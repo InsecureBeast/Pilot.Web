@@ -1,0 +1,292 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.Server.Api.Contracts;
+using Pilot.Web.Model.CommonSettings;
+using Pilot.Web.Model.DataObjects;
+using Pilot.Web.Tools;
+
+namespace Pilot.Web.Model
+{
+    public interface IServerApiService
+    {
+        DDatabaseInfo GetDatabaseInfo();
+        INMetadata GetMetadata();
+        IEnumerable<PObject> GetObjects(Guid[] ids);
+        IEnumerable<PObject> GetObjectChildren(Guid id, ChildrenType type);
+        IEnumerable<PObject> GetObjectParents(Guid id);
+        INType GetType(int id);
+
+        Task<IEnumerable<PObject>> GetTasksAsync(string filter);
+
+        ICommonSettings GetPersonalSettings(string key);
+        INPerson GetPerson(int id);
+        INPerson GetCurrentPerson();
+
+        IReadOnlyDictionary<int, INType> GetTypes();
+        void AddSearch(DSearchDefinition searchDefinition);
+        IReadOnlyDictionary<int, INPerson> GetPeople();
+        IEnumerable<INUserState> GetUserStates();
+        INUserStateMachine GetStateMachine(Guid stateMachineId);
+        INUserState GetUserState(Guid id);
+        IReadOnlyDictionary<int, INOrganisationUnit> GetOrganizationUnits();
+    }
+
+    public class ServerApiService : IServerApiService, IRemoteServiceListener
+    {
+        private readonly IServerApi _serverApi;
+        private readonly DDatabaseInfo _dbInfo;
+        private readonly ISearchServiceFactory _searchServiceFactory;
+        private INMetadata _metadata;
+        private IReadOnlyDictionary<int, INPerson> _people = new Dictionary<int, INPerson>();
+        private IReadOnlyDictionary<int, INOrganisationUnit> _orgUnits = new Dictionary<int, INOrganisationUnit>();
+        private IReadOnlyDictionary<int, INType> _types = new Dictionary<int, INType>();
+        private readonly Dictionary<string, INUserState> _states = new Dictionary<string, INUserState>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<Guid, INUserState> _statesById = new Dictionary<Guid, INUserState>();
+        private readonly Dictionary<Guid, INUserStateMachine> _stateMachines = new Dictionary<Guid, INUserStateMachine>();
+        private readonly INPerson _currentPerson;
+
+        public ServerApiService(IServerApi serverApi, DDatabaseInfo dbInfo, ISearchServiceFactory searchServiceFactory)
+        {
+            _serverApi = serverApi;
+            _dbInfo = dbInfo;
+            _searchServiceFactory = searchServiceFactory;
+            _currentPerson = dbInfo.Person;
+
+            LoadPeople();
+            LoadOrganizationUnits();
+            LoadMetadata(0);
+        }
+
+        public DDatabaseInfo GetDatabaseInfo()
+        {
+            return _dbInfo;
+        }
+
+        public INMetadata GetMetadata()
+        {
+            CheckApi();
+            return _metadata;
+        }
+
+        public IEnumerable<PObject> GetObjectChildren(Guid id, ChildrenType type)
+        {
+            CheckApi();
+            var parent = GetObject(id);
+            if (parent == null)
+                throw new Exception("Object not found");
+            
+            var childIds = GetChildrenByType(parent, type);
+            if (!childIds.Any())
+                return new List<PObject>();
+
+            var children = _serverApi.GetObjects(childIds);
+
+            var res = children.Select(o => new PObject(o, _metadata, _people)).ToList();
+            res.Sort(new ObjectComparer());
+
+            var parentType = GetType(parent.TypeId);
+            if (parentType.IsMountable && type != ChildrenType.Storage)
+            {
+                res.Insert(0, new SourcePObject(parent, _metadata, _people, this));
+            }
+            
+            return res;
+        }
+
+        public IEnumerable<PObject> GetObjectParents(Guid id)
+        {
+            CheckApi();
+
+            var parents = new List<PObject>();
+            var parentId = id;
+
+            while (true)
+            {
+                var parent = GetObject(parentId);
+                if (parent == null || parent.ParentId == Guid.Empty)
+                    return parents;
+
+                var parentType = GetType(parent.TypeId);
+                if (parentType.IsMountable)
+                {
+                    parents.Insert(0, new SourcePObject(parent, _metadata, _people, this));
+                }
+
+                parents.Insert(0, new PObject(parent, _metadata, _people));
+                parentId = parent.ParentId;
+            }
+        }
+
+        public INType GetType(int id)
+        {
+            CheckApi();
+            return _types[id];
+        }
+
+        public async Task<IEnumerable<PObject>> GetTasksAsync(string filter)
+        {
+            CheckApi();
+            var searchService = _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
+            var searchResult = await searchService.Search(filter);
+            if (searchResult.Found == null)
+                return Array.Empty<PObject>();
+
+            return GetObjects(searchResult.Found.ToArray());
+        }
+
+        public IEnumerable<PObject> GetObjects(Guid[] ids)
+        {
+            CheckApi();
+            if (ids == null)
+                return Array.Empty<PObject>();
+
+            if (ids.Length == 0)
+                return Array.Empty<PObject>();
+
+            var array = _serverApi.GetObjects(ids);
+            var res = array.Select(o => new PObject(o, _metadata, _people));
+            return res;
+        }
+
+        public ICommonSettings GetPersonalSettings(string key)
+        {
+            CheckApi();
+            var settingsProvider = new CommonSettingsProvider(_serverApi, _currentPerson);
+            return settingsProvider.GetPersonalSetting(key);
+        }
+
+        public INPerson GetPerson(int id)
+        {
+            return _people[id];
+        }
+
+        public INPerson GetCurrentPerson()
+        {
+            return _currentPerson;
+        }
+
+        public IReadOnlyDictionary<int, INType> GetTypes()
+        {
+            return _types;
+        }
+
+        public IReadOnlyDictionary<int, INPerson> GetPeople()
+        {
+            return _people;
+        }
+
+        public IEnumerable<INUserState> GetUserStates()
+        {
+            return _metadata.UserStates;
+        }
+
+        public INUserStateMachine GetStateMachine(Guid stateMachineId)
+        {
+            return !_stateMachines.TryGetValue(stateMachineId, out var result) ? MUserStateMachine.Null : result;
+        }
+
+        public INUserState GetUserState(Guid id)
+        {
+            return !_statesById.TryGetValue(id, out var result) ? MUserState.Null : result;
+        }
+
+        public IReadOnlyDictionary<int, INOrganisationUnit> GetOrganizationUnits()
+        {
+            return _orgUnits;
+        }
+
+        public void AddSearch(DSearchDefinition searchDefinition)
+        {
+            _serverApi.AddSearch(searchDefinition);
+        }
+
+        private void CheckApi()
+        {
+            if (_serverApi == null)
+                throw new ArgumentException(nameof(_serverApi));
+        }
+
+        private void LoadPeople()
+        {
+            CheckApi();
+            _people = _serverApi.LoadPeople().ToDictionary(k => k.Id, v => (INPerson)v);
+        }
+
+        private void LoadOrganizationUnits()
+        {
+            CheckApi();
+            _orgUnits = _serverApi.LoadOrganisationUnits().ToDictionary(k => k.Id, v => (INOrganisationUnit)v);
+        }
+
+        private void LoadMetadata(long version)
+        {
+            CheckApi();
+            _metadata = _serverApi.GetMetadata(version);
+            _types = _metadata.Types.ToDictionary(k => k.Id, v => v);
+            
+            _states.Clear();
+            _statesById.Clear();
+            foreach (var state in _metadata.UserStates)
+            {
+                _states[state.Name] = state;
+                _statesById[state.Id] = state;
+            }
+
+            _stateMachines.Clear();
+            foreach (var stateMachine in _metadata.StateMachines)
+            {
+                _stateMachines[stateMachine.Id] = stateMachine;
+            }
+        }
+
+        private Guid[] GetChildrenByType(DObject obj, ChildrenType type)
+        {
+            var childIds = new Guid[0];
+            switch (type)
+            {
+                case ChildrenType.All:
+                    childIds = obj.Children.Select(c => c.ObjectId).ToArray();
+                    break;
+                case ChildrenType.ListView:
+                    childIds = obj.GetChildrenForListView(this).ToArray();
+                    break;
+                case ChildrenType.TreeView:
+                    break;
+                case ChildrenType.Storage:
+                    childIds = obj.GetChildrenForPilotStorage(this).ToArray();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+
+            return childIds;
+        }
+
+        private DObject GetObject(Guid id)
+        {
+            var objects = _serverApi.GetObjects(new[] { id });
+            return objects.FirstOrDefault();
+        }
+
+        public void Notify(DMetadataChangeset changeset)
+        {
+            if (changeset == null || changeset.Version == 0)
+                return;
+
+            LoadMetadata(changeset.Version);
+        }
+
+        public void Notify(OrganisationUnitChangeset changeset)
+        {
+            LoadOrganizationUnits();
+        }
+
+        public void Notify(PersonChangeset changeset)
+        {
+            LoadPeople();
+        }
+    }
+}
