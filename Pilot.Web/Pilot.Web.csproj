@@ -32,12 +32,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\documents\shared\document.ts" />
+    <None Remove="ClientApp\src\app\tasks\shared\tasks.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Model\" />
     <Folder Include="Tools\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\documentRender\DocumentRender.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\documents\shared\document.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\tasks\shared\tasks.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

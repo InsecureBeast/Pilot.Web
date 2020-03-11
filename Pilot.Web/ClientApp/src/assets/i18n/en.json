@@ -1,0 +1,28 @@
+{
+  "login": {
+    "username": "User name",
+    "password": "Password",
+    "account": "Account"
+  },
+  "signInCardTitle": "Sign in",
+  "signIn": "Sign in",
+  "signingIn": "Sign in ...",
+  "signOut": "Sign out",
+  "documents": "Documents",
+  "download": "Download",
+  "downloading": "Downloading ...",
+  "downloadZip": "Download zip",
+  "objectCard": "Object card",
+  "cantPreviewDocument": "Looks like preview of this file is not possible",
+  "loading": "Loading ...",
+  "folderIsEmpty": "This folder is empty",
+  "errorTitle": "An unhandled error occurred while processing the request",
+  "closeDocumentButtonHint": "Close document",
+  "nextDocumentButtonHint": "Next document",
+  "previousDocumentButtonHint": "Previous document",
+  "sourceFiles": "Source files",
+  "tasks": "Tasks",
+  "you": "You",
+  "deadline": "Deadline",
+  "stage": "Stage" 
+}

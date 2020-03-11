@@ -1,0 +1,28 @@
+{
+  "login": {
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "account": "Учетная запись"
+  },
+  "signInCardTitle": "Вход",
+  "signIn": "Вход",
+  "signingIn": "Вход ...",
+  "signOut": "Выйти",
+  "documents": "Документы",
+  "download": "Скачать",
+  "downloading": "Скачивание ...",
+  "downloadZip": "Скачать архивом",
+  "objectCard": "Карточка",
+  "loading": "Загрузка ...",
+  "folderIsEmpty": "Эта папка пуста",
+  "errorTitle": "В процессе обработки запроса произошла ошибка",
+  "closeDocumentButtonHint": "Закрыть",
+  "nextDocumentButtonHint": "Следующий документ",
+  "previousDocumentButtonHint": "Предыдущий документ",
+  "cantPreviewDocument": "Похоже, предварительный просмотр этого документа невозможен",
+  "sourceFiles": "Исходные файлы",
+  "tasks": "Задания",
+  "you": "Вы",
+  "deadline": "Срок до",
+  "stage": "Этап"
+}

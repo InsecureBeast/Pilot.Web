@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +10,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+
+  constructor(/*private repository: RepositoryService,*/ translate: TranslateService) {
+    translate.addLangs(['en', 'ru'])
+    translate.setDefaultLang('en');
+    translate.use('ru');
+    registerLocaleData(localeRu);
+  }
 }
