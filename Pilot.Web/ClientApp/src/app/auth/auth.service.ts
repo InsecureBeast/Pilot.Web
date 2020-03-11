@@ -50,12 +50,12 @@ export class AuthService {
     return this.loggedIn.asObservable();
   }
 
-  private setToken(token: string): void {
-    localStorage.setItem(TOKEN, token);
+  getToken(): string {
+    return localStorage.getItem(TOKEN);
   }
 
-  private getToken(): string {
-    return localStorage.getItem(TOKEN);
+  private setToken(token: string): void {
+    localStorage.setItem(TOKEN, token);
   }
 
   private clearToken(): void {

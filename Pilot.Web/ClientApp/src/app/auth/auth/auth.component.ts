@@ -4,7 +4,8 @@ import { first } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { ErrorHandlerService } from '../../ui/error/error-handler.service';
-import { SystemIds } from '../../core/system.ids';
+import { SystemIds } from '../../core/data/system.ids';
+import { RepositoryService } from '../../core/repository.service';
 
 @Component({
     selector: 'app-auth',
@@ -21,7 +22,9 @@ export class AuthComponent {
 
 
   /** auth ctor */
-  constructor(private authService: AuthService,
+  constructor(
+    private repositoryService: RepositoryService,
+    private authService: AuthService,
     private errorService: ErrorHandlerService,
     private router: Router) {
 
@@ -36,16 +39,14 @@ export class AuthComponent {
     this.isProcessing = true;
     this.error = null;
 
-    this.authService.login(this.username, this.password).pipe(first()).subscribe(result => {
-      //this.repositoryService.initialize();
-
-      //this.subscription = this.repositoryService.initialized.subscribe(isInit => {
-      //  if (isInit) {
-      //    this.isProcessing = false;
-      this.router.navigate(['/fetch-data']);// + SystemIds.rootId]);
-      //  }
-      //});
-
+    this.authService.login(this.username, this.password).pipe(first()).subscribe(async result => {
+      const subs = this.repositoryService.initializeAsync().subscribe(isInit => {
+        if (isInit) {
+          this.isProcessing = false;
+          subs.unsubscribe();
+          this.router.navigate(['/fetch-data']); // + SystemIds.rootId]);
+        }
+      });
     }, (e: HttpErrorResponse) => {
       this.isProcessing = false;
       this.error = this.errorService.handleErrorMessage(e);
