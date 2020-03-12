@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState } from './data/data.classes';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { first, takeUntil, map, take, skip } from 'rxjs/operators';
+import { Observable, Subject, combineLatest , zip} from 'rxjs';
+import { first, takeUntil, map, take, skip} from 'rxjs/operators';
 import { Headers } from '@angular/http';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
@@ -90,53 +90,36 @@ export class RepositoryService {
     if (this.metadata)
       return new BehaviorSubject<boolean>(true);
 
-    const initSubject = new BehaviorSubject<boolean>(false);
-    initSubject.asObservable().pipe(skip(5)).subscribe((c) => {
-      init.next(true);
-    });
-    
-    //let metadata$ = this.getMetadata();
-    //let people$ = this.getPeople();
-    //let organizationUnits$ = this.getOrganizationUnits();
-    //let currentPerson$ = this.getCurrentPersonInternal();
-    //let states$ = this.getUserStates();
+    const metadata$ = this.getMetadata();
+    const people$ = this.getPeople();
+    const organizationUnits$ = this.getOrganizationUnits();
+    const currentPerson$ = this.getCurrentPersonInternal();
+    const states$ = this.getUserStates();
 
-    this.getMetadata().pipe(first()).subscribe(meta => {
-      this.metadata = meta;
-      for (let attr of this.metadata.types) {
-        this.types.set(attr.id, attr);
-      }
+    const zip$ = zip(metadata$, people$, organizationUnits$, currentPerson$, states$).subscribe(
+      ([metadata, people, organizationUnits, currentPerson, states]) => {
+        this.metadata = metadata;
+        for (let attr of this.metadata.types) {
+          this.types.set(attr.id, attr);
+        }
 
-      initSubject.next(true);
-    });
+        for (let person of people) {
+          this.people.set(person.id, person);
+        }
 
-    this.getPeople().pipe(first()).subscribe(people => {
-      for (let person of people) {
-        this.people.set(person.id, person);
-      }
+        for (let unit of organizationUnits) {
+          this.organizationUnits.set(unit.id, unit);
+        }
 
-      initSubject.next(true);
-    });
+        this.currentPerson = currentPerson;
 
-    this.getOrganizationUnits().pipe(first()).subscribe(organizationUnits => {
-      for (let unit of organizationUnits) {
-        this.organizationUnits.set(unit.id, unit);
-      }
+        for (let state of states) {
+          this.userStates.set(state.id, state);
+        }
 
-      initSubject.next(true);
-    });
-
-    this.getCurrentPersonInternal().pipe(first()).subscribe(person => {
-      this.currentPerson = person;
-      initSubject.next(true);
-    });
-
-    this.getUserStates().pipe(first()).subscribe(states => {
-      for (let state of states) {
-        this.userStates.set(state.id, state);
-      }
-      initSubject.next(true);
-    });
+        init.next(true);
+        zip$.unsubscribe();
+      });
 
     return init;
   }
