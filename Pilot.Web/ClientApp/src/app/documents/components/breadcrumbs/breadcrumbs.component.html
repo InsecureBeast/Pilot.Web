@@ -1,1 +1,10 @@
-﻿<div style="border: 1px solid red">breadcrumbs Component</div>
+<div >
+  <nav aria-label="nav" *ngIf="breadcrumbs" class="m-2">
+    <ol class="breadcrumb" #olRef>
+      <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs" [style.max-width.px]="itemWidth">
+        <a [routerLink]="" (click)="onSelect(bc);$event.stopPropagation()" *ngIf="!bc.isActive">{{bc.title}}</a>
+        <span *ngIf="bc.isActive">{{bc.title}}</span>
+      </li>
+    </ol>
+  </nav>
+</div>

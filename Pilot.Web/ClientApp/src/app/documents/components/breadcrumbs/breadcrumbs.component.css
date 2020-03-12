@@ -1,1 +1,21 @@
-﻿
+.m--17px {
+  margin: -17px;
+}
+
+.breadcrumb {
+  background-color: transparent;
+}
+
+.breadcrumb-item {
+  /*max-width: 200px;*/
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  font-size: x-large;
+  margin-top:-15px;
+}
+

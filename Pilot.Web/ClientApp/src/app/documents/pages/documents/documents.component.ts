@@ -76,8 +76,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  onItemSelected(node: ObjectNode): void {
-    //this.currentItem = node;
-    this.router.navigateByUrl('/documents/' + node.id);
+  onItemSelected(nodeId: string): void {
+    this.router.navigateByUrl('/documents/' + nodeId);
   }
 }

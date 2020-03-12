@@ -26,7 +26,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   @Input() parent: ObjectNode;
 
   @Output() onChecked = new EventEmitter<ObjectNode[]>();
-  @Output() onSelected = new EventEmitter<ObjectNode>();
+  @Output() onSelected = new EventEmitter<string>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
 
   public nodeStyle: NodeStyle;
@@ -104,7 +104,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
   selected(item: ObjectNode): void {
     //this.navigationService.navigateTo(item);
-    this.onSelected.emit(item);
+    this.onSelected.emit(item.id);
   }
 
   checked(node: ObjectNode, event: MouseEvent): void {

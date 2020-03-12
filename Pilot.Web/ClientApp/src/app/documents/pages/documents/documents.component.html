@@ -1,2 +1,4 @@
+<app-breadcrumbs [parent]="currentItem"
+                 (onSelected)="onItemSelected($event)"></app-breadcrumbs>
 <app-document-list [parent]="currentItem"
                    (onSelected)="onItemSelected($event)"></app-document-list>
