@@ -1,4 +1,9 @@
-<app-breadcrumbs [parent]="currentItem"
-                 (onSelected)="onItemSelected($event)"></app-breadcrumbs>
-<app-document-list [parent]="currentItem"
-                   (onSelected)="onItemSelected($event)"></app-document-list>
+
+<div class="row h-calc">
+  <div class="col-12 overflow-auto h-100 p-0">
+    <app-breadcrumbs [parent]="currentItem"
+                     (onSelected)="onItemSelected($event)"></app-breadcrumbs>
+    <app-document-list [parent]="currentItem"
+                       (onSelected)="onItemSelected($event)"></app-document-list>
+  </div>
+</div>
