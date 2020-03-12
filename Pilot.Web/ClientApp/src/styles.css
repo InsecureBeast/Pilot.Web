@@ -12,3 +12,56 @@ html, body {
   transform: translate(-50%,-50%);
   text-align: center;
 }
+
+.content-top {
+  z-index: 100;
+  margin-top: -56px;
+  height: calc(100vh + 5px);
+  width: 100%;
+  position: absolute;
+  background-color: white;
+}
+
+.bg-toolbar {
+  background-color: #F2F2F2;
+}
+
+.bg-tree-view {
+  background-color: #F8F9FB;
+}
+
+.h-calc {
+  height: calc(100vh - 55px)
+}
+
+.container-fluid {
+  padding-top: 55px;
+  height: 100%;
+}
+
+@media (max-width: 767px) {
+  .hidden-phone {
+    display: none;
+  }
+}
+
+.error-image {
+  width: 100px;
+  height: 100px;
+}
+
+.pointer {
+  cursor: pointer
+}
+
+.f-md {
+  font-size: 12px;
+}
+
+.f-sm {
+  font-size: 10px;
+}
+
+.f-lg {
+  font-size: 14px;
+}

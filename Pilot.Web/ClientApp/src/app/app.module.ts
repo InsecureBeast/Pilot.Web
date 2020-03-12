@@ -17,6 +17,8 @@ import { AuthGuard } from './auth/auth.guard';
 import { ErrorModule } from './ui/error/error.module';
 import { AuthComponent } from './auth/auth/auth.component';
 import { AuthModule } from './auth/auth.module';
+import { DocumentsRoutingModule } from './documents/documents-routing.module';
+import { DocumentsModule } from './documents/documents.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -52,6 +54,8 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    DocumentsModule,
+    DocumentsRoutingModule
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

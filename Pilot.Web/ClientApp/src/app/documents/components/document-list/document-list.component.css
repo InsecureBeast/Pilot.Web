@@ -1,1 +1,25 @@
-﻿
+
+.card-img-center {
+  margin: auto;
+  height: 5rem;
+}
+
+.card-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 2.5em;
+  text-align: center;
+  font-size: 14px;
+}
+
+.card {
+  /*width: 14rem;*/
+  height: 10rem;
+}
+
+.card-children-count {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.5rem;
+  font-size: 80%
+}

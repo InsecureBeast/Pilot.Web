@@ -1,0 +1,23 @@
+.icon {
+  width: 16px;
+  height: 16px;
+  cursor: pointer
+}
+
+.list-group-item {
+  cursor: pointer
+}
+
+.tree-view-item {
+  cursor: pointer;
+  padding: 5px;
+}
+
+  .tree-view-item:hover {
+    background-color: #EAEAEA;
+  }
+
+.list-group-item-primary:hover {
+  background-color: #9FCDFF;
+}
+

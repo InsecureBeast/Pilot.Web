@@ -1,1 +1,74 @@
-<div style="border: 1px solid red">document-list Component</div>
+<div class="d-flex content-center" *ngIf="isLoading">
+  <div class="spinner-border text-secondary" role="status">
+    <span class="sr-only" translate="loading"></span>
+  </div>
+</div>
+
+<div *ngIf="nodeStyle === 0; else gridViewNodeTemplate">
+  <div class="list-group list-group-flush" *ngIf="!isLoading && nodes">
+    <div *ngFor="let node of nodes">
+
+      <div class="list-group-item list-group-item-action"
+           [class.list-group-item-primary]="node.isChecked"
+           (click)="checked(node, $event);$event.stopPropagation();">
+
+        <div class="d-flex">
+
+          <!--<div class="col-1 text-center">
+            <input class="form-check-input position-static" type="checkbox" [checked]="node.isChecked">
+          </div>-->
+
+          <div class="mt-1 mr-2">
+            <img id="image" [src]="node.icon" width="36" *ngIf="node.icon != null">
+          </div>
+
+          <div class="mr-auto">
+
+            <div (click)="selected(node);$event.stopPropagation();">
+              <h6 class="mb-1 pointer">{{ node.title }}</h6>
+              <div class="mb-0 pointer">{{node.created}} {{node.creator.displayName}}</div>
+            </div>
+
+          </div>
+
+          <div class="mr-n2">
+            <a title="{{ 'download' | translate }}" (click)="downloadDocument(node)" class="btn btn-outline-light btn-sm" *ngIf="node.isDocument">
+              <img src="/assets/images/download.svg" />
+            </a>
+            <small *ngIf="!node.isDocument">{{node.children.length}}</small>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="content-center" *ngIf="nodes && nodes.length === 0">
+  <img src="/assets/images/empty-folder.svg" class="error-image" />
+  <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+</div>
+
+
+<ng-template #gridViewNodeTemplate>
+  <div class="row m-0">
+    <div *ngFor="let node of nodes"
+         class="col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4 p-2">
+
+      <div class="card text-center"
+           [class.list-group-item-primary]="node.isChecked"
+           (click)="checked(node, $event);$event.stopPropagation();">
+
+        <img id="image" [src]="node.icon" class="card-img-center" alt="<no image>">
+        <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>
+        <div (click)="selected(node);$event.stopPropagation();">
+          <h5 class="pointer card-name mt-1 mb-0">{{ node.title }}</h5>
+          <small class="pointer">{{node.created}}</small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>

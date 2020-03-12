@@ -1,1 +1,2 @@
-﻿<div style="border: 1px solid red">documents Component</div>
+<app-document-list [parent]="currentItem"
+                   (onSelected)="onItemSelected($event)"></app-document-list>

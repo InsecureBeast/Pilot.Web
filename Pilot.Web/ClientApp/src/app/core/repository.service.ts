@@ -118,6 +118,7 @@ export class RepositoryService {
         }
 
         init.next(true);
+        init.complete();
         zip$.unsubscribe();
       });
 
@@ -177,46 +178,6 @@ export class RepositoryService {
     const headers = this.getHeaders();
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers.toJSON() }).pipe(first());
   }
-
-  //private getPeopleAsync(): Promise<IPerson[]> {
-  //  return new Promise((resolve, reject) => {
-  //    const headers = this.getHeaders();
-  //    this.http
-  //      .get<IPerson[]>(this.baseUrl + 'api/Metadata/GetPeople', { headers: headers.toJSON() })
-  //      .pipe(first())
-  //      .subscribe(people => resolve(people), err => reject(err));
-  //  });
-  //}
-
-  //private getCurrentPersonAsync(): Promise<IPerson> {
-  //  return new Promise((resolve, reject) => {
-  //    const headers = this.getHeaders();
-  //    this.http
-  //      .get<IPerson>(this.baseUrl + 'api/Metadata/GetCurrentPerson', { headers: headers.toJSON() })
-  //      .pipe(first())
-  //      .subscribe(person => resolve(person), err => reject(err));
-  //  });
-  //}
-
-  //private getOrganizationUnitsAsync(): Promise<IOrganizationUnit[]> {
-  //  return new Promise((resolve, reject) => {
-  //    const headers = this.getHeaders();
-  //    this.http
-  //      .get<IOrganizationUnit[]>(this.baseUrl + 'api/Metadata/GetOrganizationUnits', { headers: headers.toJSON() })
-  //      .pipe(first())
-  //      .subscribe(units => resolve(units), err => reject(err));
-  //  });
-  //}
-
-  //private getUserStatesAsync(): Promise<IUserState[]> {
-  //  return new Promise((resolve, reject) => {
-  //    const headers = this.getHeaders();
-  //    this
-  //      .http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers.toJSON() })
-  //      .pipe(first())
-  //      .subscribe(userStates => resolve(userStates), err => reject(err));
-  //  });
-  //}
 
   private getHeaders(): Headers {
     let token = this.authService.getToken();

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { first } from 'rxjs/operators';
+import { first, skipWhile } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { ErrorHandlerService } from '../../ui/error/error-handler.service';
@@ -14,12 +14,11 @@ import { RepositoryService } from '../../core/repository.service';
 })
 /** auth component*/
 export class AuthComponent {
-
+  
   username: string;
   password: string;
   error: string;
   isProcessing: boolean;
-
 
   /** auth ctor */
   constructor(
@@ -40,12 +39,9 @@ export class AuthComponent {
     this.error = null;
 
     this.authService.login(this.username, this.password).pipe(first()).subscribe(async result => {
-      const subs = this.repositoryService.initializeAsync().subscribe(isInit => {
-        if (isInit) {
+      this.repositoryService.initializeAsync().pipe(skipWhile(v => !v)).subscribe(isInit => {
           this.isProcessing = false;
-          subs.unsubscribe();
-          this.router.navigate(['/fetch-data']); // + SystemIds.rootId]);
-        }
+          this.router.navigate(['/documents/' + SystemIds.rootId]);
       });
     }, (e: HttpErrorResponse) => {
       this.isProcessing = false;

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
 import { Observable } from 'rxjs';
 import { AuthService } from './../auth/auth.service';
 
@@ -12,7 +13,7 @@ export class NavMenuComponent implements OnInit {
   isExpanded = false;
   isLoggedIn$: Observable<boolean>; 
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
 
   }
 
@@ -26,5 +27,12 @@ export class NavMenuComponent implements OnInit {
 
   toggle() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  onLogout(event: Event): boolean {
+    this.collapse();
+    this.authService.logout();
+    this.router.navigate(["/login"]);
+    return false;
   }
 }
