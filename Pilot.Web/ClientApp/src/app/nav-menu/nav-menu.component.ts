@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { Observable } from 'rxjs';
 import { AuthService } from './../auth/auth.service';
+import { SystemIds } from '../core/data/system.ids';
 
 @Component({
   selector: 'app-nav-menu',
@@ -11,7 +12,8 @@ import { AuthService } from './../auth/auth.service';
 export class NavMenuComponent implements OnInit {
 
   isExpanded = false;
-  isLoggedIn$: Observable<boolean>; 
+  isLoggedIn$: Observable<boolean>;
+  documentRootId = SystemIds.rootId;
 
   constructor(private authService: AuthService, private router: Router) {
 

@@ -7,6 +7,7 @@ import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
 import { RepositoryService } from '../../../core/repository.service';
+import { INode } from '../../shared/node.interface';
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -32,7 +33,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   @Input() parent: ObjectNode;
-  @Output() onSelected = new EventEmitter<string>();
+  @Output() onSelected = new EventEmitter<INode>();
 
   breadcrumbs: BreadcrumbNode[];
   hiddenBreadcrumbs: BreadcrumbNode[];
@@ -70,7 +71,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSelect(bc: BreadcrumbNode): void {
-    this.onSelected.emit(bc.id);
+    this.onSelected.emit(bc);
   }
 
   private init(item: ObjectNode) {
@@ -154,7 +155,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 }
 
-export class BreadcrumbNode {
+export class BreadcrumbNode implements INode {
 
   private source: IObject;
 

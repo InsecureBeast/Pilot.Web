@@ -1,4 +1,3 @@
-
 <div class="row h-calc">
   <div class="col-12 overflow-auto h-100 p-0">
     <app-breadcrumbs [parent]="currentItem"
@@ -6,4 +5,11 @@
     <app-document-list [parent]="currentItem"
                        (onSelected)="onItemSelected($event)"></app-document-list>
   </div>
+
+  <app-document [style.display]="isDocument ? 'block' : 'none'">
+    <div modal-header>Login</div>
+    <div modal-body>Login body</div>
+    <div modal-footer>Login footer</div>
+  </app-document>
+
 </div>

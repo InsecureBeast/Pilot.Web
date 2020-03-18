@@ -1,4 +1,5 @@
-﻿import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-document',
@@ -7,8 +8,16 @@
 })
 /** document component*/
 export class DocumentComponent {
-    /** document ctor */
-    constructor() {
+  @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();
 
-    }
+  /** document-details ctor */
+  constructor(private router: Router) {
+
+  }
+
+  closeModal($event) {
+    this.router.navigate([{ outlets: { modal: null } }]);
+    this.modalClose.next($event);
+  }
+}
 }

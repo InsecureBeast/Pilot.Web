@@ -10,10 +10,11 @@ const TOKEN = 'auth_token';
 export class AuthService {
 
   private readonly baseUrl: string;
-  private loggedIn = new BehaviorSubject<boolean>(false);
+  private isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
+    this.isLoggedIn$.next(this.isSignedIn());
   }
 
   login(username: string, password: string): Observable<string> {
@@ -26,7 +27,7 @@ export class AuthService {
     observable.pipe(first()).subscribe(result => {
       const token = (result as any).token;
       this.setToken(token);
-      this.loggedIn.next(true);
+      this.isLoggedIn$.next(true);
     });
 
     return observable;
@@ -39,15 +40,15 @@ export class AuthService {
     headers.append('Content-Type', 'application/json');
     this.http.get(this.baseUrl + 'api/Auth/SignOut', { headers: headers.toJSON() });
     this.clearToken();
-    this.loggedIn.next(false);
+    this.isLoggedIn$.next(false);
   }
 
-  isSignedIn(): boolean {
+  private isSignedIn(): boolean {
     return this.getToken() != null;
   }
 
   get isLoggedIn(): Observable<boolean> {
-    return this.loggedIn.asObservable();
+    return this.isLoggedIn$.asObservable();
   }
 
   getToken(): string {

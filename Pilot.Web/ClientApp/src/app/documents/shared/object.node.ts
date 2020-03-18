@@ -6,8 +6,9 @@ import { TypeIconService } from '../../core/type-icon.service';
 import { ImagesService } from '../../core/tools/images.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Tools } from '../../core/tools/tools';
+import { INode } from './node.interface';
 
-export class ObjectNode {
+export class ObjectNode implements INode {
 
   constructor(
     private readonly source: IObject,

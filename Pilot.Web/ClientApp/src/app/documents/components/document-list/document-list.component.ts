@@ -1,16 +1,16 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { Subscription, Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+
 import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from "../../shared/object.node";
 import { ChildrenType } from '../../../core/data/children.types';
 import { IObject } from '../../../core/data/data.classes';
-//import { DownloadService } from '../../services/download.service';
-//import { NavigationService, INavigationItem } from '../../services/navigation.service';
-import { Subscription, Subject } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
-//import { DataService } from 'src/services/data.service';
-import { TranslateService } from '@ngx-translate/core';
+import { INode } from '../../shared/node.interface';
 
 @Component({
     selector: 'app-document-list',
@@ -26,7 +26,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   @Input() parent: ObjectNode;
 
   @Output() onChecked = new EventEmitter<ObjectNode[]>();
-  @Output() onSelected = new EventEmitter<string>();
+  @Output() onSelected = new EventEmitter<INode>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
 
   public nodeStyle: NodeStyle;
@@ -104,7 +104,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
   selected(item: ObjectNode): void {
     //this.navigationService.navigateTo(item);
-    this.onSelected.emit(item.id);
+    this.onSelected.emit(item);
   }
 
   checked(node: ObjectNode, event: MouseEvent): void {

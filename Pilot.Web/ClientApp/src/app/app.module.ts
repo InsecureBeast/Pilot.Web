@@ -19,6 +19,7 @@ import { AuthComponent } from './auth/auth/auth.component';
 import { AuthModule } from './auth/auth.module';
 import { DocumentsRoutingModule } from './documents/documents-routing.module';
 import { DocumentsModule } from './documents/documents.module';
+import { DocumentsComponent } from './documents/pages/documents/documents.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -39,7 +40,7 @@ export function createTranslateLoader(http: HttpClient) {
     ErrorModule,
     AuthModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: '', component: DocumentsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'counter', component: CounterComponent, canActivate: [AuthGuard]},
       { path: 'fetch-data', component: FetchDataComponent, pathMatch: 'prefix', canActivate: [AuthGuard] },
       { path: 'login', component: AuthComponent },

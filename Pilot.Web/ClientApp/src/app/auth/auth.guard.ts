@@ -26,13 +26,12 @@ export class AuthGuard implements CanActivate {
 
   //canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
-  //  //var isSignedIn = this.authService.isSignedIn();
+  //  var isSignedIn = this.authService.isSignedIn();
+  //  if (isSignedIn) {// && !this.jwtHelper.isTokenExpired(token)) {
+  //    return true;
+  //  }
 
-  //  //if (isSignedIn) {// && !this.jwtHelper.isTokenExpired(token)) {
-  //  //  return true;
-  //  //}
-
-  //  //this.router.navigate(["login"]);
-  //  //return false;
+  //  this.router.navigate(["login"]);
+  //  return false;
   //}
 }

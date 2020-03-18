@@ -1,1 +1,17 @@
-﻿<div style="border: 1px solid red">document-details Component</div>
+<!-- modal.component.html -->
+<div class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>
+        <ng-content select="[modal-header]"></ng-content>
+      </h2>
+    </div>
+    <div class="modal-body">
+      <ng-content select="[modal-body]"></ng-content>
+    </div>
+    <div class="modal-footer">
+      <ng-content select="[modal-footer]"></ng-content>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { SystemIds } from '../../../core/data/system.ids';
 import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
+import { INode } from '../../shared/node.interface';
 
 @Component({
     selector: 'app-documents',
@@ -26,7 +27,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   isDocument: boolean;
   isLoading: boolean;
   error: HttpErrorResponse;
-
+  
   /** documents ctor */
   constructor(
     private readonly route: ActivatedRoute,
@@ -40,7 +41,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.navigationSubscription = this.route.paramMap.subscribe((params: ParamMap) => {
-      let id = params.get('id');//this.route.snapshot.paramMap.get('id');
+      let id = params.get('id');
       if (!id)
         id = SystemIds.rootId;
 
@@ -76,7 +77,15 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  onItemSelected(nodeId: string): void {
-    this.router.navigateByUrl('/documents/' + nodeId);
+  onItemSelected(node: INode): void {
+    this.isDocument = node.isDocument;
+
+    if (node.isDocument) {
+      this.router.navigate([{ outlets: { modal: 'document/' + node.id } }]);
+      //this.router.navigateByUrl('/document/' + node.id);
+      return;
+    }
+
+    this.router.navigateByUrl('/documents/' + node.id);
   }
 }
