@@ -157,7 +157,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
 export class BreadcrumbNode implements INode {
 
-  private source: IObject;
+  source: IObject;
 
   /** BreadcrumbNode ctor */
   constructor(source: IObject, isActive: boolean) {
@@ -176,9 +176,4 @@ export class BreadcrumbNode implements INode {
   isActive: boolean;
   isSource: boolean;
   isDocument: boolean;
-
-  public getSource(): IObject {
-
-    return this.source;
-  }
 }

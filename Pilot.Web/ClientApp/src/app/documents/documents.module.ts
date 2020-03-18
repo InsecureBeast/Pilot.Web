@@ -6,12 +6,14 @@ import { DocumentsComponent } from './pages/documents/documents.component';
 import { DocumentComponent } from './pages/document/document.component';
 import { DocumentListComponent } from './components/document-list/document-list.component';
 import { BreadcrumbsComponent } from "./components/breadcrumbs/breadcrumbs.component";
+import { ModalModule } from "../ui/modal/modal.module";
 
 @NgModule({
   imports: [
     CommonModule,
     TranslateModule,
-    RouterModule
+    RouterModule,
+    ModalModule
   ],
   declarations: [
     DocumentsComponent,

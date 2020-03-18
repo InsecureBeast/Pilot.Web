@@ -11,7 +11,7 @@ import { INode } from './node.interface';
 export class ObjectNode implements INode {
 
   constructor(
-    private readonly source: IObject,
+    readonly source: IObject,
     isSource: boolean,
     private readonly typeIconService: TypeIconService,
     private readonly cancel: Subject<any>,
@@ -54,10 +54,6 @@ export class ObjectNode implements INode {
 
   isSelected: boolean;
   isChecked: boolean;
-
-  getSource(): IObject {
-    return this.source;
-  }
 
   select(): void {
     this.isSelected = !this.isSelected;

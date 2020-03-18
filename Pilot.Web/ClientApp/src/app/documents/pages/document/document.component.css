@@ -1,1 +1,16 @@
-﻿
+img.doc-page {
+  border: 1px solid lightgray;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  max-width: 80%;
+}
+
+.h-calc {
+  height: calc(100vh - 42px);
+}
+
+.op {
+  background: #2e2e2e85;
+  padding: 50px;
+  color: white;
+}

@@ -20,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
 import { DocumentsRoutingModule } from './documents/documents-routing.module';
 import { DocumentsModule } from './documents/documents.module';
 import { DocumentsComponent } from './documents/pages/documents/documents.component';
+import { ModalModule } from './ui/modal/modal.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -39,6 +40,7 @@ export function createTranslateLoader(http: HttpClient) {
     FormsModule,
     ErrorModule,
     AuthModule,
+    ModalModule,
     RouterModule.forRoot([
       { path: '', component: DocumentsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'counter', component: CounterComponent, canActivate: [AuthGuard]},
