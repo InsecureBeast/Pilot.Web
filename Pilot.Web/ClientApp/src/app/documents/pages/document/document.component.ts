@@ -52,16 +52,22 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (!this.document)
+      return;
+
     const source = this.document.source;
     this.images = null;
 
     if (this.sourceFileService.isXpsFile(source)) {
-
+      this.isLoading = true;
       const file = FilesSelector.getSourceFile(source.actualFileSnapshot.files);
       this.images = new Array<SafeUrl>();
       this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
         .then(_ => this.isLoading = false)
-        .catch(e => this.onError.emit(e));
+        .catch(e => {
+          this.isLoading = false;
+          this.onError.emit(e);
+        });
       return;
     }
   }

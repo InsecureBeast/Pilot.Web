@@ -134,23 +134,24 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   private setCountFromWidth(width: number): void {
     if (width <= 350) {
-      this.itemWidth = 120;
+      //this.itemWidth = 120;
       this.breadcrumbsCountSource.next(2);
       return;
     }
 
     if (width <= 500) {
-      this.itemWidth = 150;
+      //this.itemWidth = 150;
       this.breadcrumbsCountSource.next(2);
       return;
     }
 
     if (width < 765) {
       this.breadcrumbsCountSource.next(2);
-      this.itemWidth = 250;
-    } else {
+      //this.itemWidth = 250;
+    }
+    else {
       this.breadcrumbsCountSource.next(3);
-      this.itemWidth = 250;
+      //this.itemWidth = 250;
     }
   }
 }

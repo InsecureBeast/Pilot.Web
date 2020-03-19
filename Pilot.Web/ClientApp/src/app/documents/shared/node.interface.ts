@@ -6,4 +6,5 @@ export interface INode {
   id: string;
   isDocument: boolean;
   source: IObject;
+  isSource: boolean;
 }

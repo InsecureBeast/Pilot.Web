@@ -105,7 +105,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.router.navigateByUrl('/documents/' + node.id);
+    if (node.isSource)
+      this.router.navigateByUrl('/files/' + node.id);
+    else
+      this.router.navigateByUrl('/documents/' + node.id);
   }
 
   closeDocument() {
