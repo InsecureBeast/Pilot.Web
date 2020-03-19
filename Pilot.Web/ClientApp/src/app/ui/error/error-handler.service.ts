@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ErrorHandlerService {
-  constructor(private userService: AuthService) {
+  constructor(private authService: AuthService,
+    private readonly router: Router ) {
 
   }
 
@@ -18,8 +20,8 @@ export class ErrorHandlerService {
     }
 
     if (e.status === 401) {
-      this.userService.logout();
-      //this.router.navigate(['/login']);
+      this.authService.logout();
+      this.router.navigate(['/login']);
       return e.message;
     }
 
