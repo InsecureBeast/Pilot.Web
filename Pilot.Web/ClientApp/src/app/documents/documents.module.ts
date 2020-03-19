@@ -7,13 +7,15 @@ import { DocumentComponent } from './pages/document/document.component';
 import { DocumentListComponent } from './components/document-list/document-list.component';
 import { BreadcrumbsComponent } from "./components/breadcrumbs/breadcrumbs.component";
 import { ModalModule } from "../ui/modal/modal.module";
+import { ErrorModule } from "../ui/error/error.module";
 
 @NgModule({
   imports: [
     CommonModule,
     TranslateModule,
     RouterModule,
-    ModalModule
+    ModalModule,
+    ErrorModule
   ],
   declarations: [
     DocumentsComponent,
