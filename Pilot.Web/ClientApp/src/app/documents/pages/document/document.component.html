@@ -4,15 +4,16 @@
   </div>
 </div>
 
-<div class="h-calc">
-  <div class="row position-fixed">
-    <!--<app-toolbar class="col-12 p-0"
-                     [rightToolbarItems]="rightToolbarItems"
-                     [leftToolbarItems]="leftToolbarItems"></app-toolbar>-->
-    <span class="close" (click)="close()">&times;</span>
+<div>
+  <div>
+    <div class="position-fixed bg-doc-toolbar col-12 dp-4"></div>
+
+    <app-document-toolbar class="position-fixed col-12 p-0"
+                          [document]="document"
+                          (onDocumentClosed)="close($event)"></app-document-toolbar>
   </div>
 
-  <div class="text-center" *ngIf="images">
+  <div class="text-center pt-5" *ngIf="images">
     <div *ngFor="let page of images">
       <img [src]="page" class="doc-page">
     </div>

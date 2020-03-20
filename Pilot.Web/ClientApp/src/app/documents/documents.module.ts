@@ -6,6 +6,7 @@ import { DocumentsComponent } from './pages/documents/documents.component';
 import { DocumentComponent } from './pages/document/document.component';
 import { DocumentListComponent } from './components/document-list/document-list.component';
 import { BreadcrumbsComponent } from "./components/breadcrumbs/breadcrumbs.component";
+import { DocumentToolbarComponent } from "./components/document-toolbar/document-toolbar.component";
 import { ModalModule } from "../ui/modal/modal.module";
 import { ErrorModule } from "../ui/error/error.module";
 
@@ -21,7 +22,8 @@ import { ErrorModule } from "../ui/error/error.module";
     DocumentsComponent,
     DocumentComponent,
     DocumentListComponent,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    DocumentToolbarComponent
   ],
   exports: [
     DocumentsComponent,

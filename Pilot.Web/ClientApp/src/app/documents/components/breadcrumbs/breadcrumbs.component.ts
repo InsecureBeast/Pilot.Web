@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 
-import { Subscription, Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { IObject } from '../../../core/data/data.classes';
@@ -40,8 +40,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   itemWidth: number;
 
   /** breadcrumbs ctor */
-  constructor(
-    private repository: RepositoryService) {
+  constructor(private repository: RepositoryService) {
 
   }
 
@@ -50,9 +49,6 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    //this.navigationServiceSubscription.unsubscribe();
-    //this.countSubscription.unsubscribe();
-
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
@@ -66,6 +62,9 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
+    if (!this.ol)
+      return;
+
     const width = this.ol.nativeElement.offsetWidth;
     this.setCountFromWidth(width);
   }

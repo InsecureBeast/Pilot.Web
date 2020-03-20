@@ -10,11 +10,14 @@ import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TypeIconService {
-  constructor(private nodeStyleService: NodeStyleService, private sanitizer: DomSanitizer, private sourceFileService: SourceFileService) {
+  constructor(
+    private readonly nodeStyleService: NodeStyleService,
+    private readonly sanitizer: DomSanitizer,
+    private readonly sourceFileService: SourceFileService) {
 
   }
 
-  public getTypeIconAsync(item: IObject, cancel: Subject<any>): Promise<SafeUrl> {
+  getTypeIconAsync(item: IObject, cancel: Subject<any>): Promise<SafeUrl> {
 
     if (this.nodeStyleService.currentNodeStyle === NodeStyle.GridView) {
       if (this.sourceFileService.isXpsFile(item)) {

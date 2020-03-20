@@ -2,7 +2,7 @@ img.doc-page {
   border: 1px solid lightgray;
   margin-bottom: 8px;
   margin-top: 8px;
-  max-width: 80%;
+  max-width: 85%;
 }
 
 .h-calc {
@@ -10,7 +10,28 @@ img.doc-page {
 }
 
 .op {
-  background: #2e2e2e85;
+  background-color: #2e2e2e85;
   padding: 50px;
   color: white;
 }
+
+.dpt-4, .dpy-4 {
+  padding-top: 2rem !important;
+}
+
+.dp-4 {
+  padding: 2.2rem !important;
+}
+
+.bg-doc-toolbar {
+  background-image: linear-gradient(black, transparent);
+  /*background-color: black;*/
+  opacity: 0.85;
+}
+
+/*@media (max-width: 1200px) {
+  img.doc-page {
+    max-width: 100%;
+  }
+}*/
+
