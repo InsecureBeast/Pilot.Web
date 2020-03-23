@@ -94,12 +94,15 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
   ngOnDestroy(): void {
     //this.navigationServiceSubscription.unsubscribe();
-    this.nodeStyleServiceSubscription.unsubscribe();
+    if (this.nodeStyleServiceSubscription)
+      this.nodeStyleServiceSubscription.unsubscribe();
 
-    // This aborts all HTTP requests.
-    this.ngUnsubscribe.next();
-    // This completes the subject properly.
-    this.ngUnsubscribe.complete();
+    if (this.ngUnsubscribe) {
+      // This aborts all HTTP requests.
+      this.ngUnsubscribe.next();
+      // This completes the subject properly.
+      this.ngUnsubscribe.complete();
+    }
   }
 
   selected(item: ObjectNode): void {

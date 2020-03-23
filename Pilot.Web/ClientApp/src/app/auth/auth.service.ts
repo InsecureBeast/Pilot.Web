@@ -17,20 +17,19 @@ export class AuthService {
     this.isLoggedIn$.next(this.isSignedIn());
   }
 
-  login(username: string, password: string): Observable<string> {
+  login(username: string, password: string): void {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('username', username);
     headers.append('password', password);
 
-    const observable = this.http.get<string>(this.baseUrl + 'api/Auth/SignIn', { headers: headers.toJSON() });
-    observable.pipe(first()).subscribe(result => {
-      const token = (result as any).token;
-      this.setToken(token);
-      this.isLoggedIn$.next(true);
-    });
-
-    return observable;
+    this.http.get<string>(this.baseUrl + 'api/Auth/SignIn', { headers: headers.toJSON() })
+      .pipe(first())
+      .subscribe(result => {
+        const token = (result as any).token;
+        this.setToken(token);
+        this.isLoggedIn$.next(true);
+      });
   }
 
   logout() {

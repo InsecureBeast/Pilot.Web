@@ -1,7 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { first, skipWhile } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+import { first, skipWhile } from 'rxjs/operators';
+import { Subscription, Subject } from 'rxjs';
+
 import { AuthService } from '../auth.service';
 import { ErrorHandlerService } from '../../ui/error/error-handler.service';
 import { SystemIds } from '../../core/data/system.ids';
@@ -13,8 +16,9 @@ import { RepositoryService } from '../../core/repository.service';
     styleUrls: ['./auth.component.css']
 })
 /** auth component*/
-export class AuthComponent {
-  
+export class AuthComponent implements OnInit, OnDestroy{
+  private loginSubscription: Subscription;
+
   username: string;
   password: string;
   error: string;
@@ -22,11 +26,32 @@ export class AuthComponent {
 
   /** auth ctor */
   constructor(
-    private repositoryService: RepositoryService,
-    private authService: AuthService,
-    private errorService: ErrorHandlerService,
-    private router: Router) {
+    private readonly repositoryService: RepositoryService,
+    private readonly authService: AuthService,
+    private readonly errorService: ErrorHandlerService,
+    private readonly router: Router) {
+  }
 
+  ngOnInit(): void {
+    this.loginSubscription = this.authService.isLoggedIn.subscribe(value => {
+      if (!value)
+        return;
+
+      this.repositoryService.initializeAsync().pipe(skipWhile(v => !v)).subscribe(isInit => {
+        this.isProcessing = false;
+        this.router.navigate(['/documents/' + SystemIds.rootId]);
+
+      }, (e: HttpErrorResponse) => {
+        this.isProcessing = false;
+        this.error = this.errorService.handleErrorMessage(e);
+
+      });
+
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.loginSubscription.unsubscribe();
   }
 
   onEnter() {
@@ -37,15 +62,7 @@ export class AuthComponent {
   login(): void {
     this.isProcessing = true;
     this.error = null;
-
-    this.authService.login(this.username, this.password).pipe(first()).subscribe(async result => {
-      this.repositoryService.initializeAsync().pipe(skipWhile(v => !v)).subscribe(isInit => {
-          this.isProcessing = false;
-          this.router.navigate(['/documents/' + SystemIds.rootId]);
-      });
-    }, (e: HttpErrorResponse) => {
-      this.isProcessing = false;
-      this.error = this.errorService.handleErrorMessage(e);
-    });
+    this.authService.login(this.username, this.password);
   }
+
 }
