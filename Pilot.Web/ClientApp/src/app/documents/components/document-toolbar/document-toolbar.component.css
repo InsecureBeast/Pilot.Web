@@ -2,3 +2,11 @@
   background-color: transparent;
   border-color: transparent;
 }
+
+.nav-item-button {
+  cursor: pointer;
+}
+
+  .nav-item-button:hover {
+    background: #464B53;
+  }

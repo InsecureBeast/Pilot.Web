@@ -1,24 +1,24 @@
-<nav class="navbar navbar-expand justify-content-between pl-0">
+<nav class="navbar navbar-expand justify-content-between pl-2 mr-2 pt-0 pb-0">
   <!--<div class="navbar-expand">-->
-  <ul class="navbar-nav align-items-start">
-    <li class="nav-item">
+  <ul class="navbar-nav align-items-start mt-1">
+    <li class="nav-item nav-item-button">
       <div class="nav-link" (click)="close($event)">
         <i class="material-icons text-white font-weight-light">arrow_back</i>
       </div>
     </li>
     <li class="nav-item">
-      <img [src]="icon" style="height: 24px" class="mr-1"/>
+      <img [src]="icon" style="height: 24px"/>
       <span class="navbar-text text-white font-weight-light">
         {{title}}
       </span>
     </li>
   </ul>
   <div class="align-items-start"></div>
-  <ul class="navbar-nav align-items-start">
-    <li class="nav-item">
-      <a class="nav-link" href="#">Download
-        <span class="sr-only">(current)</span>
-      </a>
+  <ul class="navbar-nav align-items-start mt-1">
+    <li class="nav-item nav-item-button">
+      <div class="nav-link" (click)="download($event)">
+        <i class="material-icons text-white font-weight-light">file_download</i>
+      </div>
     </li>
     <!--<li class="nav-item">
       <span class="navbar-text text-white font-weight-light">

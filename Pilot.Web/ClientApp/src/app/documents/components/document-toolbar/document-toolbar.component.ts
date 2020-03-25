@@ -4,9 +4,7 @@ import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 
 import { ObjectNode } from '../../shared/object.node';
-import { TypeIconService } from '../../../core/type-icon.service';
-import { IObject } from '../../../core/data/data.classes';
-import { ImagesService } from '../../../core/tools/images.service';
+import { DownloadService } from '../../../core/download.service';
 
 @Component({
     selector: 'app-document-toolbar',
@@ -27,7 +25,7 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   @Output() onNextDocument = new EventEmitter<any>();
 
   /** document-toolbar ctor */
-  constructor(private readonly iconService: TypeIconService) {
+  constructor(private readonly downloadService: DownloadService) {
 
   }
 
@@ -49,6 +47,9 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
 
   close($event): void {
     this.onDocumentClosed.emit($event);
-    //return false;
+  }
+
+  download($event): void {
+    this.downloadService.downloadFile(this.document.source);
   }
 }

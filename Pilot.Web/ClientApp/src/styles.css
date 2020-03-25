@@ -88,5 +88,5 @@ html, body {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
-  margin-top: 1px;
+  margin-top: 2px;
 }
