@@ -4,12 +4,11 @@
   </div>
 </div>
 
-<div>
-  <div>
-    <div class="position-fixed bg-doc-toolbar col-12 dp-4"></div>
+<div class="col-12 p-0">
 
-    <app-document-toolbar class="position-fixed col-12 p-0"
-                          [document]="document"
+  <div class="position-fixed bg-doc-toolbar dp-4 col-12"></div>
+  <div class="sticky-top">
+    <app-document-toolbar [document]="document"
                           (onDocumentClosed)="close($event)"></app-document-toolbar>
   </div>
 
