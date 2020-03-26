@@ -62,7 +62,12 @@ export class AuthComponent implements OnInit, OnDestroy{
   login(): void {
     this.isProcessing = true;
     this.error = null;
-    this.authService.login(this.username, this.password);
+    this.authService.login(this.username, this.password).subscribe(token => {
+
+    }, (e: HttpErrorResponse) => {
+      this.isProcessing = false;
+      this.error = this.errorService.handleErrorMessage(e);
+    });
   }
 
 }

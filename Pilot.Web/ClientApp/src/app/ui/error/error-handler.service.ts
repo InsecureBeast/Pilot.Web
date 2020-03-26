@@ -16,6 +16,10 @@ export class ErrorHandlerService {
       if (e.error.errors)
         return JSON.stringify(e.error.errors);
 
+      const message = e.error as string;
+      if (message && message.indexOf("SecurityAccessDeniedException") !== -1)
+        return "Access denied. The user name or password is incorrect";
+
       return e.error;
     }
 
