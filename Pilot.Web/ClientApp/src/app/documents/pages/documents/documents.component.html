@@ -3,6 +3,7 @@
     <app-breadcrumbs [parent]="currentItem"
                      (onSelected)="onItemSelected($event)"></app-breadcrumbs>
     <app-document-list [parent]="currentItem"
+                       [documents]="documents"
                        (onSelected)="onItemSelected($event)"></app-document-list>
   </div>
 </div>
@@ -12,5 +13,7 @@
 <pw-modal id="document-modal">
   <app-document
     [document] ="node"
-    (onClose)="closeDocument();"></app-document>
+    (onClose)="closeDocument();"
+    (onPreviousDocument)="previousDocument($event)"
+    (onNextDocument)="nextDocument($event)"></app-document>
 </pw-modal>

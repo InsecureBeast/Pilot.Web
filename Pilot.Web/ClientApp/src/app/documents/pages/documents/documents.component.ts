@@ -26,6 +26,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
+  documents = new Array<INode>();
   currentItem: ObjectNode;
   isDocument: boolean;
   isLoading: boolean;
@@ -117,5 +118,47 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.modalService.close("document-modal");
     this.location.replaceState('/documents/' + this.currentItem.id);
     this.location.back();
+  }
+
+  previousDocument($event) {
+    const indexOf = this.documents.findIndex(id => id === $event);
+    if (!this.canPreviousDocument(indexOf))
+      return;
+
+    const prev = this.documents[indexOf - 1];
+    this.isDocument = prev.isDocument;
+    this.node = prev;
+    this.location.replaceState('./d/' + prev.id);
+  }
+
+  nextDocument($event) {
+    const indexOf = this.documents.findIndex(id => id === $event);
+    if (!this.canNextDocument(indexOf))
+      return;
+
+    const next = this.documents[indexOf + 1];
+    this.isDocument = next.isDocument;
+    this.node = next;
+    this.location.replaceState('./d/' + next.id);
+  }
+
+  private canNextDocument(indexOf: number): boolean {
+    if (indexOf === -1)
+      return false;
+
+    if (indexOf === this.documents.length - 1)
+      return false;
+
+    return true;
+  }
+
+  private canPreviousDocument(indexOf: number): boolean {
+    if (indexOf === -1)
+      return false;
+
+    if (indexOf === 0)
+      return false;
+
+    return true;
   }
 }

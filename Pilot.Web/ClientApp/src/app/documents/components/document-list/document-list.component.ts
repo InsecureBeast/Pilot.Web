@@ -24,24 +24,25 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   private ngUnsubscribe = new Subject<void>();
 
   @Input() parent: ObjectNode;
+  @Input() documents: Array<INode>;
 
   @Output() onChecked = new EventEmitter<ObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
 
-  public nodeStyle: NodeStyle;
-  public nodes: ObjectNode[];
-  public isLoading: boolean;
+  nodeStyle: NodeStyle;
+  nodes: ObjectNode[];
+  isLoading: boolean;
 
   /** documents-list ctor */
   constructor(
-    private repository: RepositoryService,
+    private readonly repository: RepositoryService,
     //private downloadService: DownloadService,
     //private navigationService: NavigationService,
-    private nodeStyleService: NodeStyleService,
-    private typeIconService: TypeIconService,
+    private readonly nodeStyleService: NodeStyleService,
+    private readonly typeIconService: TypeIconService,
     //private dataService: DataService,
-    private translate: TranslateService) {
+    private readonly translate: TranslateService) {
 
   }
 
@@ -159,6 +160,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
+
+      if (!this.documents)
+        continue;;
+
+      if (node.isDocument)
+        this.documents.push(node);
     }
   }
 }

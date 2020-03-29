@@ -24,6 +24,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
+  @Output() onPreviousDocument = new EventEmitter<any>();
+  @Output() onNextDocument = new EventEmitter<any>();
 
   @Input() document: INode;
 
@@ -76,6 +78,14 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   close($event) {
     this.onClose.emit($event);
+  }
+
+  previousDocument($event) {
+    this.onPreviousDocument.emit($event);
+  }
+
+  nextDocument($event) {
+    this.onNextDocument.emit($event);
   }
 
   download($event) {

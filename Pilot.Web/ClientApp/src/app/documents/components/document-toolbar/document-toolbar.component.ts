@@ -45,6 +45,14 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
+  previous($event): void {
+    this.onPreviousDocument.emit(this.document);
+  }
+
+  next($event): void {
+    this.onNextDocument.emit(this.document);
+  }
+
   close($event): void {
     this.onDocumentClosed.emit($event);
   }

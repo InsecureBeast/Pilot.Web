@@ -5,7 +5,10 @@
 </div>
 
 <app-document-toolbar [document]="document"
-                      (onDocumentClosed)="close($event)"></app-document-toolbar>
+                      (onDocumentClosed)="close($event)"
+                      (onPreviousDocument)="previousDocument($event)"
+                      (onNextDocument)="nextDocument($event)">
+</app-document-toolbar>
 
 <div class="document-view">
 
