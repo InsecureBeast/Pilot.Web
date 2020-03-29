@@ -34,7 +34,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   
   /** documents ctor */
   constructor(
-    private readonly route: ActivatedRoute,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly repository: RepositoryService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
@@ -46,14 +46,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.navigationSubscription = this.route.paramMap.subscribe((params: ParamMap) => {
+    this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       let id = params.get('id');
       if (!id)
         id = SystemIds.rootId;
 
       let isSource = false;
-      if (this.route.snapshot.url.length !== 0) {
-        const urlSegment = this.route.snapshot.url[0].path;
+      if (this.activatedRoute.snapshot.url.length !== 0) {
+        const urlSegment = this.activatedRoute.snapshot.url[0].path;
         if (urlSegment === 'files')
           isSource = true;
       }
@@ -100,7 +100,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.node = node;
 
     if (node.isDocument) {
-      this.router.navigate([{ outlets: { document: 'document/' + node.id } }]);
+      //this.router.navigate([{ outlets: { document: 'document/' + node.id } }]);
+      //this.router.navigateByUrl('/document/' + node.id);
+      this.router.navigate(['./d/' + node.id], { relativeTo: this.activatedRoute });
       this.modalService.open("document-modal");
       return;
     }
@@ -112,6 +114,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   closeDocument() {
+    this.modalService.close("document-modal");
+    this.location.replaceState('/documents/' + this.currentItem.id);
     this.location.back();
   }
 }

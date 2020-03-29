@@ -8,6 +8,7 @@ import { Subscription, Subject } from 'rxjs';
 import { INode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
+import { DownloadService } from '../../../core/download.service';
 import { Constants } from '../../../core/constants';
 
 @Component({
@@ -32,7 +33,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   /** document-details ctor */
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly sourceFileService: SourceFileService) {
+    private readonly sourceFileService: SourceFileService,
+    private readonly downloadService: DownloadService) {
 
   }
 
@@ -74,5 +76,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   close($event) {
     this.onClose.emit($event);
+  }
+
+  download($event) {
+    this.downloadService.downloadFile(this.document.source);
   }
 }

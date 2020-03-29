@@ -6,9 +6,17 @@ import { DocumentComponent } from './pages/document/document.component';
 import { AuthGuard } from '../auth/auth.guard';
 
 const routes: Routes = [
-  { path: 'documents/:id', component: DocumentsComponent, canActivate: [AuthGuard] },
-  { path: 'document/:id', component: DocumentComponent, outlet: 'document', canActivate: [AuthGuard] },
-  { path: 'files/:id', component: DocumentsComponent, canActivate: [AuthGuard] },
+  {
+    path: 'documents/:id',
+    component: DocumentsComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'd/:id', component: DocumentComponent, canActivate: [AuthGuard] }
+    ]
+
+  },
+  //{ path: 'document/:id', component: DocumentComponent, outlet: 'document', canActivate: [AuthGuard] },
+  { path: 'files/:id', component: DocumentsComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
