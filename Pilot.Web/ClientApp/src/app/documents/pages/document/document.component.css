@@ -5,29 +5,23 @@ img.doc-page {
   max-width: 85%;
 }
 
-.h-calc {
+.document-view {
   height: calc(100vh - 42px);
+  margin-top: 42px;
+  overflow: auto;
 }
-
-.op {
-  background-color: #2e2e2e85;
-  padding: 50px;
-  color: white;
-}
-
-.dpt-4, .dpy-4 {
+/*.dpt-4, .dpy-4 {
   padding-top: 2rem !important;
 }
 
 .dp-4 {
   padding: 2.2rem !important;
-}
+}*/
 
-.bg-doc-toolbar {
+/*.bg-doc-toolbar {
   background-image: linear-gradient(black, transparent);
-  /*background-color: black;*/
   opacity: 0.85;
-}
+}*/
 
 /*@media (max-width: 1200px) {
   img.doc-page {
@@ -72,20 +66,3 @@ img.doc-page {
   font-size: 12px; 
   text-align: center; 
 } 
-
-/*.row {
-  margin-right: 0px;
-  margin-left: 0px;
-}*/
-
-.a-b-Zc-d, .a-b-Dd-d {
-  position: absolute;
-  top: 80px;
-  bottom: 80px;
-  margin-top: auto;
-  margin-bottom: auto;
-  outline: 0;
-  width: 40px;
-  height: 90px;
-  z-index: 5;
-}

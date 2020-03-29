@@ -4,21 +4,18 @@
   </div>
 </div>
 
-<div class="col-12 p-0">
+<app-document-toolbar [document]="document"
+                      (onDocumentClosed)="close($event)"></app-document-toolbar>
 
-  <div class="position-fixed bg-doc-toolbar dp-4 col-12"></div>
-  <div class="sticky-top">
-    <app-document-toolbar [document]="document"
-                          (onDocumentClosed)="close($event)"></app-document-toolbar>
-  </div>
+<div class="document-view">
 
-  <div class="text-center pt-5" *ngIf="images">
+  <div class="text-center" *ngIf="images">
     <div *ngFor="let page of images">
       <img [src]="page" class="doc-page">
     </div>
   </div>
 
-  <div class="content-center op" *ngIf="!images">
+  <div class="content-center" *ngIf="!images">
     <img src="/assets/images/doc_empty.svg" class="error-image" />
     <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
     <p class="mt-3" translate="cantPreviewDocument"></p>
