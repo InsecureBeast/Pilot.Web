@@ -9,7 +9,7 @@ import { DownloadService } from '../../../core/download.service';
 @Component({
     selector: 'app-document-toolbar',
     templateUrl: './document-toolbar.component.html',
-    styleUrls: ['./document-toolbar.component.css']
+    styleUrls: ['./document-toolbar.component.css', '../../shared/toolbar.css']
 })
 /** document-toolbar component*/
 export class DocumentToolbarComponent implements OnChanges, OnDestroy {

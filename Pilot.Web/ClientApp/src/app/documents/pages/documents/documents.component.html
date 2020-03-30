@@ -1,11 +1,18 @@
 <div class="row h-calc">
+  <app-documents-toolbar class="col-12 p-0">
+
+  </app-documents-toolbar>
+
   <div class="col-12 overflow-auto h-100 p-0">
     <app-breadcrumbs [parent]="currentItem"
-                     (onSelected)="onItemSelected($event)"></app-breadcrumbs>
+                     (onSelected)="onItemSelected($event)">
+    </app-breadcrumbs>
     <app-document-list [parent]="currentItem"
                        [documents]="documents"
-                       (onSelected)="onItemSelected($event)"></app-document-list>
+                       (onSelected)="onItemSelected($event)">
+    </app-document-list>
   </div>
+
 </div>
 
 <app-error *ngIf="error" [response]="error"></app-error>

@@ -1,7 +1,7 @@
 
 .card-img-center {
-  margin: auto;
-  height: 5rem;
+  /*margin: auto;*/
+  width: 100%;
 }
 
 .card-name {
@@ -14,7 +14,8 @@
 
 .card {
   /*width: 14rem;*/
-  height: 10rem;
+  height: 15rem;
+  overflow: hidden;
 }
 
 .card-children-count {

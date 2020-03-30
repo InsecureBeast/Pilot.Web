@@ -1,0 +1,36 @@
+.btn-primary-outline {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.nav-item {
+  height: 40px;
+}
+
+.nav-item-button {
+  cursor: pointer;
+  width: 40px;
+}
+
+  .nav-item-button:hover {
+    background: #eaeaea;
+  }
+
+.bg-toolbar {
+  background-color: #f4f4f4;
+}
+
+.toolbar {
+  height: 42px;
+  padding: 0;
+  margin: 0;
+}
+
+.toolbar-text {
+  font-weight: 300;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: .25rem;
+  margin-left: .25rem;
+}

@@ -62,13 +62,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       this.repository.getObjectAsync(id)
         .then(source => {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-          //this.navigationService.initialize(current);
           this.isLoading = false;
         })
         .catch(err => {
           this.error = err;
           this.isLoading = false;
-          //this.toolbarService.clearToolbar();
         });
     });
 
@@ -85,9 +83,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //this.navigationServiceSubscription.unsubscribe();
-    //this.closeDocumentSubscription.unsubscribe();
-    //this.nodeStyleSubscription.unsubscribe();
     this.navigationSubscription.unsubscribe();
     this.routerSubscription.unsubscribe();
 
