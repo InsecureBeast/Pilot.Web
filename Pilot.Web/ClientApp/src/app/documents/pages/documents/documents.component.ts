@@ -101,9 +101,12 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.node = node;
 
     if (node.isDocument) {
-      //this.router.navigate([{ outlets: { document: 'document/' + node.id } }]);
-      //this.router.navigateByUrl('/document/' + node.id);
-      this.router.navigate(['./d/' + node.id], { relativeTo: this.activatedRoute });
+      if (node.isSource) {
+        this.router.navigate(['./file/' + node.id], { relativeTo: this.activatedRoute });
+      } else {
+        this.router.navigate(['./document/' + node.id], { relativeTo: this.activatedRoute });
+      }
+
       this.modalService.open("document-modal");
       return;
     }
@@ -128,7 +131,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     const prev = this.documents[indexOf - 1];
     this.isDocument = prev.isDocument;
     this.node = prev;
-    this.location.replaceState('./d/' + prev.id);
+    this.location.replaceState('./document/' + prev.id);
   }
 
   nextDocument($event) {
@@ -139,7 +142,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     const next = this.documents[indexOf + 1];
     this.isDocument = next.isDocument;
     this.node = next;
-    this.location.replaceState('./d/' + next.id);
+    this.location.replaceState('./document/' + next.id);
   }
 
   private canNextDocument(indexOf: number): boolean {

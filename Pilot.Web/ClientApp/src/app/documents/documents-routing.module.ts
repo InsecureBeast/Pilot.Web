@@ -11,12 +11,19 @@ const routes: Routes = [
     component: DocumentsComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'd/:id', component: DocumentComponent, canActivate: [AuthGuard] },
+      { path: 'document/:id', component: DocumentComponent, canActivate: [AuthGuard] }
     ]
 
   },
   //{ path: 'document/:id', component: DocumentComponent, outlet: 'document', canActivate: [AuthGuard] },
-  { path: 'files/:id', component: DocumentsComponent, canActivate: [AuthGuard] }
+  {
+    path: 'files/:id',
+    component: DocumentsComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'file/:id', component: DocumentComponent, canActivate: [AuthGuard] }
+    ]
+  }
 ];
 
 @NgModule({
