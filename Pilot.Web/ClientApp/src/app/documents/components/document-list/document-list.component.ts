@@ -11,6 +11,7 @@ import { IObject } from '../../../core/data/data.classes';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
+import { DownloadService } from '../../../core/download.service';
 
 @Component({
     selector: 'app-document-list',
@@ -37,11 +38,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   /** documents-list ctor */
   constructor(
     private readonly repository: RepositoryService,
-    //private downloadService: DownloadService,
-    //private navigationService: NavigationService,
+    private readonly downloadService: DownloadService,
     private readonly nodeStyleService: NodeStyleService,
     private readonly typeIconService: TypeIconService,
-    //private dataService: DataService,
     private readonly translate: TranslateService) {
 
   }
@@ -124,7 +123,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   downloadDocument(node: ObjectNode) {
-    //this.downloadService.downloadFile(node.getSource());
+    this.downloadService.downloadFile(node.source);
   }
 
   private init(item: ObjectNode) {

@@ -31,9 +31,9 @@
 
           </div>
 
-          <div class="mr-n2">
-            <a title="{{ 'download' | translate }}" (click)="downloadDocument(node)" class="btn btn-outline-light btn-sm" *ngIf="node.isDocument">
-              <img src="/assets/images/download.svg" />
+          <div class="item-button mt-1">
+            <a title="{{ 'download' | translate }}" (click)="downloadDocument(node)" class="" *ngIf="node.isDocument">
+              <i class="material-icons mt-2">file_download</i>
             </a>
             <small *ngIf="!node.isDocument">{{node.children.length}}</small>
           </div>
