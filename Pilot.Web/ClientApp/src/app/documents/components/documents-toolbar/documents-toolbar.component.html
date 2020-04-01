@@ -12,15 +12,11 @@
   </ul>
 
   <ul class="navbar-nav">
-    <li class="nav-item nav-item-button" *ngIf="nodeStyle === 1">
-      <div class="nav-link" (click)="changeStyle(0)">
-        <i class="material-icons nav-icon">view_list</i>
-      </div>
+    <li class="nav-item nav-item-button" (click)="changeStyle(0)" *ngIf="nodeStyle === 1">
+      <span class="navbar-text toolbar-text material-icons nav-icon">view_list</span>
     </li>
-    <li class="nav-item nav-item-button" *ngIf="nodeStyle === 0">
-      <div class="nav-link" (click)="changeStyle(1)">
-        <i class="material-icons nav-icon">view_module</i>
-      </div>
+    <li class="nav-item nav-item-button" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
+      <span class="navbar-text toolbar-text material-icons nav-icon">view_module</span>
     </li>
   </ul>
 </nav>

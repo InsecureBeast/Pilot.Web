@@ -15,8 +15,8 @@
         <div class="d-flex">
 
           <!--<div class="col-1 text-center">
-            <input class="form-check-input position-static" type="checkbox" [checked]="node.isChecked">
-          </div>-->
+    <input class="form-check-input position-static" type="checkbox" [checked]="node.isChecked">
+  </div>-->
 
           <div class="mt-1 mr-2">
             <img id="image" [src]="node.icon" width="36" *ngIf="node.icon != null">
@@ -31,12 +31,14 @@
 
           </div>
 
-          <div class="item-button mt-1">
-            <!--<a title="{{ 'download' | translate }}" (click)="downloadDocument(node)" class="" *ngIf="node.isDocument">
-              <i class="material-icons mt-2">file_download</i>
-            </a>-->
-            <small *ngIf="!node.isDocument">{{node.children.length}}</small>
-          </div>
+          <small *ngIf="!node.isDocument">{{node.children.length}}</small>
+
+          <!--<div class="item-button mt-1">
+    <a title="{{ 'download' | translate }}" (click)="downloadDocument(node)" class="" *ngIf="node.isDocument">
+      <i class="material-icons mt-2">file_download</i>
+    </a>
+    <small *ngIf="!node.isDocument">{{node.children.length}}</small>
+  </div>-->
 
         </div>
       </div>
