@@ -9,12 +9,20 @@
 
 .nav-item-button {
   cursor: pointer;
-  width: 40px;
+  min-width: 40px;
 }
 
   .nav-item-button:hover {
     background: #eaeaea;
   }
+
+.nav-link {
+  padding: .3rem 1rem;
+}
+
+.nav-icon {
+  padding: .25rem 0rem;
+}
 
 .bg-toolbar {
   /*background-color: #f4f4f4;*/

@@ -1,10 +1,17 @@
 <nav class="navbar navbar-expand fixed-top navbar-light bg-toolbar border-bottom toolbar justify-content-between">
   <ul class="navbar-nav">
-    <li class="nav-item nav-item-button">
-      <div class="nav-link" (click)="download($event)">
-        <i class="material-icons font-weight-light">file_download</i>
-      </div>
+    <li class="nav-item nav-item-button" (click)="download($event)">
+      <span class="navbar-text toolbar-text material-icons">file_download</span>
+      <span class="navbar-text toolbar-text hidden-phone" translate="download"></span>
     </li>
+    <!--<li class="nav-item">
+    <span class="navbar-text toolbar-text">
+      {{title}}
+    </span>
+  </li>-->
+  </ul>
+
+  <ul class="navbar-nav">
     <li class="nav-item">
       <!--<img [src]="icon" style="height: 24px"/>-->
       <span class="navbar-text toolbar-text">
@@ -12,21 +19,21 @@
       </span>
     </li>
   </ul>
-  
+
   <ul class="navbar-nav">
     <li class="nav-item nav-item-button">
       <div class="nav-link" (click)="previous($event)">
-        <i class="material-icons font-weight-light">chevron_left</i>
+        <i class="material-icons nav-icon">chevron_left</i>
       </div>
     </li>
     <li class="nav-item nav-item-button">
       <div class="nav-link" (click)="next($event)">
-        <i class="material-icons font-weight-light">chevron_right</i>
+        <i class="material-icons nav-icon">chevron_right</i>
       </div>
     </li>
     <li class="nav-item nav-item-button">
       <div class="nav-link" (click)="close($event)">
-        <i class="material-icons font-weight-light">close</i>
+        <i class="material-icons nav-icon">close</i>
       </div>
     </li>
 
