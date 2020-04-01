@@ -1,5 +1,6 @@
 <div class="row h-calc">
-  <app-documents-toolbar class="col-12 p-0">
+  <app-documents-toolbar class="col-12 p-0"
+                         [checkedNodes]="checked">
 
   </app-documents-toolbar>
 
@@ -9,7 +10,8 @@
     </app-breadcrumbs>
     <app-document-list [parent]="currentItem"
                        [documents]="documents"
-                       (onSelected)="onItemSelected($event)">
+                       (onSelected)="onItemSelected($event)"
+                       (onChecked)="onItemsChecked($event)">
     </app-document-list>
   </div>
 

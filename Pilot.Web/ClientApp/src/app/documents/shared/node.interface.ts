@@ -7,4 +7,5 @@ export interface INode {
   isDocument: boolean;
   source: IObject;
   isSource: boolean;
+  isChecked: boolean;
 }

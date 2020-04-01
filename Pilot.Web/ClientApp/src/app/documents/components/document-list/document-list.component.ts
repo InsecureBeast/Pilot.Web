@@ -119,7 +119,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
     }
 
     node.isChecked = !node.isChecked;
-    this.onChecked.emit(this.nodes);
+
+    const checked = this.nodes.filter(n => n.isChecked);
+    this.onChecked.emit(checked);
   }
 
   downloadDocument(node: ObjectNode) {
@@ -142,7 +144,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
-        this.onChecked.emit(this.nodes);
+        this.onChecked.emit(null);
         //this.dataService.changeCurrentNodes(this.nodes);
       })
       .catch(e => {

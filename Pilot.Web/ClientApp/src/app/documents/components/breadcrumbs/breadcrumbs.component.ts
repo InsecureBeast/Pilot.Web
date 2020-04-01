@@ -176,4 +176,5 @@ export class BreadcrumbNode implements INode {
   isActive: boolean;
   isSource: boolean;
   isDocument: boolean;
+  isChecked: boolean;
 }

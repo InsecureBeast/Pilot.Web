@@ -18,7 +18,9 @@ export class DownloadService {
       this.filesRepository.getFile(file.body.id, file.body.size)
         .pipe(first())
         .subscribe(data => {
-          this.runLoadFile(data, file.name, "application/octet-stream");
+          const fileExt = file.name.split('.').pop();
+          const name = object.title + '.' + fileExt;
+          this.runLoadFile(data, name, "application/octet-stream");
           resolve(true);
         }, err => reject(err));
     });

@@ -27,6 +27,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
 
   documents = new Array<INode>();
+  checked = new Array<INode>();
   currentItem: ObjectNode;
   isDocument: boolean;
   isLoading: boolean;
@@ -110,6 +111,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/files/' + node.id);
     else
       this.router.navigateByUrl('/documents/' + node.id);
+  }
+
+  onItemsChecked(nodes: INode[]): void {
+    this.checked = nodes;
   }
 
   closeDocument() {

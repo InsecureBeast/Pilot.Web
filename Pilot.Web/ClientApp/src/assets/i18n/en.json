@@ -24,5 +24,7 @@
   "tasks": "Tasks",
   "you": "You",
   "deadline": "Deadline",
-  "stage": "Stage" 
+  "stage": "Stage",
+  "back": "Back",
+  "forward": "Forward"
 }

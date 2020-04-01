@@ -10,6 +10,7 @@
 .nav-item-button {
   cursor: pointer;
   min-width: 40px;
+  text-align: center;
 }
 
   .nav-item-button:hover {
@@ -21,7 +22,7 @@
 }
 
 .nav-icon {
-  padding: .25rem 0rem;
+  width: 20px;
 }
 
 .bg-toolbar {
