@@ -64,6 +64,24 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         .then(source => {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
           this.isLoading = false;
+          if (this.activatedRoute.snapshot.children.length !== 0) {
+            if (this.activatedRoute.snapshot.firstChild.url.length === 2) {
+              const documentId = this.activatedRoute.snapshot.firstChild.url[1];
+
+              this.repository.getObjectAsync(documentId.path)
+                .then(document => {
+                  const node = new ObjectNode(document, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+                  //this.onItemSelected(node);
+                  this.node = node;
+                  this.isDocument = node.isDocument;
+                  this.modalService.open("document-modal");
+                })
+                .catch(err => {
+                  this.error = err;
+                  this.isLoading = false;
+                });
+            }
+          }
         })
         .catch(err => {
           this.error = err;
@@ -123,26 +141,26 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  previousDocument($event) {
-    const indexOf = this.documents.findIndex(id => id === $event);
+  previousDocument(node : INode) {
+    const indexOf = this.documents.findIndex(doc => doc.id === node.id);
     if (!this.canPreviousDocument(indexOf))
       return;
 
     const prev = this.documents[indexOf - 1];
     this.isDocument = prev.isDocument;
     this.node = prev;
-    this.location.replaceState('./document/' + prev.id);
+    this.updateLocation(prev.id);
   }
 
-  nextDocument($event) {
-    const indexOf = this.documents.findIndex(id => id === $event);
+  nextDocument(node: INode) {
+    const indexOf = this.documents.findIndex(doc => doc.id === node.id);
     if (!this.canNextDocument(indexOf))
       return;
 
     const next = this.documents[indexOf + 1];
     this.isDocument = next.isDocument;
     this.node = next;
-    this.location.replaceState('./document/' + next.id);
+    this.updateLocation(next.id);
   }
 
   private canNextDocument(indexOf: number): boolean {
@@ -163,5 +181,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       return false;
 
     return true;
+  }
+
+  private updateLocation(id: string): void {
+    let path = this.activatedRoute.snapshot.url.join('/');
+    path = path + "/" + this.activatedRoute.snapshot.firstChild.url[0];
+    this.location.replaceState(path + '/' + id);
   }
 }
