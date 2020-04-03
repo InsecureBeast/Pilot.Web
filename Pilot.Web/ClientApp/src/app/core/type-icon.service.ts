@@ -4,7 +4,6 @@ import { IObject } from './data/data.classes';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { NodeStyle, NodeStyleService } from './node-style.service';
 import { FilesSelector } from './tools/files.selector';
-import { ImagesService } from './tools/images.service';
 import { Tools } from './tools/tools';
 import { Subject } from 'rxjs';
 
@@ -17,28 +16,33 @@ export class TypeIconService {
 
   }
 
-  getTypeIconAsync(item: IObject, cancel: Subject<any>): Promise<SafeUrl> {
+  getTypeIcon(item: IObject): SafeUrl {
+
+    const typeIcon = item.type.icon;
+    if (typeIcon === null) {
+      return null;
+    }
+
+    return Tools.getImage(typeIcon, "svg+xml;charset=utf-8", this.sanitizer);
+  }
+
+  getPreviewAsync(item: IObject, cancel: Subject<any>): Promise<SafeUrl> {
 
     if (this.nodeStyleService.currentNodeStyle === NodeStyle.GridView) {
       if (this.sourceFileService.isXpsFile(item)) {
-        var file = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
-        return this.sourceFileService.getXpsThumbnailAsync(file, cancel);
+        const xpsfile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
+        return this.sourceFileService.getXpsThumbnailAsync(xpsfile, cancel);
       }
 
       if (this.sourceFileService.isImageFile(item)) {
-        var file = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
-        return this.sourceFileService.getImageFileToShowAsync(file, cancel);
+        const imageFile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
+        return this.sourceFileService.getImageFileToShowAsync(imageFile, cancel);
       }
     }
 
-    return new Promise((resolve, reject) => {
-      var typeIcon = item.type.icon;
-      if (typeIcon === null) {
-        resolve(ImagesService.emptyDocumentIcon);
-        return;
-      }
 
-      resolve(Tools.getImage(typeIcon, "svg+xml;charset=utf-8", this.sanitizer));
+    return new Promise((resolve, reject) => {
+      resolve(null);
     });
   }
 }

@@ -1,7 +1,11 @@
 
 .card-img-center {
-  /*margin: auto;*/
   width: 100%;
+}
+
+.card-icon-center {
+  width: 65%;
+  margin-top: 10px;
 }
 
 .card-name {
@@ -13,7 +17,6 @@
 }
 
 .card {
-  /*width: 14rem;*/
   height: 15rem;
   overflow: hidden;
 }

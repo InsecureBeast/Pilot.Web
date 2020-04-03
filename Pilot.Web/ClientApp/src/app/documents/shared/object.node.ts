@@ -37,6 +37,7 @@ export class ObjectNode implements INode {
       this.context = source.context;
 
     this.loadTypeIcon();
+    this.loadPreview();
   }
 
   id: string;
@@ -47,6 +48,7 @@ export class ObjectNode implements INode {
   creator: IPerson;
   created: string;
   icon: SafeUrl;
+  preview: SafeUrl;
   isDocument: boolean;
   isSource: boolean;
   url: string;
@@ -64,12 +66,20 @@ export class ObjectNode implements INode {
   }
 
   loadTypeIcon(): void {
-    this.typeIconService.getTypeIconAsync(this.source, this.cancel)
-      .then(icon => {
-        this.icon = icon;
+    const icon = this.typeIconService.getTypeIcon(this.source);
+    if (icon === null)
+      this.icon = ImagesService.emptyDocumentIcon;
+    else 
+      this.icon = icon;  
+  }
+
+  loadPreview(): void {
+    this.typeIconService.getPreviewAsync(this.source, this.cancel)
+      .then(preview => {
+          this.preview = preview;
       })
       .catch(err => {
-        this.icon = ImagesService.emptyDocumentIcon;
+        this.preview = null;
       });
   }
 
