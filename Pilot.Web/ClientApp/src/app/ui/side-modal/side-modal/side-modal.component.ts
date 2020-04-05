@@ -30,7 +30,7 @@ export class SideModalComponent implements OnInit, OnDestroy {
 
     // close modal on background click
     this.element.addEventListener('click', el => {
-      if (el.target.className === 'modal') {
+      if (el.target.className === 'side-modal-background') {
         this.close();
       }
     });
@@ -48,13 +48,13 @@ export class SideModalComponent implements OnInit, OnDestroy {
   // open modal
   open(): void {
     this.element.style.display = 'block';
-    document.body.classList.add('in');
+    document.body.classList.add('side-modal-open');
   }
 
   // close modal
   close(): void {
     this.element.style.display = 'none';
-    document.body.classList.remove('in');
+    document.body.classList.remove('side-modal-open');
 
   }
 

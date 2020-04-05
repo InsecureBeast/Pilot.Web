@@ -29,7 +29,7 @@ export class ModalComponent implements OnInit, OnDestroy {
 
     // close modal on background click
     this.element.addEventListener('click', el => {
-      if (el.target.className === 'jw-modal') {
+      if (el.target.className === 'pw-modal') {
         this.close();
       }
     });
@@ -47,12 +47,12 @@ export class ModalComponent implements OnInit, OnDestroy {
   // open modal
   open(): void {
     this.element.style.display = 'block';
-    document.body.classList.add('jw-modal-open');
+    document.body.classList.add('pw-modal-open');
   }
 
   // close modal
   close(): void {
     this.element.style.display = 'none';
-    document.body.classList.remove('jw-modal-open');
+    document.body.classList.remove('pw-modal-open');
   }
 }
