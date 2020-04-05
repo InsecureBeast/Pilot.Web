@@ -10,6 +10,7 @@ import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
 import { Constants } from '../../../core/constants';
+import { ModalService } from '../../../ui/modal/modal.service';
 
 @Component({
   selector: 'app-document',
@@ -36,7 +37,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly sourceFileService: SourceFileService,
-    private readonly downloadService: DownloadService) {
+    private readonly downloadService: DownloadService,
+    private readonly modalService: ModalService,) {
 
   }
 
@@ -76,19 +78,27 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  close($event) {
+  close($event): void {
     this.onClose.emit($event);
   }
 
-  previousDocument($event) {
+  previousDocument($event): void {
     this.onPreviousDocument.emit($event);
   }
 
-  nextDocument($event) {
+  nextDocument($event): void {
     this.onNextDocument.emit($event);
   }
 
-  download($event) {
+  download($event): void{
     this.downloadService.downloadFile(this.document.source);
+  }
+
+  showDocumentVersions($event): void {
+    this.modalService.open("document-versions");
+  }
+
+  closeDetails(): void {
+    this.modalService.close("document-versions");
   }
 }

@@ -1,14 +1,15 @@
 import { Component, ViewEncapsulation, ElementRef, Input, OnInit, OnDestroy } from '@angular/core';
 
-import { ModalService } from '../modal.service';
+import { ModalService } from '../../modal/modal.service';
 
 @Component({
-  selector: 'pw-modal',
-  templateUrl: 'modal.component.html',
-  styleUrls: ['modal.component.scss'],
+  selector: 'side-modal',
+  templateUrl: './side-modal.component.html',
+  styleUrls: ['./side-modal.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ModalComponent implements OnInit, OnDestroy {
+/** side-modal component*/
+export class SideModalComponent implements OnInit, OnDestroy {
 
   @Input() id: string;
   private element: any;
@@ -29,7 +30,7 @@ export class ModalComponent implements OnInit, OnDestroy {
 
     // close modal on background click
     this.element.addEventListener('click', el => {
-      if (el.target.className === 'jw-modal') {
+      if (el.target.className === 'modal') {
         this.close();
       }
     });
@@ -47,12 +48,14 @@ export class ModalComponent implements OnInit, OnDestroy {
   // open modal
   open(): void {
     this.element.style.display = 'block';
-    document.body.classList.add('jw-modal-open');
+    document.body.classList.add('in');
   }
 
   // close modal
   close(): void {
     this.element.style.display = 'none';
-    document.body.classList.remove('jw-modal-open');
+    document.body.classList.remove('in');
+
   }
+
 }

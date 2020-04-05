@@ -7,7 +7,8 @@
 <app-document-toolbar [document]="document"
                       (onDocumentClosed)="close($event)"
                       (onPreviousDocument)="previousDocument($event)"
-                      (onNextDocument)="nextDocument($event)">
+                      (onNextDocument)="nextDocument($event)"
+                      (onShowVersions)="showDocumentVersions($event)">
 </app-document-toolbar>
 
 <div class="document-view">
@@ -29,3 +30,13 @@
     </button>
   </div>
 </div>
+
+
+<side-modal id="document-versions">
+  <!-- Modal: modalPoll -->
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true" class="white-text" (click)="closeDetails()" style="margin: 20px">×</span>
+  </button>
+  <!-- Modal: modalPoll -->
+</side-modal>
+

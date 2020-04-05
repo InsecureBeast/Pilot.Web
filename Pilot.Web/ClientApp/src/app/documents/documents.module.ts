@@ -9,6 +9,7 @@ import { BreadcrumbsComponent } from "./components/breadcrumbs/breadcrumbs.compo
 import { DocumentToolbarComponent } from "./components/document-toolbar/document-toolbar.component";
 import { DocumentsToolbarComponent } from "./components/documents-toolbar/documents-toolbar.component";
 import { ModalModule } from "../ui/modal/modal.module";
+import { SideModalModule } from '../ui/side-modal/side-modal.module';
 import { ErrorModule } from "../ui/error/error.module";
 
 @NgModule({
@@ -17,6 +18,7 @@ import { ErrorModule } from "../ui/error/error.module";
     TranslateModule,
     RouterModule,
     ModalModule,
+    SideModalModule,
     ErrorModule
   ],
   declarations: [

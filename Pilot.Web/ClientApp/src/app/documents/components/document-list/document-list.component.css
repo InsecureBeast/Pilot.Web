@@ -4,7 +4,7 @@
 }
 
 .card-icon-center {
-  width: 65%;
+  height: 10rem;
   margin-top: 10px;
 }
 
@@ -14,6 +14,7 @@
   max-height: 2.5em;
   text-align: center;
   font-size: 14px;
+  max-width: 90%
 }
 
 .card {

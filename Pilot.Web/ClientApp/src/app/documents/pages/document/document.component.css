@@ -10,59 +10,9 @@ img.doc-page {
   margin-top: 42px;
   overflow: auto;
 }
-/*.dpt-4, .dpy-4 {
-  padding-top: 2rem !important;
-}
-
-.dp-4 {
-  padding: 2.2rem !important;
-}*/
-
-/*.bg-doc-toolbar {
-  background-image: linear-gradient(black, transparent);
-  opacity: 0.85;
-}*/
-
-/*@media (max-width: 1200px) {
-  img.doc-page {
-    max-width: 100%;
-  }
-}*/
-
 
 .vertical-center {
   position: absolute;
   margin-top: auto;
   margin-bottom: auto;
-  /*left: 0;
-  top: 50%;
-  -ms-transform: translate(-0%,-50%);
-  transform: translate(-0%,-50%);*/
-  /*text-align: center;*/
 }
-
-.btn-circle.btn-sm {
-  width: 40px;
-  height: 40px;
-  padding: 6px 0px;
-  border-radius: 20px;
-  font-size: 8px;
-  text-align: center;
-}
-
-.btn-circle.btn-md { 
-  width: 50px; 
-  height: 50px; 
-  padding: 7px 10px; 
-  border-radius: 25px; 
-  font-size: 10px; 
-  text-align: center; 
-} 
-.btn-circle.btn-xl { 
-  width: 70px; 
-  height: 70px; 
-  padding: 10px 16px; 
-  border-radius: 35px; 
-  font-size: 12px; 
-  text-align: center; 
-} 

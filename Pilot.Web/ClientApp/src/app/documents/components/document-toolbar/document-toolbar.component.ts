@@ -23,6 +23,7 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   @Output() onDocumentClosed = new EventEmitter<any>();
   @Output() onPreviousDocument = new EventEmitter<any>();
   @Output() onNextDocument = new EventEmitter<any>();
+  @Output() onShowVersions = new EventEmitter<any>();
 
   /** document-toolbar ctor */
   constructor(private readonly downloadService: DownloadService) {
@@ -60,4 +61,7 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   download($event): void {
     this.downloadService.downloadFile(this.document.source);
   }
-}
+
+  showVersions($event): void {
+    this.onShowVersions.emit(this.document);
+  }}
