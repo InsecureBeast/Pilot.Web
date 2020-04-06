@@ -17,6 +17,13 @@
     background: #eaeaea;
   }
 
+  .nav-item-button.checked {
+    background: #f4f4f4;
+  }
+    .nav-item-button.checked:hover {
+      background: #eaeaea;
+    }
+
 .nav-link {
   padding: .3rem 1rem;
 }

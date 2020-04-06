@@ -18,6 +18,7 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
 
   title: string;
   icon: SafeUrl;
+  isVersionsChecked: boolean;
 
   @Input() document: ObjectNode;
   @Output() onDocumentClosed = new EventEmitter<any>();
@@ -63,5 +64,6 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   }
 
   showVersions($event): void {
+    this.isVersionsChecked = !this.isVersionsChecked;
     this.onShowVersions.emit(this.document);
   }}
