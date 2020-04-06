@@ -12,31 +12,33 @@
 </app-document-toolbar>
 
 <div class="document-view">
+  <div class="row m-0">
+    <div class="overflow-auto pages col-12"
+         [class.col-md-8]="isInfoShown"
+         [class.info-open]="isInfoShown">
+      <div class="text-center" *ngIf="images">
+        <div *ngFor="let page of images">
+          <img [src]="page" class="doc-page">
+        </div>
+      </div>
 
-  <div class="text-center" *ngIf="images">
-    <div *ngFor="let page of images">
-      <img [src]="page" class="doc-page">
+      <div class="content-center" *ngIf="!images">
+        <img src="/assets/images/doc_empty.svg" class="error-image" />
+        <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
+        <p class="mt-3" translate="cantPreviewDocument"></p>
+        <button type="submit" class="btn btn-primary" (click)="download()" *ngIf="!isDownloading" translate="download"></button>
+        <button class="btn btn-primary" type="button" disabled *ngIf="isDownloading">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span class="ml-1" translate="downloading"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 doc-info" *ngIf="isInfoShown">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true" class="white-text" (click)="closeDocumentVersions()" style="margin: 20px">×</span>
+      </button>
     </div>
   </div>
-
-  <div class="content-center" *ngIf="!images">
-    <img src="/assets/images/doc_empty.svg" class="error-image" />
-    <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
-    <p class="mt-3" translate="cantPreviewDocument"></p>
-    <button type="submit" class="btn btn-primary" (click)="download()" *ngIf="!isDownloading" translate="download"></button>
-    <button class="btn btn-primary" type="button" disabled *ngIf="isDownloading">
-      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      <span class="ml-1" translate="downloading"></span>
-    </button>
-  </div>
+  
 </div>
-
-
-<side-modal id="document-versions">
-  <!-- Modal: modalPoll -->
-  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    <span aria-hidden="true" class="white-text" (click)="closeDetails()" style="margin: 20px">×</span>
-  </button>
-  <!-- Modal: modalPoll -->
-</side-modal>
-

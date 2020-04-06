@@ -2,17 +2,47 @@ img.doc-page {
   border: 1px solid lightgray;
   margin-bottom: 8px;
   margin-top: 8px;
-  max-width: 85%;
+  max-width: 100%;
 }
 
 .document-view {
   height: calc(100vh - 42px);
   margin-top: 42px;
-  overflow: auto;
 }
 
 .vertical-center {
   position: absolute;
   margin-top: auto;
   margin-bottom: auto;
+}
+
+.doc-info {
+  background: white;
+  border-left: 1px solid rgb(222, 226, 230);
+}
+
+.pages {
+  height: calc(100vh - 42px);
+}
+  .pages.info-open {
+    height: calc(100vh - 42px);
+  }
+
+.h-calc {
+  height: calc(100vh - 42px);
+}
+
+@media (max-width: 767px) {
+  .pages {
+    height: calc(100vh - 42px);
+  }
+
+  .pages.info-open {
+    height: 70vh;
+  }
+
+  .doc-info {
+    height: 26vh;
+    border-top: 1px solid rgb(222, 226, 230);
+  }
 }

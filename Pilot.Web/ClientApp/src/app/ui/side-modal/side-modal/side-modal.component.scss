@@ -5,6 +5,9 @@ side-modal {
   /* modals are hidden by default */
   display: none;
 
+  right: -320px;
+  
+
   .side-modal {
     /* modal container fixed across whole screen */
     position: fixed;
@@ -16,6 +19,7 @@ side-modal {
     z-index: 1100;
     /* enables scrolling for tall modals */
     overflow: auto;
+
 
     .side-modal-body {
       padding: 0px;

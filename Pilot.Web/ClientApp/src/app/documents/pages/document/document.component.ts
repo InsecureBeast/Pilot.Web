@@ -32,6 +32,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   images: SafeUrl[];
   isLoading: boolean;
+  isInfoShown: boolean;
 
   /** document-details ctor */
   constructor(
@@ -95,10 +96,10 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   showDocumentVersions($event): void {
-    this.modalService.open("document-versions");
+    this.isInfoShown = !this.isInfoShown;
   }
 
-  closeDetails(): void {
-    this.modalService.close("document-versions");
+  closeDocumentVersions(): void {
+    this.isInfoShown = false;
   }
 }
