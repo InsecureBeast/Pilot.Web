@@ -44,17 +44,10 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
-    //this.routeSubscription = this.route.paramMap.subscribe((params: ParamMap) => {
-
-    //});
-    //this.navigationServiceSubscription = this.navigationService.currentObject.subscribe(document => {
-    //  this._document = document;
-    //  this.init(document);
-    //});
+    
   }
 
   ngOnDestroy(): void {
-    //this.routeSubscription.unsubscribe();
     this.ngUnsubscribe.unsubscribe();
   }
 
@@ -63,20 +56,56 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       return;
 
     const source = this.document.source;
-    this.images = null;
+    this.isLoading = true;
+    this.images = new Array<SafeUrl>();
 
     if (this.sourceFileService.isXpsFile(source)) {
-      this.isLoading = true;
       const file = FilesSelector.getSourceFile(source.actualFileSnapshot.files);
-      this.images = new Array<SafeUrl>();
       this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
         .then(_ => this.isLoading = false)
         .catch(e => {
           this.isLoading = false;
+          this.images = null;
           this.onError.emit(e);
         });
       return;
     }
+
+    if (this.sourceFileService.isImageFile(source)) {
+      const file = FilesSelector.getSourceFile(source.actualFileSnapshot.files);
+      if (!file) {
+        this.isLoading = false;
+        this.images = null;
+        return;
+      }
+
+      this.sourceFileService.getImageFileToShowAsync(file, this.ngUnsubscribe)
+        .then(url => {
+          this.images.push(url);
+          this.isLoading = false;
+        })
+        .catch(e => {
+          this.images = null;
+          this.onError.emit(e);
+        });
+
+      return;
+    }
+
+    if (this.sourceFileService.isKnownFile(source)) {
+      this.sourceFileService.openFileAsync(source, this.ngUnsubscribe)
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch(e => {
+          this.images = null;
+          this.onError.emit(e);
+        });
+      return;
+    }
+
+    this.images = null;
+    this.isLoading = false;
   }
 
   close($event): void {
