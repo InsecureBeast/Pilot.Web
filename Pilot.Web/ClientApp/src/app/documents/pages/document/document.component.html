@@ -34,8 +34,8 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-4 doc-info" *ngIf="isInfoShown">
-      
+    <div class="col-12 col-md-4 doc-info overflow-auto" *ngIf="isInfoShown">
+      <app-document-versions [document]="document"></app-document-versions>
     </div>
   </div>
   

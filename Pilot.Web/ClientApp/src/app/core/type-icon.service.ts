@@ -30,7 +30,7 @@ export class TypeIconService {
 
     if (this.nodeStyleService.currentNodeStyle === NodeStyle.GridView) {
       if (this.sourceFileService.isXpsFile(item)) {
-        const xpsfile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
+        const xpsfile = FilesSelector.getXpsFile(item.actualFileSnapshot.files);
         return this.sourceFileService.getXpsThumbnailAsync(xpsfile, cancel);
       }
 

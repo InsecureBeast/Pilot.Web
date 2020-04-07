@@ -18,6 +18,7 @@ namespace Pilot.Web.Model.DataObjects
             Subscribers = source.Subscribers;
             Attributes = source.Attributes.ToDictionary(k => k.Key, v => v.Value.Value);
             ActualFileSnapshot = source.ActualFileSnapshot;
+            PreviousFileSnapshots = source.PreviousFileSnapshots;
             Created = source.Created;
             Access = source.Access;
             StateInfo = source.StateInfo;

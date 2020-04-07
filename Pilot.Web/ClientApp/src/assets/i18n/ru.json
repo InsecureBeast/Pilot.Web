@@ -27,5 +27,6 @@
   "stage": "Этап",
   "back": "Назад",
   "forward": "Вперед",
-  "versions": "Версии"
+  "versions": "Версии",
+  "version": "Версия" 
 }

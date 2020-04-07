@@ -11,6 +11,7 @@ import { DocumentsToolbarComponent } from "./components/documents-toolbar/docume
 import { ModalModule } from "../ui/modal/modal.module";
 import { SideModalModule } from '../ui/side-modal/side-modal.module';
 import { ErrorModule } from "../ui/error/error.module";
+import { DocumentVersionsComponent } from "./components/document-versions/document-versions.component";
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { ErrorModule } from "../ui/error/error.module";
     DocumentListComponent,
     BreadcrumbsComponent,
     DocumentToolbarComponent,
+    DocumentVersionsComponent,
     DocumentsToolbarComponent
   ],
   exports: [

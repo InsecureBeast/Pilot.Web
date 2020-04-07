@@ -28,6 +28,7 @@ export interface IObject {
   creator: IPerson;
   created: string;
   actualFileSnapshot: IFileSnapshot;
+  previousFileSnapshots: IFileSnapshot[];
   context: string[];
   relations: IRelation[];
 }
@@ -130,7 +131,7 @@ export interface IFile {
 }
 
 export interface IFileSnapshot {
-  created: Date;
+  created: string;
   creatorId: number;
   reason: string;
   files: IFile[];

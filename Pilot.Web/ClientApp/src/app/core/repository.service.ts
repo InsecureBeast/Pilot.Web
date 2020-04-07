@@ -19,16 +19,18 @@ export class RepositoryService {
 
   private behaviorInitializedSubject = new BehaviorSubject<boolean>(false);
 
-  public initialized = this.behaviorInitializedSubject.asObservable();
+  initialized = this.behaviorInitializedSubject.value;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private authService: AuthService) {
     this.types = new Map<number, IType>();
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
     this.userStates = new Map<string, IUserState>();
+
+    this.initializeAsync();
   }
 
-  public getType(id: number): IType {
+  getType(id: number): IType {
     return this.types.get(id);
   }
 
@@ -37,7 +39,7 @@ export class RepositoryService {
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers.toJSON() });
   }
 
-  public getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
+  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
       let headers = this.getHeaders();
       let url = 'api/Documents/GetDocumentChildren?id=' + objectId + "&childrenType=" + childrenType;
@@ -49,7 +51,7 @@ export class RepositoryService {
     });
   }
 
-  public getObjectParentsAsync(id: string, cancel: Subject<any>): Promise<IObject[]> {
+  getObjectParentsAsync(id: string, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
       let headers = this.getHeaders();
       let url = 'api/Documents/GetDocumentParents?id=' + id;
@@ -61,7 +63,7 @@ export class RepositoryService {
     });
   }
 
-  public getObjectAsync(id: string): Promise<IObject> {
+  getObjectAsync(id: string): Promise<IObject> {
     let headers = this.getHeaders();
     return new Promise((resolve, reject) => {
       this.http
@@ -71,7 +73,7 @@ export class RepositoryService {
     });
   }
 
-  public getObjectsAsync(ids: string[]): Promise<IObject[]> {
+  getObjectsAsync(ids: string[]): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
       const body = JSON.stringify(ids);
       const headers = this.getHeaders();
@@ -99,20 +101,24 @@ export class RepositoryService {
     const zip$ = zip(metadata$, people$, organizationUnits$, currentPerson$, states$).subscribe(
       ([metadata, people, organizationUnits, currentPerson, states]) => {
         this.metadata = metadata;
+        this.types = new Map<number, IType>();
         for (let attr of this.metadata.types) {
           this.types.set(attr.id, attr);
         }
 
+        this.people = new Map<number, IPerson>();
         for (let person of people) {
           this.people.set(person.id, person);
         }
 
+        this.organizationUnits = new Map<number, IOrganizationUnit>();
         for (let unit of organizationUnits) {
           this.organizationUnits.set(unit.id, unit);
         }
 
         this.currentPerson = currentPerson;
 
+        this.userStates = new Map<string, IUserState>();
         for (let state of states) {
           this.userStates.set(state.id, state);
         }

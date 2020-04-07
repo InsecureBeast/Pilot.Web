@@ -19,6 +19,7 @@ img.doc-page {
 .doc-info {
   background: white;
   border-left: 1px solid rgb(222, 226, 230);
+  height: calc(100vh - 42px);
 }
 
 .pages {
@@ -38,11 +39,11 @@ img.doc-page {
   }
 
   .pages.info-open {
-    height: 70vh;
+    height: calc(70vh - 42px);
   }
 
   .doc-info {
-    height: 26vh;
+    height: 30vh;
     border-top: 1px solid rgb(222, 226, 230);
   }
 }

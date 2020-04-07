@@ -1,0 +1,14 @@
+
+<p class="lead mt-3" translate="versions"></p>
+
+<ul class="list-group list-group-flush mb-3">
+  <li class="list-group-item list-group-item-action pointer p-2" *ngFor="let version of versions"
+      [class.list-group-item-primary]="version.isSelected">
+
+    <div class=""
+        (click)="selected(version);">
+      <span class="" style="font-size: .8rem;">{{version.created}} {{version.creator.displayName}}</span>
+    </div>
+
+  </li>
+</ul>

@@ -27,5 +27,6 @@
   "stage": "Stage",
   "back": "Back",
   "forward": "Forward",
-  "versions": "Versions"
+  "versions": "Versions",
+  "version": "Version"
 }
