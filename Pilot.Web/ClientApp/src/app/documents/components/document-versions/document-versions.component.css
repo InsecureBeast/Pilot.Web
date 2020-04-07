@@ -1,1 +1,7 @@
-﻿
+.list-group-item-primary {
+  background-color: #f4f4f4;
+}
+  .list-group-item-primary:hover {
+    background-color: #eaeaea;
+  }
+

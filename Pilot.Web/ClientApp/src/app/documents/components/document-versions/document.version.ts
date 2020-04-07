@@ -6,7 +6,7 @@ import { Tools } from '../../../core/tools/tools';
 import { FilesSelector } from '../../../core/tools/files.selector';
 
 export interface IDocumentVersion {
-  creator: IPerson;
+  creator: string;
   created: string;
   fileId: string;
   isSelected: boolean;
@@ -14,7 +14,7 @@ export interface IDocumentVersion {
 
 export class DocumentVersion implements IDocumentVersion {
 
-  creator: IPerson;
+  creator: string;
   created: string;
   fileId: string;
   isSelected : boolean;
@@ -22,7 +22,11 @@ export class DocumentVersion implements IDocumentVersion {
   constructor(protected readonly snapshot: IFileSnapshot, repository: RepositoryService) {
 
     this.created = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
-    this.creator = repository.getPerson(snapshot.creatorId);
+    this.creator = "";
+    const creator = repository.getPerson(snapshot.creatorId);
+    if (creator)
+      this.creator = creator.displayName;
+
     this.fileId = this.getFileId();
   }
 

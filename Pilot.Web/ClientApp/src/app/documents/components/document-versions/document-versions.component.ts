@@ -24,12 +24,14 @@ export class DocumentVersionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.versions = new Array();
-
-    this.versions.push(new DocumentVersion(this.document.source.actualFileSnapshot, this.repository));
     for (let snapshot of this.document.source.previousFileSnapshots) {
       this.versions.push(new DocumentVersion(snapshot, this.repository));
     }
-    
+
+    const actualVersion = new DocumentVersion(this.document.source.actualFileSnapshot, this.repository);
+    actualVersion.isSelected = true;
+    this.versions.push(actualVersion);
+    this.versions.reverse();
   }
 
   selected(version: IDocumentVersion): void {
