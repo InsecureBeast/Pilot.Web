@@ -22,6 +22,7 @@
 <pw-modal id="document-modal">
   <app-document
     [document] ="node"
+    [selectedVersion]="selectedVersion"
     (onClose)="closeDocument();"
     (onPreviousDocument)="previousDocument($event)"
     (onNextDocument)="nextDocument($event)"></app-document>

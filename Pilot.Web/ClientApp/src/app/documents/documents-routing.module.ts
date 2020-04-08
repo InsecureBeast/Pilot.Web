@@ -11,7 +11,8 @@ const routes: Routes = [
     component: DocumentsComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'document/:id', component: DocumentComponent, canActivate: [AuthGuard] }
+      { path: 'document/:id', component: DocumentComponent, canActivate: [AuthGuard] },
+      { path: 'document/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] }
     ]
 
   },
@@ -21,7 +22,8 @@ const routes: Routes = [
     component: DocumentsComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'file/:id', component: DocumentComponent, canActivate: [AuthGuard] }
+      { path: 'file/:id', component: DocumentComponent, canActivate: [AuthGuard] },
+      { path: 'file/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] }
     ]
   }
 ];

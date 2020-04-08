@@ -33,6 +33,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   error: HttpErrorResponse;
   node: INode;
+  selectedVersion: string; //date
   
   /** documents ctor */
   constructor(
@@ -65,22 +66,28 @@ export class DocumentsComponent implements OnInit, OnDestroy {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
           this.isLoading = false;
           if (this.activatedRoute.snapshot.children.length !== 0) {
-            if (this.activatedRoute.snapshot.firstChild.url.length === 2) {
-              const documentId = this.activatedRoute.snapshot.firstChild.url[1];
-
-              this.repository.getObjectAsync(documentId.path)
-                .then(document => {
-                  const node = new ObjectNode(document, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-                  //this.onItemSelected(node);
-                  this.node = node;
-                  this.isDocument = node.isDocument;
-                  this.modalService.open("document-modal");
-                })
-                .catch(err => {
-                  this.error = err;
-                  this.isLoading = false;
-                });
+            let documentId = "";
+            var selectedVersion = "";
+            if (this.activatedRoute.snapshot.firstChild.url.length >= 2) {
+              documentId = this.activatedRoute.snapshot.firstChild.url[1].path;
             }
+
+            if (this.activatedRoute.snapshot.firstChild.url.length >= 3) {
+              selectedVersion = this.activatedRoute.snapshot.firstChild.url[2].path;
+            }
+
+            this.repository.getObjectAsync(documentId)
+              .then(document => {
+                const node = new ObjectNode(document, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+                this.node = node;
+                this.isDocument = node.isDocument;
+                this.selectedVersion = selectedVersion;
+                this.modalService.open("document-modal");
+              })
+              .catch(err => {
+                this.error = err;
+                this.isLoading = false;
+              });
           }
         })
         .catch(err => {

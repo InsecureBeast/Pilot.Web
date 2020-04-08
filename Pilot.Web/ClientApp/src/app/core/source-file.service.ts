@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IFile, IObject } from './data/data.classes';
+import { IFile, IFileSnapshot } from './data/data.classes';
 import { FilesSelector } from './tools/files.selector';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
@@ -48,8 +48,8 @@ export class SourceFileService {
     });
   }
 
-  isImageFile(document: IObject): boolean {
-    const file = FilesSelector.getSourceFile(document.actualFileSnapshot.files);
+  isImageFile(snapshot: IFileSnapshot): boolean {
+    const file = FilesSelector.getSourceFile(snapshot.files);
     if (!file)
       return false;
 
@@ -57,16 +57,16 @@ export class SourceFileService {
     return imageType != null;
   }
 
-  isXpsFile(document: IObject): boolean {
-    var file = FilesSelector.getSourceFile(document.actualFileSnapshot.files);
+  isXpsFile(snapshot: IFileSnapshot): boolean {
+    var file = FilesSelector.getSourceFile(snapshot.files);
     if (!file)
       return false;
 
     return file.name.endsWith('.xps');
   }
 
-  isKnownFile(document: IObject): boolean {
-    var file = FilesSelector.getSourceFile(document.actualFileSnapshot.files);
+  isKnownFile(snapshot: IFileSnapshot): boolean {
+    var file = FilesSelector.getSourceFile(snapshot.files);
     if (!file)
       return false;
 
@@ -74,9 +74,9 @@ export class SourceFileService {
     return fileType != null;
   }
 
-  openFileAsync(document: IObject, cancel: Subject<any>): Promise<void> {
+  openFileAsync(snapshot: IFileSnapshot, cancel: Subject<any>): Promise<void> {
     return new Promise((resolve, reject) => {
-      var file = FilesSelector.getSourceFile(document.actualFileSnapshot.files);
+      var file = FilesSelector.getSourceFile(snapshot.files);
       if (!file) {
         reject();
         return;

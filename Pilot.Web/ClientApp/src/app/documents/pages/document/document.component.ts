@@ -1,16 +1,19 @@
-import { Component, Output, Input, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Output, Input, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
 
+import { Tools } from '../../../core/tools/tools';
 import { INode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
-import { ModalService } from '../../../ui/modal/modal.service';
+import { IObject, IFileSnapshot } from '../../../core/data/data.classes';
 
 @Component({
   selector: 'app-document',
@@ -29,17 +32,24 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   @Output() onNextDocument = new EventEmitter<any>();
 
   @Input() document: INode;
+  @Input() selectedVersion : string;
 
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
+  isActualVersionSelected: boolean;
+  selectedVersionSnapshot: IFileSnapshot;
+  selectedVersionCreated: string;
+  selectedVersionCreator: string;
 
   /** document-details ctor */
   constructor(
-    private readonly route: ActivatedRoute,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly sourceFileService: SourceFileService,
     private readonly downloadService: DownloadService,
-    private readonly modalService: ModalService,) {
+    private readonly location: Location,
+    private readonly repository: RepositoryService,
+    private cd: ChangeDetectorRef) {
 
   }
 
@@ -56,56 +66,19 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       return;
 
     const source = this.document.source;
-    this.isLoading = true;
-    this.images = new Array<SafeUrl>();
+    this.selectedVersionSnapshot = source.actualFileSnapshot;
+    this.isActualVersionSelected = !this.selectedVersion;
+    if (!this.isActualVersionSelected)
+      this.selectedVersionSnapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
 
-    if (this.sourceFileService.isXpsFile(source)) {
-      const file = FilesSelector.getSourceFile(source.actualFileSnapshot.files);
-      this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
-        .then(_ => this.isLoading = false)
-        .catch(e => {
-          this.isLoading = false;
-          this.images = null;
-          this.onError.emit(e);
-        });
-      return;
+    if (this.selectedVersionSnapshot) {
+      this.selectedVersionCreated = Tools.toUtcCsDateTime(this.selectedVersionSnapshot.created).toLocaleString();
+      this.selectedVersionCreator = "";
+      const creator = this.repository.getPerson(this.selectedVersionSnapshot.creatorId);
+      if (creator)
+        this.selectedVersionCreator = creator.displayName;
     }
-
-    if (this.sourceFileService.isImageFile(source)) {
-      const file = FilesSelector.getSourceFile(source.actualFileSnapshot.files);
-      if (!file) {
-        this.isLoading = false;
-        this.images = null;
-        return;
-      }
-
-      this.sourceFileService.getImageFileToShowAsync(file, this.ngUnsubscribe)
-        .then(url => {
-          this.images.push(url);
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.onError.emit(e);
-        });
-
-      return;
-    }
-
-    if (this.sourceFileService.isKnownFile(source)) {
-      this.sourceFileService.openFileAsync(source, this.ngUnsubscribe)
-        .then(() => {
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.onError.emit(e);
-        });
-      return;
-    }
-
-    this.images = null;
-    this.isLoading = false;
+    this.loadSnapshot(this.selectedVersionSnapshot);
   }
 
   close($event): void {
@@ -130,5 +103,87 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   closeDocumentVersions(): void {
     this.isInfoShown = false;
+  }
+
+  selectVersion(snapshot: IFileSnapshot): void {
+    this.isActualVersionSelected = this.document.source.actualFileSnapshot.created === snapshot.created;
+    let version = "";
+    if (!this.isActualVersionSelected)
+      version = snapshot.created;
+
+    this.updateLocation(version);
+    this.loadSnapshot(snapshot);
+  }
+
+  selectActualVersion(): boolean {
+    this.isActualVersionSelected = true;
+    this.updateLocation("");
+    this.selectedVersionSnapshot = this.document.source.actualFileSnapshot;
+    this.cd.detectChanges();
+    this.loadSnapshot(this.selectedVersionSnapshot);
+    return false;
+  }
+
+  private updateLocation(version: string): void {
+    let path = this.activatedRoute.snapshot.url.join("/");
+    path = path + "/" + this.activatedRoute.snapshot.firstChild.url[0];
+    path = path + "/" + this.document.id;
+    if (version !== "")
+      this.location.replaceState(path + "/" + version);
+    else
+      this.location.replaceState(path);
+  }
+
+  private loadSnapshot(snapshot: IFileSnapshot): void {
+    this.isLoading = true;
+    this.images = new Array<SafeUrl>();
+
+    if (this.sourceFileService.isXpsFile(snapshot)) {
+      const file = FilesSelector.getSourceFile(snapshot.files);
+      this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
+        .then(_ => this.isLoading = false)
+        .catch(e => {
+          this.isLoading = false;
+          this.images = null;
+          this.onError.emit(e);
+        });
+      return;
+    }
+
+    if (this.sourceFileService.isImageFile(snapshot)) {
+      const file = FilesSelector.getSourceFile(snapshot.files);
+      if (!file) {
+        this.isLoading = false;
+        this.images = null;
+        return;
+      }
+
+      this.sourceFileService.getImageFileToShowAsync(file, this.ngUnsubscribe)
+        .then(url => {
+          this.images.push(url);
+          this.isLoading = false;
+        })
+        .catch(e => {
+          this.images = null;
+          this.onError.emit(e);
+        });
+
+      return;
+    }
+
+    if (this.sourceFileService.isKnownFile(snapshot)) {
+      this.sourceFileService.openFileAsync(snapshot, this.ngUnsubscribe)
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch(e => {
+          this.images = null;
+          this.onError.emit(e);
+        });
+      return;
+    }
+
+    this.images = null;
+    this.isLoading = false;
   }
 }

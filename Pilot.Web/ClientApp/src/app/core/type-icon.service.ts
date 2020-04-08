@@ -29,12 +29,12 @@ export class TypeIconService {
   getPreviewAsync(item: IObject, cancel: Subject<any>): Promise<SafeUrl> {
 
     if (this.nodeStyleService.currentNodeStyle === NodeStyle.GridView) {
-      if (this.sourceFileService.isXpsFile(item)) {
+      if (this.sourceFileService.isXpsFile(item.actualFileSnapshot)) {
         const xpsfile = FilesSelector.getXpsFile(item.actualFileSnapshot.files);
         return this.sourceFileService.getXpsThumbnailAsync(xpsfile, cancel);
       }
 
-      if (this.sourceFileService.isImageFile(item)) {
+      if (this.sourceFileService.isImageFile(item.actualFileSnapshot)) {
         const imageFile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
         return this.sourceFileService.getImageFileToShowAsync(imageFile, cancel);
       }

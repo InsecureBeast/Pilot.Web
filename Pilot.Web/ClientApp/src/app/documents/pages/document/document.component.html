@@ -7,9 +7,16 @@
 
 <div class="document-view">
   <div class="row m-0">
-    <div class="overflow-auto pages col-12"
+    <div class="overflow-auto pages col-12 p-0"
          [class.col-md-8]="isInfoShown"
          [class.info-open]="isInfoShown">
+
+      <div class="text-center" *ngIf="!isActualVersionSelected">
+        <div class="alert alert-warning" role="alert">
+          <span>Неактуальная версия  от </span> {{selectedVersionCreated}}. <a href="#" (click)="selectActualVersion()">Перейти к актуальной версии</a>
+        </div>
+      </div>
+
       <div class="text-center" *ngIf="images">
         <div *ngFor="let page of images">
           <img [src]="page" class="doc-page">
@@ -17,7 +24,7 @@
       </div>
 
       <div class="content-center" *ngIf="!images">
-        <img src="/assets/images/doc_empty.svg" class="error-image" />
+        <img src="/assets/images/doc_empty.svg" class="error-image"/>
         <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
         <p class="mt-3" translate="cantPreviewDocument"></p>
         <button type="submit" class="btn btn-primary" (click)="download()" *ngIf="!isDownloading" translate="download"></button>
@@ -35,8 +42,10 @@
     </div>
 
     <div class="col-12 col-md-4 doc-info overflow-auto" *ngIf="isInfoShown">
-      <app-document-versions [document]="document"></app-document-versions>
+      <app-document-versions [document]="document"
+                             [selectedVersion]="selectedVersionSnapshot"
+                             (onVersionSelected)="selectVersion($event)"></app-document-versions>
     </div>
   </div>
-  
+
 </div>

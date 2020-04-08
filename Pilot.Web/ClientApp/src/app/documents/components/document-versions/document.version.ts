@@ -10,6 +10,7 @@ export interface IDocumentVersion {
   created: string;
   fileId: string;
   isSelected: boolean;
+  snapshot: IFileSnapshot;
 }
 
 export class DocumentVersion implements IDocumentVersion {
@@ -17,24 +18,26 @@ export class DocumentVersion implements IDocumentVersion {
   creator: string;
   created: string;
   fileId: string;
-  isSelected : boolean;
+  isSelected: boolean;
+  snapshot: IFileSnapshot;
 
-  constructor(protected readonly snapshot: IFileSnapshot, repository: RepositoryService) {
+  constructor(protected readonly sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
 
-    this.created = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
+    this.created = Tools.toUtcCsDateTime(sourceSnapshot.created).toLocaleString();
     this.creator = "";
-    const creator = repository.getPerson(snapshot.creatorId);
+    const creator = repository.getPerson(sourceSnapshot.creatorId);
     if (creator)
       this.creator = creator.displayName;
 
     this.fileId = this.getFileId();
+    this.snapshot = sourceSnapshot;
   }
 
   protected getFileId(): string {
     
-    let file = FilesSelector.getXpsFile(this.snapshot.files);
+    let file = FilesSelector.getXpsFile(this.sourceSnapshot.files);
     if (file == null)
-      file = FilesSelector.getPdfFile(this.snapshot.files);
+      file = FilesSelector.getPdfFile(this.sourceSnapshot.files);
 
     if (file)
       return file.body.id;
@@ -45,12 +48,12 @@ export class DocumentVersion implements IDocumentVersion {
 
 export class FileVersion extends DocumentVersion implements IDocumentVersion {
 
-  constructor(protected readonly snapshot: IFileSnapshot, repository: RepositoryService) {
-    super(snapshot, repository);
+  constructor(protected readonly sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
+    super(sourceSnapshot, repository);
   }
 
   protected getFileId(): string {
-    const file = FilesSelector.getSourceFile(this.snapshot.files);
+    const file = FilesSelector.getSourceFile(this.sourceSnapshot.files);
     if (file)
       return file.body.id;
 

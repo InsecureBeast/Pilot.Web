@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 
 import { INode } from '../../shared/node.interface';
-import { IDocumentVersion, DocumentVersion } from './document.version';
+import { IDocumentVersion, DocumentVersion, FileVersion } from './document.version';
 import { RepositoryService } from '../../../core/repository.service';
+import { IFileSnapshot } from '../../../core/data/data.classes';
 
 @Component({
     selector: 'app-document-versions',
@@ -13,7 +14,8 @@ import { RepositoryService } from '../../../core/repository.service';
 export class DocumentVersionsComponent implements OnChanges {
 
   @Input() document: INode;
-  @Output() onVersionSelected = new EventEmitter<string>();
+  @Input() selectedVersion: IFileSnapshot;
+  @Output() onVersionSelected = new EventEmitter<IFileSnapshot>();
 
   versions : Array<IDocumentVersion>;
 
@@ -23,13 +25,21 @@ export class DocumentVersionsComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
     this.versions = new Array();
     for (let snapshot of this.document.source.previousFileSnapshots) {
-      this.versions.push(new DocumentVersion(snapshot, this.repository));
+      let version: IDocumentVersion;
+      if (!this.document.source)
+        version = new DocumentVersion(snapshot, this.repository);
+      else {
+        version = new FileVersion(snapshot, this.repository);
+      }
+      version.isSelected = snapshot.created === this.selectedVersion.created;
+      this.versions.push(version);
     }
 
-    const actualVersion = new DocumentVersion(this.document.source.actualFileSnapshot, this.repository);
-    actualVersion.isSelected = true;
+    let actualVersion = new DocumentVersion(this.document.source.actualFileSnapshot, this.repository);
+    actualVersion.isSelected = this.document.source.actualFileSnapshot.created === this.selectedVersion.created;
     this.versions.push(actualVersion);
     this.versions.reverse();
   }
@@ -40,5 +50,5 @@ export class DocumentVersionsComponent implements OnChanges {
     }
 
     version.isSelected = true;
-    this.onVersionSelected.emit(version.fileId);
+    this.onVersionSelected.emit(version.snapshot);
   }}
