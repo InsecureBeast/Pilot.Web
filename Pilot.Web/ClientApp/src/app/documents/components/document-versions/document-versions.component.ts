@@ -1,8 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, Output, EventEmitter } from '@angular/core';
+
+import { Subscription } from 'rxjs';
 
 import { INode } from '../../shared/node.interface';
 import { IDocumentVersion, DocumentVersion, FileVersion } from './document.version';
 import { RepositoryService } from '../../../core/repository.service';
+import { VersionsSelectorService } from './versions-selector.service';
 import { IFileSnapshot } from '../../../core/data/data.classes';
 
 @Component({
@@ -11,44 +14,92 @@ import { IFileSnapshot } from '../../../core/data/data.classes';
     styleUrls: ['./document-versions.component.css']
 })
 /** document-versions component*/
-export class DocumentVersionsComponent implements OnChanges {
+export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
+  private versionSubscription: Subscription;
+  private _document: INode;
 
-  @Input() document: INode;
-  @Input() selectedVersion: IFileSnapshot;
-  @Output() onVersionSelected = new EventEmitter<IFileSnapshot>();
+  //@Input()
+  //get selectedVersion(): string {
+  //   return this._aSelectedVersion;
+  //}
+  //set selectedVersion(newValue: string) {
+  //  if (!this.document)
+  //    return;
+
+  //  let snapshot = this.document.source.actualFileSnapshot;
+  //  if (newValue !== "") {
+  //    snapshot = this.document.source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
+  //  }
+
+  //  this._aSelectedVersion = newValue;
+  //  this.selectVersion(snapshot);
+  //}
+
+  @Input()
+  get document(): INode {
+    return this._document;
+  }
+  set document(newValue: INode) {
+    this._document = newValue;
+    this.loadVersions(newValue);
+  }
 
   versions : Array<IDocumentVersion>;
 
   /** document-versions ctor */
-  constructor(private readonly repository: RepositoryService) {
+  constructor(private readonly repository: RepositoryService,
+              private readonly versionSelector: VersionsSelectorService) {
+    this.versions = new Array();
+  }
 
+  ngOnInit(): void {
+    this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
+      if (s === null)
+        return;
+
+      if (!this.document)
+          return;
+
+      this.selectVersion(s);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.versionSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
 
+  }
+
+  selected(version: IDocumentVersion): void {
+    this.selectVersion(version.snapshot);
+    this.versionSelector.changeSelectedSnapshot(version.snapshot);
+  }
+
+  private selectVersion(snapshot: IFileSnapshot): void {
+    for (const v of this.versions) {
+        v.isSelected = v.snapshot.created === snapshot.created;
+    }
+  }
+
+  private loadVersions(document: INode): void {
     this.versions = new Array();
-    for (let snapshot of this.document.source.previousFileSnapshots) {
+    for (let snapshot of document.source.previousFileSnapshots) {
       let version: IDocumentVersion;
-      if (!this.document.source)
+      if (!document.isSource)
         version = new DocumentVersion(snapshot, this.repository);
       else {
         version = new FileVersion(snapshot, this.repository);
       }
-      version.isSelected = snapshot.created === this.selectedVersion.created;
+      version.isSelected = false;
       this.versions.push(version);
     }
 
-    let actualVersion = new DocumentVersion(this.document.source.actualFileSnapshot, this.repository);
-    actualVersion.isSelected = this.document.source.actualFileSnapshot.created === this.selectedVersion.created;
+    const actualVersion = new DocumentVersion(document.source.actualFileSnapshot, this.repository);
+    actualVersion.isSelected = true;
     this.versions.push(actualVersion);
     this.versions.reverse();
   }
+}
 
-  selected(version: IDocumentVersion): void {
-    for (const v of this.versions) {
-      v.isSelected = false;
-    }
-
-    version.isSelected = true;
-    this.onVersionSelected.emit(version.snapshot);
-  }}

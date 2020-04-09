@@ -14,6 +14,7 @@ import { DownloadService } from '../../../core/download.service';
 import { RepositoryService } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
 import { IObject, IFileSnapshot } from '../../../core/data/data.classes';
+import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 
 @Component({
   selector: 'app-document',
@@ -22,8 +23,7 @@ import { IObject, IFileSnapshot } from '../../../core/data/data.classes';
 })
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
-
-  //private routeSubscription: Subscription;
+  private  versionSubscription: Subscription;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
@@ -37,10 +37,11 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
+
   isActualVersionSelected: boolean;
-  selectedVersionSnapshot: IFileSnapshot;
   selectedVersionCreated: string;
   selectedVersionCreator: string;
+  
 
   /** document-details ctor */
   constructor(
@@ -49,16 +50,28 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private readonly downloadService: DownloadService,
     private readonly location: Location,
     private readonly repository: RepositoryService,
-    private cd: ChangeDetectorRef) {
+    private readonly versionSelector: VersionsSelectorService) {
 
   }
 
   ngOnInit(): void {
-    
+    this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
+      if (s === null)
+        return;
+
+      this.isActualVersionSelected = this.document.source.actualFileSnapshot.created === s.created;
+      let version = "";
+      if (!this.isActualVersionSelected)
+        version = s.created;
+
+      this.updateLocation(version);
+      this.loadSnapshot(s);
+    });
   }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.unsubscribe();
+    this.versionSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,19 +79,19 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       return;
 
     const source = this.document.source;
-    this.selectedVersionSnapshot = source.actualFileSnapshot;
+    let snapshot = source.actualFileSnapshot;
     this.isActualVersionSelected = !this.selectedVersion;
     if (!this.isActualVersionSelected)
-      this.selectedVersionSnapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
+      snapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
 
-    if (this.selectedVersionSnapshot) {
-      this.selectedVersionCreated = Tools.toUtcCsDateTime(this.selectedVersionSnapshot.created).toLocaleString();
+    if (snapshot) {
+      this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
       this.selectedVersionCreator = "";
-      const creator = this.repository.getPerson(this.selectedVersionSnapshot.creatorId);
+      const creator = this.repository.getPerson(snapshot.creatorId);
       if (creator)
         this.selectedVersionCreator = creator.displayName;
     }
-    this.loadSnapshot(this.selectedVersionSnapshot);
+    this.loadSnapshot(snapshot);
   }
 
   close($event): void {
@@ -105,22 +118,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.isInfoShown = false;
   }
 
-  selectVersion(snapshot: IFileSnapshot): void {
-    this.isActualVersionSelected = this.document.source.actualFileSnapshot.created === snapshot.created;
-    let version = "";
-    if (!this.isActualVersionSelected)
-      version = snapshot.created;
-
-    this.updateLocation(version);
-    this.loadSnapshot(snapshot);
-  }
-
   selectActualVersion(): boolean {
-    this.isActualVersionSelected = true;
-    this.updateLocation("");
-    this.selectedVersionSnapshot = this.document.source.actualFileSnapshot;
-    this.cd.detectChanges();
-    this.loadSnapshot(this.selectedVersionSnapshot);
+    this.versionSelector.changeSelectedSnapshot(this.document.source.actualFileSnapshot);
     return false;
   }
 
