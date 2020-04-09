@@ -28,5 +28,7 @@
   "back": "Back",
   "forward": "Forward",
   "versions": "Versions",
-  "version": "Version"
+  "version": "Version",
+  "outdatedVersionFrom": "Outdated version from",
+  "goToCurrentVersion": "Go to the current version"
 }

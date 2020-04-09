@@ -28,5 +28,7 @@
   "back": "Назад",
   "forward": "Вперед",
   "versions": "Версии",
-  "version": "Версия" 
+  "version": "Версия",
+  "outdatedVersionFrom": "Неактуальная версия от",
+  "goToCurrentVersion": "Перейти к актуальной версии"
 }

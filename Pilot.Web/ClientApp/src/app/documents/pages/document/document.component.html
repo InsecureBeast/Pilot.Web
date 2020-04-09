@@ -13,7 +13,7 @@
 
       <div class="text-center" *ngIf="!isActualVersionSelected">
         <div class="alert alert-warning" role="alert">
-          <span>Неактуальная версия  от </span> {{selectedVersionCreated}}. <a href="#" (click)="selectActualVersion()">Перейти к актуальной версии</a>
+          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}. <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
         </div>
       </div>
 

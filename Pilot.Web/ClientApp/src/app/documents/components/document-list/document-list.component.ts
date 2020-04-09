@@ -59,41 +59,16 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
         return;
 
       for (let node of this.nodes) {
-        node.loadTypeIcon();
+        node.loadPreview();
       }
     });
   }
 
   ngOnInit(): void {
-    //this.navigationServiceSubscription = this.navigationService.currentObject.subscribe(item => {
-    //  if (!item)
-    //    return;
 
-    //  if (item.isDocument) {
-    //    if (this.currentItem)
-    //      return;
-
-    //    // TODO load parent nodes
-    //    this.repository.getObjectAsync(item.parentId)
-    //      .then(source => {
-    //        var parent = new ObjectNode(source, item.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-    //        this.init(parent);
-
-    //      })
-    //      .catch(err => {
-    //        this.onError.emit(err);
-    //        this.isLoading = false;
-    //      });
-
-    //    return;
-    //  }
-
-    //  this.init(item);
-    //});
   }
 
   ngOnDestroy(): void {
-    //this.navigationServiceSubscription.unsubscribe();
     if (this.nodeStyleServiceSubscription)
       this.nodeStyleServiceSubscription.unsubscribe();
 
@@ -106,7 +81,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   selected(item: ObjectNode): void {
-    //this.navigationService.navigateTo(item);
     this.onSelected.emit(item);
   }
 
@@ -130,7 +104,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
   private init(item: ObjectNode) {
     this.nodes = null;
-    //this.currentItem = item;
     this.isLoading = true;
     this.loadChildren(item.id, item.isSource);
   }
@@ -145,7 +118,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
         this.isLoading = false;
         this.addNodes(nodes, isSource);
         this.onChecked.emit(null);
-        //this.dataService.changeCurrentNodes(this.nodes);
       })
       .catch(e => {
         this.onError.emit(e);
