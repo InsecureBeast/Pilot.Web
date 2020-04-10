@@ -4,36 +4,31 @@
   </div>
 </div>
 
-<div *ngIf="nodeStyle === 0; else gridViewNodeTemplate">
-  <div class="list-group list-group-flush" *ngIf="!isLoading && nodes">
-    <div *ngFor="let node of nodes">
+<div class="pb-5" *ngIf="nodeStyle === 0; else gridViewNodeTemplate">
+  <ul class="list-group list-group-flush" *ngIf="!isLoading && nodes">
+    <li class="list-group-item list-group-item-action"
+        [class.list-group-item-primary]="node.isChecked"
+        (click)="checked(node, $event);$event.stopPropagation();"
+        *ngFor="let node of nodes">
 
-      <div class="list-group-item list-group-item-action"
-           [class.list-group-item-primary]="node.isChecked"
-           (click)="checked(node, $event);$event.stopPropagation();">
+      <div class="d-flex">
 
-        <div class="d-flex">
-
-          <div class="mt-1 mr-2">
-            <img id="image" [src]="node.icon" width="36" *ngIf="node.icon != null">
-          </div>
-
-          <div class="mr-auto">
-
-            <div (click)="selected(node);$event.stopPropagation();">
-              <h6 class="mb-1 pointer">{{ node.title }}</h6>
-              <div class="mb-0 pointer">{{node.created}} {{node.creator.displayName}}</div>
-            </div>
-
-          </div>
-
-          <small *ngIf="!node.isDocument">{{node.children.length}}</small>
+        <div class="mt-1 mr-2">
+          <img id="image" [src]="node.icon" width="36" *ngIf="node.icon != null">
         </div>
+
+        <div class="mr-auto">
+          <div class="pointer"
+               (click)="selected(node);$event.stopPropagation();">
+            <div class="middle-phone-text">{{ node.title }}</div>
+            <small class="hidden-phone text-muted">{{node.created}} {{node.creator.displayName}}</small>
+          </div>
+        </div>
+
+        <small *ngIf="!node.isDocument">{{node.children.length}}</small>
       </div>
-
-    </div>
-
-  </div>
+    </li>
+  </ul>
 </div>
 
 <div class="content-center" *ngIf="nodes && nodes.length === 0">
@@ -43,7 +38,7 @@
 
 
 <ng-template #gridViewNodeTemplate>
-  <div class="row m-0">
+  <div class="row m-0 pb-5">
     <div *ngFor="let node of nodes"
          class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 p-2">
 

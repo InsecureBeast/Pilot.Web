@@ -39,3 +39,9 @@
   .item-button:hover {
     background: #eaeaea;
   }
+
+@media (max-width: 767px) {
+  .middle-phone-text {
+    margin-top: 7px;
+  }
+}
