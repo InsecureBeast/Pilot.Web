@@ -13,21 +13,11 @@ html, body {
   text-align: center;
 }
 
-.content-top {
-  z-index: 100;
-  margin-top: -56px;
-  height: calc(100vh + 5px);
-  width: 100%;
-  position: absolute;
-  background-color: white;
-}
-
 .bg-toolbar {
-  background-color: #F2F2F2;
+  background-color: #ffffff;
 }
-
-.bg-tree-view {
-  background-color: #F8F9FB;
+.bg-content {
+  background-color: #f5f6fb;
 }
 
 .h-calc {

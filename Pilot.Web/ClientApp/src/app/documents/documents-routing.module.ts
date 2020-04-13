@@ -10,6 +10,7 @@ const routes: Routes = [
     path: 'documents/:id',
     component: DocumentsComponent,
     canActivate: [AuthGuard],
+    //data: { reuse: true },
     children: [
       { path: 'document/:id', component: DocumentComponent, canActivate: [AuthGuard] },
       { path: 'document/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] }

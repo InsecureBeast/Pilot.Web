@@ -6,14 +6,15 @@
 </app-document-toolbar>
 
 <div class="document-view">
-  <div class="row m-0">
+  <div class="row m-0 bg-content">
     <div class="overflow-auto pages col-12 p-0 pb-5"
          [class.col-md-8]="isInfoShown"
          [class.info-open]="isInfoShown">
 
       <div class="text-center" *ngIf="!isActualVersionSelected">
         <div class="alert alert-warning" role="alert">
-          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}. <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
+          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}.
+          <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
         </div>
       </div>
 

@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { RouterModule, RouteReuseStrategy } from '@angular/router';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -21,6 +21,7 @@ import { DocumentsRoutingModule } from './documents/documents-routing.module';
 import { DocumentsModule } from './documents/documents.module';
 import { DocumentsComponent } from './documents/pages/documents/documents.component';
 import { ModalModule } from './ui/modal/modal.module';
+import { RouteReuseService } from './core/route-reuse.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -48,7 +49,7 @@ export function createTranslateLoader(http: HttpClient) {
       { path: 'login', component: AuthComponent },
 
       // otherwise redirect to home
-      { path: '**', redirectTo: 'login' }
+      { path: '*', redirectTo: 'login' }
     ]),
     TranslateModule.forRoot({
       loader: {
@@ -60,7 +61,10 @@ export function createTranslateLoader(http: HttpClient) {
     DocumentsModule,
     DocumentsRoutingModule
   ],
-  providers: [AuthGuard],
+  providers: [
+    AuthGuard,
+    { provide: RouteReuseStrategy, useClass: RouteReuseService}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
