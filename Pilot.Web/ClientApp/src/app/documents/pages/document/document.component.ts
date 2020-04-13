@@ -13,7 +13,7 @@ import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
 import { RepositoryService } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
-import { IObject, IFileSnapshot } from '../../../core/data/data.classes';
+import { IFileSnapshot } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 
 @Component({
@@ -23,7 +23,7 @@ import { VersionsSelectorService } from '../../components/document-versions/vers
 })
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
-  private  versionSubscription: Subscription;
+  private versionSubscription: Subscription;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   @Output() onClose: EventEmitter<any> = new EventEmitter<any>();

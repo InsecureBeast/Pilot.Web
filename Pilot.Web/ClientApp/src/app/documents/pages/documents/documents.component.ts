@@ -13,6 +13,7 @@ import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
 import { ModalService } from '../../../ui/modal/modal.service';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 @Component({
     selector: 'app-documents',
@@ -43,7 +44,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly translate: TranslateService,
     private readonly router: Router,
     private readonly modalService: ModalService,
-    private readonly location: Location) {
+    private readonly location: Location,
+    private readonly navigationService: DocumentsNavigationService) {
 
   }
 
@@ -123,9 +125,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.router.navigate(['./file/' + node.id], { relativeTo: this.activatedRoute });
+        this.navigationService.navigateToFile(node.id);
       } else {
-        this.router.navigate(['./document/' + node.id], { relativeTo: this.activatedRoute });
+        this.navigationService.navigateToDocument(node.id, this.activatedRoute);
       }
 
       this.modalService.open("document-modal");
@@ -133,9 +135,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     }
 
     if (node.isSource)
-      this.router.navigateByUrl('/files/' + node.id);
+      this.navigationService.navigateToFilesFolder(node.id);
     else
-      this.router.navigateByUrl('/documents/' + node.id);
+      this.navigationService.navigateToDocumentsFolder(node.id);
   }
 
   onItemsChecked(nodes: INode[]): void {

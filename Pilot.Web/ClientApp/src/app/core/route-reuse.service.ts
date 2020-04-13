@@ -60,19 +60,19 @@ export class RouteReuseService implements  RouteReuseStrategy {
 
   private getUrl(route: ActivatedRouteSnapshot): string {
 
-    let url = "";
-    for (let segment of route.url) {
-      url = url + segment.path;
-    }
-
-    //route.url.forEach(s => url += s.path);
-    //if (route.routeConfig) {
-    //  const url = route.routeConfig.path;
-      console.log('returning url', url);
-      return url;
+    //let url = "";
+    //for (let segment of route.url) {
+    //  url = url + segment.path;
     //}
 
-    //return '';
+    //route.url.forEach(s => url += s.path);
+    if (route.routeConfig) {
+      const url = route.routeConfig.path;
+      console.log('returning url', url);
+      return url;
+    }
+
+    return '';
   }
 
 }
