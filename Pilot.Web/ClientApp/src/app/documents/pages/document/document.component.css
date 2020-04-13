@@ -6,8 +6,8 @@ img.doc-page {
 }
 
 .document-view {
-  height: calc(100vh - 42px);
-  margin-top: 42px;
+  height: calc(100vh - 2.5rem);
+  margin-top: 2.5rem;
 }
 
 .vertical-center {
@@ -19,28 +19,28 @@ img.doc-page {
 .doc-info {
   background: white;
   border-left: 1px solid rgb(222, 226, 230);
-  height: calc(100vh - 42px);
+  height: calc(100vh - 2.5rem);
 }
 
 .pages {
-  height: calc(100vh - 42px);
+  height: calc(100vh - 2.5rem);
 }
   .pages.info-open {
-    height: calc(100vh - 42px);
+    height: calc(100vh - 2.5rem);
   }
 
 .h-calc {
-  height: calc(100vh - 42px);
+  height: calc(100vh - 2.5rem);
 }
 
 @media (max-width: 767px) {
   .pages {
-    height: calc(100vh - 42px);
+    height: calc(100vh - 2.5rem);
   }
 
-  .pages.info-open {
-    height: calc(70vh - 42px);
-  }
+    .pages.info-open {
+      height: calc(70vh - 2.5rem);
+    }
 
   .doc-info {
     height: 30vh;

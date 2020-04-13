@@ -4,12 +4,12 @@
 }
 
 .nav-item {
-  height: 40px;
+  height: 2.4rem;
 }
 
 .nav-item-button {
   cursor: pointer;
-  min-width: 40px;
+  min-width: 2.5rem;
   text-align: center;
 }
 
@@ -29,11 +29,11 @@
 }
 
 .nav-icon {
-  width: 24px;
+  width: 1.5rem;
 }
 
 .toolbar {
-  height: 42px;
+  height: 2.5rem;
   padding: 0;
   margin: 0;
 }
