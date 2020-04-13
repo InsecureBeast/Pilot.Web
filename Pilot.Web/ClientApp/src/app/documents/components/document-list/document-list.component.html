@@ -21,7 +21,7 @@
           <div class="pointer"
                (click)="selected(node);$event.stopPropagation();">
             <div class="middle-phone-text">{{ node.title }}</div>
-            <small class="hidden-phone text-muted">{{node.created}} {{node.creator.displayName}}</small>
+            <small class="hidden-phone text-muted">{{node.type.title}}</small>
           </div>
         </div>
 
@@ -55,8 +55,8 @@
         <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>
         <div class="card-body" (click)="selected(node);$event.stopPropagation();">
           <div class="text-center pointer">
-            <h6 class="mb-0">{{ node.title }}</h6>
-            <small class="">{{node.created}}</small>
+            <div class="card-name">{{ node.title }}</div>
+            <small class="text-muted">{{node.type.title}}</small>
           </div>
         </div>
       </div>

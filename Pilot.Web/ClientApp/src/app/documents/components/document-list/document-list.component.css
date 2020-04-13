@@ -11,15 +11,16 @@
 .card-name {
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 2.5em;
-  text-align: center;
-  font-size: 14px;
-  max-width: 90%
+  max-height: 3.2em;
 }
 
 .card {
   height: 15rem;
   overflow: hidden;
+}
+
+.card-body {
+  padding: 0.85rem;
 }
 
 .card-children-count {
