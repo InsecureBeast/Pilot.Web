@@ -13,11 +13,26 @@
   overflow: hidden;
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
+.breadcrumb-item + .breadcrumb-item:before {
   content: "›";
   font-size: x-large;
   margin-top:-15px;
 }
+
+li.breadcrumb-item a {
+  color: #a3a6b6;
+}
+
+  li.breadcrumb-item a:link {
+    color: #a3a6b6;
+  }
+  li.breadcrumb-item a:visited {
+    color: #a3a6b6;
+  }
+  li.breadcrumb-item a:hover {
+    color: #343951;
+    text-decoration: none;
+  }
 
 @media (max-width: 350px) {
   .breadcrumb-item {

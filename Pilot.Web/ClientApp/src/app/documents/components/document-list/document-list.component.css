@@ -1,12 +1,12 @@
 
 .list-group-item {
   cursor: pointer;
-  margin-bottom: .5rem;
+  /*margin-bottom: .5rem;
   border: 0;
   border-bottom-left-radius: .25rem;
   border-bottom-right-radius: .25rem;
   border-top-left-radius: .25rem;
-  border-top-right-radius: .25rem;
+  border-top-right-radius: .25rem;*/
 }
 
 .card-img-center {

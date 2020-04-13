@@ -2,9 +2,23 @@
   <nav aria-label="nav" *ngIf="breadcrumbs" class="m-2">
     <ol class="breadcrumb" #olRef>
       <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs">
-        <a [routerLink]="" (click)="onSelect(bc);$event.stopPropagation()" *ngIf="!bc.isActive">{{bc.title}}</a>
-        <span *ngIf="bc.isActive">{{bc.title}}</span>
+        <ng-container *ngIf="!bc.isRoot">
+          <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
+        </ng-container>
+        <ng-container *ngIf="bc.isRoot">
+          <ng-container *ngTemplateOutlet="rootItemTemplate;context:{bcItem:bc}"></ng-container>
+        </ng-container>
       </li>
     </ol>
   </nav>
 </div>
+
+<ng-template #rootItemTemplate let-bc="bcItem">
+  <a [routerLink]="" (click)="onSelect(bc);$event.stopPropagation()" *ngIf="!bc.isActive" class="material-icons">home</a>
+  <span *ngIf="bc.isActive" class="material-icons">home</span>
+</ng-template>
+
+<ng-template #itemTemplate let-bc="bcItem">
+  <a [routerLink]="" (click)="onSelect(bc);$event.stopPropagation()" *ngIf="!bc.isActive">{{bc.title}}</a>
+  <span *ngIf="bc.isActive">{{bc.title}}</span>
+</ng-template>

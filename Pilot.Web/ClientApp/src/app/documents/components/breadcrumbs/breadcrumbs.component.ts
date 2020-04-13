@@ -168,6 +168,7 @@ export class BreadcrumbNode implements INode {
     this.parentId = source.parentId;
     this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
     this.source = source;
+    this.isRoot = source.id === "00000001-0001-0001-0001-000000000001";
   }
 
   id: string;
@@ -177,4 +178,5 @@ export class BreadcrumbNode implements INode {
   isSource: boolean;
   isDocument: boolean;
   isChecked: boolean;
+  isRoot: boolean;
 }
