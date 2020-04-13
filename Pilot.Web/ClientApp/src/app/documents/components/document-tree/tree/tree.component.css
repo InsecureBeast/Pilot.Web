@@ -4,10 +4,6 @@
   cursor: pointer
 }
 
-.list-group-item {
-  cursor: pointer
-}
-
 .tree-view-item {
   cursor: pointer;
   padding: 5px;

@@ -5,7 +5,7 @@
 </div>
 
 <div class="pb-5" *ngIf="nodeStyle === 0; else gridViewNodeTemplate">
-  <ul class="list-group list-group-flush" *ngIf="!isLoading && nodes">
+  <ul class="list-group pr-3 pl-3" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
         (click)="checked(node, $event);$event.stopPropagation();"
