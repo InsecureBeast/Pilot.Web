@@ -125,7 +125,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.navigationService.navigateToFile(node.id);
+        this.navigationService.navigateToFile(node.id, this.activatedRoute);
       } else {
         this.navigationService.navigateToDocument(node.id, this.activatedRoute);
       }

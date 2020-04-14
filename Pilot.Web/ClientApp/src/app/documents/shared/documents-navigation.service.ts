@@ -14,8 +14,8 @@ export class DocumentsNavigationService {
     this.router.navigate(['./document/' + documentId], { relativeTo: activatedRoute });
   }
 
-  navigateToFile(fileId: string): void {
-    this.router.navigate(['./file/' + fileId], { relativeTo: this.activatedRoute });
+  navigateToFile(fileId: string, activatedRoute: ActivatedRoute): void {
+    this.router.navigate(['./file/' + fileId], { relativeTo: activatedRoute });
   }
 
   navigateToDocumentsFolder(folderId: string): void {

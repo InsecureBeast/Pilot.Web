@@ -45,11 +45,11 @@
       <div class="card text-center"
            [class.list-group-item-primary]="node.isChecked"
            (click)="checked(node, $event);$event.stopPropagation();">
-        <div class="" *ngIf="!node.preview">
+        <div class="overflow-hidden bg-white card-img" *ngIf="!node.preview">
           <img id="icon" [src]="node.icon" class="card-icon-center" alt="<no image>">
         </div>
 
-        <div class="overflow-hidden bg-white" *ngIf="node.preview">
+        <div class="overflow-hidden bg-white card-img" *ngIf="node.preview">
           <img id="image" [src]="node.preview" class="card-img-center" alt="<no image>">
         </div>
         <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>

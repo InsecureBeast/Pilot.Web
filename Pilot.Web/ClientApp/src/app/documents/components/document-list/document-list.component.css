@@ -11,11 +11,15 @@
 }
 
 .card-img-center {
-  height: 100%;
+  max-height: 100%;
+}
+
+.card-img {
+  min-height: 10rem;
 }
 
 .card-icon-center {
-  height: 10rem;
+  height: 100%;
   margin-top: 10px;
 }
 
