@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 
 import { Subscription, Subject } from 'rxjs';
 
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { DownloadService } from '../../../core/download.service';
+import { DocumentsService } from '../../shared/documents.service';
 import { INode } from '../../shared/node.interface';
-
 
 @Component({
     selector: 'app-documents-toolbar',
@@ -25,7 +25,8 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
 
   /** documents-toolbar ctor */
   constructor(private readonly nodeStyleService: NodeStyleService,
-    private readonly downloadService: DownloadService) {
+    private readonly downloadService: DownloadService,
+    private readonly documentsService: DocumentsService) {
 
   }
 
@@ -84,5 +85,10 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
       return false;
 
     return this.checkedNodes[0].isDocument;
+  }
+
+  clearChecked(): void {
+    this.documentsService.changeClearChecked(true);
+    this.checkedNodes = new Array();
   }
 }

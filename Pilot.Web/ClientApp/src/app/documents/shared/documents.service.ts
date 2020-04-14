@@ -7,10 +7,10 @@ import { INode } from './node.interface';
 export class DocumentsService {
 
   private documentSubject = new BehaviorSubject<INode>(null);
-
-
+  private clearCheckedSubject = new BehaviorSubject<boolean>(false);
 
   document$ = this.documentSubject.asObservable();
+  clearChecked = this.clearCheckedSubject.asObservable();
 
   constructor() {
 
@@ -20,10 +20,6 @@ export class DocumentsService {
     this.documentSubject.next(document);
   }
 
-
-  //[document] = "node"
-  //  [selectedVersion] = "selectedVersion"
-  //  (onClose) = "closeDocument();"
-  //  (onPreviousDocument) = "previousDocument($event)"
-  //  (onNextDocument) = "nextDocument($event)" > </app-document>
-}
+  changeClearChecked(value: boolean): void {
+    this.clearCheckedSubject.next(value);
+  }}

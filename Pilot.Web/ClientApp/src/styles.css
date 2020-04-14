@@ -5,6 +5,10 @@ html, body {
   background-color: #f5f6fc;
 }
 
+/*.text-muted {
+  color: #939ac0 !important;
+}*/
+
 .content-center {
   position: absolute;
   left: 50%;

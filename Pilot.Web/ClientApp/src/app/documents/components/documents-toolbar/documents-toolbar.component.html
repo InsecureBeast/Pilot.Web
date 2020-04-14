@@ -12,6 +12,12 @@
   </ul>
 
   <ul class="navbar-nav">
+    <li class="nav-item nav-item-button" (click)="clearChecked()" *ngIf="isNodeChecked()">
+      <span class="navbar-text toolbar-text hidden-phone" translate="itemsSelected"></span>
+      <span class="navbar-text toolbar-text">{{checkedNodes.length}}</span>
+      <span class="navbar-text toolbar-text material-icons nav-icon">clear</span>
+    </li>
+
     <li class="nav-item nav-item-button" (click)="changeStyle(0)" *ngIf="nodeStyle === 1">
       <span class="navbar-text toolbar-text material-icons nav-icon">view_list</span>
     </li>

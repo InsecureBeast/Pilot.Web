@@ -30,5 +30,6 @@
   "versions": "Версии",
   "version": "Версия",
   "outdatedVersionFrom": "Неактуальная версия от",
-  "goToCurrentVersion": "Перейти к актуальной версии"
+  "goToCurrentVersion": "Перейти к актуальной версии",
+  "itemsSelected": "Выбрано элементов:"
 }

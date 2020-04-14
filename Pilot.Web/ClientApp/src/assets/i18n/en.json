@@ -30,5 +30,6 @@
   "versions": "Versions",
   "version": "Version",
   "outdatedVersionFrom": "Outdated version from",
-  "goToCurrentVersion": "Go to the current version"
+  "goToCurrentVersion": "Go to the current version",
+  "itemsSelected": "Items selected:" 
 }

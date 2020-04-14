@@ -12,6 +12,7 @@ import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
 import { DownloadService } from '../../../core/download.service';
+import { DocumentsService } from '../../shared/documents.service';
 
 @Component({
     selector: 'app-document-list',
@@ -22,6 +23,7 @@ import { DownloadService } from '../../../core/download.service';
 export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
   private nodeStyleServiceSubscription: Subscription;
+  private checkedNodesSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
 
   @Input() parent: ObjectNode;
@@ -42,7 +44,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
     private readonly downloadService: DownloadService,
     private readonly nodeStyleService: NodeStyleService,
     private readonly typeIconService: TypeIconService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private readonly documentsService: DocumentsService) {
 
   }
 
@@ -66,7 +69,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   ngOnInit(): void {
-
+    this.checkedNodesSubscription = this.documentsService.clearChecked.subscribe(v => {
+      if (v)
+        this.clearChecked();
+    });
   }
 
   ngOnDestroy(): void {
@@ -79,16 +85,18 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
       // This completes the subject properly.
       this.ngUnsubscribe.complete();
     }
+
+    this.checkedNodesSubscription.unsubscribe();
   }
 
   selected(item: ObjectNode): void {
-    this.clearSelection();
+    this.clearChecked();
     this.onSelected.emit(item);
   }
 
   checked(node: ObjectNode, event: MouseEvent): void {
     if (!event.ctrlKey) {
-      this.clearSelection();
+      this.clearChecked();
     }
 
     node.isChecked = !node.isChecked;
@@ -104,6 +112,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
 
     const checked = this.nodes.filter(n => n.isChecked);
     this.onChecked.emit(checked);
+
+    if (checked.length === 0)
+      this.isAnyItemChecked = false;
   }
 
   downloadDocument(node: ObjectNode) {
@@ -150,7 +161,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
     }
   }
 
-  private clearSelection(): void {
+  private clearChecked(): void {
     for (let node of this.nodes) {
       node.isChecked = false;
     }
