@@ -13,7 +13,7 @@
 
       <div class="d-flex">
 
-        <div class="mt-1 mr-2">
+        <div class="mr-2">
           <img id="image" [src]="node.icon" width="36" *ngIf="node.icon != null">
         </div>
 
@@ -49,7 +49,7 @@
           <img id="icon" [src]="node.icon" class="card-icon-center" alt="<no image>">
         </div>
 
-        <div class="overflow-hidden" *ngIf="node.preview">
+        <div class="overflow-hidden bg-white" *ngIf="node.preview">
           <img id="image" [src]="node.preview" class="card-img-center" alt="<no image>">
         </div>
         <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>
