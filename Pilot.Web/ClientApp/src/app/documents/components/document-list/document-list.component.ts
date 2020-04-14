@@ -34,6 +34,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   nodeStyle: NodeStyle;
   nodes: ObjectNode[];
   isLoading: boolean;
+  isAnyItemChecked: boolean;
 
   /** documents-list ctor */
   constructor(
@@ -81,18 +82,25 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   }
 
   selected(item: ObjectNode): void {
+    this.clearSelection();
     this.onSelected.emit(item);
   }
 
   checked(node: ObjectNode, event: MouseEvent): void {
-
     if (!event.ctrlKey) {
-      for (let node of this.nodes) {
-        node.isChecked = false;
-      }
+      this.clearSelection();
     }
 
     node.isChecked = !node.isChecked;
+    this.isAnyItemChecked = true;
+
+    const checked = this.nodes.filter(n => n.isChecked);
+    this.onChecked.emit(checked);
+  }
+
+  addChecked(node: ObjectNode): void {
+    node.isChecked = !node.isChecked;
+    this.isAnyItemChecked = true;
 
     const checked = this.nodes.filter(n => n.isChecked);
     this.onChecked.emit(checked);
@@ -140,5 +148,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
       if (node.isDocument)
         this.documents.push(node);
     }
+  }
+
+  private clearSelection(): void {
+    for (let node of this.nodes) {
+      node.isChecked = false;
+    }
+
+    this.isAnyItemChecked = false;
   }
 }

@@ -8,13 +8,18 @@
   <ul class="list-group pr-3 pl-3" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
-        (click)="checked(node, $event);$event.stopPropagation();"
+        (click)="checked(node, $event)"
         *ngFor="let node of nodes">
 
       <div class="d-flex">
 
+        <div class="mr-2 pointer" *ngIf="isAnyItemChecked" (click)="addChecked(node); $event.stopPropagation();">
+          <span class="material-icons mt-1 text-muted" *ngIf="!node.isChecked">radio_button_unchecked</span>
+          <span class="material-icons mt-1 text-muted" *ngIf="node.isChecked">check_circle</span>
+        </div>
+
         <div class="mr-2">
-          <img id="image" [src]="node.icon" width="36" *ngIf="node.icon != null">
+          <img [src]="node.icon" width="36" *ngIf="node.icon != null" alt="type icon">
         </div>
 
         <div class="mr-auto">
@@ -52,7 +57,14 @@
         <div class="overflow-hidden bg-white card-img" *ngIf="node.preview">
           <img id="image" [src]="node.preview" class="card-img-center" alt="<no image>">
         </div>
+
+        <div class="card-checker" *ngIf="isAnyItemChecked" (click)="addChecked(node); $event.stopPropagation();">
+          <span class="material-icons mt-1 text-muted" *ngIf="!node.isChecked">radio_button_unchecked</span>
+          <span class="material-icons mt-1 text-muted" *ngIf="node.isChecked">check_circle</span>
+        </div>
+
         <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>
+
         <div class="card-body" (click)="selected(node);$event.stopPropagation();">
           <div class="text-center pointer">
             <div class="card-name">{{ node.title }}</div>

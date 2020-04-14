@@ -1,9 +1,9 @@
 
 .list-group-item {
-  /*cursor: pointer;*/
   line-height: 1.0;
-  /*margin-bottom: .5rem;
-  border: 0;
+  padding-left: .7rem;
+  padding-right: .7rem;
+  /*border: 0;
   border-bottom-left-radius: .25rem;
   border-bottom-right-radius: .25rem;
   border-top-left-radius: .25rem;
@@ -45,6 +45,13 @@
   top: 0.1rem;
   right: 0.5rem;
   font-size: 80%
+}
+
+.card-checker {
+  top: 0;
+  position: absolute;
+  margin-left: .25rem;
+  cursor: pointer;
 }
 
 .item-button {
