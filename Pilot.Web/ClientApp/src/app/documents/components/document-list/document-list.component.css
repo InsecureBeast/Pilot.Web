@@ -19,7 +19,7 @@
 }
 
 .card-icon-center {
-  height: 100%;
+  height: 80%;
   margin-top: 10px;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .card-body {
-  padding: 0.85rem;
+  padding: 0.5rem;
 }
 
 .card-children-count {

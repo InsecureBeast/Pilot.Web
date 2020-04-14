@@ -81,6 +81,8 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isDocumentChecked(): boolean {
+    if (!this.checkedNodes)
+      return false;
     if (this.checkedNodes.length !== 1)
       return false;
 
