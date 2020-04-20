@@ -60,6 +60,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
     // or get item from changes
     this.init(this.parent);
+  }
+
+  ngOnInit(): void {
+    this.checkedNodesSubscription = this.documentsService.clearChecked.subscribe(v => {
+      if (v)
+        this.clearChecked();
+    });
 
     this.nodeStyleServiceSubscription = this.nodeStyleService.getNodeStyle().subscribe(value => {
       this.nodeStyle = value;
@@ -70,13 +77,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       for (let node of this.nodes) {
         node.loadPreview();
       }
-    });
-  }
-
-  ngOnInit(): void {
-    this.checkedNodesSubscription = this.documentsService.clearChecked.subscribe(v => {
-      if (v)
-        this.clearChecked();
     });
   }
 
@@ -143,6 +143,11 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     let type = ChildrenType.ListView;
     if (isSource)
       type = ChildrenType.Storage;
+
+    if (this.ngUnsubscribe) {
+      // This aborts all HTTP requests.
+      this.ngUnsubscribe.next();
+    }
 
     this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
       .then(nodes => {
