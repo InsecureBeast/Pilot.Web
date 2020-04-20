@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, ElementRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NavigationStart, Router } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,6 +26,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
+  private routerSubscription: Subscription;
+  private isPopBack: boolean;
 
   @Input() parent: ObjectNode;
   @Input() documents: Array<INode>;
@@ -47,6 +50,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private readonly nodeStyleService: NodeStyleService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
+    private readonly router: Router,
     private readonly documentsService: DocumentsService,
     public element: ElementRef) {
 
@@ -56,10 +60,15 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (!this.parent)
       return;
 
-    this.isLoaded = false;
-
+    if (this.isPopBack)
+      return;
+    
     // or get item from changes
     this.init(this.parent);
+  }
+
+  ngOnInit(): void {
+    this.isPopBack = false;
 
     this.nodeStyleServiceSubscription = this.nodeStyleService.getNodeStyle().subscribe(value => {
       this.nodeStyle = value;
@@ -71,12 +80,26 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         node.loadPreview();
       }
     });
-  }
 
-  ngOnInit(): void {
     this.checkedNodesSubscription = this.documentsService.clearChecked.subscribe(v => {
       if (v)
         this.clearChecked();
+    });
+
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      // close your modal here
+      if (event instanceof NavigationStart) {
+        const startEvent = <NavigationStart>event;
+        if (startEvent.navigationTrigger === 'popstate') {
+          this.isPopBack = true;
+          this.loadNodesPopBack();
+          
+        }
+        if (startEvent.navigationTrigger === 'imperative') {
+          this.isPopBack = false;
+        }
+      }
+
     });
   }
 
@@ -98,7 +121,11 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       this.ngUnsubscribe.complete();
     }
 
-    this.checkedNodesSubscription.unsubscribe();
+    if (this.checkedNodesSubscription)
+      this.checkedNodesSubscription.unsubscribe();
+
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
   }
 
   selected(item: ObjectNode): void {
@@ -150,6 +177,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.addNodes(nodes, isSource);
         this.isLoaded = true;
         this.onChecked.emit(null);
+        this.documentsService.saveNodes(id, this.nodes);
       })
       .catch(e => {
         this.onError.emit(e);
@@ -180,5 +208,25 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
 
     this.isAnyItemChecked = false;
+  }
+
+  private loadNodesPopBack(): void {
+    this.isLoaded = false;
+    const nodes = this.documentsService.getNodes(this.parent.parentId);
+    if (nodes != null) {
+      this.documents = new Array();
+      this.nodes = new Array();
+      for (const node of nodes) {
+        this.nodes.push(node);
+
+        if (!this.documents)
+          continue;;
+
+        if (node.isDocument)
+          this.documents.push(node);
+      }
+
+      this.isLoaded = true;
+    }
   }
 }

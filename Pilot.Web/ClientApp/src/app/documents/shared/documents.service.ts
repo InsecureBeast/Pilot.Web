@@ -2,6 +2,7 @@ import { Injectable, ElementRef } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import { INode } from './node.interface';
+import { ObjectNode } from './object.node';
 
 @Injectable({ providedIn: 'root'})
 export class DocumentsService {
@@ -9,12 +10,14 @@ export class DocumentsService {
   private documentSubject = new BehaviorSubject<INode>(null);
   private clearCheckedSubject = new BehaviorSubject<boolean>(false);
   private readonly scrollPositions: KeyedCollection<number>;
+  private readonly cacheNodes: KeyedCollection<ObjectNode[]>;
 
   document$ = this.documentSubject.asObservable();
   clearChecked = this.clearCheckedSubject.asObservable();
 
   constructor() {
     this.scrollPositions = new KeyedCollection<number>();
+    this.cacheNodes = new KeyedCollection<ObjectNode[]>();
   }
 
   changeDocument(document: INode): void {
@@ -33,6 +36,20 @@ export class DocumentsService {
   saveScrollPosition(node: INode, element: ElementRef): void {
     const pos = element.nativeElement.scrollTop;
     this.savePosition(node.source.parentId, pos);
+  }
+
+  saveNodes(key: string, nodes: ObjectNode[]): void {
+    if (this.cacheNodes.containsKey(key))
+      this.cacheNodes.remove(key);
+
+    this.cacheNodes.add(key, nodes);
+  }
+
+  getNodes(key: string): ObjectNode[] {
+    if (this.cacheNodes.containsKey(key))
+      return this.cacheNodes.remove(key);
+
+    return null;
   }
 
   private savePosition(key: string, pos: number): void {
