@@ -3,14 +3,15 @@
                          [checkedNodes]="checked">
   </app-documents-toolbar>
 
-  <div class="col-12 overflow-auto h-100 p-0 bg-content">
+  <div #documentsView class="col-12 overflow-auto h-100 p-0 bg-content">
     <app-breadcrumbs [parent]="currentItem"
                      (onSelected)="onItemSelected($event)">
     </app-breadcrumbs>
     <app-document-list [parent]="currentItem"
                        [documents]="documents"
                        (onSelected)="onItemSelected($event)"
-                       (onChecked)="onItemsChecked($event)">
+                       (onChecked)="onItemsChecked($event)"
+                       (onLoaded)="onListLoaded($event)">
     </app-document-list>
   </div>
 

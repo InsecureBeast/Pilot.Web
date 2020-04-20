@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, ElementRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Subscription, Subject } from 'rxjs';
@@ -20,7 +20,7 @@ import { DocumentsService } from '../../shared/documents.service';
     styleUrls: ['./document-list.component.css']
 })
 /** documents-list component*/
-export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
+export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
 
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
@@ -32,11 +32,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
   @Output() onChecked = new EventEmitter<ObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
+  @Output() onLoaded = new EventEmitter<INode>();
 
   nodeStyle: NodeStyle;
   nodes: ObjectNode[];
   isLoading: boolean;
   isAnyItemChecked: boolean;
+  isLoaded: boolean;
 
   /** documents-list ctor */
   constructor(
@@ -45,13 +47,16 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
     private readonly nodeStyleService: NodeStyleService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
-    private readonly documentsService: DocumentsService) {
+    private readonly documentsService: DocumentsService,
+    public element: ElementRef) {
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.parent)
       return;
+
+    this.isLoaded = false;
 
     // or get item from changes
     this.init(this.parent);
@@ -73,6 +78,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
       if (v)
         this.clearChecked();
     });
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.isLoaded) {
+      this.onLoaded.emit(this.parent);
+      this.isLoaded = false;
+    }
   }
 
   ngOnDestroy(): void {
@@ -136,6 +148,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges{
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
+        this.isLoaded = true;
         this.onChecked.emit(null);
       })
       .catch(e => {

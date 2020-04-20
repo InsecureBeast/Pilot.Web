@@ -4,10 +4,10 @@ import { Location } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsNavigationService {
+
   constructor(private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
     private readonly location: Location) {
-
   }
 
   navigateToDocument(documentId: string, activatedRoute: ActivatedRoute): void {
@@ -25,5 +25,4 @@ export class DocumentsNavigationService {
   navigateToFilesFolder(folderId: string): void {
     this.router.navigateByUrl('/files/' + folderId);
   }
-
 }

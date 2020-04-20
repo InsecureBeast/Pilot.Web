@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
 import { ModalService } from '../../../ui/modal/modal.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { DocumentsService } from '../../shared/documents.service';
 
 @Component({
     selector: 'app-documents',
@@ -27,6 +28,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
+  @ViewChild('documentsView') documentsView: ElementRef;
+  
   documents = new Array<INode>();
   checked = new Array<INode>();
   currentItem: ObjectNode;
@@ -45,7 +48,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly modalService: ModalService,
     private readonly location: Location,
-    private readonly navigationService: DocumentsNavigationService) {
+    private readonly navigationService: DocumentsNavigationService,
+    private readonly documentsService: DocumentsService) {
 
   }
 
@@ -119,7 +123,17 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
+  onListLoaded(node: INode): void {
+    if (this.node) {
+      if (this.node.id !== node.id) {
+        this.documentsService.restoreScrollPosition(node, this.documentsView);
+      }
+    }
+  }
+
   onItemSelected(node: INode): void {
+    this.documentsService.saveScrollPosition(node, this.documentsView);
+
     this.isDocument = node.isDocument;
     this.node = node;
 
