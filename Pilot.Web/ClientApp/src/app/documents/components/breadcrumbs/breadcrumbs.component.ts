@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { IObject } from '../../../core/data/data.classes';
@@ -8,6 +8,7 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
 import { RepositoryService } from '../../../core/repository.service';
 import { INode } from '../../shared/node.interface';
+import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -19,6 +20,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   
   private ol: ElementRef;
   private breadcrumbsCountSource = new BehaviorSubject<number>(2);
+  private nodeStyleSubscription: Subscription;
+
   private ngUnsubscribe = new Subject<void>();
   private allBreadcrumbNodes: BreadcrumbNode[];
 
@@ -38,19 +41,24 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   breadcrumbs: BreadcrumbNode[];
   hiddenBreadcrumbs: BreadcrumbNode[];
   itemWidth: number;
+  nodeStyle: NodeStyle;
 
   /** breadcrumbs ctor */
-  constructor(private repository: RepositoryService) {
+  constructor(private repository: RepositoryService,
+  private readonly nodeStyleService: NodeStyleService) {
 
   }
 
   ngOnInit(): void {
-    
+    this.nodeStyleSubscription = this.nodeStyleService.getNodeStyle().subscribe(style => {
+      this.nodeStyle = style;
+    });
   }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.nodeStyleSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -73,25 +81,17 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.onSelected.emit(bc);
   }
 
+  changeStyle(style: number): void {
+    if (style === 0)
+      this.nodeStyleService.setNodeStyle(NodeStyle.ListView);
+    if (style === 1)
+      this.nodeStyleService.setNodeStyle(NodeStyle.GridView);
+  }
+
   private init(item: ObjectNode) {
     if (!item)
       return;
 
-    //if (item.isDocument) {
-      
-    //  this.repository.getObjectAsync(item.parentId)
-    //    .then(source => {
-    //      var parent = new BreadcrumbNode(source, false);
-    //      this.loadBreadcrumbs(parent);
-    //    })
-    //    .catch(err => {
-
-    //    });
-
-    //  return;
-    //}
-
-    //this.currentItem = item;
     this.loadBreadcrumbs(item);
   }
 

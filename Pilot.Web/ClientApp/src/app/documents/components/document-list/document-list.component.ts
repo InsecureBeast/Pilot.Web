@@ -185,5 +185,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
 
     this.isAnyItemChecked = false;
+    this.onChecked.emit(null);
   }
 }

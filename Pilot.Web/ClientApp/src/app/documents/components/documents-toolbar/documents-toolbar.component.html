@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-light bg-toolbar border-bottom toolbar justify-content-between">
+<nav class="navbar fixed-top navbar-expand navbar-light bg-content justify-content-between">
   <ul class="navbar-nav">
     <li class="nav-item nav-item-button" (click)="download()" *ngIf="isDocumentChecked()">
       <span class="navbar-text toolbar-text nav-icon material-icons">file_download</span>
@@ -18,11 +18,11 @@
       <span class="navbar-text toolbar-text material-icons nav-icon">clear</span>
     </li>
 
-    <li class="nav-item nav-item-button" (click)="changeStyle(0)" *ngIf="nodeStyle === 1">
+    <!--<li class="nav-item nav-item-button" (click)="changeStyle(0)" *ngIf="nodeStyle === 1">
       <span class="navbar-text toolbar-text material-icons nav-icon">view_list</span>
     </li>
     <li class="nav-item nav-item-button" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
       <span class="navbar-text toolbar-text material-icons nav-icon">view_module</span>
-    </li>
+    </li>-->
   </ul>
 </nav>

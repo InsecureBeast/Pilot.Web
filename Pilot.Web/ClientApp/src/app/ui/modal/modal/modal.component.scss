@@ -13,10 +13,9 @@ pw-modal {
     bottom: 0;
     left: 0;
     /* z-index must be higher than .jw-modal-background */
-    z-index: 1000;
+    z-index: 1050;
     /* enables scrolling for tall modals */
     /*overflow: auto;*/
-
     .pw-modal-body {
       padding: 0px;
       /*background: #fff;*/
@@ -36,7 +35,8 @@ pw-modal {
     /*background-color: #f8f8f8;*/
     /*opacity: 0.85;*/
     /* z-index must be below .jw-modal and above everything else  */
-    z-index: 900;
+    /* must be higher than bootstrap fixed-top (1030)*/
+    z-index: 1040;
   }
 }
 

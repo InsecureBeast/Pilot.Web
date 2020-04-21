@@ -17,11 +17,7 @@ import { INode } from '../../shared/node.interface';
 export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
 
   //private ngUnsubscribe = new Subject<void>();
-  private nodeStyleSubscription: Subscription;
-
   @Input() checkedNodes: Array<INode>;
-
-  nodeStyle: NodeStyle;
 
   /** documents-toolbar ctor */
   constructor(private readonly nodeStyleService: NodeStyleService,
@@ -31,13 +27,11 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
-    this.nodeStyleSubscription = this.nodeStyleService.getNodeStyle().subscribe(style => {
-      this.nodeStyle = style;
-    });
+    
   }
 
   ngOnDestroy(): void {
-    this.nodeStyleSubscription.unsubscribe();
+    
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -53,12 +47,7 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
     //}
   }
 
-  changeStyle(style: number): void {
-    if (style === 0)
-      this.nodeStyleService.setNodeStyle(NodeStyle.ListView);
-    if (style === 1)
-      this.nodeStyleService.setNodeStyle(NodeStyle.GridView);
-  }
+  
 
   download(): void {
     if (!this.checkedNodes)

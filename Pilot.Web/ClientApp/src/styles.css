@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 html, body {
-  overflow: hidden;
+  /*overflow: hidden;*/
   height: 100%;
   background-color: #f5f6fc;
 }
@@ -27,7 +27,7 @@ html, body {
 }
 
 .h-calc {
-  height: calc(100vh - 55px)
+  /*height: calc(100vh - 55px)*/
 }
 
 .container-fluid {
@@ -50,16 +50,8 @@ html, body {
   cursor: pointer
 }
 
-.f-md {
-  font-size: 12px;
-}
-
-.f-sm {
-  font-size: 10px;
-}
-
-.f-lg {
-  font-size: 14px;
+.pt-6 {
+  padding-top: 4rem;
 }
 
 /* fallback */
@@ -84,5 +76,5 @@ html, body {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
-  margin-top: 1px;
+  /*margin-top: 1px;*/
 }
