@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -28,8 +28,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
-  @ViewChild('documentsView') documentsView: ElementRef;
-  
   documents = new Array<INode>();
   checked = new Array<INode>();
   currentItem: ObjectNode;
@@ -108,6 +106,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.modalService.close("document-modal");
+          this.documentsService.changeClearChecked(true);
         }
       }
 
@@ -126,13 +125,13 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onListLoaded(node: INode): void {
     if (this.node) {
       if (this.node.id !== node.id) {
-        this.documentsService.restoreScrollPosition(node, this.documentsView);
+        this.documentsService.restoreScrollPosition(node);
       }
     }
   }
 
   onItemSelected(node: INode): void {
-    this.documentsService.saveScrollPosition(node, this.documentsView);
+    this.documentsService.saveScrollPosition(node);
 
     this.isDocument = node.isDocument;
     this.node = node;

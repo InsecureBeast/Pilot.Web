@@ -28,7 +28,8 @@
         <div class="mr-auto">
           <div class="pointer"
                (click)="selected(node);$event.stopPropagation();">
-            <div class="middle-phone-text">{{ node.title }}</div>
+            <div class="middle-phone-text"
+                 [class.text-primary]="node.isChecked">{{ node.title }}</div>
             <small class="hidden-phone text-muted">{{node.type.title}}</small>
           </div>
         </div>
@@ -72,8 +73,7 @@
           <div class="text-center pointer">
             <div class="card-name"
                  [class.text-primary]="node.isChecked">{{ node.title }}</div>
-            <small [class.text-muted]="!node.isChecked"
-                   [class.text-primary]="node.isChecked">{{node.type.title}}</small>
+            <small class="text-muted">{{node.type.title}}</small>
           </div>
         </div>
       </div>

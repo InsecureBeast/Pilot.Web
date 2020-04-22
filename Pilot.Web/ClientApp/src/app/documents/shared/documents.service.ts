@@ -25,13 +25,13 @@ export class DocumentsService {
     this.clearCheckedSubject.next(value);
   }
 
-  restoreScrollPosition(node : INode, element: ElementRef): void {
+  restoreScrollPosition(node : INode): void {
     const pos = this.getPosition(node.id);
-    element.nativeElement.scrollTop = pos;
+    window.scrollTo(0, pos);
   }
 
-  saveScrollPosition(node: INode, element: ElementRef): void {
-    const pos = element.nativeElement.scrollTop;
+  saveScrollPosition(node: INode): void {
+    const pos = window.pageYOffset;
     this.savePosition(node.source.parentId, pos);
   }
 
