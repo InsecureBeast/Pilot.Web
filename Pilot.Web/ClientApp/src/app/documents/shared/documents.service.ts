@@ -32,7 +32,7 @@ export class DocumentsService {
 
   saveScrollPosition(node: INode): void {
     const pos = window.pageYOffset;
-    this.savePosition(node.source.parentId, pos);
+    this.savePosition(node.source.id, pos);
   }
 
   private savePosition(key: string, pos: number): void {
@@ -41,8 +41,7 @@ export class DocumentsService {
 
   private getPosition(key: string): number {
     if (this.scrollPositions.containsKey(key)) {
-      const value = this.scrollPositions.item(key);
-      //this.scrollPositions.remove(key);
+      const value = this.scrollPositions.remove(key);
       return value;
     }
 

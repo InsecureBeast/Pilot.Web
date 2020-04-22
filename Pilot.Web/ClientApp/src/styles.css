@@ -15,7 +15,7 @@ html, body {
 
 .bg-toolbar {
   background-color: #ffffff;
-  opacity: 0.95;
+  /*opacity: 0.95;*/
 }
 
 .bg-content {

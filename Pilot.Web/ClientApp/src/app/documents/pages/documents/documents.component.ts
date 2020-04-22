@@ -12,7 +12,6 @@ import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
-import { ModalService } from '../../../ui/modal/modal.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
 
@@ -44,7 +43,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
     private readonly router: Router,
-    private readonly modalService: ModalService,
     private readonly location: Location,
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService) {
@@ -86,7 +84,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
                 this.node = node;
                 this.isDocument = node.isDocument;
                 this.selectedVersion = selectedVersion;
-                this.modalService.open("document-modal");
               })
               .catch(err => {
                 this.error = err;
@@ -105,7 +102,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       if (event instanceof NavigationStart) {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
-          this.modalService.close("document-modal");
+          this.node = null;
+          this.isDocument = false;
           this.documentsService.changeClearChecked(true);
         }
       }
@@ -123,18 +121,13 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onListLoaded(node: INode): void {
-    if (this.node) {
-      if (this.node.id !== node.id) {
-        this.documentsService.restoreScrollPosition(node);
-      }
-    }
+    this.documentsService.restoreScrollPosition(this.currentItem);
   }
 
   onItemSelected(node: INode): void {
-    this.documentsService.saveScrollPosition(node);
-
     this.isDocument = node.isDocument;
     this.node = node;
+    this.documentsService.saveScrollPosition(this.currentItem);
 
     if (node.isDocument) {
       if (node.isSource) {
@@ -142,8 +135,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       } else {
         this.navigationService.navigateToDocument(node.id, this.activatedRoute);
       }
-
-      this.modalService.open("document-modal");
+      
       return;
     }
 
@@ -151,6 +143,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       this.navigationService.navigateToFilesFolder(node.id);
     else
       this.navigationService.navigateToDocumentsFolder(node.id);
+
   }
 
   onItemsChecked(nodes: INode[]): void {
@@ -158,7 +151,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   closeDocument() {
-    this.modalService.close("document-modal");
     this.location.replaceState('/documents/' + this.currentItem.id);
     this.location.back();
   }

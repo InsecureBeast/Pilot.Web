@@ -1,32 +1,47 @@
-<div class="row pt-6">
-
-  <app-documents-toolbar class="col-12 p-0"
-                         *ngIf="checked != null && checked.length > 0"
-                         [checkedNodes]="checked">
-  </app-documents-toolbar>
-
-
-  <div #documentsView class="col-12 p-0">
-    <app-breadcrumbs [parent]="currentItem"
-                     (onSelected)="onItemSelected($event)">
-    </app-breadcrumbs>
-    <app-document-list [parent]="currentItem"
-                       [documents]="documents"
-                       (onSelected)="onItemSelected($event)"
-                       (onChecked)="onItemsChecked($event)"
-                       (onLoaded)="onListLoaded($event)">
-    </app-document-list>
-  </div>
-
+<div *ngIf="!error">
+  <ng-container *ngIf="!isDocument else documentTemplate">
+    <ng-container *ngTemplateOutlet="documentsTemplate"></ng-container>
+  </ng-container>
+  <!--<div *ngIf="!error">
+    <div [class.d-none]="isDocument">
+      <ng-container *ngTemplateOutlet="documentsTemplate"></ng-container>
+    </div>
+    <div [class.d-none]="!isDocument">
+      <ng-container *ngTemplateOutlet="documentTemplate"></ng-container>
+    </div>
+  </div>-->
 </div>
 
 <app-error *ngIf="error" [response]="error"></app-error>
 
-<pw-modal id="document-modal">
-  <app-document
-    [document] ="node"
-    [selectedVersion]="selectedVersion"
-    (onClose)="closeDocument();"
-    (onPreviousDocument)="previousDocument($event)"
-    (onNextDocument)="nextDocument($event)"></app-document>
-</pw-modal>
+<ng-template #documentsTemplate >
+  <div class="row pt-6">
+
+    <app-documents-toolbar class="col-12 p-0"
+                           *ngIf="checked != null && checked.length > 0"
+                           [checkedNodes]="checked">
+    </app-documents-toolbar>
+
+
+    <div #documentsView class="col-12 p-0">
+      <app-breadcrumbs [parent]="currentItem"
+                       (onSelected)="onItemSelected($event)">
+      </app-breadcrumbs>
+      <app-document-list [parent]="currentItem"
+                         [documents]="documents"
+                         (onSelected)="onItemSelected($event)"
+                         (onChecked)="onItemsChecked($event)"
+                         (onLoaded)="onListLoaded($event)">
+      </app-document-list>
+    </div>
+
+  </div>
+</ng-template>
+
+<ng-template #documentTemplate>
+  <app-document [document]="node"
+                [selectedVersion]="selectedVersion"
+                (onClose)="closeDocument();"
+                (onPreviousDocument)="previousDocument($event)"
+                (onNextDocument)="nextDocument($event)"></app-document>
+</ng-template>
