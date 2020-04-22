@@ -70,3 +70,18 @@
     margin-top: 7px;
   }
 }
+
+.checker-img {
+  opacity: 0.2;
+}
+
+.checker {
+  font-size: 24px;
+}
+
+.checker-container {
+  position: absolute;
+  top: -0.01rem;
+  left: -0.01rem;
+  padding: 0.93rem;
+}

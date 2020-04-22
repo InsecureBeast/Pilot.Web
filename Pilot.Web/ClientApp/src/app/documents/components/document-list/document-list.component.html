@@ -13,13 +13,16 @@
 
       <div class="d-flex">
 
-        <div class="mr-2 pointer" *ngIf="isAnyItemChecked" (click)="addChecked(node); $event.stopPropagation();">
-          <span class="material-icons mt-1 text-muted" *ngIf="!node.isChecked">radio_button_unchecked</span>
-          <span class="material-icons mt-1 text-muted" *ngIf="node.isChecked">check_circle</span>
+        <div class="mr-2"
+             [class.checker-img]="isAnyItemChecked">
+          <img [src]="node.icon" width="36" *ngIf="node.icon != null" alt="type icon">
         </div>
 
-        <div class="mr-2">
-          <img [src]="node.icon" width="36" *ngIf="node.icon != null" alt="type icon">
+        <div class="mr-2 pointer checker-container"
+             *ngIf="isAnyItemChecked"
+             (click)="addChecked(node); $event.stopPropagation();">
+          <span class="material-icons mt-1 checker" style="color: transparent" *ngIf="!node.isChecked">radio_button_unchecked</span>
+          <span class="material-icons mt-1 text-primary checker" *ngIf="node.isChecked">check_circle</span>
         </div>
 
         <div class="mr-auto">
@@ -60,15 +63,17 @@
 
         <div class="card-checker" *ngIf="isAnyItemChecked" (click)="addChecked(node); $event.stopPropagation();">
           <span class="material-icons mt-1 text-muted" *ngIf="!node.isChecked">radio_button_unchecked</span>
-          <span class="material-icons mt-1 text-muted" *ngIf="node.isChecked">check_circle</span>
+          <span class="material-icons mt-1 text-primary" *ngIf="node.isChecked">check_circle</span>
         </div>
 
         <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>
 
         <div class="card-body" (click)="selected(node);$event.stopPropagation();">
           <div class="text-center pointer">
-            <div class="card-name">{{ node.title }}</div>
-            <small class="text-muted">{{node.type.title}}</small>
+            <div class="card-name"
+                 [class.text-primary]="node.isChecked">{{ node.title }}</div>
+            <small [class.text-muted]="!node.isChecked"
+                   [class.text-primary]="node.isChecked">{{node.type.title}}</small>
           </div>
         </div>
       </div>
