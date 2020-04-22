@@ -18,12 +18,18 @@
 
 @media screen and (max-width: 576px) {
   .toolbar-text {
-    max-width: 250px;
+    max-width: 220px;
   }
 }
 
 @media screen and (max-width: 450px) {
   .toolbar-text {
-    max-width: 150px;
+    max-width: 120px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .toolbar-text {
+    max-width: 80px;
   }
 }

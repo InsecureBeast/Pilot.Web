@@ -10,7 +10,7 @@ html, body {
 }*/
 
 .content-center {
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 50%;
   -ms-transform: translate(-50%,-50%);
@@ -20,6 +20,7 @@ html, body {
 
 .bg-toolbar {
   background-color: #ffffff;
+  opacity: 0.95;
 }
 
 .bg-content {
