@@ -5,11 +5,6 @@ img.doc-page {
   max-width: 90%;
 }
 
-.document-view {
-  height: calc(100vh - 2.5rem);
-  margin-top: 2.5rem;
-}
-
 .vertical-center {
   position: absolute;
   margin-top: auto;
@@ -19,31 +14,23 @@ img.doc-page {
 .doc-info {
   background: white;
   border-left: 1px solid rgb(222, 226, 230);
-  height: calc(100vh - 2.5rem);
 }
 
-.pages {
-  height: calc(100vh - 2.5rem);
-}
-  .pages.info-open {
-    height: calc(100vh - 2.5rem);
-  }
-
-.h-calc {
-  height: calc(100vh - 2.5rem);
+.versions-view {
+  position: fixed;
+  right: 0;
+  top: 3rem;
+  bottom: 0;
 }
 
 @media (max-width: 767px) {
-  .pages {
-    height: calc(100vh - 2.5rem);
+  .doc-info {
+    /*height: 30vh;*/
+    border-top: 1px solid rgb(222, 226, 230);
   }
 
-    .pages.info-open {
-      height: calc(70vh - 2.5rem);
-    }
-
-  .doc-info {
-    height: 30vh;
-    border-top: 1px solid rgb(222, 226, 230);
+  .versions-view {
+    top: unset;
+    left: 0;
   }
 }

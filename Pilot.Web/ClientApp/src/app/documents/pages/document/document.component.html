@@ -5,9 +5,9 @@
                       (onShowVersions)="showDocumentVersions($event)">
 </app-document-toolbar>
 
-<div class="document-view">
-  <div class="row m-0 bg-content">
-    <div class="overflow-auto pages col-12 p-0 pb-5"
+<div class="pt-6">
+  <div class="row m-0">
+    <div class="pages col-12 p-0 pb-5"
          [class.col-md-8]="isInfoShown"
          [class.info-open]="isInfoShown">
 
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-4 doc-info overflow-auto" *ngIf="isInfoShown">
+    <div class="versions-view col-12 col-md-4 doc-info overflow-auto" *ngIf="isInfoShown">
       <app-document-versions [document]="document"></app-document-versions>
     </div>
   </div>
