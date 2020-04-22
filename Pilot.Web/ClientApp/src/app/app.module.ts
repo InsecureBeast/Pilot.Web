@@ -9,9 +9,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { AuthGuard } from './auth/auth.guard';
 
 import { ErrorModule } from './ui/error/error.module';
@@ -31,9 +29,7 @@ export function createTranslateLoader(http: HttpClient) {
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
     CounterComponent,
-    FetchDataComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -44,8 +40,6 @@ export function createTranslateLoader(http: HttpClient) {
     ModalModule,
     RouterModule.forRoot([
       { path: '', component: DocumentsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'counter', component: CounterComponent, canActivate: [AuthGuard]},
-      { path: 'fetch-data', component: FetchDataComponent, pathMatch: 'prefix', canActivate: [AuthGuard] },
       { path: 'login', component: AuthComponent },
 
       // otherwise redirect to home
