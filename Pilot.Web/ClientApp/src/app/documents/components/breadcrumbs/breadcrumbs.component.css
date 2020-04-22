@@ -1,11 +1,8 @@
-.m--17px {
-  margin: -17px;
-}
-
 .breadcrumb {
   background-color: transparent;
   margin: 0;
   padding: 0;
+  height: 24px;
 }
 
 .breadcrumb-item {
@@ -36,21 +33,32 @@ li.breadcrumb-item a {
     text-decoration: none;
   }
 
-@media (max-width: 350px) {
+@media (max-width: 765px) {
   .breadcrumb-item {
-    max-width: 120px;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 600px) {
+  .breadcrumb-item {
+    max-width: 210px;
   }
 }
 
 @media (max-width: 500px) {
   .breadcrumb-item {
-    max-width: 150px;
+    max-width: 170px;
   }
 }
 
-@media (max-width: 765px) {
+@media (max-width: 400px) {
   .breadcrumb-item {
-    max-width: 250px;
+    max-width: 145px;
   }
 }
 
+@media (max-width: 350px) {
+  .breadcrumb-item {
+    max-width: 135px;
+  }
+}

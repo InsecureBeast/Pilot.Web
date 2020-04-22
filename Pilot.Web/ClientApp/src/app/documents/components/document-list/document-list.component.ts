@@ -180,8 +180,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   private clearChecked(): void {
-    for (let node of this.nodes) {
-      node.isChecked = false;
+    if (this.nodes) {
+      for (let node of this.nodes) {
+        node.isChecked = false;
+      }
     }
 
     this.isAnyItemChecked = false;
