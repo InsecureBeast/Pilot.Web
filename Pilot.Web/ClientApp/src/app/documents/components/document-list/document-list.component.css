@@ -15,7 +15,7 @@
 }
 
 .card-img {
-  min-height: 10rem;
+  min-height: 8rem;
 }
 
 .card-icon-center {
@@ -31,7 +31,7 @@
 }
 
 .card {
-  height: 15rem;
+  height: 13rem;
   overflow: hidden;
   /*border: 0;*/
 }
