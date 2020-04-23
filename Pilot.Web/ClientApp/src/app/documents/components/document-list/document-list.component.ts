@@ -6,12 +6,12 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RepositoryService } from '../../../core/repository.service';
-import { ObjectNode } from "../../shared/object.node";
+import { ObjectNode, EmptyObjectNode } from "../../shared/object.node";
 import { ChildrenType } from '../../../core/data/children.types';
 import { IObject } from '../../../core/data/data.classes';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
-import { INode } from '../../shared/node.interface';
+import { INode, IObjectNode } from '../../shared/node.interface';
 import { DownloadService } from '../../../core/download.service';
 import { DocumentsService } from '../../shared/documents.service';
 
@@ -30,13 +30,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   @Input() parent: ObjectNode;
   @Input() documents: Array<INode>;
 
-  @Output() onChecked = new EventEmitter<ObjectNode[]>();
+  @Output() onChecked = new EventEmitter<IObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
   @Output() onLoaded = new EventEmitter<INode>();
 
   nodeStyle: NodeStyle;
-  nodes: ObjectNode[];
+  nodes: IObjectNode[];
   isLoading: boolean;
   isAnyItemChecked: boolean;
   isLoaded: boolean;
@@ -114,12 +114,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.cancelAllRequests(true);
   }
 
-  selected(item: ObjectNode): void {
+  selected(item: IObjectNode): void {
     this.clearChecked();
     this.onSelected.emit(item);
   }
 
-  checked(node: ObjectNode, event: MouseEvent): void {
+  checked(node: IObjectNode, event: MouseEvent): void {
     if (!event.ctrlKey) {
       this.clearChecked();
     }
@@ -131,7 +131,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.onChecked.emit(checked);
   }
 
-  addChecked(node: ObjectNode): void {
+  addChecked(node: IObjectNode): void {
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
 
@@ -142,18 +142,22 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       this.isAnyItemChecked = false;
   }
 
-  downloadDocument(node: ObjectNode) {
+  downloadDocument(node: IObjectNode) {
     this.downloadService.downloadFile(node.source);
   }
 
-  private init(item: ObjectNode) {
+  private init(item: IObjectNode) {
     this.nodes = null;
-    this.isLoading = true;
+    //this.isLoading = true;
+    this.nodes = new Array();
+    for (let i = 0; i < item.children.length; i++) {
+      this.nodes.push(new EmptyObjectNode());
+    }
+
     this.loadChildren(item.id, item.isSource);
   }
 
   private loadChildren(id: string, isSource: boolean) {
-
     let type = ChildrenType.ListView;
     if (isSource)
       type = ChildrenType.Storage;

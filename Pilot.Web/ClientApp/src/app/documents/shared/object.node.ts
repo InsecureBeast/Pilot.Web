@@ -1,14 +1,15 @@
 import { SafeUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { IObject, IType, IChild, IPerson } from '../../core/data/data.classes';
+import { EmptyObject } from '../../core/data/empty-data.classes';
 import { TypeExtensions } from '../../core/tools/type.extensions';
 import { TypeIconService } from '../../core/type-icon.service';
 import { ImagesService } from '../../core/tools/images.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Tools } from '../../core/tools/tools';
-import { INode } from './node.interface';
+import { IObjectNode } from './node.interface';
 
-export class ObjectNode implements INode {
+export class ObjectNode implements IObjectNode {
 
   constructor(
     readonly source: IObject,
@@ -99,5 +100,24 @@ export class ObjectNode implements INode {
       return false;
 
     return type.hasFiles;
+  }
+}
+
+export class EmptyObjectNode implements IObjectNode {
+
+  constructor() {
+    this.source = new EmptyObject();
+    this.children = this.source.children;
+  }
+
+  id: string;
+  isDocument: boolean;
+  source: IObject;
+  isSource: boolean;
+  isChecked: boolean;
+  children: IChild[];
+
+  loadPreview(): void {
+    // do nothing
   }
 }

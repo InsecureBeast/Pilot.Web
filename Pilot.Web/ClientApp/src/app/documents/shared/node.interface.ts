@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IObject } from '../../core/data/data.classes';
+import { IObject, IChild } from '../../core/data/data.classes';
 
 export interface INode {
 
@@ -8,4 +8,10 @@ export interface INode {
   source: IObject;
   isSource: boolean;
   isChecked: boolean;
+}
+
+export interface IObjectNode extends INode {
+
+  loadPreview(): void;
+  children: IChild[];
 }

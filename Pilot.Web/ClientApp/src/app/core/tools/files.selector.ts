@@ -4,6 +4,8 @@ import { FileNames } from "../data/file.names";
 export class FilesSelector {
 
   static getSourceFile(files: IFile[]): IFile {
+    if (!files)
+      return null;
     for (let file of files) {
       if (!this.isThumbnailFile(file))
         return file;
