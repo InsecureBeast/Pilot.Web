@@ -12,12 +12,9 @@
           <li class="nav-item" [routerLinkActive]='["link-active"]'>
             <a class="nav-link" [routerLink]='["/documents", documentRootId]' translate="documents"></a>
           </li>
-          <!--<li class="nav-item" [routerLinkActive]='["link-active"]'>
-            <a class="nav-link" [routerLink]='["/counter"]'>Counter</a>
-          </li>
           <li class="nav-item" [routerLinkActive]='["link-active"]'>
-            <a class="nav-link" [routerLink]='["/fetch-data"]'>Fetch data</a>
-          </li>-->
+            <a class="nav-link" [routerLink]='["/tasks"]' translate="tasks"></a>
+          </li>
           <li class="nav-item" [routerLinkActive]='["link-active"]' *ngIf="isLoggedIn$ | async">
             <a class="nav-link" href="/" (click)="onLogout($event)" translate="signOut"></a>
           </li>

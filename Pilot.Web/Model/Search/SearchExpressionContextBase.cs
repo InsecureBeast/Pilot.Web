@@ -411,8 +411,10 @@ namespace Pilot.Web.Model.Search
                 buildItemsForElement: attributeTypePair =>
                 {
                     var stateMachineId = attributeTypePair.Item1.ParsedConfiguration().StateMachineId;
+                    if (stateMachineId == null)
+                        return new Dictionary<string, UserStateSearchItem>();
 
-                    var stateMachine = _context.GetStateMachine(stateMachineId);
+                    var stateMachine = _context.GetStateMachine((Guid)stateMachineId);
 
                     var presetItems = stateMachine.StateTransitions
                         .Select(state => _context.GetUserState(state.Key))

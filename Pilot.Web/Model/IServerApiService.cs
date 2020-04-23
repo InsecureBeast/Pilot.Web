@@ -155,7 +155,7 @@ namespace Pilot.Web.Model
         {
             CheckApi();
             var settingsProvider = new CommonSettingsProvider(_serverApi, _currentPerson);
-            return settingsProvider.GetPersonalSetting(key);
+            return settingsProvider.GetSetting(key);
         }
 
         public INPerson GetPerson(int id)

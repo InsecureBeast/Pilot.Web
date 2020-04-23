@@ -1,1 +1,21 @@
-﻿<div style="border: 1px solid red">task-filters Component</div>
+<div class="list-group">
+  
+  <div *ngFor="let filter of filters">
+    <div class="filter-view-item list-group-item-action filter-one-line-text"
+         [class.list-group-item-primary]="filter.isActive"
+         (click)="selectFilter(filter)">
+      {{ filter.name }}
+    </div>
+  </div>
+
+  <div class="border-top">
+    <div *ngFor="let filter of personalFilters">
+      <div class="filter-view-item list-group-item-action filter-one-line-text"
+           [class.list-group-item-primary]="filter.isActive"
+           (click)="selectFilter(filter)">
+        {{ filter.name }}
+      </div>
+    </div>
+  </div>
+
+</div>

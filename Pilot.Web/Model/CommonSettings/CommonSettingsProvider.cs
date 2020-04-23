@@ -7,7 +7,7 @@ namespace Pilot.Web.Model.CommonSettings
 {
     public interface ICommonSettingsProvider
     {
-        ICommonSettings GetPersonalSetting(string key);
+        ICommonSettings GetSetting(string key);
     }
 
     public interface ICommonSettings
@@ -23,15 +23,12 @@ namespace Pilot.Web.Model.CommonSettings
 
         public CommonSettingsProvider(IServerApi serverApi, INPerson person)
         {
-            //INSettings commonSettings = serverApi.GetCommonSettings();
             INSettings personalSettings = serverApi.GetPersonalSettings();
             _person = person;
-
-            //ReloadSettings(commonSettings);
             ReloadSettings(personalSettings);
         }
 
-        public ICommonSettings GetPersonalSetting(string key)
+        public ICommonSettings GetSetting(string key)
         {
             return _settings.TryGetValue(key, out var value) ? value : CommonSettings.Null;
         }

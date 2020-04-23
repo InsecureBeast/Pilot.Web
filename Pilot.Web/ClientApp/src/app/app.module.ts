@@ -20,6 +20,8 @@ import { DocumentsModule } from './documents/documents.module';
 import { DocumentsComponent } from './documents/pages/documents/documents.component';
 import { ModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
+import { TasksModule } from './tasks/tasks.module';
+import { TasksRoutingModule } from './tasks/tasks-routing.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -53,7 +55,9 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     DocumentsModule,
-    DocumentsRoutingModule
+    DocumentsRoutingModule,
+    TasksModule,
+    TasksRoutingModule
   ],
   providers: [
     AuthGuard,

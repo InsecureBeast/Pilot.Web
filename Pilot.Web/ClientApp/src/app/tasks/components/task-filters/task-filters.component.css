@@ -1,1 +1,20 @@
-﻿
+
+.filter-view-item {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.filter-view-item:hover {
+  background-color: #EAEAEA;
+}
+
+.list-group-item-primary:hover {
+  background-color: #9FCDFF;
+}
+
+.filter-one-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 2.1em;
+  max-width: 100%;
+}

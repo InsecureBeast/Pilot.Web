@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.2.0" />
+    <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.8.0" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00007" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00007" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
