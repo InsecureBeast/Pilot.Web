@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, NavigationStart } from '@angular/router';
+import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';

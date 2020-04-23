@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, ElementRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router, NavigationStart } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,7 +22,7 @@ import { DocumentsService } from '../../shared/documents.service';
 })
 /** documents-list component*/
 export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
-
+  private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
@@ -48,11 +49,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
     private readonly documentsService: DocumentsService,
+    private readonly router: Router,
     public element: ElementRef) {
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
     if (!this.parent)
       return;
 
@@ -78,6 +81,17 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         node.loadPreview();
       }
     });
+
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      // close your modal here
+      if (event instanceof NavigationStart) {
+        const startEvent = <NavigationStart>event;
+        if (startEvent.navigationTrigger === 'popstate') {
+          this.cancelAllRequests(false);
+        }
+      }
+
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -91,14 +105,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (this.nodeStyleServiceSubscription)
       this.nodeStyleServiceSubscription.unsubscribe();
 
-    if (this.ngUnsubscribe) {
-      // This aborts all HTTP requests.
-      this.ngUnsubscribe.next();
-      // This completes the subject properly.
-      this.ngUnsubscribe.complete();
-    }
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
 
-    this.checkedNodesSubscription.unsubscribe();
+    if (this.checkedNodesSubscription)
+      this.checkedNodesSubscription.unsubscribe();
+
+    this.cancelAllRequests(true);
   }
 
   selected(item: ObjectNode): void {
@@ -140,14 +153,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   private loadChildren(id: string, isSource: boolean) {
+
     let type = ChildrenType.ListView;
     if (isSource)
       type = ChildrenType.Storage;
-
-    if (this.ngUnsubscribe) {
-      // This aborts all HTTP requests.
-      this.ngUnsubscribe.next();
-    }
 
     this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
       .then(nodes => {
@@ -188,5 +197,15 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
     this.isAnyItemChecked = false;
     this.onChecked.emit(null);
+  }
+
+  private cancelAllRequests(isCompleted: boolean): void {
+    if (this.ngUnsubscribe) {
+      // This aborts all HTTP requests.
+      this.ngUnsubscribe.next();
+      // This completes the subject properly.
+      if (isCompleted)
+        this.ngUnsubscribe.complete();
+    }
   }
 }

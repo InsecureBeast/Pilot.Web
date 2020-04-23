@@ -1,7 +1,7 @@
 import { Component, Output, Input, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, ParamMap, NavigationStart } from '@angular/router';
+import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
@@ -24,6 +24,7 @@ import { VersionsSelectorService } from '../../components/document-versions/vers
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private versionSubscription: Subscription;
+  private routerSubscription: Subscription;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
@@ -50,6 +51,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private readonly downloadService: DownloadService,
     private readonly location: Location,
     private readonly repository: RepositoryService,
+    private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService) {
 
   }
@@ -67,11 +69,27 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       this.updateLocation(version);
       this.loadSnapshot(s);
     });
+
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      // close your modal here
+      if (event instanceof NavigationStart) {
+        const startEvent = <NavigationStart>event;
+        if (startEvent.navigationTrigger === 'popstate') {
+          this.cancelAllRequests(false);
+        }
+      }
+
+    });
   }
 
   ngOnDestroy(): void {
-    this.ngUnsubscribe.unsubscribe();
-    this.versionSubscription.unsubscribe();
+    this.cancelAllRequests(true);
+
+    if (this.versionSubscription)
+      this.versionSubscription.unsubscribe();
+
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -95,14 +113,17 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   close($event): void {
+    this.cancelAllRequests(false);
     this.onClose.emit($event);
   }
 
   previousDocument($event): void {
+    this.cancelAllRequests(false);
     this.onPreviousDocument.emit($event);
   }
 
   nextDocument($event): void {
+    this.cancelAllRequests(false);
     this.onNextDocument.emit($event);
   }
 
@@ -184,5 +205,13 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
     this.images = null;
     this.isLoading = false;
+  }
+
+  private cancelAllRequests(isComplete: boolean): void {
+    if (this.ngUnsubscribe) {
+      this.ngUnsubscribe.next();
+      if (isComplete)
+        this.ngUnsubscribe.complete();
+    }
   }
 }
