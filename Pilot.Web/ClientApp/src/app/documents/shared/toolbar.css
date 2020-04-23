@@ -13,16 +13,13 @@
   text-align: center;
 }
 
-  .nav-item-button:hover {
-    background: #eaeaea;
+  li.nav-item-button span {
+    color: #a3a6b6;
   }
 
-  .nav-item-button.checked {
-    background: #f4f4f4;
+  li.nav-item-button:hover span {
+    color: #343951;
   }
-    .nav-item-button.checked:hover {
-      background: #eaeaea;
-    }
 
 .nav-link {
   padding: .3rem 1rem;
