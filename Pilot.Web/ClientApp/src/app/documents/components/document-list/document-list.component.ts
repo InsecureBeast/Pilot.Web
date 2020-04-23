@@ -153,7 +153,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     for (let i = 0; i < item.children.length; i++) {
       this.nodes.push(new EmptyObjectNode());
     }
-
+    this.isLoaded = true;
     this.loadChildren(item.id, item.isSource);
   }
 
@@ -166,7 +166,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
-        this.isLoaded = true;
+        //this.isLoaded = true;
         this.onChecked.emit(null);
       })
       .catch(e => {

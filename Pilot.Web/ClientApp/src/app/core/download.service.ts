@@ -34,15 +34,25 @@ export class DownloadService {
 
   private runLoadFile(data: ArrayBuffer, name: string, dataType: string): void {
     const blob = new Blob([data], { type: dataType });
-    const objectUrl: string = URL.createObjectURL(blob);
-    const a = document.createElement("a") as HTMLAnchorElement;
+    
+    //detect whether the browser is IE/Edge or another browser
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      //To IE or Edge browser, using msSaveorOpenBlob method to download file.
+      window.navigator.msSaveOrOpenBlob(blob, name);
+    } else {
+      //To another browser, create a tag to downlad file.
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.setAttribute('style', 'display: none');
+      a.href = url;
+      a.download = name;
+      a.click();
 
-    a.href = objectUrl;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-
-    document.body.removeChild(a);
-    URL.revokeObjectURL(objectUrl);
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    }
+    //document.body.removeChild(a);
+    //URL.revokeObjectURL(objectUrl);
   }
 }
