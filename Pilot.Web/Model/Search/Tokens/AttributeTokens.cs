@@ -437,4 +437,28 @@ namespace Pilot.Web.Model.Search.Tokens
 
         public override string Hint => "end attribute specification";
     }
+
+    class StringAttributeIsSetToken : AttributeIsSetToken
+    {
+    }
+
+    class UserStateAttributeIsSetToken : AttributeIsSetToken
+    {
+    }
+
+    class DateTimeAttributeIsSetToken : AttributeIsSetToken
+    {
+    }
+
+    class IntegerNumberAttributeIsSetToken : AttributeIsSetToken
+    {
+    }
+
+    class FloatNumberAttributeIsSetToken : AttributeIsSetToken
+    {
+    }
+
+    class OrgUnitAttributeIsSetToken : AttributeIsSetToken
+    {
+    }
 }

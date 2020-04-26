@@ -14,7 +14,7 @@ namespace Pilot.Web.Model.Search.QueryBuilder.Fields
 
         public abstract ISearchTerm Be(bool value);
 
-        public ISearchTerm Exists()
+        public virtual ISearchTerm Exists()
         {
             return new ExistsTerm(_fieldName);
         }

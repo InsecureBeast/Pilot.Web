@@ -148,9 +148,9 @@ namespace Pilot.Web.Model.Search
             }
         }
 
-        protected virtual void AddIsSetSearch(IQueryBuilder queryBuilder, string attributeName, TermOccur termOccur)
+        protected virtual void AddIsSetSearch(IQueryBuilder queryBuilder, string attributeName, IField field, TermOccur termOccur)
         {
-            var term = new ExistsTerm(attributeName);
+            var term = field.Exists();
             queryBuilder.Add(term, termOccur);
         }
 
@@ -162,14 +162,16 @@ namespace Pilot.Web.Model.Search
             var attributeIsSetTokens = expression.Tokens.OfType<AttributeIsSetToken>().ToList();
             foreach (var group in attributeIsSetTokens.GroupByAttributeAndOccur())
             {
-                AddIsSetSearch(attributesQueryBuilder, group.Key.AttributeName, group.Key.Occur);
+                var token = group.First();
+                var field = GetAttributeField(token, group.Key.AttributeName);
+                AddIsSetSearch(attributesQueryBuilder, group.Key.AttributeName, field, group.Key.Occur);
             }
 
             var stringAttributeValueTokens = expression.Tokens.OfType<StringAttributeValueToken>().ToList();
             foreach (var group in stringAttributeValueTokens.GroupByAttributeAndOccur())
             {
                 var attributeName = group.Key.AttributeName;
-                var field = new StringField(attributeName);
+                var field = AttributeFields.String(attributeName);
 
                 var values = group.Select(token => EscapeStringValue(token.Value));
                 attributesQueryBuilder.AddAnyOf(values.Select(x => field.Be(x)).ToArray(), group.Key.Occur);
@@ -179,7 +181,7 @@ namespace Pilot.Web.Model.Search
             foreach (var group in orgUnitValueTokens.GroupByAttributeAndOccur())
             {
                 var attributeName = group.Key.AttributeName;
-                var field = new Int32Field(attributeName);
+                var field = AttributeFields.OrgUnit(attributeName);
 
                 var positions = group
                     .Select(token => token is OrgUnitMeArgumentToken
@@ -194,7 +196,7 @@ namespace Pilot.Web.Model.Search
             var stateAttributeValueTokens = expression.Tokens.OfType<UserStateAttributeValueToken>().ToList();
             foreach (var group in stateAttributeValueTokens.GroupByAttributeAndOccur())
             {
-                var field = new GuidField(group.Key.AttributeName);
+                var field = AttributeFields.State(group.Key.AttributeName);
                 attributesQueryBuilder.Add(field.BeAnyOf(group.Select(x => Guid.Parse(x.Id)).Distinct().ToArray()), group.Key.Occur);
             }
 
@@ -202,7 +204,7 @@ namespace Pilot.Web.Model.Search
             foreach (var dateAttributeNameToken in dateAttributesNames)
             {
                 var dateFieldName = dateAttributeNameToken.Data;
-                var dateField = new DateTimeField(dateFieldName);
+                var dateField = AttributeFields.DateTime(dateFieldName);
                 AddDateSearch(
                     token => token.Context[TokenBase.GroupParentKey].Value is DateAttributeNameToken && token.Context[nameof(AttributeNameTokenBase)].Value as string == dateFieldName,
                     datesRange => dateField.BeInRange(datesRange.FromUtc, datesRange.ToUtc),
@@ -212,7 +214,7 @@ namespace Pilot.Web.Model.Search
 
             var numberAttributeTokens = expression.Tokens.OfType<NumberAttributeValueToken>().ToList();
             var fromNumAttributesTokens = numberAttributeTokens.Where(x => (bool?)x.Context[RangeToken.IsRangeTopKey].Value != true).ToList();
-            var toNumAttributesTokens = numberAttributeTokens.Where(x => (bool?)x.Context[RangeToken.IsRangeTopKey].Value == true).ToList();
+            var toNumAttributesToknes = numberAttributeTokens.Where(x => (bool?)x.Context[RangeToken.IsRangeTopKey].Value == true).ToList();
 
             var numAttributesRanges = new List<NumAttributeRange>();
             foreach (var fromRangeToken in fromNumAttributesTokens)
@@ -234,7 +236,7 @@ namespace Pilot.Web.Model.Search
                 }
 
                 var groupParent = fromRangeToken.Context[TokenBase.GroupParentKey].Value;
-                var toRangeToken = toNumAttributesTokens.FirstOrDefault(x => ReferenceEquals(groupParent, x.Context[TokenBase.GroupParentKey].Value));
+                var toRangeToken = toNumAttributesToknes.FirstOrDefault(x => ReferenceEquals(groupParent, x.Context[TokenBase.GroupParentKey].Value));
                 var toValue = toRangeToken != null ? (double?)double.Parse(toRangeToken.Value, CultureInfo.InvariantCulture) : null;
 
                 numAttributesRanges.Add(new NumAttributeRange(attributeName, isFloat, fromValue, toValue, fromRangeToken.Context));
@@ -242,8 +244,8 @@ namespace Pilot.Web.Model.Search
 
             foreach (var range in numAttributesRanges)
             {
-                var doubleFiled = new DoubleField(range.AttrName);
-                var longField = new Int64Field(range.AttrName);
+                var doubleFiled = AttributeFields.Double(range.AttrName);
+                var longField = AttributeFields.Integer(range.AttrName);
 
                 var fromDoubleValue = range.From;
                 var fromLongValue = double.IsNegativeInfinity(fromDoubleValue) ? long.MinValue : Convert.ToInt64(Math.Floor(fromDoubleValue));
@@ -262,6 +264,24 @@ namespace Pilot.Web.Model.Search
                     attributesQueryBuilder.Add(searchTerm, range.Context.GetTermOccur());
                 }
             }
+        }
+
+        internal static IField GetAttributeField(AttributeIsSetToken token, string attributeName)
+        {
+            if (token is StringAttributeIsSetToken)
+                return AttributeFields.String(attributeName);
+            if (token is DateTimeAttributeIsSetToken)
+                return AttributeFields.DateTime(attributeName);
+            if (token is OrgUnitAttributeIsSetToken)
+                return AttributeFields.OrgUnit(attributeName);
+            if (token is UserStateAttributeIsSetToken)
+                return AttributeFields.State(attributeName);
+            if (token is IntegerNumberAttributeIsSetToken)
+                return AttributeFields.Integer(attributeName);
+            if (token is FloatNumberAttributeIsSetToken)
+                return AttributeFields.Double(attributeName);
+
+            throw new NotSupportedException($"{token.GetType().Name} is not supported");
         }
 
         protected void AddDateSearch(

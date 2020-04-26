@@ -1,12 +1,12 @@
 <div class="pt-6 row">
-  <div class="col-2">
+  <div class="col-12 col-sm-3 col-md-3 col-xl-2">
     <app-task-filters class="fixed"
                       (onSelected)="onFilterSelected($event)">
 
     </app-task-filters>
   </div>
 
-  <app-task-list class="col-10 p-0"
+  <app-task-list class="d-none d-sm-block col-sm-9 col-md-9 col-xl-10 p-0"
                  [filter]="selectedFilter">
 
   </app-task-list>

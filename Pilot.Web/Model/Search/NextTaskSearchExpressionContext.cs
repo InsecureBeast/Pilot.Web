@@ -53,7 +53,7 @@ namespace Pilot.Web.Model.Search
 
                 foreach (var attribute in attributeNames)
                 {
-                    var field = new Int32Field(attribute);
+                    var field = AttributeFields.OrgUnit(attribute);
                     searchObjects.Add(field.BeAnyOf(currentUserPositions));
                 }
 
@@ -81,7 +81,7 @@ namespace Pilot.Web.Model.Search
             return queryBuilder.ToString();
         }
 
-        protected override void AddIsSetSearch(IQueryBuilder queryBuilder, string attributeName, TermOccur termOccur)
+        protected override void AddIsSetSearch(IQueryBuilder queryBuilder, string attributeName, IField field, TermOccur termOccur)
         {
             if (attributeName == SystemTaskAttributes.DEADLINE_DATE)
             {
@@ -89,7 +89,7 @@ namespace Pilot.Web.Model.Search
             }
             else
             {
-                base.AddIsSetSearch(queryBuilder, attributeName, termOccur);
+                base.AddIsSetSearch(queryBuilder, attributeName, field, termOccur);
             }
         }
 

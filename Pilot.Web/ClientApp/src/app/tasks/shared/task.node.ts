@@ -10,9 +10,9 @@ import { TypeExtensions } from "src/app/core/tools/type.extensions";
 export class TaskNode {
 
   constructor(source: IObject,
-    private sanitizer: DomSanitizer,
-    private repository: RepositoryService,
-    private translate: TranslateService) {
+    private readonly sanitizer: DomSanitizer,
+    private readonly repository: RepositoryService,
+    private readonly translate: TranslateService) {
 
     this.title = source.title;
     this.type = source.type;
@@ -32,7 +32,7 @@ export class TaskNode {
   intent: number;
   isInWorkflow: boolean;
   attachments: any;
-  isSelected: boolean = false;
+  isSelected = false;
   attributes: Map<string, any>;
   dateOfAssignment: string;
   deadline: string;
@@ -111,10 +111,20 @@ export class TaskNode {
     const deadlineAttrString = this.getDateString(source, SystemTaskAttributes.DEADLINE_DATE);
     if (deadlineAttrString) {
       this.deadline = Tools.toLocalDateTime(deadlineAttrString, this.translate.currentLang);
-      const deadineDate = Tools.toUtcCsDateTime(dateAttrString);
-      this.isOutdated = deadineDate.getDate() < Date.now();
+      const deadlineDate = Tools.toUtcCsDateTime(dateAttrString);
+      this.isOutdated = deadlineDate.getDate() < Date.now();
     }
     
+  }
+}
+
+export class TaskWorkflowNode extends TaskNode {
+
+  constructor(source: IObject,
+    sanitizer: DomSanitizer,
+    repository: RepositoryService,
+    translate: TranslateService) {
+    super(source, sanitizer, repository, translate);
   }
 }
 

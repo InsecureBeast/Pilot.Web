@@ -9,6 +9,7 @@
   border-top-left-radius: .25rem;
   border-top-right-radius: .25rem;*/
   min-height: 4rem;
+  margin-bottom: -2px;
 }
 
 .card-img-center {
