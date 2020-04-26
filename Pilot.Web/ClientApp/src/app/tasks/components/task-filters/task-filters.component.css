@@ -1,16 +1,40 @@
-
-.filter-view-item {
-  cursor: pointer;
-  padding: 5px;
+.filter {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
 }
 
-.filter-view-item:hover {
+.filter-item {
+  max-width: 400px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+}
+
+li.filter-item a {
+  color: #a3a6b6;
+}
+
+  li.filter-item a:link {
+    color: #a3a6b6;
+  }
+  li.filter-item a:visited {
+    color: #a3a6b6;
+  }
+  li.filter-item a:hover {
+    color: #343951;
+    text-decoration: none;
+  }
+
+/*.filter-view-item:hover {
   background-color: #EAEAEA;
 }
 
 .list-group-item-primary:hover {
   background-color: #9FCDFF;
-}
+}*/
 
 .filter-one-line-text {
   overflow: hidden;

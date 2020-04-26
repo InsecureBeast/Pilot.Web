@@ -1,1 +1,17 @@
-﻿
+.one-line-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-height: 1.1rem;
+  max-width: 100%;
+  line-height: 1.1rem;
+}
+
+.list-group-item {
+  padding: 0.75rem 0.75rem;
+  margin-bottom: -2px;
+}
+
+.outdated {
+  color: tomato;
+}

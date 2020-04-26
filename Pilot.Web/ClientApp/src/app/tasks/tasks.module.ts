@@ -20,7 +20,9 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   imports: [
     CommonModule,
-    ErrorModule
+    ErrorModule,
+    RouterModule,
+    TranslateModule
   ],
   declarations: [
     TaskFiltersComponent,

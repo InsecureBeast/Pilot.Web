@@ -1,1 +1,72 @@
-﻿<div style="border: 1px solid red">task-list Component</div>
+<div class="d-flex content-center" *ngIf="isLoading">
+  <div class="spinner-border text-secondary" role="status">
+    <span class="sr-only" translate="loading"></span>
+  </div>
+</div>
+
+<div class="pb-5">
+  <ul class="list-group pr-3 pl-3" *ngIf="!isLoading && tasks">
+    <li class="list-group-item list-group-item-action"
+        [class.list-group-item-primary]="task.isChecked"
+        (click)="checked(task, $event)"
+        *ngFor="let task of tasks">
+
+      <div class="list-group-item-action"
+           [class.mt-2]="!task.isTask"
+           
+           [class.list-group-item-primary]="task.isSelected"
+           (click)="select(task);">
+
+        <div class="d-flex">
+
+          <div class="mr-2">
+            <img [src]="task.icon" width="24" *ngIf="task.icon != null" alt="type icon">
+          </div>
+
+          <div class="mr-2">
+            <img id="state_image"
+                 [src]="task.userState.icon"
+                 title="{{task.userState.title}}"
+                 width="24"
+                 *ngIf="task.userState != null">
+          </div>
+
+          <div class="mr-auto overflow-hidden">
+            <div class="pointer"
+                 (click)="selected(task);$event.stopPropagation();">
+
+              <div class="one-line-text"
+                   [class.text-primary]="task.isChecked">
+                <span class="d-inline">{{ task.title }}</span>
+              </div>
+
+              <div class="one-line-text" *ngIf="task.isTask">
+                <small *ngIf="task.dateOfAssignment">{{task.dateOfAssignment}} • </small>
+                <small class="d-inline">{{task.initiator}} → {{task.executor}}</small>
+              </div>
+
+              <div class="one-line-text">
+                <div *ngIf="!task.deadline">
+                  <small class="d-inline">{{task.type.title}}</small>
+                </div>
+
+                <div class="mr-auto"
+                     [class.outdated]="task.isOutdated"
+                     *ngIf="task.deadline"
+                     style="min-width: 140px;">
+                  <small translate="deadline"></small>
+                  <small class="ml-1">{{task.deadline}}</small>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <img src="/assets/images/attachment.svg"
+               *ngIf="task.attachments.length > 0">
+        </div>
+
+      </div>
+    </li>
+  </ul>
+</div>

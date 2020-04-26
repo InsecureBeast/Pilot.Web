@@ -1,21 +1,13 @@
-<div class="list-group">
-  
-  <div *ngFor="let filter of filters">
-    <div class="filter-view-item list-group-item-action filter-one-line-text"
-         [class.list-group-item-primary]="filter.isActive"
-         (click)="selectFilter(filter)">
-      {{ filter.name }}
-    </div>
-  </div>
-
-  <div class="border-top">
-    <div *ngFor="let filter of personalFilters">
-      <div class="filter-view-item list-group-item-action filter-one-line-text"
-           [class.list-group-item-primary]="filter.isActive"
-           (click)="selectFilter(filter)">
-        {{ filter.name }}
-      </div>
-    </div>
-  </div>
-
+<div class="navbar-nav">
+  <ul class="filter">
+    <li class="filter-item" *ngFor="let filter of filters">
+      <a [routerLink]="" (click)="selectFilter(filter);$event.stopPropagation()">{{ filter.name }}</a>
+    </li>
+  </ul>
+  <ul class="filter"
+      [class.border-top]="personalFilters">
+    <li class="filter-item" *ngFor="let filter of personalFilters">
+      <a [routerLink]="" (click)="selectFilter(filter);$event.stopPropagation()">{{ filter.name }}</a>
+    </li>
+  </ul>
 </div>
