@@ -134,7 +134,9 @@ namespace Pilot.Web.Model
             if (searchResult.Found == null)
                 return Array.Empty<PObject>();
 
-            return GetObjects(searchResult.Found.ToArray());
+            var objects = GetObjects(searchResult.Found.ToArray());
+            var tasks = LoadTasks(objects, searchResult.Found);
+            return tasks;
         }
 
         public IEnumerable<PObject> GetObjects(Guid[] ids)
@@ -240,6 +242,19 @@ namespace Pilot.Web.Model
             {
                 _stateMachines[stateMachine.Id] = stateMachine;
             }
+        }
+
+        private static IEnumerable<PObject> LoadTasks(IEnumerable<PObject> objects, IEnumerable<Guid> found)
+        {
+            var searchResult = new HashSet<Guid>(found ?? Enumerable.Empty<Guid>());
+            var loadedObjectsList = objects.ToList();
+            var duplicates = loadedObjectsList.Where(x => x.Context.Any(searchResult.Contains)).Select(x => x.Id);
+
+            var objectListToShow = loadedObjectsList
+                .Where(x => !duplicates.Contains(x.Id))
+                .ToList();
+
+            return objectListToShow;
         }
 
         private Guid[] GetChildrenByType(DObject obj, ChildrenType type)
