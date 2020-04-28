@@ -40,6 +40,7 @@ export class TaskNode {
   executor: string;
   isTask: boolean;
   isOutdated: boolean;
+  isChecked: boolean;
 
   private getOrgUnit(source: IObject, attrName: string): IOrganizationUnit {
 

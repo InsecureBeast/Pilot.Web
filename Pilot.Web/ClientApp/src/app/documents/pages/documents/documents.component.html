@@ -23,7 +23,8 @@
                          [documents]="documents"
                          (onSelected)="onItemSelected($event)"
                          (onChecked)="onItemsChecked($event)"
-                         (onLoaded)="onListLoaded($event)">
+                         (onLoaded)="onListLoaded($event)"
+                         (onError)="onError($event)">
       </app-document-list>
     </div>
 

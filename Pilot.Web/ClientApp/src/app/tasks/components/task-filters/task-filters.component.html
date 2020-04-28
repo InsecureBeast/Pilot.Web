@@ -5,7 +5,7 @@
     </li>
   </ul>
   <ul class="filter"
-      [class.border-top]="personalFilters">
+      [class.border-top]="personalFilters && personalFilters.length > 0">
     <li class="filter-item" *ngFor="let filter of personalFilters">
       <a [routerLink]="" (click)="selectFilter(filter);$event.stopPropagation()">{{ filter.name }}</a>
     </li>

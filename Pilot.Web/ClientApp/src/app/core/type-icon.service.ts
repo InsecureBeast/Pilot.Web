@@ -17,6 +17,8 @@ export class TypeIconService {
   }
 
   getTypeIcon(item: IObject): SafeUrl {
+    if (!item)
+      return null;
 
     const typeIcon = item.type.icon;
     if (typeIcon === null) {

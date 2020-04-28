@@ -1,1 +1,46 @@
-﻿<div style="border: 1px solid red">task-details Component</div>
+<div class="row bg-white border rounded pt-3 pb-3">
+  <div class="col-12">
+    <img [src]="taskTypeIcon" width="16" *ngIf="taskTypeIcon != null">
+    <span class="ml-2">{{taskTypeTitle}}</span>
+  </div>
+
+  <div class="col-12 mt-2" *ngIf="initiator">
+    <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:initiator}"></div>
+  </div>
+
+  <div class="col-12" *ngIf="executor">
+    <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:executor}"></div>
+  </div>
+
+  <div class="col-12" *ngFor="let attr of attributes">
+    <ng-container *ngIf="attr.type === 8">
+      <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
+    </ng-container>
+    <ng-container *ngIf="attr.type !== 8">
+      <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
+    </ng-container>
+  </div>
+
+  <div class="col-12 mt-4" *ngIf="hasAttachments">
+    <div class=" border-top ">
+      <!-- <app-task-attachments [taskNode]="taskNode"></app-task-attachments>-->
+    </div>
+  </div>
+</div>
+
+<ng-template #orgUnitAttributeTemplate let-item="item">
+  <div class="f-md text-muted mt-2">{{item.title}}</div>
+  <div *ngFor="let orgUnit of item.items| keyvalue">
+    <div class="f-lg">
+      <span *ngIf="orgUnit.key" class="mr-1">{{orgUnit.key.displayName}}</span>
+      <span class="text-secondary">({{orgUnit.value.title}})</span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #stringAttributeTemplate let-item="attr">
+  <div class="mt-2">
+    <div class="f-md text-muted">{{item.title}}</div>
+    <div class="f-lg">{{item.value}}</div>
+  </div>
+</ng-template>

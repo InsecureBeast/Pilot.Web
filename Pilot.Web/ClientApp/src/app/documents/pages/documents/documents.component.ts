@@ -176,6 +176,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.updateLocation(next.id);
   }
 
+  onError(error): void {
+    this.error = error;
+  }
+
   private canNextDocument(indexOf: number): boolean {
     if (indexOf === -1)
       return false;

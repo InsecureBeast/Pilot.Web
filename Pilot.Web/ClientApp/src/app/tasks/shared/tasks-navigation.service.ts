@@ -2,18 +2,19 @@ import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-@Injectable({ providedIn: 'root' })
-export class DocumentsNavigationService {
+@Injectable({providedIn: 'root'})
+export class TasksNavigationService {
 
   constructor(private readonly router: Router) {
   }
 
-  navigateToDocument(documentId: string, activatedRoute: ActivatedRoute): void {
-    this.router.navigate(['./document/' + documentId], { relativeTo: activatedRoute });
+  navigateToFilter(filterId: string): void {
+    this.router.navigateByUrl('/tasks/' + filterId);
   }
 
-  navigateToFile(fileId: string, activatedRoute: ActivatedRoute): void {
-    this.router.navigate(['./file/' + fileId], { relativeTo: activatedRoute });
+  navigateToTask(taskId: string): void {
+    //this.router.navigate(['./task/' + taskId], { relativeTo: activatedRoute });
+    this.router.navigateByUrl('/task/' + taskId);
   }
 
   navigateToDocumentsFolder(folderId: string): void {

@@ -12,6 +12,7 @@ import { TaskListComponent } from './components/task-list/task-list.component';
 import { TaskDetailsComponent } from './components/task-details/task-details.component';
 import { TaskAttachmentsComponent } from './components/task-attachments/task-attachments.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
+import { TaskComponent } from './pages/task/task.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -29,7 +30,8 @@ export function createTranslateLoader(http: HttpClient) {
     TaskListComponent,
     TaskDetailsComponent,
     TaskAttachmentsComponent,
-    TasksComponent
+    TasksComponent,
+    TaskComponent
   ],
   exports: [
     TasksComponent
