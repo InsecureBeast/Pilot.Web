@@ -14,7 +14,7 @@
 
         <div class="d-flex"
              [class.mt-2]="!task.isTask"
-             (click)="select(task);">
+             >
 
           <div class="d-flex align-items-start flex-column mr-2">
             <div class="">
@@ -36,36 +36,44 @@
           </div>
 
           <div class="flex-grow-1 overflow-hidden">
-            <div class="pointer"
-                 (click)="selected(task);$event.stopPropagation();">
+            <div>
 
-              <div class="d-flex" *ngIf="task.isTask">
-                <div class="one-line-text mr-auto text-second">
+              <div class="d-flex"
+                   *ngIf="task.isTask">
+
+                <div class="one-line-text mr-auto text-second pointer"
+                     (click)="selected(task);$event.stopPropagation();">
                   <small class="d-inline">{{task.initiator}} → {{task.executor}}</small>
                 </div>
 
-                <div class="one-line-text" *ngIf="task.dateOfAssignment">
+                <div class="one-line-text pointer"
+                     *ngIf="task.dateOfAssignment"
+                     (click)="selected(task);$event.stopPropagation();">
                   <small class="d-inline text-second">{{task.dateOfAssignment}}</small>
                 </div>
               </div>
 
               <div class="one-line-text"
                    [class.text-primary]="task.isChecked">
-                <span class="d-inline caption">{{ task.title }}</span>
+                <span class="d-inline caption pointer" (click)="selected(task);$event.stopPropagation();">{{ task.title }}</span>
               </div>
 
-              <div class=" two-line-text overflow-hidden" *ngIf="task.isTask">
+              <div class=" two-line-text overflow-hidden pointer"
+                   *ngIf="task.isTask"
+                   (click)="selected(task);$event.stopPropagation();">
                 <span class="d-inline text-second description">{{task.description}}</span>
               </div>
 
               <div class="d-flex">
-                <div class="one-line-text mr-auto text-muted">
+                <div class="one-line-text mr-auto text-muted pointer"
+                     (click)="selected(task);$event.stopPropagation();">
                   <small class="d-inline">{{task.type.title}}</small>
                 </div>
 
-                <div class="one-line-text text-second"
+                <div class="one-line-text text-second pointer"
                      [class.outdated]="task.isOutdated"
-                     *ngIf="task.deadline">
+                     *ngIf="task.deadline"
+                     (click)="selected(task);$event.stopPropagation();">
                   <small translate="deadline"></small>
                   <small class="ml-1">{{task.deadline}}</small>
                 </div>
