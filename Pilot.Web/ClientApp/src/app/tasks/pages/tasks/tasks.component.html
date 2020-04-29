@@ -1,12 +1,13 @@
+
 <div class="pt-6 row h-100">
-  <div class="col-12 col-sm-3 col-md-3 col-xl-2">
+  <div class="d-none d-sm-block col-sm-3 col-md-3 col-xl-2">
     <app-task-filters class="fixed"
                       (onSelected)="onFilterSelected($event)">
 
     </app-task-filters>
   </div>
 
-  <app-task-list class="d-none d-sm-block col-sm-9 col-md-9 col-xl-10 bg-white rounded pt-3 pb-3"
+  <app-task-list class="col-12 col-sm-9 col-md-9 col-xl-10 bg-white rounded pt-3 pb-3"
                  [filter]="selectedFilter"
                  (onSelected)="onTaskSelected($event)"
                  (onChecked)="onTaskChecked($event)"

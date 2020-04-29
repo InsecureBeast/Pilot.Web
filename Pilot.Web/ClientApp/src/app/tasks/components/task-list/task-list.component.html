@@ -13,8 +13,7 @@
 
 
         <div class="d-flex"
-             [class.mt-2]="!task.isTask"
-             >
+             [class.mt-2]="!task.isTask">
 
           <div class="d-flex align-items-start flex-column mr-2">
             <div class="">
@@ -61,7 +60,7 @@
               <div class=" two-line-text overflow-hidden pointer"
                    *ngIf="task.isTask"
                    (click)="selected(task);$event.stopPropagation();">
-                <span class="d-inline text-second description">{{task.description}}</span>
+                <small class="d-inline text-second">{{task.description}}</small>
               </div>
 
               <div class="d-flex">

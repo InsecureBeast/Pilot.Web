@@ -117,7 +117,7 @@ export class TaskNode {
     if (deadlineAttrString) {
       this.deadline = Tools.toLocalDateTime(deadlineAttrString, this.translate.currentLang);
       const deadlineDate = Tools.toUtcCsDateTime(dateAttrString);
-      this.isOutdated = deadlineDate.getDate() < Date.now();
+      this.isOutdated = deadlineDate.valueOf() > Date.now();
     }
     
   }
