@@ -14,7 +14,8 @@ export class TaskNode {
     private readonly repository: RepositoryService,
     private readonly translate: TranslateService) {
 
-    this.title = source.title;
+    this.title = this.getTitle(source);
+    this.description = this.getDescription(source);
     this.type = source.type;
     this.icon = Tools.getSvgImage(source.type.icon, sanitizer);
     this.setTaskData(source);
@@ -26,6 +27,7 @@ export class TaskNode {
   id: string;
   parentId: string;
   title: string;
+  description : string;
   type: IType;
   icon: SafeUrl;
   userState: UserState;
@@ -70,6 +72,8 @@ export class TaskNode {
         return position.title;
       }
     }
+
+    return null;
   }
 
   private getDateString(source: IObject, attributeName: string): string {
@@ -116,6 +120,24 @@ export class TaskNode {
       this.isOutdated = deadlineDate.getDate() < Date.now();
     }
     
+  }
+
+  private getTitle(source: IObject): string {
+    if (source.attributes) {
+      const title = source.attributes["title"];
+      return title;
+    }
+
+    return "";
+  }
+
+  private getDescription(source: IObject): string {
+    if (source.attributes) {
+      const description = source.attributes["description"];
+      return description;
+    }
+
+    return "";
   }
 }
 

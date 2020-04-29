@@ -2,15 +2,34 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-height: 1.3rem;
-  line-height: 1.3rem;
+  max-height: 1.6rem;
 }
 
-.list-group-item {
-  padding: 0.75rem 0.75rem;
-  margin-bottom: -2px;
+.two-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 2.5rem;
+  line-height: 1.1rem;
 }
 
 .outdated {
   color: tomato;
+}
+
+.list-group-item {
+  border: none;
+  padding: 0.75rem 0.45rem;
+  margin: 1px 0
+}
+
+.list-group-item-primary:hover {
+  background-color: #b8daff;
+}
+
+.caption {
+  font-size: 110%;
+}
+
+.description {
+  font-size: 90%;
 }

@@ -5,68 +5,77 @@
 </div>
 
 <div class="pb-5">
-  <ul class="list-group pr-3 pl-3" *ngIf="!isLoading && tasks">
+  <ul class="list-group" *ngIf="!isLoading && tasks">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="task.isChecked"
         (click)="checked(task, $event)"
         *ngFor="let task of tasks">
 
-      <div class="list-group-item-action"
-           [class.mt-2]="!task.isTask"
-           
-           [class.list-group-item-primary]="task.isSelected"
-           (click)="select(task);">
 
-        <div class="d-flex">
+        <div class="d-flex"
+             [class.mt-2]="!task.isTask"
+             (click)="select(task);">
 
-          <div class="mr-2">
-            <img [src]="task.icon" width="24" *ngIf="task.icon != null" alt="type icon">
+          <div class="d-flex align-items-start flex-column mr-2">
+            <div class="">
+               <img [src]="task.icon" width="16" *ngIf="task.icon != null" alt="type icon">
+            </div>
+            <div class="mt-2">
+              <img src="/assets/images/attachment.svg"
+                   width="16"
+                   *ngIf="task.attachments.length > 0">
+            </div>
           </div>
 
           <div class="mr-2">
             <img id="state_image"
                  [src]="task.userState.icon"
                  title="{{task.userState.title}}"
-                 width="24"
+                 width="16"
                  *ngIf="task.userState != null">
           </div>
 
-          <div class="mr-auto overflow-hidden">
+          <div class="flex-grow-1 overflow-hidden">
             <div class="pointer"
                  (click)="selected(task);$event.stopPropagation();">
 
+              <div class="d-flex" *ngIf="task.isTask">
+                <div class="one-line-text mr-auto text-second">
+                  <small class="d-inline">{{task.initiator}} → {{task.executor}}</small>
+                </div>
+
+                <div class="one-line-text" *ngIf="task.dateOfAssignment">
+                  <small class="d-inline text-second">{{task.dateOfAssignment}}</small>
+                </div>
+              </div>
+
               <div class="one-line-text"
                    [class.text-primary]="task.isChecked">
-                <span class="d-inline">{{ task.title }}</span>
+                <span class="d-inline caption">{{ task.title }}</span>
               </div>
 
-              <div class="one-line-text" *ngIf="task.isTask">
-                <small *ngIf="task.dateOfAssignment">{{task.dateOfAssignment}} • </small>
-                <small class="d-inline">{{task.initiator}} → {{task.executor}}</small>
+              <div class=" two-line-text overflow-hidden" *ngIf="task.isTask">
+                <span class="d-inline text-second description">{{task.description}}</span>
               </div>
 
-              <div class="one-line-text">
-                <div *ngIf="!task.deadline">
+              <div class="d-flex">
+                <div class="one-line-text mr-auto text-muted">
                   <small class="d-inline">{{task.type.title}}</small>
                 </div>
 
-                <div class="mr-auto"
+                <div class="one-line-text text-second"
                      [class.outdated]="task.isOutdated"
-                     *ngIf="task.deadline"
-                     style="min-width: 140px;">
+                     *ngIf="task.deadline">
                   <small translate="deadline"></small>
                   <small class="ml-1">{{task.deadline}}</small>
                 </div>
-
               </div>
+              
             </div>
           </div>
-
-          <img src="/assets/images/attachment.svg"
-               *ngIf="task.attachments.length > 0">
+ 
         </div>
 
-      </div>
     </li>
   </ul>
 </div>
