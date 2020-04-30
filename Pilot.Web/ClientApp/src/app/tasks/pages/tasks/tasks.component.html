@@ -1,5 +1,14 @@
-
 <div class="pt-6 row h-100">
+
+  <div class="col-12 d-sm-none">
+    <a id="filters-button"
+       [routerLink]=""
+       (click)="showFilters();$event.stopPropagation()">
+      <span>{{ selectedFilter.name }}</span>
+      <span class="material-icons">arrow_drop_down</span>
+    </a>
+  </div>
+
   <div class="d-none d-sm-block col-sm-3 col-md-3 col-xl-2">
     <app-task-filters class="fixed"
                       (onSelected)="onFilterSelected($event)">
@@ -7,11 +16,22 @@
     </app-task-filters>
   </div>
 
-  <app-task-list class="col-12 col-sm-9 col-md-9 col-xl-10 bg-white rounded pt-3 pb-3"
+  <app-task-list class="col-12 col-sm-9 col-md-9 col-xl-10 bg-white rounded pt-3 pb-3 task-list"
                  [filter]="selectedFilter"
                  (onSelected)="onTaskSelected($event)"
                  (onChecked)="onTaskChecked($event)"
                  (onError)="onError($event)">
 
   </app-task-list>
+
+  <div [class.collapse]="!isFiltersMenuShown">
+    <div class="pw-modal-background"
+         (click)="closeFilters();"></div>
+    <div class="col-12 modal-view bg-content border-top shadow">
+      <app-task-filters class=""
+                        (onSelected)="onFilterSelected($event)">
+
+      </app-task-filters>
+    </div>
+  </div>
 </div>

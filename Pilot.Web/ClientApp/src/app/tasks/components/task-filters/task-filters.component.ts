@@ -71,6 +71,7 @@ export class TaskFilter {
     this.searchValue = filter;
     this.isActive = false;
   }
+
   name: string;
   searchValue: string;
   isActive: boolean;

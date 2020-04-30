@@ -1,3 +1,46 @@
 .fixed {
   position: fixed;
 }
+
+a {
+  color: #a3a6b6;
+}
+
+  a:link {
+    color: #a3a6b6;
+  }
+
+  a:active {
+    color: #a3a6b6;
+  }
+
+  a:visited {
+    color: #a3a6b6;
+  }
+
+  a:hover {
+    color: #343951;
+    text-decoration: none;
+  }
+
+.task-list {
+  min-height: calc(100vh - 6.0rem);
+}
+
+#filters-button {
+  display: flex;
+  margin-bottom: .45rem;
+}
+
+.modal-view {
+  z-index: 1050;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.pw-modal-background {
+  /* semi-transparent black  */
+  background-color: #000000;
+  opacity: 0.30;
+}

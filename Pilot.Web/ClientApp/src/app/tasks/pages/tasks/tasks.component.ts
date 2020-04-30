@@ -14,15 +14,18 @@ import { TaskNode } from '../../shared/task.node';
 export class TasksComponent {
 
   selectedFilter: TaskFilter;
+  isFiltersMenuShown: boolean;
 
   /** tasks ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly tasksNavigationService: TasksNavigationService) {
 
+    this.selectedFilter = new TaskFilter("", "");
   }
 
   onFilterSelected(filter: TaskFilter): void {
+    this.isFiltersMenuShown = false;
     this.selectedFilter = filter;
     this.tasksNavigationService.navigateToFilter(filter.name);
   }
@@ -37,5 +40,13 @@ export class TasksComponent {
 
   onError(error): void {
     //this.error = error;
+  }
+
+  showFilters(): void {
+    this.isFiltersMenuShown = true;
+  }
+
+  closeFilters(): void {
+    this.isFiltersMenuShown = false;
   }
 }
