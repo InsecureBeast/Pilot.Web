@@ -10,6 +10,7 @@
   border-top-right-radius: .25rem;*/
   min-height: 4rem;
   margin-bottom: -2px;
+  border: none;
 }
 
 .card-img-center {
@@ -35,7 +36,7 @@
 .card {
   height: 13rem;
   overflow: hidden;
-  /*border: 0;*/
+  border: 0;
 }
 
 .card-body {

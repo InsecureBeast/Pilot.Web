@@ -25,6 +25,8 @@ a {
 
 .task-list {
   min-height: calc(100vh - 6.0rem);
+  /*padding: 0;*/
+  /*margin-right: .75rem;*/
 }
 
 #filters-button {

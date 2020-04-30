@@ -5,7 +5,7 @@
 </div>
 
 <div class="pb-5" *ngIf="nodeStyle === 0; else gridViewNodeTemplate">
-  <ul class="list-group pr-3 pl-3" *ngIf="!isLoading && nodes">
+  <ul class="list-group mr-3 ml-3 shadow-sm" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
         (click)="checked(node, $event)"
@@ -51,7 +51,7 @@
     <div *ngFor="let node of nodes"
          class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 p-2">
 
-      <div class="card text-center"
+      <div class="card text-center shadow-sm"
            [class.list-group-item-primary]="node.isChecked"
            (click)="checked(node, $event);$event.stopPropagation();">
         <div class="overflow-hidden bg-white card-img" *ngIf="!node.preview">

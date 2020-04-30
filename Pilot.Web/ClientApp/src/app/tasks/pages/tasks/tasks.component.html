@@ -15,14 +15,17 @@
 
     </app-task-filters>
   </div>
+  <div class="col-12 col-sm-9 col-md-9 col-xl-10 task-list">
+    <div class="h-100 bg-white rounded shadow-sm mr-n2 ml-n2">
+      <app-task-list class="p-0"
+                     [filter]="selectedFilter"
+                     (onSelected)="onTaskSelected($event)"
+                     (onChecked)="onTaskChecked($event)"
+                     (onError)="onError($event)">
 
-  <app-task-list class="col-12 col-sm-9 col-md-9 col-xl-10 bg-white rounded pt-3 pb-3 task-list"
-                 [filter]="selectedFilter"
-                 (onSelected)="onTaskSelected($event)"
-                 (onChecked)="onTaskChecked($event)"
-                 (onError)="onError($event)">
-
-  </app-task-list>
+      </app-task-list>
+    </div>
+  </div>
 
   <div [class.collapse]="!isFiltersMenuShown">
     <div class="pw-modal-background"
