@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { TaskFiltersProvider } from './task-filters.provider';
-import { TasksService } from '../../shared/tasks.service';
+import { TasksRepositoryService } from '../../shared/tasks-repository.service';
 import { CommonSettingsDefaults } from '../../../core/data/common-settings.defaults';
 
 @Component({
@@ -21,12 +21,12 @@ export class TaskFiltersComponent implements OnInit {
   @Output() onLoaded = new EventEmitter<[TaskFilter[], TaskFilter[]]>();
 
   /** task-filters ctor */
-  constructor(private tasksService: TasksService) {
+  constructor(private readonly tasksRepositoryService: TasksRepositoryService) {
     
   }
 
   ngOnInit(): void {
-    this.tasksService.getPersonalSettings(CommonSettingsDefaults.taskFiltersKey)
+    this.tasksRepositoryService.getPersonalSettings(CommonSettingsDefaults.taskFiltersKey)
       .subscribe(settings => {
           this.filters = new Array<TaskFilter>();
           var filtersProvider = new TaskFiltersProvider(settings);

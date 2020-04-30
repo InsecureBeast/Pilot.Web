@@ -1,11 +1,13 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { first } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { TaskFilter } from '../task-filters/task-filters.component';
-import { TasksService } from '../../shared/tasks.service';
+import { TasksRepositoryService } from '../../shared/tasks-repository.service';
 import { TaskNode } from "../../shared/task.node";
 import { TaskNodeFactory } from "../../shared/task-node.factory";
+import { TasksService } from "../../shared/tasks.service";
 
 @Component({
     selector: 'app-task-list',
@@ -13,8 +15,9 @@ import { TaskNodeFactory } from "../../shared/task-node.factory";
     styleUrls: ['./task-list.component.css']
 })
 /** task-list component*/
-export class TaskListComponent {
- 
+export class TaskListComponent implements  OnInit, OnDestroy{
+
+  private clearCheckedSubscription: Subscription;
   private _filter: TaskFilter;
 
   @Input()
@@ -32,11 +35,24 @@ export class TaskListComponent {
   isAnyItemChecked: boolean;
 
   /** task-list ctor */
-  constructor(private readonly tasksService: TasksService,
-    private readonly taskNodeFactory: TaskNodeFactory) {
+  constructor(private readonly tasksRepositoryService: TasksRepositoryService,
+    private readonly taskNodeFactory: TaskNodeFactory,
+    private readonly tasksService: TasksService) {
 
   }
 
+  ngOnInit(): void {
+    this.clearCheckedSubscription = this.tasksService.clearChecked.subscribe(v => {
+      if (v)
+        this.clearChecked();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.clearCheckedSubscription)
+      this.clearCheckedSubscription.unsubscribe();
+  }
+  
   selected(item: TaskNode): void {
     this.clearChecked();
     this.onSelected.emit(item);
@@ -60,7 +76,7 @@ export class TaskListComponent {
     if (!filter)
       return;
 
-    this.tasksService.getTasks(filter.searchValue).pipe(first()).subscribe(objects => {
+    this.tasksRepositoryService.getTasks(filter.searchValue).pipe(first()).subscribe(objects => {
       this.isLoading = false;
       this.tasks = new Array<TaskNode>();
       for (let source of objects) {

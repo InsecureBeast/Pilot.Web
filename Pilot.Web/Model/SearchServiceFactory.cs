@@ -84,7 +84,7 @@ namespace Pilot.Web.Model
 
         public void Notify(DSearchResult result)
         {
-            _searchCompletionSource.TrySetResult(result);
+            _searchCompletionSource?.TrySetResult(result);
         }
     }
 }

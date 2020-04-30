@@ -1,42 +1,44 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { Headers } from '@angular/http';
+import { Injectable, ElementRef } from '@angular/core';
+import { Observable, BehaviorSubject } from 'rxjs';
 
-import { IObject, ICommonSettings } from '../../core/data/data.classes';
-import { AuthService } from '../../auth/auth.service';
+import {TaskNode } from './task.node';
+
 
 @Injectable({ providedIn: 'root' })
 export class TasksService {
-  constructor(
-    private readonly http: HttpClient,
-    @Inject('BASE_URL')
-    private readonly baseUrl: string,
-    private readonly userService: AuthService) {
 
+  private clearCheckedSubject = new BehaviorSubject<boolean>(false);
+  //private readonly scrollPositions: KeyedCollection<number>;
+
+  clearChecked = this.clearCheckedSubject.asObservable();
+
+  constructor() {
   }
 
-  getPersonalSettings(key: string): Observable<ICommonSettings> {
-    const headers = this.getHeaders();
-    return this.http.get<ICommonSettings>(this.baseUrl + 'api/Metadata/GetPersonalSettings?key=' + key, { headers: headers.toJSON() })
-      .pipe(first());
+  changeClearChecked(value: boolean): void {
+    this.clearCheckedSubject.next(value);
   }
 
-  getTasks(filter: string): Observable<IObject[]> {
-    const body = JSON.stringify(filter);
-    const headers = this.getHeaders();
-    const path = this.baseUrl + 'api/Tasks/GetTasks';
-    return this.http.post<IObject[]>(path, body, { headers: headers.toJSON() })
-      .pipe(first());
-  }
+  //restoreScrollPosition(node: TaskNode): void {
+  //  const pos = this.getPosition(node.id);
+  //  window.scrollTo(0, pos);
+  //}
 
+  //saveScrollPosition(node: TaskNode): void {
+  //  const pos = window.pageYOffset;
+  //  this.savePosition(node.source.id, pos);
+  //}
 
-  private getHeaders(): Headers {
-    const token = this.userService.getToken();
-    const headers = new Headers();
-    headers.append('Authorization', "Bearer " + token);
-    headers.append('Content-Type', 'application/json');
-    return headers;
-  }
+  //private savePosition(key: string, pos: number): void {
+  //  this.scrollPositions.add(key, pos);
+  //}
+
+  //private getPosition(key: string): number {
+  //  if (this.scrollPositions.containsKey(key)) {
+  //    const value = this.scrollPositions.remove(key);
+  //    return value;
+  //  }
+
+  //  return 0;
+  //}
 }

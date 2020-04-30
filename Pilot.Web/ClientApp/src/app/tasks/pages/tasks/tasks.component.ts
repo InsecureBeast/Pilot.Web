@@ -4,24 +4,28 @@ import { ActivatedRoute } from '@angular/router';
 import { TaskFilter } from '../../components/task-filters/task-filters.component';
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
 import { TaskNode } from '../../shared/task.node';
+import { TasksService } from '../../shared/tasks.service';
 
 @Component({
     selector: 'app-tasks',
     templateUrl: './tasks.component.html',
-    styleUrls: ['./tasks.component.css']
+    styleUrls: ['./tasks.component.css', '../../../documents/shared/toolbar.css']
 })
 /** tasks component*/
 export class TasksComponent {
 
   selectedFilter: TaskFilter;
   isFiltersMenuShown: boolean;
+  checked: TaskNode[];
 
   /** tasks ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly tasksNavigationService: TasksNavigationService) {
+    private readonly tasksNavigationService: TasksNavigationService,
+    private readonly tasksService: TasksService) {
 
     this.selectedFilter = new TaskFilter("", "");
+    this.checked = new Array();
   }
 
   onFilterSelected(filter: TaskFilter): void {
@@ -34,8 +38,8 @@ export class TasksComponent {
     this.tasksNavigationService.navigateToTask(item.id);
   }
 
-  onTaskChecked(node: TaskNode): void {
-    
+  onTaskChecked(items: TaskNode[]): void {
+    this.checked = items;
   }
 
   onError(error): void {
@@ -48,5 +52,10 @@ export class TasksComponent {
 
   closeFilters(): void {
     this.isFiltersMenuShown = false;
+  }
+
+  clearChecked(): void {
+    this.checked = new Array();
+    this.tasksService.changeClearChecked(true);
   }
 }
