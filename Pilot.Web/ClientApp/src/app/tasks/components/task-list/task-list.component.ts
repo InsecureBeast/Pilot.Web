@@ -5,9 +5,10 @@ import { Subscription } from 'rxjs';
 
 import { TaskFilter } from '../task-filters/task-filters.component';
 import { TasksRepositoryService } from '../../shared/tasks-repository.service';
-import { TaskNode } from "../../shared/task.node";
+import { TaskNode, TaskWorkflowNode, TaskStageNode } from "../../shared/task.node";
 import { TaskNodeFactory } from "../../shared/task-node.factory";
 import { TasksService } from "../../shared/tasks.service";
+import { RepositoryService } from 'src/app/core/repository.service';
 
 @Component({
     selector: 'app-task-list',
@@ -37,7 +38,8 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   /** task-list ctor */
   constructor(private readonly tasksRepositoryService: TasksRepositoryService,
     private readonly taskNodeFactory: TaskNodeFactory,
-    private readonly tasksService: TasksService) {
+    private readonly tasksService: TasksService,
+    private readonly repositoryService: RepositoryService) {
 
   }
 
@@ -68,6 +70,48 @@ export class TaskListComponent implements  OnInit, OnDestroy{
 
     const checked = this.tasks.filter(n => n.isChecked);
     this.onChecked.emit(checked);
+  }
+
+  showSubTasks(task: TaskNode): void {
+
+    if (task.loadedChildren.length > 0) {
+      for (var child of task.loadedChildren) {
+        child.isVisible = !task.isChildrenShown;
+      }
+
+      task.isChildrenShown = !task.isChildrenShown;
+      return;
+    }
+
+    if (!task.isChildrenShown)
+      this.loadSubTasks(task);
+
+    task.isChildrenShown = !task.isChildrenShown;
+  }
+
+  isStage(task: TaskNode): boolean {
+    return task instanceof TaskStageNode;
+  }
+
+  private loadSubTasks(parent: TaskNode): void {
+    const children = parent.source.children.map(c => c.objectId);
+    let index = this.tasks.indexOf(parent);
+    this.repositoryService.getObjectsAsync(children)
+      .then(objects => {
+        for (const source of objects) {
+          const node = this.taskNodeFactory.createNode(source);
+          if (!node)
+            continue;
+
+          index++;
+          this.tasks.splice(index, 0, node);
+          parent.loadedChildren.push(node);
+          node.loadChildren(this.tasks, this.taskNodeFactory)
+        }
+      })
+      .catch(er => {
+        this.onError.emit(er);
+      });
   }
 
   private loadTasks(filter: TaskFilter): void {

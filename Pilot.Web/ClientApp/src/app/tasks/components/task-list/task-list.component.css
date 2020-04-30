@@ -19,7 +19,7 @@
 .list-group-item {
   border: none;
   padding: 0.75rem 0.45rem;
-  margin: 1px 0
+  /*margin: 1px 0*/
 }
 
 .list-group-item-primary:hover {
@@ -34,3 +34,31 @@
 .description {
   font-size: 90%;
 }
+
+li a {
+  color: #a3a6b6;
+}
+
+  li a:hover {
+    color: #343951;
+  }
+
+.stage {
+  margin: -0.75rem -0.45rem;
+  background-color: #fdfdfd;
+}
+
+.task-intent {
+  width: 5px;
+  margin: -.75rem .45rem -.75rem -.45rem;
+}
+
+.list-group-item-intent {
+  /*color: #004085;*/
+  background-color: #fdfdfd
+}
+.list-group-item-intent:hover{
+  /*color: #004085;*/
+  background-color: #f9f9f9;
+}
+

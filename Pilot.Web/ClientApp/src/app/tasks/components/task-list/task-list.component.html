@@ -8,81 +8,121 @@
   <ul class="list-group" *ngIf="!isLoading && tasks">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="task.isChecked"
+        [class.collapse]="!task.isVisible"
+        [class.list-group-item-intent]="task.intent > 0"
         (click)="checked(task, $event)"
         *ngFor="let task of tasks">
 
+      <ng-container *ngIf="!isStage(task);">
+        <ng-container *ngTemplateOutlet="taskNodeTemplate;context:{item:task}"></ng-container>
+      </ng-container>
 
-        <div class="d-flex"
-             [class.mt-2]="!task.isTask">
-
-          <div class="d-flex align-items-start flex-column mr-2">
-            <div class="">
-               <img [src]="task.icon" width="16" *ngIf="task.icon != null" alt="type icon">
-            </div>
-            <div class="mt-2">
-              <img src="/assets/images/attachment.svg"
-                   width="16"
-                   *ngIf="task.attachments.length > 0">
-            </div>
-          </div>
-
-          <div class="mr-2">
-            <img id="state_image"
-                 [src]="task.userState.icon"
-                 title="{{task.userState.title}}"
-                 width="16"
-                 *ngIf="task.userState != null">
-          </div>
-
-          <div class="flex-grow-1 overflow-hidden">
-            <div>
-
-              <div class="d-flex"
-                   *ngIf="task.isTask">
-
-                <div class="one-line-text mr-auto text-second pointer"
-                     (click)="selected(task);$event.stopPropagation();">
-                  <small class="d-inline">{{task.initiator}} → {{task.executor}}</small>
-                </div>
-
-                <div class="one-line-text pointer"
-                     *ngIf="task.dateOfAssignment"
-                     (click)="selected(task);$event.stopPropagation();">
-                  <small class="d-inline text-second">{{task.dateOfAssignment}}</small>
-                </div>
-              </div>
-
-              <div class="one-line-text"
-                   [class.text-primary]="task.isChecked">
-                <span class="d-inline caption pointer" (click)="selected(task);$event.stopPropagation();">{{ task.title }}</span>
-              </div>
-
-              <div class=" two-line-text overflow-hidden pointer"
-                   *ngIf="task.isTask"
-                   (click)="selected(task);$event.stopPropagation();">
-                <small class="d-inline text-second">{{task.description}}</small>
-              </div>
-
-              <div class="d-flex">
-                <div class="one-line-text mr-auto text-muted pointer"
-                     (click)="selected(task);$event.stopPropagation();">
-                  <small class="d-inline">{{task.type.title}}</small>
-                </div>
-
-                <div class="one-line-text text-second pointer"
-                     [class.outdated]="task.isOutdated"
-                     *ngIf="task.deadline"
-                     (click)="selected(task);$event.stopPropagation();">
-                  <small translate="deadline"></small>
-                  <small class="ml-1">{{task.deadline}}</small>
-                </div>
-              </div>
-              
-            </div>
-          </div>
- 
-        </div>
+      <ng-container *ngIf="isStage(task);">
+        <ng-container *ngTemplateOutlet="stageTemplate;context:{item:task}"></ng-container>
+      </ng-container>
 
     </li>
   </ul>
 </div>
+
+<ng-template #taskNodeTemplate let-task="item">
+  <div class="d-flex">
+
+    <!--<div class="bg-dark task-intent"
+         *ngIf="task.intent > 0 || !task.isTask">
+    </div>-->
+
+    <div class="d-flex align-items-start flex-column mr-2">
+      <div class="">
+        <img [src]="task.icon" width="16" *ngIf="task.icon != null" alt="type icon">
+      </div>
+
+      <div class="mt-2">
+        <img src="/assets/images/attachment.svg"
+             width="16"
+             *ngIf="task.attachments.length > 0">
+      </div>
+    </div>
+
+    <div class="mr-2">
+      <img id="state_image"
+           [src]="task.userState.icon"
+           title="{{task.userState.title}}"
+           width="16"
+           *ngIf="task.userState != null">
+    </div>
+
+    <div class="flex-grow-1 overflow-hidden">
+      <div>
+
+        <div class="d-flex"
+             *ngIf="task.isTask">
+
+          <div class="one-line-text mr-auto text-second pointer"
+               (click)="selected(task);$event.stopPropagation();">
+            <small class="d-inline">{{task.initiator}} → {{task.executor}}</small>
+          </div>
+
+          <div class="one-line-text pointer"
+               *ngIf="task.dateOfAssignment"
+               (click)="selected(task);$event.stopPropagation();">
+            <small class="d-inline text-second">{{task.dateOfAssignment}}</small>
+          </div>
+        </div>
+
+        <div class="one-line-text"
+             [class.text-primary]="task.isChecked">
+          <span class="d-inline caption pointer" (click)="selected(task);$event.stopPropagation();">{{ task.title }}</span>
+        </div>
+
+        <div class=" two-line-text overflow-hidden pointer"
+             *ngIf="task.isTask"
+             (click)="selected(task);$event.stopPropagation();">
+          <small class="d-inline text-second">{{task.description}}</small>
+        </div>
+
+        <div class="d-flex">
+          <div class="one-line-text mr-auto text-muted pointer"
+               (click)="selected(task);$event.stopPropagation();">
+            <small class="d-inline">{{task.type.title}}</small>
+          </div>
+
+          <div class="one-line-text text-second pointer"
+               [class.outdated]="task.isOutdated"
+               *ngIf="task.deadline"
+               (click)="selected(task);$event.stopPropagation();">
+            <small translate="deadline"></small>
+            <small class="ml-1">{{task.deadline}}</small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <a [routerLink]=""
+       *ngIf="task.hasChildren"
+       class="align-self-center"
+       (click)="showSubTasks(task);$event.stopPropagation()">
+      <span class="material-icons" *ngIf="!task.isChildrenShown">chevron_right</span>
+      <span class="material-icons" *ngIf="task.isChildrenShown">expand_more</span>
+    </a>
+
+  </div>
+</ng-template>
+
+<ng-template #stageTemplate let-stage="item">
+  <div class="stage">
+
+    <div class="p-1 m-0 row">
+      <!--<div class="mt-n1 mb-n1 ml-n1 bg-dark"
+           style="width: 2px;">
+      </div>-->
+
+      <div class="col-10 p-0 mb-0 mr-2 ml-2 label one-line-text">
+        <span translate="stage"></span>
+        <span>{{ stage.title }}</span>
+      </div>
+    </div>
+
+  </div>
+</ng-template>

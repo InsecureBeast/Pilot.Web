@@ -1,17 +1,21 @@
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { TranslateService } from "@ngx-translate/core";
 
-import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors } from "src/app/core/data/data.classes";
-import { RepositoryService } from "src/app/core/repository.service";
+import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors, IChild } from "src/app/core/data/data.classes";
+import { RepositoryService } from 'src/app/core/repository.service';
 import { SystemTaskAttributes } from "src/app/core/data/system.types";
 import { Tools } from "src/app/core/tools/tools";
 import { TypeExtensions } from "src/app/core/tools/type.extensions";
+import { TaskNodeFactory } from "./task-node.factory";
 
 export class TaskNode {
 
-  constructor(source: IObject,
+  private _isVisible: boolean;
+
+  constructor(
+    public readonly source: IObject,
     private readonly sanitizer: DomSanitizer,
-    private readonly repository: RepositoryService,
+    protected readonly repository: RepositoryService,
     private readonly translate: TranslateService) {
 
     this.title = this.getTitle(source);
@@ -21,7 +25,11 @@ export class TaskNode {
     this.setTaskData(source);
     this.id = source.id;
     this.parentId = source.parentId;
-
+    this.hasChildren = source.children.length > 0;
+    this.loadedChildren = new Array();
+    this._isVisible = true;
+    if (source.context)
+      this.intent = source.context.length;
   }
 
   id: string;
@@ -43,6 +51,36 @@ export class TaskNode {
   isTask: boolean;
   isOutdated: boolean;
   isChecked: boolean;
+  hasChildren: boolean;
+  isChildrenShown: boolean;
+  loadedChildren: TaskNode[];
+
+  set isVisible(value: boolean) {
+    this._isVisible = value;
+    for (var child of this.loadedChildren) {
+      child.isVisible = value;
+    }
+  }
+
+  get isVisible(): boolean {
+    return this._isVisible;
+  }
+
+  loadChildren(list: TaskNode[], taskFactory: TaskNodeFactory): void {
+    const children = this.source.children.map(c => c.objectId);
+    let index = list.indexOf(this);
+    this.repository.getObjectsAsync(children).then(objs => {
+      for (const source of objs) {
+        const node = taskFactory.createNode(source);
+        if (!node)
+          continue;
+
+        index++;
+        list.splice(index, 0, node);
+        this.loadedChildren.push(node);
+      }
+    });
+  }
 
   private getOrgUnit(source: IObject, attrName: string): IOrganizationUnit {
 
@@ -150,6 +188,24 @@ export class TaskWorkflowNode extends TaskNode {
     super(source, sanitizer, repository, translate);
   }
 }
+
+export class TaskStageNode extends TaskNode {
+
+  constructor(source: IObject,
+    sanitizer: DomSanitizer,
+    repository: RepositoryService,
+    translate: TranslateService) {
+    super(source, sanitizer, repository, translate);
+    this.title = this.getStageTitle(source);
+  }
+
+  private getStageTitle(object: IObject): string {
+    const order = object.attributes[SystemTaskAttributes.STAGE_ORDER];
+    return order;
+  }
+}
+
+
 
 export class UserState {
 
