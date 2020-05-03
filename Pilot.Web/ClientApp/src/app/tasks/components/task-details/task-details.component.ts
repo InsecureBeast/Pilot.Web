@@ -29,6 +29,10 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     this.loadTask(value);
   }
 
+  get task(): IObject {
+    return this._task;
+  }
+
   taskTypeIcon: SafeUrl;
   taskTypeTitle: string;
 

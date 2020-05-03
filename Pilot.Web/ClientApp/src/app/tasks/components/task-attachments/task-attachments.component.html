@@ -1,1 +1,25 @@
-﻿<div style="border: 1px solid red">task-attachments Component</div>
+<div class="list-group list-group">
+  <ng-container *ngFor="let attachment of attachments">
+
+    <div class="list-group-item list-group-item-action pointer"
+         [class.list-group-item-primary]="attachment.isChecked"
+         (click)="select(attachment, $event);"
+         style="border:0;">
+
+      <div class="d-flex">
+
+        <div class="mt-1 mr-2">
+          <img id="image" [src]="attachment.icon" width="36" *ngIf="attachment.icon != null">
+        </div>
+
+        <div class="mr-auto" style="line-height: 1.2rem;">
+          <div class="">{{ attachment.title }}</div>
+          <small class="mb-0 text-muted">{{attachment.type.title}}</small>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -1,18 +1,17 @@
-<div class="row bg-white border rounded pt-3 pb-3">
-  <div class="col-12">
-    <img [src]="taskTypeIcon" width="16" *ngIf="taskTypeIcon != null">
+  <div class="mt-2" style="margin-left: -2px;">
+    <img [src]="taskTypeIcon" width="24" *ngIf="taskTypeIcon != null">
     <span class="ml-2">{{taskTypeTitle}}</span>
   </div>
 
-  <div class="col-12 mt-2" *ngIf="initiator">
+  <div class="mt-4" *ngIf="initiator">
     <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:initiator}"></div>
   </div>
 
-  <div class="col-12" *ngIf="executor">
+  <div class="" *ngIf="executor">
     <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:executor}"></div>
   </div>
 
-  <div class="col-12" *ngFor="let attr of attributes">
+  <div class="" *ngFor="let attr of attributes">
     <ng-container *ngIf="attr.type === 8">
       <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
     </ng-container>
@@ -21,12 +20,11 @@
     </ng-container>
   </div>
 
-  <div class="col-12 mt-4" *ngIf="hasAttachments">
+  <div class=" mt-4" *ngIf="hasAttachments">
     <div class=" border-top ">
-      <!-- <app-task-attachments [taskNode]="taskNode"></app-task-attachments>-->
+      <app-task-attachments [taskNode]="task"></app-task-attachments>
     </div>
   </div>
-</div>
 
 <ng-template #orgUnitAttributeTemplate let-item="item">
   <div class="f-md text-muted mt-2">{{item.title}}</div>
@@ -40,7 +38,7 @@
 
 <ng-template #stringAttributeTemplate let-item="attr">
   <div class="mt-2">
-    <div class="f-md text-muted">{{item.title}}</div>
-    <div class="f-lg">{{item.value}}</div>
+    <div class="text-second">{{item.title}}</div>
+    <div class="">{{item.value}}</div>
   </div>
 </ng-template>
