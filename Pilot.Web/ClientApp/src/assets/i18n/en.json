@@ -32,5 +32,6 @@
   "outdatedVersionFrom": "Outdated version from",
   "goToCurrentVersion": "Go to the current version",
   "itemsSelected": "Items selected:",
-  "pilotServerUnavailable": "Looks like Pilot-Server is unavailable. Please try again later"
+  "pilotServerUnavailable": "Looks like Pilot-Server is unavailable. Please try again later",
+  "cancel": "Cancel"
 }

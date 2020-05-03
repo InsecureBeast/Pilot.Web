@@ -93,6 +93,10 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     return task instanceof TaskStageNode;
   }
 
+  isInWorkflow(task: TaskNode): boolean {
+    return task.intent > 0 || task instanceof TaskWorkflowNode;
+  }
+
   private loadSubTasks(parent: TaskNode): void {
     const children = parent.source.children.map(c => c.objectId);
     let index = this.tasks.indexOf(parent);

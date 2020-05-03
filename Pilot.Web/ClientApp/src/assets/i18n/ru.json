@@ -32,5 +32,6 @@
   "outdatedVersionFrom": "Неактуальная версия от",
   "goToCurrentVersion": "Перейти к актуальной версии",
   "itemsSelected": "Выбрано элементов:",
-  "pilotServerUnavailable": "Похоже, Pilot-Server на данный момент недоступен. Попробуте повторить запрос позже"
+  "pilotServerUnavailable": "Похоже, Pilot-Server на данный момент недоступен. Попробуте повторить запрос позже",
+  "cancel": "Отмена"
 }

@@ -9,7 +9,7 @@
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="task.isChecked"
         [class.collapse]="!task.isVisible"
-        [class.list-group-item-intent]="task.intent > 0"
+        [class.task-intent]="isInWorkflow(task)"
         (click)="checked(task, $event)"
         *ngFor="let task of tasks">
 
@@ -28,10 +28,6 @@
 <ng-template #taskNodeTemplate let-task="item">
   <div class="d-flex"
        [class.ml-5]="task.intent > 2">
-
-    <!--<div class="bg-dark task-intent"
-         *ngIf="task.intent > 0 || !task.isTask">
-    </div>-->
 
     <div class="d-flex align-items-start flex-column mr-2">
       <div class="">

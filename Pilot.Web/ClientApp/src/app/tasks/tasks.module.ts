@@ -13,6 +13,7 @@ import { TaskDetailsComponent } from './components/task-details/task-details.com
 import { TaskAttachmentsComponent } from './components/task-attachments/task-attachments.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { TaskComponent } from './pages/task/task.component';
+import { ModalModule } from '../ui/modal/modal.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -23,7 +24,8 @@ export function createTranslateLoader(http: HttpClient) {
     CommonModule,
     ErrorModule,
     RouterModule,
-    TranslateModule
+    TranslateModule,
+    ModalModule
   ],
   declarations: [
     TaskFiltersComponent,

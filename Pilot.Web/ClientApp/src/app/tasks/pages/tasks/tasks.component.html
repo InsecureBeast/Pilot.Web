@@ -42,15 +42,18 @@
       </app-task-list>
     </div>
   </div>
+</div>
 
-  <div [class.collapse]="!isFiltersMenuShown">
-    <div class="pw-modal-background"
-         (click)="closeFilters();"></div>
-    <div class="col-12 modal-view bg-content border-top shadow">
+<pw-modal id="filtesModal">
+  <div class="mob-filters-view">
+    <div class="bg-content rounded-lg p-3">
       <app-task-filters class=""
                         (onSelected)="onFilterSelected($event)">
 
       </app-task-filters>
     </div>
-  </div>
-</div>
+
+    <div class="bg-content rounded-lg p-3 mt-2"><a [routerLink]=""
+       (click)="closeFilters();$event.stopPropagation()" translate="cancel">Cancel</a></div>
+   </div>
+</pw-modal>
