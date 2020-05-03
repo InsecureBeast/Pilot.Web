@@ -1,11 +1,13 @@
 import { Component, OnInit, OnChanges, OnDestroy, Input, SimpleChanges } from '@angular/core';
-import { TaskNode } from '../../shared/task.node';
+
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { Subject } from 'rxjs';
 import { ObjectNode } from 'src/app/documents/shared/object.node';
 import { RelationType, IObject } from 'src/app/core/data/data.classes';
+import { DocumentsNavigationService } from 'src/app/documents/shared/documents-navigation.service';
 
 @Component({
     selector: 'app-task-attachments',
@@ -22,7 +24,8 @@ export class TaskAttachmentsComponent implements OnInit, OnChanges, OnDestroy {
   /** task-attachments ctor */
   constructor(private repository: RepositoryService,
     private typeIconService: TypeIconService,
-    private translate: TranslateService) {
+    private translate: TranslateService,
+    private navigator: DocumentsNavigationService) {
 
   }
 
@@ -56,7 +59,19 @@ export class TaskAttachmentsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   select(node: ObjectNode, event: MouseEvent): void {
+    
+    if (node.isDocument) {
+      if (node.isSource)
+        this.navigator.navigateToFile(node);
+      else
+        this.navigator.navigateToDocument(node);
 
+      return
+    }
 
+    if (node.isSource)
+      this.navigator.navigateToDocumentsFolder(node.id);
+    else
+      this.navigator.navigateToDocumentsFolder(node.id);
   }
 }
