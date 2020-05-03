@@ -14,7 +14,9 @@
   </ul>
 </nav>
 
-<div class="pt-6 row h-100">
+<app-error *ngIf="error" [response]="error"></app-error>
+
+<div class="pt-6 row h-100" *ngIf="!error">
 
   <div class="col-12 d-sm-none">
     <a id="filters-button"
@@ -46,14 +48,14 @@
 
 <pw-modal id="filtesModal">
   <div class="mob-filters-view">
-    <div class="bg-content rounded-lg p-3">
+    <div class="bg-white rounded-lg p-3">
       <app-task-filters class=""
                         (onSelected)="onFilterSelected($event)">
 
       </app-task-filters>
     </div>
 
-    <div class="bg-content rounded-lg p-3 mt-2"><a [routerLink]=""
+    <div class="bg-white rounded-lg p-3 mt-2"><a [routerLink]=""
        (click)="closeFilters();$event.stopPropagation()" translate="cancel">Cancel</a></div>
    </div>
 </pw-modal>

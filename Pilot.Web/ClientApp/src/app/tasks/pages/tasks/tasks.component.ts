@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { TaskFilter } from '../../components/task-filters/task-filters.component';
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
@@ -21,6 +22,7 @@ export class TasksComponent implements OnInit {
   selectedFilter: TaskFilter;
   isFiltersMenuShown: boolean;
   checked: TaskNode[];
+  error: HttpErrorResponse;
 
   /** tasks ctor */
   constructor(
@@ -53,7 +55,7 @@ export class TasksComponent implements OnInit {
   }
 
   onError(error): void {
-    //this.error = error;
+    this.error = error;
   }
 
   showFilters(): void {
