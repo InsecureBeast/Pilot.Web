@@ -62,9 +62,9 @@ export class TaskAttachmentsComponent implements OnInit, OnChanges, OnDestroy {
     
     if (node.isDocument) {
       if (node.isSource)
-        this.navigator.navigateToFile(node);
+        this.navigator.navigateToFile(node.source);
       else
-        this.navigator.navigateToDocument(node);
+        this.navigator.navigateToDocument(node.source);
 
       return
     }

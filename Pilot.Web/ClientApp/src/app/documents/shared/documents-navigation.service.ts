@@ -9,22 +9,26 @@ export class DocumentsNavigationService {
   constructor(private readonly router: Router) {
   }
 
-  navigateToDocument(documentId: string, activatedRoute: ActivatedRoute): void {
-    this.router.navigate(['./document/' + documentId], { relativeTo: activatedRoute });
+  navigateToDocument(document: string | IObject, activatedRoute?: ActivatedRoute): void {
+    if (typeof document === 'string') {
+      //Logic for overload 1
+      this.router.navigate(['./document/' + document], { relativeTo: activatedRoute });
+    } else {
+      //Logic for overload 2
+      const url = "/documents/" + document.parentId + "/document/" + document.id;
+      this.router.navigateByUrl(url);
+    }
   }
 
-  navigateToDocument(document: IObject): void {
-    const url = "/documents/" + document.parentId + "/document/" + document.id;
-    this.router.navigateByUrl(url);
-  }
-
-  navigateToFile(fileId: string, activatedRoute: ActivatedRoute): void {
-    this.router.navigate(['./file/' + fileId], { relativeTo: activatedRoute });
-  }
-
-  navigateToFile(document: IObject): void {
-    const url = "/documents/" + document.parentId + "/file/" + document.id;
-    this.router.navigateByUrl(url);
+  navigateToFile(file: string | IObject, activatedRoute?: ActivatedRoute): void {
+    if (typeof file === 'string') {
+      //Logic for overload 1
+      this.router.navigate(['./file/' + file], { relativeTo: activatedRoute });
+    } else {
+      //Logic for overload 2
+      const url = "/documents/" + file.parentId + "/file/" + file.id;
+      this.router.navigateByUrl(url);
+    }
   }
 
   navigateToDocumentsFolder(folderId: string): void {
