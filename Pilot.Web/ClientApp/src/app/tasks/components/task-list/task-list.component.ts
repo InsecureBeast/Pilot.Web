@@ -97,7 +97,8 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     const children = parent.source.children.map(c => c.objectId);
     let index = this.tasks.indexOf(parent);
     this.repositoryService.getObjectsAsync(children)
-      .then(objects => {
+      .then(async objects => {
+        var stages = new Array<TaskNode>();
         for (const source of objects) {
           const node = this.taskNodeFactory.createNode(source);
           if (!node)
@@ -106,8 +107,14 @@ export class TaskListComponent implements  OnInit, OnDestroy{
           index++;
           this.tasks.splice(index, 0, node);
           parent.loadedChildren.push(node);
-          node.loadChildren(this.tasks, this.taskNodeFactory)
+          //await node.loadChildren(this.tasks, this.taskNodeFactory)
+          stages.push(node);
         }
+
+        for (var s of stages) {
+           await s.loadChildren(this.tasks, this.taskNodeFactory)
+        }
+       
       })
       .catch(er => {
         this.onError.emit(er);

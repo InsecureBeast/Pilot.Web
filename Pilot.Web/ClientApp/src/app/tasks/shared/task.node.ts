@@ -66,19 +66,23 @@ export class TaskNode {
     return this._isVisible;
   }
 
-  loadChildren(list: TaskNode[], taskFactory: TaskNodeFactory): void {
-    const children = this.source.children.map(c => c.objectId);
-    let index = list.indexOf(this);
-    this.repository.getObjectsAsync(children).then(objs => {
-      for (const source of objs) {
-        const node = taskFactory.createNode(source);
-        if (!node)
-          continue;
+  loadChildren(list: TaskNode[], taskFactory: TaskNodeFactory): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const children = this.source.children.map(c => c.objectId);
+      let index = list.indexOf(this);
+      this.repository.getObjectsAsync(children).then(objs => {
+        for (const source of objs) {
+          const node = taskFactory.createNode(source);
+          if (!node)
+            continue;
 
-        index++;
-        list.splice(index, 0, node);
-        this.loadedChildren.push(node);
-      }
+          index++;
+          list.splice(index, 0, node);
+          this.loadedChildren.push(node);
+        }
+
+        resolve();
+      });
     });
   }
 
@@ -155,7 +159,7 @@ export class TaskNode {
     if (deadlineAttrString) {
       this.deadline = Tools.toLocalDateTime(deadlineAttrString, this.translate.currentLang);
       const deadlineDate = Tools.toUtcCsDateTime(dateAttrString);
-      this.isOutdated = deadlineDate.valueOf() > Date.now();
+      this.isOutdated = deadlineDate.valueOf() - Date.now() < 0;
     }
     
   }
@@ -217,7 +221,9 @@ export class UserState {
     this.isDeleted = state.isDeleted;
     this.isCompletionState = state.isCompletionState;
     this.isSystemState = state.isSystemState;
-    this.icon = Tools.getSvgImage(state.icon, sanitizer);
+
+    if (state.icon !== null)
+      this.icon = Tools.getSvgImage(state.icon, sanitizer);
   }
 
   id: string;

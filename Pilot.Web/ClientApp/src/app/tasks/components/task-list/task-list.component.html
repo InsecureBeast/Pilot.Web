@@ -26,7 +26,8 @@
 </div>
 
 <ng-template #taskNodeTemplate let-task="item">
-  <div class="d-flex">
+  <div class="d-flex"
+       [class.ml-5]="task.intent > 2">
 
     <!--<div class="bg-dark task-intent"
          *ngIf="task.intent > 0 || !task.isTask">
@@ -44,12 +45,13 @@
       </div>
     </div>
 
-    <div class="mr-2">
+    <div class="mr-2"
+         [class.ml-3]="!task.userState.icon || !task.userState">
       <img id="state_image"
            [src]="task.userState.icon"
            title="{{task.userState.title}}"
            width="16"
-           *ngIf="task.userState != null">
+           *ngIf="task.userState !== null && task.userState.icon">
     </div>
 
     <div class="flex-grow-1 overflow-hidden">

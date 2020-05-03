@@ -45,7 +45,7 @@ li a {
 
 .stage {
   margin: -0.75rem -0.45rem;
-  background-color: #fdfdfd;
+  background-color: #f8f9fa;
 }
 
 .task-intent {
@@ -55,7 +55,7 @@ li a {
 
 .list-group-item-intent {
   /*color: #004085;*/
-  background-color: #fdfdfd
+  background-color: #fcfdff
 }
 .list-group-item-intent:hover{
   /*color: #004085;*/
