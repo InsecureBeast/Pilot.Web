@@ -18,7 +18,7 @@ namespace Pilot.Web.Model.Search.NextTasksSearchExpression.Tokens
         {
             typeof(StringAttributeNameToken),
             typeof(NextTaskDateAttributeNameToken),
-            typeof(NumberAttributeNameToken),
+            typeof(IntegerNumberAttributeNameToken),
             typeof(FloatNumberAttributeNameToken),
             typeof(UserStateAttributeNameToken),
             typeof(OrgUnitAttributeNameToken),

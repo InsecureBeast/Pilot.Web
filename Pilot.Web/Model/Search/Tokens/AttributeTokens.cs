@@ -26,7 +26,7 @@ namespace Pilot.Web.Model.Search.Tokens
         {
             typeof(StringAttributeNameToken),
             typeof(DateAttributeNameToken),
-            typeof(NumberAttributeNameToken),
+            typeof(IntegerNumberAttributeNameToken),
             typeof(FloatNumberAttributeNameToken),
             typeof(UserStateAttributeNameToken),
             typeof(OrgUnitAttributeNameToken),
@@ -96,6 +96,7 @@ namespace Pilot.Web.Model.Search.Tokens
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
         {
             typeof(UserStateAttributeValueToken),
+            typeof(UserStateAttributeIsSetToken)
         };
     }
 
@@ -122,7 +123,7 @@ namespace Pilot.Web.Model.Search.Tokens
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
         {
             typeof(StringAttributeValueToken),
-            typeof(AttributeIsSetToken)
+            typeof(StringAttributeIsSetToken)
         };
 
         public override string Alias => SearchTokenAliases.AttributeWhitespaceAlias;
@@ -185,7 +186,7 @@ namespace Pilot.Web.Model.Search.Tokens
         {
             get
             {
-                return base.ValidNextTypes.Concat(new[] { typeof(AttributeIsSetToken) }).ToList();
+                return base.ValidNextTypes.Concat(new[] { typeof(DateTimeAttributeIsSetToken) }).ToList();
             }
         }
 
@@ -194,11 +195,11 @@ namespace Pilot.Web.Model.Search.Tokens
     #endregion
 
     #region number attributes
-    class NumberAttributeNameToken : AttributeNameTokenBase
+    class IntegerNumberAttributeNameToken : AttributeNameTokenBase
     {
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
         {
-            typeof(NumberAttributeWhitespaceToken),
+            typeof(IntegerNumberAttributeWhitespaceToken),
         };
 
         protected override void UpdateTokenContext(TokenContext context)
@@ -208,21 +209,31 @@ namespace Pilot.Web.Model.Search.Tokens
         }
     }
 
-    class NumberAttributeWhitespaceToken : AttributeWhitespaceTokenBase
+    abstract class NumberAttributeWhitespaceTokenBase : AttributeWhitespaceTokenBase
     {
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
         {
             typeof(NumberAttributeValueToken),
             typeof(NumberAttributeGreaterToken),
-            typeof(NumberAttributeLessToken),
-            typeof(AttributeIsSetToken)
+            typeof(NumberAttributeLessToken)
         };
     }
 
-    class NumberAttributeGreaterToken : KeywordToken
+    class IntegerNumberAttributeWhitespaceToken : NumberAttributeWhitespaceTokenBase
+    {
+        protected override List<Type> ValidNextTypes
+        {
+            get
+            {
+                return base.ValidNextTypes.Union(new[] { typeof(IntegerNumberAttributeIsSetToken) }).ToList();
+            }
+        }
+    }
+
+    public class NumberAttributeGreaterToken : KeywordToken
     {
         public override string Alias => ">";
-        public override string Hint => "greater than";
+        public override string Hint => "Greater then";
         public override string SerializationAlias => Alias;
 
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
@@ -240,7 +251,7 @@ namespace Pilot.Web.Model.Search.Tokens
     class NumberAttributeLessToken : KeywordToken
     {
         public override string Alias => "<";
-        public override string Hint => "less than";
+        public override string Hint => "Less then";
         public override string SerializationAlias => Alias;
 
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
@@ -285,7 +296,7 @@ namespace Pilot.Web.Model.Search.Tokens
 
         public override bool AllowCustomValues => true;
 
-        public override string InvalidValueMessage => $"&apos;{Value}&apos; is not a number";
+        public override string InvalidValueMessage => $"'{Value}' is not a nubmer or contains too much digits";
 
         public override bool ValidateAttributeValue(IPresetItem argumentValue)
         {
@@ -305,7 +316,7 @@ namespace Pilot.Web.Model.Search.Tokens
         }
     }
 
-    class NumberAttributeValueListWhitespaceToken : NonTerminalWhitespaceToken
+    public class NumberAttributeValueListWhitespaceToken : NonTerminalWhitespaceToken
     {
         protected override List<Type> ValidNextTypes { get; } = new List<Type>
         {
@@ -347,12 +358,29 @@ namespace Pilot.Web.Model.Search.Tokens
         }
     }
 
-    class FloatNumberAttributeNameToken : NumberAttributeNameToken
+    class FloatNumberAttributeNameToken : AttributeNameTokenBase
     {
+        protected override List<Type> ValidNextTypes { get; } = new List<Type>
+        {
+            typeof(FloatNumberAttributeWhitespaceToken),
+        };
+
         protected override void UpdateTokenContext(TokenContext context)
         {
             context[nameof(FloatNumberAttributeNameToken)] = new ContextItem(this, typeof(AttributeArgumentEndToken));
             base.UpdateTokenContext(context);
+            context[RangeToken.AllowRangeKey] = new ContextItem(true, typeof(NumberAttributeRangeToken), typeof(NumberAttributeGreaterToken), typeof(NumberAttributeLessToken));
+        }
+    }
+
+    class FloatNumberAttributeWhitespaceToken : NumberAttributeWhitespaceTokenBase
+    {
+        protected override List<Type> ValidNextTypes
+        {
+            get
+            {
+                return base.ValidNextTypes.Union(new[] { typeof(FloatNumberAttributeIsSetToken) }).ToList();
+            }
         }
     }
     #endregion
@@ -372,7 +400,7 @@ namespace Pilot.Web.Model.Search.Tokens
         {
             typeof(OrgUnitMeArgumentToken),
             typeof(OrgUnitAttributeValueToken),
-            typeof(AttributeIsSetToken)
+            typeof(OrgUnitAttributeIsSetToken)
         };
     }
 

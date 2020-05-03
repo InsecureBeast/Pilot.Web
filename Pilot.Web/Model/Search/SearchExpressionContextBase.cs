@@ -680,7 +680,7 @@ namespace Pilot.Web.Model.Search
             if (token is FloatNumberAttributeNameToken)
                 return new List<MAttrType> { MAttrType.Double, MAttrType.Decimal };
 
-            if (token is NumberAttributeNameToken)
+            if (token is IntegerNumberAttributeNameToken)
                 return new List<MAttrType> { MAttrType.Integer };
 
             if (token is UserStateAttributeNameToken)
