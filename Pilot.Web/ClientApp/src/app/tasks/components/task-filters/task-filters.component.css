@@ -14,27 +14,27 @@
 }
 
 li.filter-item a {
-  color: #a3a6b6;
+  color: var(--gray);
 }
 
   li.filter-item a:link {
-    color: #a3a6b6;
+    color: var(--gray);
   }
   li.filter-item a:visited {
-    color: #a3a6b6;
+    color: var(--gray);
   }
   li.filter-item a:hover {
-    color: #343951;
+    color: var(--dark);
     text-decoration: none;
   }
 
-/*.filter-view-item:hover {
-  background-color: #EAEAEA;
+li.filter-item-active a {
+    color: var(--dark);
 }
 
-.list-group-item-primary:hover {
-  background-color: #9FCDFF;
-}*/
+  li.filter-item-active a:visited {
+    color: var(--dark);
+  }
 
 .filter-one-line-text {
   overflow: hidden;

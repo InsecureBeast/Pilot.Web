@@ -47,7 +47,7 @@
            [src]="task.userState.icon"
            title="{{task.userState.title}}"
            width="16"
-           *ngIf="task.userState !== null && task.userState.icon">
+           *ngIf="task.userState && task.userState.icon">
     </div>
 
     <div class="flex-grow-1 overflow-hidden">

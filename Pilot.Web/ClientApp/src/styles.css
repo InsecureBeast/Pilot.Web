@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 html, body {
   height: 100%;
-  background-color: #f5f6fc;
+  background-color: var(--bg-content);
 }
 
 .content-center {
@@ -14,16 +14,15 @@ html, body {
 }
 
 .bg-toolbar {
-  background-color: #ffffff;
-  /*opacity: 0.95;*/
+  background-color: var(--white);
 }
 
 .bg-content {
-  background-color: #f5f6fc;
+  background-color: var(--bg-content);
 }
 
 .text-second {
-  color: #9e9e9e;
+  color: var(--second);
 }
 
 .container-fluid {

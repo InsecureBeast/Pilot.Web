@@ -1,12 +1,16 @@
 <div class="navbar-nav">
   <ul class="filter">
-    <li class="filter-item" *ngFor="let filter of filters">
+    <li class="filter-item"
+        [class.filter-item-active]="filter.isActive"
+        *ngFor="let filter of filters">
       <a [routerLink]="" (click)="selectFilter(filter);$event.stopPropagation()">{{ filter.name }}</a>
     </li>
   </ul>
   <ul class="filter"
       [class.border-top]="personalFilters && personalFilters.length > 0">
-    <li class="filter-item" *ngFor="let filter of personalFilters">
+    <li class="filter-item"
+        [class.filter-item-active]="filter.isActive"
+        *ngFor="let filter of personalFilters">
       <a [routerLink]="" (click)="selectFilter(filter);$event.stopPropagation()">{{ filter.name }}</a>
     </li>
   </ul>

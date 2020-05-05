@@ -3,19 +3,19 @@
 }
 
 a {
-  color: #a3a6b6;
+  color: var(--gray);
 }
 
   a:link {
-    color: #a3a6b6;
+    color: var(--gray);
   }
 
   a:active {
-    color: #a3a6b6;
+    color: var(--gray);
   }
 
   a:visited {
-    color: #a3a6b6;
+    color: var(--gray);
   }
 
   a:hover {

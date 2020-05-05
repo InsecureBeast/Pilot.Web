@@ -19,14 +19,14 @@
 }
 
 li.breadcrumb-item a {
-  color: #a3a6b6;
+  color: var(--gray);
 }
 
   li.breadcrumb-item a:link {
-    color: #a3a6b6;
+    color: var(--gray);
   }
   li.breadcrumb-item a:visited {
-    color: #a3a6b6;
+    color: var(--gray);
   }
   li.breadcrumb-item a:hover {
     color: #343951;

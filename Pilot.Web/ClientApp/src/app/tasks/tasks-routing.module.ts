@@ -19,7 +19,7 @@ const routes: Routes = [
     //]
   },
   {
-    path: 'tasks/:id',
+    path: 'tasks/:filter',
     component: TasksComponent,
     canActivate: [AuthGuard],
     data: { reuse: true }

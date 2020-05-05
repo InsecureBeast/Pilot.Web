@@ -13,9 +13,9 @@
   text-align: center;
 }
 
-  li.nav-item-button span {
-    color: #a3a6b6;
-  }
+li.nav-item-button span {
+  color: var(--gray);
+}
 
   li.nav-item-button:hover span {
     color: #343951;
@@ -36,4 +36,5 @@
   white-space: nowrap;
   margin-right: .25rem;
   margin-left: .25rem;
+  color: var(--gray);
 }
