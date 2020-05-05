@@ -37,4 +37,6 @@ li.nav-item-button span {
   margin-right: .25rem;
   margin-left: .25rem;
   color: var(--gray);
+  -webkit-user-select: none;
+  user-select: none;
 }
