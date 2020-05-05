@@ -20,21 +20,23 @@ li.filter-item a {
   li.filter-item a:link {
     color: var(--gray);
   }
+
   li.filter-item a:visited {
     color: var(--gray);
   }
+
   li.filter-item a:hover {
     color: var(--dark);
     text-decoration: none;
   }
 
-li.filter-item-active a {
-    color: var(--dark);
-}
-
-  li.filter-item-active a:visited {
+  li.filter-item a:active {
     color: var(--dark);
   }
+
+.active {
+    color: var(--dark)!important;
+}
 
 .filter-one-line-text {
   overflow: hidden;

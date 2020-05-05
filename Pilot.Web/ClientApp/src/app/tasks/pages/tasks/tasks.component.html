@@ -18,7 +18,7 @@
 
 <div class="pt-6 row h-100" *ngIf="!error">
 
-  <div class="col-12 d-sm-none">
+  <div class="col-12 d-sm-none" *ngIf="selectedFilter">
     <a id="filters-button"
        [routerLink]=""
        (click)="showFilters();$event.stopPropagation()">
@@ -29,7 +29,9 @@
 
   <div class="d-none d-sm-block col-sm-3 col-md-3 col-xl-2">
     <app-task-filters class="fixed"
-                      (onSelected)="onFilterSelected($event)">
+                      [selectedFilter]="selectedFilter"
+                      (onSelected)="onFilterSelected($event)"
+                      (onLoaded)="onFiltersLoaded($event)">
 
     </app-task-filters>
   </div>
@@ -50,8 +52,8 @@
   <div class="mob-filters-view">
     <div class="bg-white rounded-lg p-3">
       <app-task-filters class=""
+                        [selectedFilter]="selectedFilter"
                         (onSelected)="onFilterSelected($event)">
-
       </app-task-filters>
     </div>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { TaskFiltersProvider } from './task-filters.provider';
@@ -20,25 +20,29 @@ export class TaskFiltersComponent implements OnInit {
   @Output() onError = new EventEmitter<HttpErrorResponse>();
   @Output() onLoaded = new EventEmitter<[TaskFilter[], TaskFilter[]]>();
 
+
+  @Input()
+  set selectedFilter(filter: TaskFilter) {
+    this.selectFilterOnly(filter);
+  }
+
   /** task-filters ctor */
   constructor(private readonly tasksRepositoryService: TasksRepositoryService) {
-    
+    this.personalFilters = new Array();
+    this.filters = new Array();
   }
 
   ngOnInit(): void {
     this.tasksRepositoryService.getPersonalSettings(CommonSettingsDefaults.taskFiltersKey)
       .subscribe(settings => {
-          this.filters = new Array<TaskFilter>();
+          this.filters = new Array();
           var filtersProvider = new TaskFiltersProvider(settings);
           filtersProvider.commonFilters.forEach((value: string, key: string) => {
             var filter = new TaskFilter(key, value);
-            if (this.filters.length === 0) { //TODO get from local storage
-              this.selectFilter(filter);
-            }
             this.filters.push(filter);
           });
 
-          this.personalFilters = new Array<TaskFilter>();
+          this.personalFilters = new Array();
           filtersProvider.personalFilters.forEach((value: string, key: string) => {
             var filter = new TaskFilter(key, value);
             this.personalFilters.push(filter);
@@ -50,18 +54,22 @@ export class TaskFiltersComponent implements OnInit {
   }
 
   selectFilter(filter: TaskFilter): void {
-    for (let f of this.filters) {
-      f.isActive = false;
-    }
-
-    for (let f of this.personalFilters) {
-      f.isActive = false;
-    }
-
-    filter.isActive = !filter.isActive;
+    this.selectFilterOnly(filter);
     this.onSelected.emit(filter);
   }
 
+  selectFilterOnly(filter: TaskFilter): void {
+    if (!filter)
+      return;
+
+    for (let f of this.filters) {
+      f.isActive = f.name === filter.name;
+    }
+
+    for (let f of this.personalFilters) {
+      f.isActive = f.name === filter.name;;
+    }
+  }
 }
 
 export class TaskFilter {

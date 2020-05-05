@@ -42,7 +42,7 @@
     </div>
 
     <div class="mr-2"
-         [class.ml-3]="!task.userState.icon || !task.userState">
+         [class.ml-3]="!task.userState || !task.userState.icon">
       <img id="state_image"
            [src]="task.userState.icon"
            title="{{task.userState.title}}"
