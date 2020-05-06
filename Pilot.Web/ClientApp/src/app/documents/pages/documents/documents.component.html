@@ -1,12 +1,4 @@
 <div *ngIf="!error">
-  <ng-container *ngIf="!isDocument else documentTemplate">
-    <ng-container *ngTemplateOutlet="documentsTemplate"></ng-container>
-  </ng-container>
-</div>
-
-<app-error *ngIf="error" [response]="error"></app-error>
-
-<ng-template #documentsTemplate >
   <div class="row pt-6">
 
     <app-documents-toolbar class="col-12 p-0"
@@ -29,12 +21,7 @@
     </div>
 
   </div>
-</ng-template>
+</div>
 
-<ng-template #documentTemplate>
-  <app-document [document]="node"
-                [selectedVersion]="selectedVersion"
-                (onClose)="closeDocument();"
-                (onPreviousDocument)="previousDocument($event)"
-                (onNextDocument)="nextDocument($event)"></app-document>
-</ng-template>
+<app-error *ngIf="error" [response]="error"></app-error>
+

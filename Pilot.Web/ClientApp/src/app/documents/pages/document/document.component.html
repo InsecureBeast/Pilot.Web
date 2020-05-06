@@ -1,11 +1,12 @@
 <app-document-toolbar [document]="document"
                       (onDocumentClosed)="close($event)"
+                      (onDownload)="download($event)"
                       (onPreviousDocument)="previousDocument($event)"
                       (onNextDocument)="nextDocument($event)"
                       (onShowVersions)="showDocumentVersions($event)">
 </app-document-toolbar>
 
-<div class="pt-6">
+<div class="pt-6" *ngIf="!error">
   <div class="row m-0">
     <div class="col-12 p-0 pb-5"
          [class.col-md-8]="isInfoShown"
@@ -48,3 +49,5 @@
   </div>
 
 </div>
+
+<app-error *ngIf="error" [response]="error"></app-error>

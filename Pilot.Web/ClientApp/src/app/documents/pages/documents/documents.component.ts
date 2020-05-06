@@ -37,14 +37,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   
   /** documents ctor */
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly repository: RepositoryService,
-    private readonly typeIconService: TypeIconService,
-    private readonly translate: TranslateService,
-    private readonly router: Router,
-    private readonly location: Location,
-    private readonly navigationService: DocumentsNavigationService,
-    private readonly documentsService: DocumentsService) {
+    private activatedRoute: ActivatedRoute,
+    private repository: RepositoryService,
+    private typeIconService: TypeIconService,
+    private translate: TranslateService,
+    private router: Router,
+    private location: Location,
+    private navigationService: DocumentsNavigationService,
+    private documentsService: DocumentsService) {
 
   }
 
@@ -130,9 +130,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.navigationService.navigateToFile(node.id, this.activatedRoute);
+        this.navigationService.navigateToFile(node.id);
       } else {
-        this.navigationService.navigateToDocument(node.id, this.activatedRoute);
+        this.navigationService.navigateToDocument(node.id);
       }
       
       return;
@@ -149,60 +149,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.checked = nodes;
   }
 
-  closeDocument() {
-    this.location.replaceState('/documents/' + this.currentItem.id);
-    this.location.back();
-  }
-
-  previousDocument(node : INode) {
-    const indexOf = this.documents.findIndex(doc => doc.id === node.id);
-    if (!this.canPreviousDocument(indexOf))
-      return;
-
-    const prev = this.documents[indexOf - 1];
-    this.isDocument = prev.isDocument;
-    this.node = prev;
-    this.updateLocation(prev.id);
-  }
-
-  nextDocument(node: INode) {
-    const indexOf = this.documents.findIndex(doc => doc.id === node.id);
-    if (!this.canNextDocument(indexOf))
-      return;
-
-    const next = this.documents[indexOf + 1];
-    this.isDocument = next.isDocument;
-    this.node = next;
-    this.updateLocation(next.id);
-  }
-
   onError(error): void {
     this.error = error;
-  }
-
-  private canNextDocument(indexOf: number): boolean {
-    if (indexOf === -1)
-      return false;
-
-    if (indexOf === this.documents.length - 1)
-      return false;
-
-    return true;
-  }
-
-  private canPreviousDocument(indexOf: number): boolean {
-    if (indexOf === -1)
-      return false;
-
-    if (indexOf === 0)
-      return false;
-
-    return true;
-  }
-
-  private updateLocation(id: string): void {
-    let path = this.activatedRoute.snapshot.url.join('/');
-    path = path + "/" + this.activatedRoute.snapshot.firstChild.url[0];
-    this.location.replaceState(path + '/' + id);
   }
 }

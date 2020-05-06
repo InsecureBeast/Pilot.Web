@@ -1,10 +1,9 @@
-import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter, OnDestroy } from '@angular/core';
-import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { SafeUrl} from '@angular/platform-browser';
 
 import { Subject } from 'rxjs';
 
-import { ObjectNode } from '../../shared/object.node';
-import { DownloadService } from '../../../core/download.service';
+import { IObject } from '../../../core/data/data.classes';
 
 @Component({
     selector: 'app-document-toolbar',
@@ -12,7 +11,7 @@ import { DownloadService } from '../../../core/download.service';
     styleUrls: ['./document-toolbar.component.css', '../../shared/toolbar.css']
 })
 /** document-toolbar component*/
-export class DocumentToolbarComponent implements OnChanges, OnDestroy {
+export class DocumentToolbarComponent implements OnDestroy {
 
   private ngUnsubscribe = new Subject<void>();
 
@@ -20,26 +19,20 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   icon: SafeUrl;
   isVersionsChecked: boolean;
 
-  @Input() document: ObjectNode;
+  @Input()
+  set document(value: IObject) {
+    this.documentChanged(value);
+  }
+
   @Output() onDocumentClosed = new EventEmitter<any>();
+  @Output() onDownload = new EventEmitter<any>();
   @Output() onPreviousDocument = new EventEmitter<any>();
   @Output() onNextDocument = new EventEmitter<any>();
   @Output() onShowVersions = new EventEmitter<any>();
 
   /** document-toolbar ctor */
-  constructor(private readonly downloadService: DownloadService) {
+  constructor() {
 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.title = null;
-    this.icon = null;
-
-    if (!this.document)
-      return;
-
-    this.title = this.document.title;
-    this.icon = this.document.icon;
   }
 
   ngOnDestroy(): void {
@@ -48,11 +41,11 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   }
 
   previous($event): void {
-    this.onPreviousDocument.emit(this.document);
+    this.onPreviousDocument.emit();
   }
 
   next($event): void {
-    this.onNextDocument.emit(this.document);
+    this.onNextDocument.emit();
   }
 
   close($event): void {
@@ -60,10 +53,22 @@ export class DocumentToolbarComponent implements OnChanges, OnDestroy {
   }
 
   download($event): void {
-    this.downloadService.downloadFile(this.document.source);
+    this.onDownload.emit($event);
   }
 
   showVersions($event): void {
     this.isVersionsChecked = !this.isVersionsChecked;
     this.onShowVersions.emit(this.document);
-  }}
+  }
+
+  private documentChanged(document: IObject): void {
+    this.title = null;
+    this.icon = null;
+
+    if (!document)
+      return;
+
+    this.title = document.title;
+    this.icon = document.type.icon;
+  }
+}

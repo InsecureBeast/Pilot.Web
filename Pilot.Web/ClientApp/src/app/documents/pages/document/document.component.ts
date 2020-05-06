@@ -13,7 +13,7 @@ import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
 import { RepositoryService } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
-import { IFileSnapshot } from '../../../core/data/data.classes';
+import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 
 @Component({
@@ -25,19 +25,19 @@ import { VersionsSelectorService } from '../../components/document-versions/vers
 export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
+  private navigationSubscription: Subscription;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onError = new EventEmitter<HttpErrorResponse>();
-  @Output() onPreviousDocument = new EventEmitter<any>();
-  @Output() onNextDocument = new EventEmitter<any>();
+  private documents = new Array<string>();
 
-  @Input() document: INode;
+  document: IObject;
+
   @Input() selectedVersion : string;
 
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
+  error: HttpErrorResponse;
 
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
@@ -46,22 +46,33 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   /** document-details ctor */
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly sourceFileService: SourceFileService,
-    private readonly downloadService: DownloadService,
-    private readonly location: Location,
-    private readonly repository: RepositoryService,
-    private readonly router: Router,
-    private readonly versionSelector: VersionsSelectorService) {
+    private activatedRoute: ActivatedRoute,
+    private sourceFileService: SourceFileService,
+    private downloadService: DownloadService,
+    private location: Location,
+    private repository: RepositoryService,
+    private router: Router,
+    private versionSelector: VersionsSelectorService) {
 
   }
 
   ngOnInit(): void {
+    this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const id = params.get('id');
+      if (!id)
+        return;
+
+      this.loadDocument(id, true);
+    });
+
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
       if (s === null)
         return;
 
-      this.isActualVersionSelected = this.document.source.actualFileSnapshot.created === s.created;
+      if (!this.document)
+        return;
+
+      this.isActualVersionSelected = this.document.actualFileSnapshot.created === s.created;
       let version = "";
       if (!this.isActualVersionSelected)
         version = s.created;
@@ -90,45 +101,38 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
     if (this.routerSubscription)
       this.routerSubscription.unsubscribe();
+
+    if (this.navigationSubscription)
+      this.navigationSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.document)
-      return;
+    //if (!this.document)
+    //  return;
 
-    const source = this.document.source;
-    let snapshot = source.actualFileSnapshot;
-    this.isActualVersionSelected = !this.selectedVersion;
-    if (!this.isActualVersionSelected)
-      snapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
+    //const source = this.document.source;
+    //let snapshot = source.actualFileSnapshot;
+    //this.isActualVersionSelected = !this.selectedVersion;
+    //if (!this.isActualVersionSelected)
+    //  snapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
 
-    if (snapshot) {
-      this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
-      this.selectedVersionCreator = "";
-      const creator = this.repository.getPerson(snapshot.creatorId);
-      if (creator)
-        this.selectedVersionCreator = creator.displayName;
-    }
-    this.loadSnapshot(snapshot);
+    //if (snapshot) {
+    //  this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
+    //  this.selectedVersionCreator = "";
+    //  const creator = this.repository.getPerson(snapshot.creatorId);
+    //  if (creator)
+    //    this.selectedVersionCreator = creator.displayName;
+    //}
+    //this.loadSnapshot(snapshot);
   }
 
   close($event): void {
     this.cancelAllRequests(false);
-    this.onClose.emit($event);
-  }
-
-  previousDocument($event): void {
-    this.cancelAllRequests(false);
-    this.onPreviousDocument.emit($event);
-  }
-
-  nextDocument($event): void {
-    this.cancelAllRequests(false);
-    this.onNextDocument.emit($event);
+    this.location.back();
   }
 
   download($event): void{
-    this.downloadService.downloadFile(this.document.source);
+    this.downloadService.downloadFile(this.document);
   }
 
   showDocumentVersions($event): void {
@@ -140,18 +144,84 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   selectActualVersion(): boolean {
-    this.versionSelector.changeSelectedSnapshot(this.document.source.actualFileSnapshot);
+    this.versionSelector.changeSelectedSnapshot(this.document.actualFileSnapshot);
     return false;
   }
 
-  private updateLocation(version: string): void {
-    let path = this.activatedRoute.snapshot.url.join("/");
-    path = path + "/" + this.activatedRoute.snapshot.firstChild.url[0];
-    path = path + "/" + this.document.id;
-    if (version !== "")
-      this.location.replaceState(path + "/" + version);
-    else
-      this.location.replaceState(path);
+  previousDocument(node: INode) {
+    this.cancelAllRequests(false);
+    const indexOf = this.documents.findIndex(doc => doc === this.document.id);
+    if (!this.canPreviousDocument(indexOf))
+      return;
+
+    const prevId = this.documents[indexOf - 1];
+    this.loadDocument(prevId);
+    this.updateLocation(prevId);
+  }
+
+  nextDocument(node: INode) {
+    this.cancelAllRequests(false);
+    const indexOf = this.documents.findIndex(doc => doc === this.document.id);
+    if (!this.canNextDocument(indexOf))
+      return;
+
+    const nextId = this.documents[indexOf + 1];
+    this.loadDocument(nextId);
+    this.updateLocation(nextId);
+  }
+
+  private loadDocument(id: string, loadNeighbors?: boolean): void {
+    this.repository.getObjectAsync(id)
+      .then(source => {
+        if (!source)
+          return;
+
+        this.document = source;
+        let snapshot = source.actualFileSnapshot;
+        this.isActualVersionSelected = !this.selectedVersion;
+        if (!this.isActualVersionSelected)
+          snapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
+
+        if (snapshot) {
+          this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
+          this.selectedVersionCreator = "";
+          const creator = this.repository.getPerson(snapshot.creatorId);
+          if (creator)
+            this.selectedVersionCreator = creator.displayName;
+        }
+
+        this.loadSnapshot(snapshot);
+
+        if (loadNeighbors) {
+          this.loadNeighbors(source);
+        }
+      })
+      .catch(e => {
+        this.isLoading = false;
+        this.error = e;
+      });
+  }
+
+  private loadNeighbors(source: IObject): void {
+    this.repository.getObjectAsync(source.parentId)
+      .then(parent => {
+        for (const child of parent.children) {
+          const type = this.repository.getType(child.typeId);
+          if (type && type.hasFiles)
+            this.documents.push(child.objectId);
+        }
+      }).catch(e => {
+        this.isLoading = false;
+        this.error = e;
+      });
+  }
+
+  private updateLocation(id: string, version?: string): void {
+    if (!version) {
+      this.router.navigate(["document/" + id], { replaceUrl: true });
+    } else {
+      this.router.navigate(["document/" + id + "/" + version], { replaceUrl: true });
+    }
   }
 
   private loadSnapshot(snapshot: IFileSnapshot): void {
@@ -165,7 +235,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         .catch(e => {
           this.isLoading = false;
           this.images = null;
-          this.onError.emit(e);
+          this.error = e;
         });
       return;
     }
@@ -185,7 +255,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         })
         .catch(e => {
           this.images = null;
-          this.onError.emit(e);
+          this.error = e;
         });
 
       return;
@@ -198,7 +268,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         })
         .catch(e => {
           this.images = null;
-          this.onError.emit(e);
+          this.error = e;
         });
       return;
     }
@@ -213,5 +283,25 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       if (isComplete)
         this.ngUnsubscribe.complete();
     }
+  }
+
+  private canNextDocument(indexOf: number): boolean {
+    if (indexOf === -1)
+      return false;
+
+    if (indexOf === this.documents.length - 1)
+      return false;
+
+    return true;
+  }
+
+  private canPreviousDocument(indexOf: number): boolean {
+    if (indexOf === -1)
+      return false;
+
+    if (indexOf === 0)
+      return false;
+
+    return true;
   }
 }

@@ -1,33 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
+
 import { IObject } from 'src/app/core/data/data.classes';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsNavigationService {
 
-  constructor(private readonly router: Router) {
+  constructor(private router: Router) {
   }
 
-  navigateToDocument(document: string | IObject, activatedRoute?: ActivatedRoute): void {
+  navigateToDocument(document: string | IObject): void {
     if (typeof document === 'string') {
       //Logic for overload 1
-      this.router.navigate(['./document/' + document], { relativeTo: activatedRoute });
+      this.router.navigateByUrl('/document/' + document);
     } else {
       //Logic for overload 2
-      const url = "/documents/" + document.parentId + "/document/" + document.id;
-      this.router.navigateByUrl(url);
+      this.router.navigateByUrl('/document/' + document.id);
     }
   }
 
-  navigateToFile(file: string | IObject, activatedRoute?: ActivatedRoute): void {
+  navigateToFile(file: string | IObject): void {
     if (typeof file === 'string') {
       //Logic for overload 1
-      this.router.navigate(['./file/' + file], { relativeTo: activatedRoute });
+      this.router.navigateByUrl('/file/' + file);
     } else {
       //Logic for overload 2
-      const url = "/documents/" + file.parentId + "/file/" + file.id;
-      this.router.navigateByUrl(url);
+      this.router.navigateByUrl('/file/' + file.id);
     }
   }
 
