@@ -68,10 +68,12 @@
     background: #eaeaea;
   }
 
-@media (max-width: 767px) {
-  .middle-phone-text {
-    margin-top: 7px;
-  }
+
+.two-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 2.5rem;
+  line-height: 1.2rem;
 }
 
 .checker-img {

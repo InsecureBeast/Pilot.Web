@@ -26,9 +26,9 @@
         </div>
 
         <div class="mr-auto">
-          <div class="pointer"
+          <div class="pointer two-line-text overflow-hidden"
                (click)="selected(node);$event.stopPropagation();">
-            <div class="middle-phone-text"
+            <div class="d-inline"
                  [class.text-primary]="node.isChecked">{{ node.title }}</div>
             <small class="hidden-phone text-muted">{{node.type.title}}</small>
           </div>

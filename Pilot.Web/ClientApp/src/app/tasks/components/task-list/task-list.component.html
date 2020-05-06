@@ -73,7 +73,7 @@
           <span class="d-inline caption pointer" (click)="selected(task);$event.stopPropagation();">{{ task.title }}</span>
         </div>
 
-        <div class=" two-line-text overflow-hidden pointer"
+        <div class="two-line-text overflow-hidden pointer"
              *ngIf="task.isTask"
              (click)="selected(task);$event.stopPropagation();">
           <small class="d-inline text-second">{{task.description}}</small>
