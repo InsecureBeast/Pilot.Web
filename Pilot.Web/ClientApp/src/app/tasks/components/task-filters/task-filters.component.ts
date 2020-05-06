@@ -27,7 +27,7 @@ export class TaskFiltersComponent implements OnInit {
   }
 
   /** task-filters ctor */
-  constructor(private readonly tasksRepositoryService: TasksRepositoryService) {
+  constructor(private tasksRepositoryService: TasksRepositoryService) {
     this.personalFilters = new Array();
     this.filters = new Array();
   }
@@ -35,16 +35,17 @@ export class TaskFiltersComponent implements OnInit {
   ngOnInit(): void {
     this.tasksRepositoryService.getPersonalSettings(CommonSettingsDefaults.taskFiltersKey)
       .subscribe(settings => {
+          let index = 0;
           this.filters = new Array();
           var filtersProvider = new TaskFiltersProvider(settings);
           filtersProvider.commonFilters.forEach((value: string, key: string) => {
-            var filter = new TaskFilter(key, value);
+            var filter = new TaskFilter(index++, key, value);
             this.filters.push(filter);
           });
 
           this.personalFilters = new Array();
           filtersProvider.personalFilters.forEach((value: string, key: string) => {
-            var filter = new TaskFilter(key, value);
+            var filter = new TaskFilter(index++, key, value);
             this.personalFilters.push(filter);
           });
 
@@ -74,7 +75,8 @@ export class TaskFiltersComponent implements OnInit {
 
 export class TaskFilter {
 
-  constructor(name: string, filter: string) {
+  constructor(id: number, name: string, filter: string) {
+    this.id = id;
     this.name = name;
     this.searchValue = filter;
     this.isActive = false;
@@ -83,5 +85,6 @@ export class TaskFilter {
   name: string;
   searchValue: string;
   isActive: boolean;
+  id: number;
 }
 

@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Injectable({providedIn: 'root'})
 export class TasksNavigationService {
 
-  constructor(private readonly router: Router) {
+  constructor(private router: Router) {
   }
 
-  navigateToFilter(filterId: string): void {
+  navigateToFilter(filterId: number): void {
     this.router.navigateByUrl('/tasks/' + filterId);
   }
 
   navigateToTask(taskId: string): void {
-    //this.router.navigate(['./task/' + taskId], { relativeTo: activatedRoute });
     this.router.navigateByUrl('/task/' + taskId);
   }
 

@@ -20,8 +20,8 @@ import { ModalService } from 'src/app/ui/modal/modal.service';
 export class TasksComponent implements OnInit, OnDestroy {
     
   private navigationSubscription: Subscription;
-  private filtersModalId: string = "filtersModal";
-  private filterName: string;
+  private filtersModalId = "filtersModal";
+  private filterId: number;
 
   selectedFilter: TaskFilter;
   checked: TaskNode[];
@@ -39,7 +39,11 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.navigationSubscription = this.activatedRoute.paramMap.pipe(first()).subscribe((params: ParamMap) => {
-      this.filterName = params.get('filter');
+      this.filterId = +params.get('filterId');
+      if (!this.filterId) {
+        // todo get filter id from store
+        this.tasksNavigationService.navigateToFilter(0);
+      }
     });
   }
 
@@ -49,28 +53,16 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   onFiltersLoaded(filters: [TaskFilter[], TaskFilter[]]): void {
-    let commonFilters = filters[0];
-    let personalFilters = filters[1];
+    const commonFilters = filters[0];
+    const personalFilters = filters[1];
 
-    if (!this.filterName) {
-      if (commonFilters.length > 0) {
-        this.selectedFilter = commonFilters[0];
-        return;
-      }
-
-      if (personalFilters.length > 0) {
-        this.selectedFilter = personalFilters[0];
-      }
-      return;
-    }
-
-    let selected = commonFilters.find(f => f.name === this.filterName);
+    let selected = commonFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;
     }
 
-    selected = personalFilters.find(f => f.name === this.filterName)
+    selected = personalFilters.find(f => f.id === this.filterId)
     if (selected) {
       this.selectedFilter = selected;
       return;
@@ -81,7 +73,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.modalService.close(this.filtersModalId);
     this.selectedFilter = filter;
     this.clearChecked();
-    this.tasksNavigationService.navigateToFilter(filter.name);
+    this.tasksNavigationService.navigateToFilter(filter.id);
   }
 
   onTaskSelected(item: TaskNode): void {

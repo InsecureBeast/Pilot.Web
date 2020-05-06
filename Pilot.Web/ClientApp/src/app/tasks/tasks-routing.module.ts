@@ -12,14 +12,14 @@ const routes: Routes = [
     path: 'tasks',
     component: TasksComponent,
     canActivate: [AuthGuard],
-    //data: { reuse: true }
+    data: { reuse: true }
     //children: [
     //{ path: ':id', component: TasksComponent, canActivate: [AuthGuard] },
     //{ path: 'task/:id', component: TaskComponent, canActivate: [AuthGuard] }
     //]
   },
   {
-    path: 'tasks/:filter',
+    path: 'tasks/:filterId',
     component: TasksComponent,
     canActivate: [AuthGuard],
     data: { reuse: true }
