@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { SafeUrl } from '@angular/platform-browser';
 
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -9,6 +10,7 @@ import { ObjectNode } from '../../shared/object.node';
 import { RepositoryService } from '../../../core/repository.service';
 import { INode } from '../../shared/node.interface';
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
+import { SystemIds } from '../../../core/data/system.ids';
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -157,10 +159,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
 export class BreadcrumbNode implements INode {
 
-  source: IObject;
-
   /** BreadcrumbNode ctor */
-  constructor(source: IObject, isActive: boolean) {
+  constructor(public source: IObject, isActive: boolean) {
     this.id = source.id;
     this.title = source.title;
     this.isActive = isActive;
@@ -168,7 +168,7 @@ export class BreadcrumbNode implements INode {
     this.parentId = source.parentId;
     this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
     this.source = source;
-    this.isRoot = source.id === "00000001-0001-0001-0001-000000000001";
+    this.isRoot = source.id === SystemIds.rootId;
   }
 
   id: string;

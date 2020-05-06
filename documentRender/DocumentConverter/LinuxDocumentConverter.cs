@@ -29,6 +29,7 @@ namespace DocumentRender.DocumentConverter
             var file = Directory.GetFiles(outputDir).FirstOrDefault();
             var result = file != null ? FileToBytes(file) : null;
             FileSystemHelper.DeleteDirectory(outputDir);
+            FileSystemHelper.DeleteFile(filename);
             return result;
         }
 
@@ -47,6 +48,7 @@ namespace DocumentRender.DocumentConverter
             }
 
             FileSystemHelper.DeleteDirectory(outputDir);
+            FileSystemHelper.DeleteFile(filename);
             return result;
         }
 
@@ -73,7 +75,7 @@ namespace DocumentRender.DocumentConverter
         private string GetImagesOutputDir(string fileName)
         {
             var fileDir = Path.GetDirectoryName(fileName);
-            var resultDir = Path.Combine(fileDir, "pages");
+            var resultDir = Path.Combine(fileDir, $"{fileName}_pages");
             if (!Directory.Exists(resultDir))
                 Directory.CreateDirectory(resultDir);
 

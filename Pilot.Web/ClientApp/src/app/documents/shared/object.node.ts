@@ -12,13 +12,12 @@ import { IObjectNode } from './node.interface';
 export class ObjectNode implements IObjectNode {
 
   constructor(
-    readonly source: IObject,
+    public source: IObject,
     isSource: boolean,
-    private readonly typeIconService: TypeIconService,
-    private readonly cancel: Subject<any>,
-    private readonly translate: TranslateService) {
+    private typeIconService: TypeIconService,
+    private cancel: Subject<any>,
+    private translate: TranslateService) {
 
-    this.source = source;
     this.created = Tools.toUtcCsDateTime(source.created).toLocaleString();
     this.id = source.id;
     this.parentId = source.parentId;
@@ -116,6 +115,8 @@ export class EmptyObjectNode implements IObjectNode {
   isSource: boolean;
   isChecked: boolean;
   children: IChild[];
+  title: string;
+  icon: SafeUrl;
 
   loadPreview(): void {
     // do nothing

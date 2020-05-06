@@ -28,13 +28,13 @@
         <div class="mr-auto">
           <div class="pointer two-line-text overflow-hidden"
                (click)="selected(node);$event.stopPropagation();">
-            <div class="d-inline"
-                 [class.text-primary]="node.isChecked">{{ node.title }}</div>
-            <small class="hidden-phone text-muted">{{node.type.title}}</small>
+            <div class=""
+                 [class.text-primary]="node?.isChecked">{{ node?.title }}</div>
+            <small class="hidden-phone text-muted">{{node?.type.title}}</small>
           </div>
         </div>
 
-        <small *ngIf="!node.isDocument">{{node.children.length}}</small>
+        <small *ngIf="!node.isDocument">{{node?.children.length}}</small>
       </div>
     </li>
   </ul>
