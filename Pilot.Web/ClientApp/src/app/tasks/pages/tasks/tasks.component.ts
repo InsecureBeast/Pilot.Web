@@ -20,20 +20,19 @@ import { ModalService } from 'src/app/ui/modal/modal.service';
 export class TasksComponent implements OnInit, OnDestroy {
     
   private navigationSubscription: Subscription;
-  private filtersModalId: string = "filtesModal";
+  private filtersModalId: string = "filtersModal";
   private filterName: string;
 
   selectedFilter: TaskFilter;
-  isFiltersMenuShown: boolean;
   checked: TaskNode[];
   error: HttpErrorResponse;
 
   /** tasks ctor */
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly tasksNavigationService: TasksNavigationService,
-    private readonly tasksService: TasksService,
-    private readonly modalService: ModalService ) {
+    private activatedRoute: ActivatedRoute,
+    private tasksNavigationService: TasksNavigationService,
+    private tasksService: TasksService,
+    private modalService: ModalService ) {
 
     this.checked = new Array();
   }
@@ -79,9 +78,9 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   onFilterSelected(filter: TaskFilter): void {
-    this.isFiltersMenuShown = false;
     this.modalService.close(this.filtersModalId);
     this.selectedFilter = filter;
+    this.clearChecked();
     this.tasksNavigationService.navigateToFilter(filter.name);
   }
 
@@ -99,12 +98,10 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   showFilters(): void {
     this.modalService.open(this.filtersModalId);
-    this.isFiltersMenuShown = true;
   }
 
   closeFilters(): void {
     this.modalService.close(this.filtersModalId);
-    this.isFiltersMenuShown = false;
   }
 
   clearChecked(): void {

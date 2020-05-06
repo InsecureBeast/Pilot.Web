@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand navbar-light bg-content justify-content-between">
   <ol class="breadcrumb navbar-nav" #olRef>
-    <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs">
+    <li class="breadcrumb-item noselect" *ngFor="let bc of breadcrumbs">
       <ng-container *ngIf="!bc.isRoot">
         <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
       </ng-container>
@@ -11,10 +11,10 @@
   </ol>
 
   <ul class="navbar-nav breadcrumb">
-    <li class="breadcrumb-item" *ngIf="nodeStyle === 1">
+    <li class="breadcrumb-item noselect" *ngIf="nodeStyle === 1">
       <a [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(0);$event.stopPropagation()">view_list</a>
     </li>
-    <li class="breadcrumb-item" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
+    <li class="breadcrumb-item noselect" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
       <a [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(1);$event.stopPropagation()">view_module</a>
     </li>
   </ul>

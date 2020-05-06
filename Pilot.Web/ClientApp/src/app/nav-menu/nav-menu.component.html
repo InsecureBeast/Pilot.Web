@@ -10,13 +10,13 @@
       <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" [ngClass]='{"show": isExpanded}'>
         <ul class="navbar-nav flex-grow">
           <li class="nav-item" [routerLinkActive]='["link-active"]'>
-            <a class="nav-link" [routerLink]='["/documents", documentRootId]' translate="documents" (click)="toggle()"></a>
+            <a class="nav-link noselect" [routerLink]='["/documents", documentRootId]' translate="documents" (click)="toggle()"></a>
           </li>
           <li class="nav-item" [routerLinkActive]='["link-active"]'>
-            <a class="nav-link" [routerLink]='["/tasks"]' translate="tasks" (click)="toggle()"></a>
+            <a class="nav-link noselect" [routerLink]='["/tasks"]' translate="tasks" (click)="toggle()"></a>
           </li>
           <li class="nav-item" [routerLinkActive]='["link-active"]' *ngIf="isLoggedIn$ | async">
-            <a class="nav-link" href="/" (click)="onLogout($event)" translate="signOut"></a>
+            <a class="nav-link noselect" href="/" (click)="onLogout($event)" translate="signOut"></a>
           </li>
         </ul>
       </div>
