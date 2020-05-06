@@ -13,29 +13,17 @@ const routes: Routes = [
     component: TasksComponent,
     canActivate: [AuthGuard],
     data: { reuse: true }
-    //children: [
-    //{ path: ':id', component: TasksComponent, canActivate: [AuthGuard] },
-    //{ path: 'task/:id', component: TaskComponent, canActivate: [AuthGuard] }
-    //]
   },
   {
     path: 'tasks/:filterId',
     component: TasksComponent,
     canActivate: [AuthGuard],
     data: { reuse: true }
-    //children: [
-      //{ path: ':id', component: TasksComponent, canActivate: [AuthGuard] },
-      //{ path: 'task/:id', component: TaskComponent, canActivate: [AuthGuard] }
-    //]
   },
   {
     path: 'task/:id',
     component: TaskComponent,
     canActivate: [AuthGuard]
-    //children: [
-      //{ path: 'filter/:id', component: TasksComponent, canActivate: [AuthGuard] },
-      //{ path: 'task/:id', component: TaskComponent, canActivate: [AuthGuard] }
-    //]
   }
 ];
 

@@ -23,12 +23,16 @@ export class NavMenuComponent implements OnInit {
     this.isLoggedIn$ = this.authService.isLoggedIn;
   }
 
-  collapse() {
+  collapse(): void {
     this.isExpanded = false;
   }
 
-  toggle() {
+  toggle(): void{
     this.isExpanded = !this.isExpanded;
+  }
+
+  toggleOff(): void {
+    this.isExpanded = false;
   }
 
   onLogout(event: Event): boolean {
