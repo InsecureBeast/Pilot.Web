@@ -14,6 +14,7 @@ import { TaskAttachmentsComponent } from './components/task-attachments/task-att
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { TaskComponent } from './pages/task/task.component';
 import { ModalModule } from '../ui/modal/modal.module';
+import { TasksRoutingModule } from './tasks-routing.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -25,7 +26,8 @@ export function createTranslateLoader(http: HttpClient) {
     ErrorModule,
     RouterModule,
     TranslateModule,
-    ModalModule
+    ModalModule,
+    TasksRoutingModule
   ],
   declarations: [
     TaskFiltersComponent,

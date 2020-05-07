@@ -31,7 +31,8 @@
     <app-task-filters class="fixed"
                       [selectedFilter]="selectedFilter"
                       (onSelected)="onFilterSelected($event)"
-                      (onLoaded)="onFiltersLoaded($event)">
+                      (onLoaded)="onFiltersLoaded($event)"
+                      (onError)="onError($event)">
 
     </app-task-filters>
   </div>

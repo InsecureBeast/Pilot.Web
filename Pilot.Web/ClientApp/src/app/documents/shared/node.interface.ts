@@ -16,4 +16,5 @@ export interface IObjectNode extends INode {
   loadPreview(): void;
   children: IChild[];
   icon: SafeUrl;
+  childrenCount: number;
 }

@@ -27,6 +27,11 @@ export class ObjectNode implements IObjectNode {
     this.creator = source.creator;
     this.isDocument = this.getIsDocument(source.type);
 
+    if (this.isDocument)
+      this.childrenCount = -1;
+    else
+      this.childrenCount = source.children.length;
+
     if (!isSource)
       this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
     else
@@ -53,6 +58,7 @@ export class ObjectNode implements IObjectNode {
   isSource: boolean;
   url: string;
   context: string[];
+  childrenCount: number;
 
   isSelected: boolean;
   isChecked: boolean;
@@ -107,6 +113,7 @@ export class EmptyObjectNode implements IObjectNode {
   constructor() {
     this.source = new EmptyObject();
     this.children = this.source.children;
+    this.childrenCount = -1;
   }
 
   id: string;
@@ -117,6 +124,7 @@ export class EmptyObjectNode implements IObjectNode {
   children: IChild[];
   title: string;
   icon: SafeUrl;
+  childrenCount: number;
 
   loadPreview(): void {
     // do nothing

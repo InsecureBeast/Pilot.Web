@@ -34,7 +34,7 @@
           </div>
         </div>
 
-        <small *ngIf="!node.isDocument">{{node?.children.length}}</small>
+        <small *ngIf="node.childrenCount >= 0">{{node?.childrenCount}}</small>
       </div>
     </li>
   </ul>
@@ -55,7 +55,7 @@
            [class.list-group-item-primary]="node.isChecked"
            (click)="checked(node, $event);$event.stopPropagation();">
         <div class="overflow-hidden bg-white card-img" *ngIf="!node.preview">
-          <img [src]="node.icon" class="card-icon-center" alt="type icon image">
+          <img [src]="node.icon" class="card-icon-center" alt="type icon image" *ngIf="node.icon">
         </div>
 
         <div class="overflow-hidden bg-white card-img" *ngIf="node.preview">
@@ -67,7 +67,7 @@
           <span class="material-icons mt-1 text-primary" *ngIf="node.isChecked">check_circle</span>
         </div>
 
-        <div class="card-children-count text-muted" *ngIf="!node.isDocument">{{node.children.length}}</div>
+        <div class="card-children-count text-muted" *ngIf="node.childrenCount >= 0">{{node.childrenCount}}</div>
 
         <div class="card-body" (click)="selected(node);$event.stopPropagation();">
           <div class="text-center pointer">
