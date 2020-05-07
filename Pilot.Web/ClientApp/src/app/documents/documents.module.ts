@@ -12,6 +12,7 @@ import { ModalModule } from "../ui/modal/modal.module";
 import { SideModalModule } from '../ui/side-modal/side-modal.module';
 import { ErrorModule } from "../ui/error/error.module";
 import { DocumentVersionsComponent } from "./components/document-versions/document-versions.component";
+import { DocumentsRoutingModule } from "./documents-routing.module";
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { DocumentVersionsComponent } from "./components/document-versions/docume
     RouterModule,
     ModalModule,
     SideModalModule,
-    ErrorModule
+    ErrorModule,
+    DocumentsRoutingModule
   ],
   declarations: [
     DocumentsComponent,

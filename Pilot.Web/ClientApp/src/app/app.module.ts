@@ -14,7 +14,6 @@ import { AuthGuard } from './auth/auth.guard';
 import { ErrorModule } from './ui/error/error.module';
 import { AuthComponent } from './auth/auth/auth.component';
 import { AuthModule } from './auth/auth.module';
-import { DocumentsRoutingModule } from './documents/documents-routing.module';
 import { DocumentsModule } from './documents/documents.module';
 import { DocumentsComponent } from './documents/pages/documents/documents.component';
 import { ModalModule } from './ui/modal/modal.module';
@@ -53,7 +52,6 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     DocumentsModule,
-    DocumentsRoutingModule,
     TasksModule,
     TasksRoutingModule
   ],

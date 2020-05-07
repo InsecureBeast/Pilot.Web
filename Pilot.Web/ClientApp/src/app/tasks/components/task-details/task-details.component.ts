@@ -18,9 +18,7 @@ import { TypeIconService } from '../../../core/type-icon.service';
 })
 /** task-details component*/
 export class TaskDetailsComponent implements OnInit, OnDestroy {
-  error;
-
-  //private navigationSubscription: Subscription;
+  
   private _task: IObject;
 
   @Input()
@@ -33,6 +31,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     return this._task;
   }
 
+  error;
   taskTypeIcon: SafeUrl;
   taskTypeTitle: string;
 
@@ -45,39 +44,23 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   /** task ctor */
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly repository: RepositoryService,
-    private readonly translate: TranslateService,
-    private readonly iconService: TypeIconService) {
+    private activatedRoute: ActivatedRoute,
+    private repository: RepositoryService,
+    private translate: TranslateService,
+    private iconService: TypeIconService) {
 
   }
 
   ngOnInit(): void {
-
-    //this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
-    //  const id = params.get('id');
-
-    //  this.repository.getObjectAsync(id)
-    //    .then(source => {
-          
-    //    })
-    //    .catch(err => {
-    //      this.error = err;
-    //      this.isLoading = false;
-    //    });
-    //});
   }
 
   ngOnDestroy(): void {
-    //this.navigationSubscription.unsubscribe();
-    //this.routerSubscription.unsubscribe();
-
-    // cancel
-    //this.ngUnsubscribe.next();
-    //this.ngUnsubscribe.complete();
   }
 
   private loadTask(source: IObject): void {
+    if (!source)
+      return;
+
     this.taskTypeIcon = this.iconService.getTypeIcon(source);
     this.taskTypeTitle = source.type.title;
 
