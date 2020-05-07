@@ -20,7 +20,7 @@ export class TypeExtensions {
   }
 
   public static isDocument(type: IType): boolean {
-    return !TypeExtensions.isProjectFile(type.name) && type.hasFiles;
+    return TypeExtensions.isProjectFile(type.name) || type.hasFiles;
   }
 
   static isWorkflow(type: IType): boolean {

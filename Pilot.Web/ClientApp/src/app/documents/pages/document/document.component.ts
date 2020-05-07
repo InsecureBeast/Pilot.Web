@@ -15,6 +15,7 @@ import { RepositoryService } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
 import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
+import { TypeExtensions } from '../../../core/tools/type.extensions';
 
 @Component({
   selector: 'app-document',
@@ -189,7 +190,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       .then(parent => {
         for (const child of parent.children) {
           const type = this.repository.getType(child.typeId);
-          if (type && type.hasFiles)
+          if (TypeExtensions.isDocument(type))
             this.documents.push(child.objectId);
         }
       }).catch(e => {
