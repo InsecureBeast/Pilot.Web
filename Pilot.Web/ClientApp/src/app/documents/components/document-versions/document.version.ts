@@ -21,7 +21,7 @@ export class DocumentVersion implements IDocumentVersion {
   isSelected: boolean;
   snapshot: IFileSnapshot;
 
-  constructor(protected readonly sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
+  constructor(protected sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
 
     this.created = Tools.toUtcCsDateTime(sourceSnapshot.created).toLocaleString();
     this.creator = "";
@@ -48,7 +48,7 @@ export class DocumentVersion implements IDocumentVersion {
 
 export class FileVersion extends DocumentVersion implements IDocumentVersion {
 
-  constructor(protected readonly sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
+  constructor(protected sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
     super(sourceSnapshot, repository);
   }
 

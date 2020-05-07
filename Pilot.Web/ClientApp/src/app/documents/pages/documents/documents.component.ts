@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -26,14 +25,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
-  documents = new Array<INode>();
   checked = new Array<INode>();
   currentItem: ObjectNode;
-  isDocument: boolean;
   isLoading: boolean;
   error: HttpErrorResponse;
-  node: INode;
-  selectedVersion: string; //date
   
   /** documents ctor */
   constructor(
@@ -42,7 +37,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private router: Router,
-    private location: Location,
     private navigationService: DocumentsNavigationService,
     private documentsService: DocumentsService) {
 
@@ -66,29 +60,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         .then(source => {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
           this.isLoading = false;
-          if (this.activatedRoute.snapshot.children.length !== 0) {
-            let documentId = "";
-            var selectedVersion = "";
-            if (this.activatedRoute.snapshot.firstChild.url.length >= 2) {
-              documentId = this.activatedRoute.snapshot.firstChild.url[1].path;
-            }
-
-            if (this.activatedRoute.snapshot.firstChild.url.length >= 3) {
-              selectedVersion = this.activatedRoute.snapshot.firstChild.url[2].path;
-            }
-
-            this.repository.getObjectAsync(documentId)
-              .then(document => {
-                const node = new ObjectNode(document, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-                this.node = node;
-                this.isDocument = node.isDocument;
-                this.selectedVersion = selectedVersion;
-              })
-              .catch(err => {
-                this.error = err;
-                this.isLoading = false;
-              });
-          }
         })
         .catch(err => {
           this.error = err;
@@ -97,16 +68,12 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
-      // close your modal here
       if (event instanceof NavigationStart) {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
-          this.node = null;
-          this.isDocument = false;
           this.documentsService.changeClearChecked(true);
         }
       }
-
     });
   }
 
@@ -124,8 +91,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onItemSelected(node: INode): void {
-    this.isDocument = node.isDocument;
-    this.node = node;
     this.documentsService.saveScrollPosition(this.currentItem);
 
     if (node.isDocument) {
@@ -142,7 +107,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       this.navigationService.navigateToFilesFolder(node.id);
     else
       this.navigationService.navigateToDocumentsFolder(node.id);
-
   }
 
   onItemsChecked(nodes: INode[]): void {

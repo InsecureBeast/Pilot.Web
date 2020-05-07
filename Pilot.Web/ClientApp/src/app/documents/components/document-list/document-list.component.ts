@@ -28,7 +28,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private ngUnsubscribe = new Subject<void>();
 
   @Input() parent: ObjectNode;
-  @Input() documents: Array<INode>;
 
   @Output() onChecked = new EventEmitter<IObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
@@ -43,13 +42,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   /** documents-list ctor */
   constructor(
-    private readonly repository: RepositoryService,
-    private readonly downloadService: DownloadService,
-    private readonly nodeStyleService: NodeStyleService,
-    private readonly typeIconService: TypeIconService,
-    private readonly translate: TranslateService,
-    private readonly documentsService: DocumentsService,
-    private readonly router: Router,
+    private repository: RepositoryService,
+    private downloadService: DownloadService,
+    private nodeStyleService: NodeStyleService,
+    private typeIconService: TypeIconService,
+    private translate: TranslateService,
+    private documentsService: DocumentsService,
+    private router: Router,
     public element: ElementRef) {
 
   }
@@ -83,14 +82,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
-      // close your modal here
       if (event instanceof NavigationStart) {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
         }
       }
-
     });
   }
 
@@ -148,7 +145,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   private init(item: IObjectNode) {
     this.nodes = null;
-    //this.isLoading = true;
     this.nodes = new Array();
     for (let i = 0; i < item.children.length; i++) {
       this.nodes.push(new EmptyObjectNode());
@@ -166,7 +162,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
-        //this.isLoaded = true;
         this.onChecked.emit(null);
       })
       .catch(e => {
@@ -183,12 +178,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
-
-      if (!this.documents)
-        continue;;
-
-      if (node.isDocument)
-        this.documents.push(node);
     }
   }
 

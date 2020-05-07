@@ -2,11 +2,11 @@ import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, Output, 
 
 import { Subscription } from 'rxjs';
 
-import { INode } from '../../shared/node.interface';
 import { IDocumentVersion, DocumentVersion, FileVersion } from './document.version';
 import { RepositoryService } from '../../../core/repository.service';
 import { VersionsSelectorService } from './versions-selector.service';
-import { IFileSnapshot } from '../../../core/data/data.classes';
+import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
+import { TypeExtensions } from '../../../core/tools/type.extensions';
 
 @Component({
     selector: 'app-document-versions',
@@ -16,30 +16,13 @@ import { IFileSnapshot } from '../../../core/data/data.classes';
 /** document-versions component*/
 export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
   private versionSubscription: Subscription;
-  private _document: INode;
-
-  //@Input()
-  //get selectedVersion(): string {
-  //   return this._aSelectedVersion;
-  //}
-  //set selectedVersion(newValue: string) {
-  //  if (!this.document)
-  //    return;
-
-  //  let snapshot = this.document.source.actualFileSnapshot;
-  //  if (newValue !== "") {
-  //    snapshot = this.document.source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
-  //  }
-
-  //  this._aSelectedVersion = newValue;
-  //  this.selectVersion(snapshot);
-  //}
+  private _document: IObject;
 
   @Input()
-  get document(): INode {
+  get document(): IObject {
     return this._document;
   }
-  set document(newValue: INode) {
+  set document(newValue: IObject) {
     this._document = newValue;
     this.loadVersions(newValue);
   }
@@ -47,8 +30,8 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
   versions : Array<IDocumentVersion>;
 
   /** document-versions ctor */
-  constructor(private readonly repository: RepositoryService,
-              private readonly versionSelector: VersionsSelectorService) {
+  constructor(private repository: RepositoryService,
+              private versionSelector: VersionsSelectorService) {
     this.versions = new Array();
   }
 
@@ -83,11 +66,11 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
     }
   }
 
-  private loadVersions(document: INode): void {
+  private loadVersions(document: IObject): void {
     this.versions = new Array();
-    for (let snapshot of document.source.previousFileSnapshots) {
+    for (let snapshot of document.previousFileSnapshots) {
       let version: IDocumentVersion;
-      if (!document.isSource)
+      if (!TypeExtensions.isProjectFileOrFolder(document.type))
         version = new DocumentVersion(snapshot, this.repository);
       else {
         version = new FileVersion(snapshot, this.repository);
@@ -96,7 +79,7 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
       this.versions.push(version);
     }
 
-    const actualVersion = new DocumentVersion(document.source.actualFileSnapshot, this.repository);
+    const actualVersion = new DocumentVersion(document.actualFileSnapshot, this.repository);
     actualVersion.isSelected = true;
     this.versions.push(actualVersion);
     this.versions.reverse();

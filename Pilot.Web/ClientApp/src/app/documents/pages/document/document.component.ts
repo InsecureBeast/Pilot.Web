@@ -1,4 +1,4 @@
-import { Component, Output, Input, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -26,19 +26,16 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private ngUnsubscribe = new Subject<void>();
 
   private documents = new Array<string>();
 
   document: IObject;
-
-  @Input() selectedVersion : string;
-
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
   error: HttpErrorResponse;
-
+  
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
   selectedVersionCreator: string;
@@ -54,6 +51,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private router: Router,
     private versionSelector: VersionsSelectorService) {
 
+    this.isActualVersionSelected = true;
+    this.images = new Array();
   }
 
   ngOnInit(): void {
@@ -62,11 +61,12 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       if (!id)
         return;
 
-      this.loadDocument(id, true);
+      const version = params.get("v");
+      this.loadDocument(id, version, true);
     });
 
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
-      if (s === null)
+      if (!s)
         return;
 
       if (!this.document)
@@ -77,19 +77,16 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       if (!this.isActualVersionSelected)
         version = s.created;
 
-      this.updateLocation(version);
-      this.loadSnapshot(s);
+      this.updateLocation(this.document.id, version);
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
-      // close your modal here
       if (event instanceof NavigationStart) {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
         }
       }
-
     });
   }
 
@@ -107,23 +104,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //if (!this.document)
-    //  return;
 
-    //const source = this.document.source;
-    //let snapshot = source.actualFileSnapshot;
-    //this.isActualVersionSelected = !this.selectedVersion;
-    //if (!this.isActualVersionSelected)
-    //  snapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
-
-    //if (snapshot) {
-    //  this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
-    //  this.selectedVersionCreator = "";
-    //  const creator = this.repository.getPerson(snapshot.creatorId);
-    //  if (creator)
-    //    this.selectedVersionCreator = creator.displayName;
-    //}
-    //this.loadSnapshot(snapshot);
   }
 
   close($event): void {
@@ -170,7 +151,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.updateLocation(nextId);
   }
 
-  private loadDocument(id: string, loadNeighbors?: boolean): void {
+  private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
+    this.error = null;
     this.repository.getObjectAsync(id)
       .then(source => {
         if (!source)
@@ -178,9 +160,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
         this.document = source;
         let snapshot = source.actualFileSnapshot;
-        this.isActualVersionSelected = !this.selectedVersion;
+        this.isActualVersionSelected = !version;
         if (!this.isActualVersionSelected)
-          snapshot = source.previousFileSnapshots.find(f => f.created === this.selectedVersion);
+          snapshot = source.previousFileSnapshots.find(f => f.created === version);
 
         if (snapshot) {
           this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
@@ -218,9 +200,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   private updateLocation(id: string, version?: string): void {
     if (!version) {
-      this.router.navigate(["document/" + id], { replaceUrl: true });
+      this.location.replaceState("document/" + id);
     } else {
-      this.router.navigate(["document/" + id + "/" + version], { replaceUrl: true });
+      this.location.replaceState("document/" + id + "/" + version);
     }
   }
 
