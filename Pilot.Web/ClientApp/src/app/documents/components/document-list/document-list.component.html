@@ -15,7 +15,7 @@
 
         <div class="mr-2"
              [class.checker-img]="isAnyItemChecked">
-          <img [src]="node.icon" width="36" *ngIf="node.icon != null" alt="type icon">
+          <img [src]="node.icon" width="36" *ngIf="node.icon" alt="type icon">
         </div>
 
         <div class="mr-2 pointer checker-container"
@@ -29,8 +29,8 @@
           <div class="pointer two-line-text overflow-hidden"
                (click)="selected(node);$event.stopPropagation();">
             <div class=""
-                 [class.text-primary]="node?.isChecked">{{ node?.title }}</div>
-            <small class="hidden-phone text-muted">{{node?.type.title}}</small>
+                 [class.text-primary]="node?.isChecked" *ngIf="node">{{ node.title }}</div>
+            <small class="hidden-phone text-muted" *ngIf="node.type">{{node.type.title}}</small>
           </div>
         </div>
 
@@ -72,8 +72,8 @@
         <div class="card-body" (click)="selected(node);$event.stopPropagation();">
           <div class="text-center pointer">
             <div class="card-name"
-                 [class.text-primary]="node.isChecked">{{ node.title }}</div>
-            <small class="text-muted">{{node.type.title}}</small>
+                 [class.text-primary]="node.isChecked" *ngIf="node">{{ node.title }}</div>
+            <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
           </div>
         </div>
       </div>
