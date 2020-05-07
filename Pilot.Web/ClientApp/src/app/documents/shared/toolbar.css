@@ -18,7 +18,7 @@ li.nav-item-button span {
 }
 
   li.nav-item-button:hover span {
-    color: #343951;
+    color: var(--dark);
   }
 
 .nav-link {

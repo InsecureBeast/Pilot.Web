@@ -27,6 +27,8 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
     this.loadVersions(newValue);
   }
 
+  @Output() onClose = new EventEmitter<any>();
+
   versions : Array<IDocumentVersion>;
 
   /** document-versions ctor */
@@ -58,6 +60,10 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
   selected(version: IDocumentVersion): void {
     this.selectVersion(version.snapshot);
     this.versionSelector.changeSelectedSnapshot(version.snapshot);
+  }
+
+  close(): void {
+    this.onClose.emit();
   }
 
   private selectVersion(snapshot: IFileSnapshot): void {

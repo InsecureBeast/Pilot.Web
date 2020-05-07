@@ -44,7 +44,8 @@
     </div>
 
     <div class="versions-view col-12 col-md-4 doc-info overflow-auto" *ngIf="isInfoShown">
-      <app-document-versions [document]="document"></app-document-versions>
+      <app-document-versions [document]="document"
+                             (onClose)="closeDocumentVersions($event)"></app-document-versions>
     </div>
   </div>
 

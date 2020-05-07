@@ -6,3 +6,12 @@
     background-color: #eaeaea;
   }
 
+
+.btn {
+  color: var(--gray);
+  font-size: 20px;
+}
+
+.btn:hover {
+  color: var(--dark);
+}
