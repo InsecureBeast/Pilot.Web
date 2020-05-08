@@ -79,6 +79,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         version = s.created;
 
       this.updateLocation(this.document.id, version);
+      this.loadSnapshot(s);
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
