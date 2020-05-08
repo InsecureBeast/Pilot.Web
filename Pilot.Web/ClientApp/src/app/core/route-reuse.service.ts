@@ -15,7 +15,7 @@ export class RouteReuseService implements  RouteReuseStrategy {
     }
 
     let shouldReuse = false;
-    console.log('checking if this route should be re used or not', route);
+    //console.log('checking if this route should be re used or not', route);
     if (route.routeConfig.data) {
       route.routeConfig.data.reuse ? shouldReuse = true : shouldReuse = false;
     }
@@ -23,14 +23,14 @@ export class RouteReuseService implements  RouteReuseStrategy {
   }
 
   store(route: ActivatedRouteSnapshot, handle: {}): void {
-    console.log('storing handler');
+    //console.log('storing handler');
     if (handle) {
       this.handlers[this.getUrl(route)] = handle;
     }
   }
 
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    console.log('checking if it should be re attached');
+    //console.log('checking if it should be re attached');
     //return true;
     const should = !!this.handlers[this.getUrl(route)];
     return should;
@@ -41,7 +41,7 @@ export class RouteReuseService implements  RouteReuseStrategy {
       return null;
     };
 
-    console.log('Attach cached page for: ', route.data['key']);
+    //console.log('Attach cached page for: ', route.data['key']);
     //return this.handlers[route.data['key']];
     return this.handlers[this.getUrl(route)];
   }
@@ -59,16 +59,9 @@ export class RouteReuseService implements  RouteReuseStrategy {
   }
 
   private getUrl(route: ActivatedRouteSnapshot): string {
-
-    //let url = "";
-    //for (let segment of route.url) {
-    //  url = url + segment.path;
-    //}
-
-    //route.url.forEach(s => url += s.path);
     if (route.routeConfig) {
       const url = route.routeConfig.path;
-      console.log('returning url', url);
+      //console.log('returning url', url);
       return url;
     }
 
@@ -78,17 +71,17 @@ export class RouteReuseService implements  RouteReuseStrategy {
 }
 
 export class CustomRouteReuseStrategy implements RouteReuseStrategy {
-  public shouldDetach(route: ActivatedRouteSnapshot): boolean {
+  shouldDetach(route: ActivatedRouteSnapshot): boolean {
      return false;
   }
-  public store(route: ActivatedRouteSnapshot, detachedTree: DetachedRouteHandle): void { }
-  public shouldAttach(route: ActivatedRouteSnapshot): boolean {
+  store(route: ActivatedRouteSnapshot, detachedTree: DetachedRouteHandle): void { }
+  shouldAttach(route: ActivatedRouteSnapshot): boolean {
      return false;
   }
-  public retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
+  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
      return null;
   }
-  public shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
     return (future.routeConfig === curr.routeConfig) || future.data.reuse;
   }
 }

@@ -6,7 +6,8 @@
   </ul>
 
   <ul class="navbar-nav">
-    <li class="nav-item nav-item-button" (click)="clearChecked()">
+    <li click-stop-propagation click-prevent-default 
+        class="nav-item nav-item-button" (click)="clearChecked()">
       <span class="navbar-text toolbar-text hidden-phone" translate="itemsSelected"></span>
       <span class="navbar-text toolbar-text">{{checked.length}}</span>
       <span class="navbar-text toolbar-text material-icons nav-icon">clear</span>
@@ -58,7 +59,10 @@
       </app-task-filters>
     </div>
 
-    <div class="bg-white rounded-lg p-3 mt-2"><a [routerLink]=""
-       (click)="closeFilters();$event.stopPropagation()" translate="cancel">Cancel</a></div>
+    <div class="bg-white rounded-lg p-3 mt-2">
+      <a click-stop-propagation
+         [routerLink]=""
+         (click)="closeFilters()" translate="cancel">Cancel</a>
+    </div>
    </div>
 </pw-modal>

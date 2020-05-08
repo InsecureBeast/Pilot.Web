@@ -1,10 +1,12 @@
 <nav class="navbar fixed-top navbar-expand navbar-light bg-content justify-content-between">
   <ul class="navbar-nav">
-    <li class="nav-item nav-item-button" (click)="download()" *ngIf="isDocumentChecked()">
+    <li click-stop-propagation click-prevent-default
+        class="nav-item nav-item-button" (click)="download()" *ngIf="isDocumentChecked()">
       <span class="navbar-text toolbar-text nav-icon material-icons">file_download</span>
       <span class="navbar-text toolbar-text hidden-phone" translate="download"></span>
     </li>
-    <li class="nav-item nav-item-button" (click)="downloadArchive()" *ngIf="isNodeChecked()">
+    <li click-stop-propagation click-prevent-default 
+        class="nav-item nav-item-button" (click)="downloadArchive()" *ngIf="isNodeChecked()">
       <span class="navbar-text toolbar-text nav-icon material-icons">archive</span>
       <span class="navbar-text toolbar-text hidden-phone" translate="downloadZip"></span>
     </li>
@@ -12,7 +14,8 @@
   </ul>
 
   <ul class="navbar-nav">
-    <li class="nav-item nav-item-button" (click)="clearChecked()" *ngIf="isNodeChecked()">
+    <li click-stop-propagation click-prevent-default
+        class="nav-item nav-item-button" (click)="clearChecked()" *ngIf="isNodeChecked()">
       <span class="navbar-text toolbar-text hidden-phone" translate="itemsSelected"></span>
       <span class="navbar-text toolbar-text">{{checkedNodes.length}}</span>
       <span class="navbar-text toolbar-text material-icons nav-icon">clear</span>

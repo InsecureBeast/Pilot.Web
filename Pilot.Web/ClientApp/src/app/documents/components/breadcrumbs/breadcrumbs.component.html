@@ -12,20 +12,20 @@
 
   <ul class="navbar-nav breadcrumb">
     <li class="breadcrumb-item noselect" *ngIf="nodeStyle === 1">
-      <a [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(0);$event.stopPropagation()">view_list</a>
+      <a click-stop-propagation click-prevent-default [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(0)">view_list</a>
     </li>
     <li class="breadcrumb-item noselect" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
-      <a [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(1);$event.stopPropagation()">view_module</a>
+      <a click-stop-propagation click-prevent-default [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(1)">view_module</a>
     </li>
   </ul>
 </nav>
 
 <ng-template #rootItemTemplate let-bc="bcItem">
-  <a [routerLink]="" (click)="onSelect(bc);$event.stopPropagation()" *ngIf="!bc.isActive" class="material-icons">home</a>
+  <a click-stop-propagation click-prevent-default [routerLink]="" (click)="onSelect(bc)" *ngIf="!bc.isActive" class="material-icons">home</a>
   <span *ngIf="bc.isActive" class="material-icons">home</span>
 </ng-template>
 
 <ng-template #itemTemplate let-bc="bcItem">
-  <a [routerLink]="" (click)="onSelect(bc);$event.stopPropagation()" *ngIf="!bc.isActive">{{bc.title}}</a>
+  <a click-stop-propagation click-prevent-default [routerLink]="" (click)="onSelect(bc)" *ngIf="!bc.isActive">{{bc.title}}</a>
   <span *ngIf="bc.isActive">{{bc.title}}</span>
 </ng-template>
