@@ -112,11 +112,17 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   selected(item: IObjectNode): void {
+    if (!item.id)
+      return;
+
     this.clearChecked();
     this.onSelected.emit(item);
   }
 
   checked(node: IObjectNode, event: MouseEvent): void {
+    if (!node.id)
+      return;
+
     if (!event.ctrlKey) {
       this.clearChecked();
     }
