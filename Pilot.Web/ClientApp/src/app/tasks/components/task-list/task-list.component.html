@@ -10,7 +10,7 @@
         [class.list-group-item-primary]="task.isChecked"
         [class.collapse]="!task.isVisible"
         [class.task-intent]="isInWorkflow(task)"
-        (click)="checked(task, $event)"
+        (click)="check(task, $event)"
         *ngFor="let task of tasks">
 
       <ng-container *ngIf="!isStage(task);">
@@ -30,11 +30,13 @@
        [class.ml-5]="task.intent > 2">
 
     <div class="d-flex align-items-start flex-column mr-2">
-      <div class="">
+      <div class=""
+           [class.checker-img]="isAnyItemChecked">
         <img [src]="task.icon" width="16" *ngIf="task.icon != null" alt="type icon">
       </div>
 
-      <div class="mt-2">
+      <div class="mt-2"
+           [class.checker-img]="isAnyItemChecked">
         <img src="/assets/images/attachment.svg"
              width="16"
              *ngIf="task.attachments.length > 0">
@@ -42,12 +44,20 @@
     </div>
 
     <div class="mr-2"
-         [class.ml-3]="!task.userState || !task.userState.icon">
+         [class.ml-3]="!task.userState || !task.userState.icon"
+         [class.checker-img]="isAnyItemChecked">
       <img id="state_image"
            [src]="task.userState.icon"
            title="{{task.userState.title}}"
            width="16"
            *ngIf="task.userState && task.userState.icon">
+    </div>
+
+    <div class="mr-2 pointer checker-container"
+         *ngIf="isAnyItemChecked"
+         (click)="addChecked(task, $event); $event.stopPropagation();">
+      <span class="material-icons mt-1 checker" style="color: transparent" *ngIf="!task.isChecked">radio_button_unchecked</span>
+      <span class="material-icons mt-1 text-primary checker" *ngIf="task.isChecked">check_circle</span>
     </div>
 
     <div class="flex-grow-1 overflow-hidden">

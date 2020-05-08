@@ -36,10 +36,10 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   isAnyItemChecked: boolean;
 
   /** task-list ctor */
-  constructor(private readonly tasksRepositoryService: TasksRepositoryService,
-    private readonly taskNodeFactory: TaskNodeFactory,
-    private readonly tasksService: TasksService,
-    private readonly repositoryService: RepositoryService) {
+  constructor(private tasksRepositoryService: TasksRepositoryService,
+    private taskNodeFactory: TaskNodeFactory,
+    private tasksService: TasksService,
+    private repositoryService: RepositoryService) {
 
   }
 
@@ -60,7 +60,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     this.onSelected.emit(item);
   }
 
-  checked(node: TaskNode, event: MouseEvent): void {
+  check(node: TaskNode, event: MouseEvent): void {
     if (!event.ctrlKey) {
       this.clearChecked();
     }
@@ -70,6 +70,17 @@ export class TaskListComponent implements  OnInit, OnDestroy{
 
     const checked = this.tasks.filter(n => n.isChecked);
     this.onChecked.emit(checked);
+  }
+
+  addChecked(node: TaskNode): void {
+    node.isChecked = !node.isChecked;
+    this.isAnyItemChecked = true;
+
+    const checked = this.tasks.filter(n => n.isChecked);
+    this.onChecked.emit(checked);
+
+    if (checked.length === 0)
+      this.isAnyItemChecked = false;
   }
 
   showSubTasks(task: TaskNode): void {

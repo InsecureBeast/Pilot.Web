@@ -52,3 +52,18 @@ li a {
 .task-intent {
   border-left: 2px solid #bbc5f7;
 }
+
+.checker-container {
+  position: absolute;
+  /*top: -0.01rem;
+  left: -0.01rem;*/
+  padding: 0.93rem;
+}
+
+.checker-img {
+  opacity: 0.2;
+}
+
+.checker {
+  font-size: 24px;
+}
