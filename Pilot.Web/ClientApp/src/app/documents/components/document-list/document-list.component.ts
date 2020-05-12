@@ -149,6 +149,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.downloadService.downloadFile(node.source);
   }
 
+  isEmptyNode(node: IObjectNode): boolean {
+    return node instanceof EmptyObjectNode;
+  }
+
   private init(item: IObjectNode) {
     this.nodes = null;
     this.nodes = new Array();

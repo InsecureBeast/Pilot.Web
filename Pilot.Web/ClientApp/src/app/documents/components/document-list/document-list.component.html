@@ -4,7 +4,22 @@
   </div>
 </div>
 
-<div class="pb-5" *ngIf="nodeStyle === 0; else gridViewNodeTemplate">
+<div class="pb-5">
+  <ng-container *ngIf="nodeStyle === 0">
+    <ng-container *ngTemplateOutlet="listViewEmptyNodeTemplate"></ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="nodeStyle === 1">
+    <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
+  </ng-container>
+</div>
+
+<div class="content-center" *ngIf="nodes && nodes.length === 0">
+  <img src="/assets/images/empty-folder.svg" class="error-image" />
+  <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+</div>
+
+<ng-template #listViewNodeTemplate>
   <ul class="list-group mr-3 ml-3 shadow-sm" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
@@ -38,22 +53,17 @@
       </div>
     </li>
   </ul>
-</div>
-
-<div class="content-center" *ngIf="nodes && nodes.length === 0">
-  <img src="/assets/images/empty-folder.svg" class="error-image" />
-  <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
-</div>
-
+</ng-template>
 
 <ng-template #gridViewNodeTemplate>
-  <div class="row m-0 pb-5">
+  <div class="row m-0">
     <div *ngFor="let node of nodes"
          class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 p-2">
 
       <div class="card text-center shadow-sm"
            [class.list-group-item-primary]="node.isChecked"
-           (click)="checked(node, $event);$event.stopPropagation();">
+           (click)="checked(node, $event);$event.stopPropagation();"
+           *ngIf="!isEmptyNode(node) else gridViewEmptyNodeTemplate">
         <div class="overflow-hidden bg-white card-img" *ngIf="!node.preview">
           <img [src]="node.icon" class="card-icon-center" alt="type icon image" *ngIf="node.icon">
         </div>
@@ -80,4 +90,12 @@
 
     </div>
   </div>
+</ng-template>
+
+<ng-template #gridViewEmptyNodeTemplate>
+  <div class="card shadow-sm"></div>
+</ng-template>
+
+<ng-template #listViewEmptyNodeTemplate>
+  <div class="d-flex" *ngIf="isEmptyNode(node) else listViewNodeTemplate"></div>
 </ng-template>
