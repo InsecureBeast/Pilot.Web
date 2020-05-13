@@ -5,8 +5,9 @@ import { AuthService } from '../../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ErrorHandlerService {
-  constructor(private authService: AuthService,
-    private readonly router: Router ) {
+  constructor(
+    private authService: AuthService,
+    private router: Router ) {
 
   }
 

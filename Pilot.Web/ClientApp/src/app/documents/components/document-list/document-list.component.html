@@ -6,7 +6,7 @@
 
 <div class="pb-5">
   <ng-container *ngIf="nodeStyle === 0">
-    <ng-container *ngTemplateOutlet="listViewEmptyNodeTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
   </ng-container>
 
   <ng-container *ngIf="nodeStyle === 1">
@@ -94,8 +94,4 @@
 
 <ng-template #gridViewEmptyNodeTemplate>
   <div class="card shadow-sm"></div>
-</ng-template>
-
-<ng-template #listViewEmptyNodeTemplate>
-  <div class="d-flex" *ngIf="isEmptyNode(node) else listViewNodeTemplate"></div>
 </ng-template>

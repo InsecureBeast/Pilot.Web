@@ -11,10 +11,10 @@ import { ErrorHandlerService } from '../error-handler.service';
 export class ErrorComponent implements OnInit, OnChanges {
 
   @Input()
-  public response: HttpErrorResponse;
+  response: HttpErrorResponse;
 
-  public code: number;
-  public message: string;
+  code: number;
+  message: string;
 
   /** error ctor */
   constructor(private errorService: ErrorHandlerService) {
@@ -28,5 +28,9 @@ export class ErrorComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.code = this.response.status;
     this.message = this.errorService.handleErrorMessage(this.response);
+  }
+
+  refresh(): void {
+    window.location.reload();
   }
 }
