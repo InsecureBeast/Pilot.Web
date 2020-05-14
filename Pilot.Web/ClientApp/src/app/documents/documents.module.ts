@@ -13,6 +13,7 @@ import { SideModalModule } from '../ui/side-modal/side-modal.module';
 import { ErrorModule } from "../ui/error/error.module";
 import { DocumentVersionsComponent } from "./components/document-versions/document-versions.component";
 import { DocumentsRoutingModule } from "./documents-routing.module";
+import { DocumentTreeComponent } from "./components/document-tree/document-tree.component";
 
 @NgModule({
   imports: [
@@ -31,12 +32,12 @@ import { DocumentsRoutingModule } from "./documents-routing.module";
     BreadcrumbsComponent,
     DocumentToolbarComponent,
     DocumentVersionsComponent,
-    DocumentsToolbarComponent
+    DocumentsToolbarComponent,
+    DocumentTreeComponent
   ],
   exports: [
     DocumentsComponent,
-    DocumentComponent,
-    DocumentListComponent
+    DocumentComponent
   ],
 })
 export class DocumentsModule {}

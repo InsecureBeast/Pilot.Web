@@ -3,7 +3,7 @@ import { Directive, HostListener } from "@angular/core";
 @Directive({
   selector: "[click-stop-propagation]"
 })
-export class ClickStopPropagation {
+export class ClickStopPropagationDirective {
   @HostListener("click", ["$event"])
   public onClick(event: any): void {
     event.stopPropagation();
@@ -19,7 +19,7 @@ export class ClickStopPropagation {
 @Directive({
   selector: "[click-prevent-default]"
 })
-export class ClickPreventDefault {
+export class ClickPreventDefaultDirective {
   @HostListener("click", ["$event"])
   public onClick(event: any): void {
     event.preventDefault();

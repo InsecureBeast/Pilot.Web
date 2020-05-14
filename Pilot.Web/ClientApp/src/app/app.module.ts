@@ -19,6 +19,7 @@ import { DocumentsComponent } from './documents/pages/documents/documents.compon
 import { ModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
 import { TasksModule } from './tasks/tasks.module';
+import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -27,7 +28,9 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    ClickStopPropagationDirective,
+    ClickPreventDefaultDirective
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
