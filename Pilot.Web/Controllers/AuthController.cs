@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,7 @@ namespace Pilot.Web.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly ILog _logger = LogManager.GetLogger(typeof(AuthController));
         private readonly IContextService _contextService;
 
         public AuthController(IContextService contextService)
@@ -35,10 +37,13 @@ namespace Pilot.Web.Controllers
                 var credentials = Credentials.GetConnectionCredentials(user.Username, user.Password);
                 _contextService.CreateContext(credentials);
                 var tokenString = CreateToken(credentials);
+                _logger.Info($"Signed in successfully. Username: {user.Username}.");
                 return Ok(new { Token = tokenString });
             }
             catch (Exception e)
             {
+                _logger.Info($"Signed in failed. Username: {user.Username}.");
+                _logger.Error(e);
                 return BadRequest(e.Message);
             }
         }
@@ -51,10 +56,13 @@ namespace Pilot.Web.Controllers
             {
                 var actor = HttpContext.GetTokenActor();
                 _contextService.RemoveContext(actor);
+                _logger.Info($"Signed out successfully. Username: {actor}.");
                 return Ok();
             }
             catch (Exception e)
             {
+                _logger.Info($"Signed out failed.");
+                _logger.Error(e);
                 return BadRequest(e.Message);
             }
         }
