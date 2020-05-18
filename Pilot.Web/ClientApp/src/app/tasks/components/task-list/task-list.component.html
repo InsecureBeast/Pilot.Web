@@ -10,6 +10,7 @@
         [class.list-group-item-primary]="task.isChecked"
         [class.collapse]="!task.isVisible"
         [class.task-intent]="isInWorkflow(task)"
+        [class.mt-1]="isWorkflow(task)"
         (click)="check(task, $event)"
         *ngFor="let task of tasks">
 

@@ -2,7 +2,7 @@
   "name": "pilot-web",
   "short_name": "Ng-PWA",
   "start_url": "./",
-  "theme_color": "#f5f6fc",
+  "theme_color": "#343951",
   "background_color": "#f5f6fc",
   "display": "standalone",
   "description": "A PWA that is built with Angular",

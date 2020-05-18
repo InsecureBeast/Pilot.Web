@@ -13,7 +13,7 @@
 }
 
 .outdated {
-  color: tomato;
+  color: var(--red);
 }
 
 .list-group-item {
@@ -50,7 +50,7 @@ li a {
 }
 
 .task-intent {
-  border-left: 2px solid #bbc5f7;
+  border-left: 2px solid var(--primary);
 }
 
 .checker-container {
