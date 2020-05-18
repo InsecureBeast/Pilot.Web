@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart } from '@angular/router';
 
@@ -39,6 +39,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   isLoading: boolean;
   isAnyItemChecked: boolean;
   isLoaded: boolean;
+
+  @ViewChild('contentDiv') contentDiv: ElementRef;
 
   /** documents-list ctor */
   constructor(
@@ -189,6 +191,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }
+
+    this.contentDiv.nativeElement.focus();
   }
 
   private clearChecked(): void {

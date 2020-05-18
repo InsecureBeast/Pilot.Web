@@ -1,11 +1,11 @@
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { TranslateService } from "@ngx-translate/core";
 
-import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors, IChild } from "src/app/core/data/data.classes";
-import { RepositoryService } from 'src/app/core/repository.service';
-import { SystemTaskAttributes } from "src/app/core/data/system.types";
-import { Tools } from "src/app/core/tools/tools";
-import { TypeExtensions } from "src/app/core/tools/type.extensions";
+import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors } from "../../core/data/data.classes";
+import { RepositoryService } from '../../core/repository.service';
+import { SystemTaskAttributes } from "../../core/data/system.types";
+import { Tools } from "../../core/tools/tools";
+import { TypeExtensions } from "../../core/tools/type.extensions";
 import { TaskNodeFactory } from "./task-node.factory";
 
 export class TaskNode {
@@ -13,10 +13,10 @@ export class TaskNode {
   private _isVisible: boolean;
 
   constructor(
-    public readonly source: IObject,
-    private readonly sanitizer: DomSanitizer,
-    protected readonly repository: RepositoryService,
-    private readonly translate: TranslateService) {
+    public source: IObject,
+    private sanitizer: DomSanitizer,
+    protected repository: RepositoryService,
+    private translate: TranslateService) {
 
     this.title = this.getTitle(source);
     this.description = this.getDescription(source);

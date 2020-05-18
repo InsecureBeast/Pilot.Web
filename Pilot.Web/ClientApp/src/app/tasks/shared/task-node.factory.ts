@@ -11,9 +11,9 @@ import { TypeExtensions } from '../../core/tools/type.extensions';
 @Injectable({ providedIn: 'root'})
 export class TaskNodeFactory {
 
-  constructor(private readonly sanitizer: DomSanitizer,
-    private readonly repository: RepositoryService,
-    private readonly translate: TranslateService) {
+  constructor(private sanitizer: DomSanitizer,
+    private repository: RepositoryService,
+    private translate: TranslateService) {
 
   }
 

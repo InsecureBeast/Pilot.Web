@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Pilot.Web.Model;
 using Pilot.Web.Model.Auth;
@@ -55,8 +56,8 @@ namespace Pilot.Web
                     });
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             //services.AddDistributedMemoryCache();
 
@@ -78,7 +79,7 @@ namespace Pilot.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -94,17 +95,26 @@ namespace Pilot.Web
             app.UseExceptionHandlerMiddleware();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-            //app.UseCookiePolicy();
-            app.UseAuthentication();
-            //app.UseSession();
-
-            app.UseMvc(routes =>
+            if (!env.IsDevelopment())
             {
-                //routes.MapRoute("api", "api/", new { controller = "Home", action = "Index" });
-                routes.MapRoute(
+                app.UseSpaStaticFiles();
+            }
+            
+            app.UseRouting();
+
+            // global cors policy
+            //app.UseCors(x => x
+            //    .AllowAnyOrigin()
+            //    .AllowAnyMethod()
+            //    .AllowAnyHeader());
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
