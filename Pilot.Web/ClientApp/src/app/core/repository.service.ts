@@ -1,10 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState } from './data/data.classes';
-import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, combineLatest , zip} from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, Subject, combineLatest , zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil, map, take, skip} from 'rxjs/operators';
-import { Headers } from '@angular/http';
-import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({ providedIn: 'root', })
@@ -36,7 +34,7 @@ export class RepositoryService {
 
   getMetadata(): Observable<IMetadata> {
     let headers = this.getHeaders();
-    return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers.toJSON() });
+    return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
   getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
@@ -44,7 +42,7 @@ export class RepositoryService {
       let headers = this.getHeaders();
       let url = 'api/Documents/GetDocumentChildren?id=' + objectId + "&childrenType=" + childrenType;
       this.http
-        .get<IObject[]>(this.baseUrl + url, { headers: headers.toJSON() })
+        .get<IObject[]>(this.baseUrl + url, { headers: headers })
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe((objects) => resolve(objects), e => reject(e));
@@ -56,7 +54,7 @@ export class RepositoryService {
       let headers = this.getHeaders();
       let url = 'api/Documents/GetDocumentParents?id=' + id;
       this.http
-        .get<IObject[]>(this.baseUrl + url, { headers: headers.toJSON() })
+        .get<IObject[]>(this.baseUrl + url, { headers: headers })
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe((objects) => resolve(objects), e => reject(e));
@@ -67,7 +65,7 @@ export class RepositoryService {
     let headers = this.getHeaders();
     return new Promise((resolve, reject) => {
       this.http
-        .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers.toJSON() })
+        .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers })
         .pipe(first())
         .subscribe((objects) => resolve(objects), e => reject(e));
     });
@@ -79,7 +77,7 @@ export class RepositoryService {
       const headers = this.getHeaders();
       const path = this.baseUrl + 'api/Documents/GetObjects';
       this.http
-        .post<IObject[]>(path, body, { headers: headers.toJSON() })
+        .post<IObject[]>(path, body, { headers: headers })
         .pipe(first())
         .subscribe(objects => resolve(objects), err => reject(err));
     });
@@ -167,29 +165,31 @@ export class RepositoryService {
 
   private getPeople(): Observable<IPerson[]> {
     const headers = this.getHeaders();
-    return this.http.get<IPerson[]>(this.baseUrl + 'api/Metadata/GetPeople', { headers: headers.toJSON() }).pipe(first());
+    return this.http.get<IPerson[]>(this.baseUrl + 'api/Metadata/GetPeople', { headers: headers }).pipe(first());
   }
 
   private getCurrentPersonInternal(): Observable<IPerson> {
     const headers = this.getHeaders();
-    return this.http.get<IPerson>(this.baseUrl + 'api/Metadata/GetCurrentPerson', { headers: headers.toJSON() }).pipe(first());
+    return this.http.get<IPerson>(this.baseUrl + 'api/Metadata/GetCurrentPerson', { headers: headers }).pipe(first());
   }
 
   private getOrganizationUnits(): Observable<IOrganizationUnit[]> {
     const headers = this.getHeaders();
-    return this.http.get<IOrganizationUnit[]>(this.baseUrl + 'api/Metadata/GetOrganizationUnits', { headers: headers.toJSON() }).pipe(first());
+    return this.http.get<IOrganizationUnit[]>(this.baseUrl + 'api/Metadata/GetOrganizationUnits', { headers: headers }).pipe(first());
   }
 
   private getUserStates(): Observable<IUserState[]> {
     const headers = this.getHeaders();
-    return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers.toJSON() }).pipe(first());
+    return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
   }
 
-  private getHeaders(): Headers {
-    let token = this.authService.getToken();
-    let headers = new Headers();
-    headers.append('Authorization', "Bearer " + token);
-    headers.append('Content-Type', 'application/json');
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Authorization': "Bearer " + token,
+      'Content-Type': 'application/json'
+    });
     return headers;
   }
 }

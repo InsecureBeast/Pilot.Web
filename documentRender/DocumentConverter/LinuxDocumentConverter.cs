@@ -41,7 +41,7 @@ namespace DocumentRender.DocumentConverter
             _toolRunner.Run(tool, filename, outputDir, scale);
 
             var result = new List<byte[]>();
-            foreach (var file in Directory.EnumerateFiles(outputDir))
+            foreach (var file in Directory.GetFiles(outputDir).OrderBy(f => f))
             {
                 var bytes = FileToBytes(file);
                 result.Add(bytes);

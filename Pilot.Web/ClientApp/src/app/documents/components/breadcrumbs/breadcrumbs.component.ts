@@ -27,7 +27,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   private ngUnsubscribe = new Subject<void>();
   private allBreadcrumbNodes: BreadcrumbNode[];
 
-  @ViewChild("olRef")
+  @ViewChild("olRef", { static: true })
   set setOl(v: ElementRef) {
     if (!v)
       return;

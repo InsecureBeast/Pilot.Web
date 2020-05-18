@@ -31,7 +31,7 @@ namespace DocumentRender.DocumentConverter
                     continue;
 
                 _defaultTool = tool;
-                logger.Info("Draw tool set to " + _defaultTool.ToolName);
+                //logger.Info("Draw tool set to " + _defaultTool.ToolName);
             }
         }
 
@@ -48,6 +48,11 @@ namespace DocumentRender.DocumentConverter
     {
         private readonly string _argumentsFormat;
 
+        public static string GetPageFormat(int page)
+        {
+            return $"page{page:0000}.png";
+        }
+
         public ToolProperties(string toolName, string argumentsFormat)
         {
             _argumentsFormat = argumentsFormat;
@@ -58,9 +63,9 @@ namespace DocumentRender.DocumentConverter
 
         public string GetArguments(string filename, string outputDir, int? page, double scale)
         {
-            var pageName = "page_%d.png";
+            var pageName = "page%04d.png";
             if (page != null)
-                pageName = $"page_{page}.png";
+                pageName = GetPageFormat((int)page);
 
             var drawResultPath = Path.Combine(outputDir, pageName);
 

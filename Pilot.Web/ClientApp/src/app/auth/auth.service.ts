@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Headers } from '@angular/http';
 
 const TOKEN = 'auth_token';
 
@@ -18,12 +17,8 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<string> {
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    headers.append('username', username);
-    headers.append('password', password);
-
-    const observable = this.http.get<string>(this.baseUrl + 'api/Auth/SignIn', { headers: headers.toJSON() });
+    const body = { username, password };
+    const observable = this.http.post<string>(this.baseUrl + 'api/Auth/SignIn', body);
     observable.pipe(first()).subscribe(result => {
       const token = (result as any).token;
       this.setToken(token);
@@ -34,11 +29,13 @@ export class AuthService {
   }
 
   logout() {
-    let token = this.getToken();
-    let headers = new Headers();
-    headers.append('Authorization', "Bearer " + token);
-    headers.append('Content-Type', 'application/json');
-    this.http.get(this.baseUrl + 'api/Auth/SignOut', { headers: headers.toJSON() });
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Authorization': "Bearer " + token,
+      'Content-Type': 'application/json'
+    });
+    this.http.get(this.baseUrl + 'api/Auth/SignOut', { headers: headers });
     this.clearToken();
     this.isLoggedIn$.next(false);
   }

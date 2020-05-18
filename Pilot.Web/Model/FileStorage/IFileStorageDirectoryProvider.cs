@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using DocumentRender.DocumentConverter;
 using Microsoft.Extensions.Options;
 
 namespace Pilot.Web.Model.FileStorage
@@ -42,7 +43,7 @@ namespace Pilot.Web.Model.FileStorage
         public string GetImagePath(Guid imageFileId, int page)
         {
             var imageDir = GetImagesStorageDirectory(imageFileId);
-            return Path.Combine(imageDir, $"page_{page}.png");
+            return Path.Combine(imageDir, ToolProperties.GetPageFormat(page));
         }
     }
 }

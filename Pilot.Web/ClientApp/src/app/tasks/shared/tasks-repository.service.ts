@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Headers } from '@angular/http';
 
 import { IObject, ICommonSettings } from '../../core/data/data.classes';
 import { AuthService } from '../../auth/auth.service';
@@ -19,7 +18,7 @@ export class TasksRepositoryService {
 
   getPersonalSettings(key: string): Observable<ICommonSettings> {
     const headers = this.getHeaders();
-    return this.http.get<ICommonSettings>(this.baseUrl + 'api/Metadata/GetPersonalSettings?key=' + key, { headers: headers.toJSON() })
+    return this.http.get<ICommonSettings>(this.baseUrl + 'api/Metadata/GetPersonalSettings?key=' + key, { headers: headers })
       .pipe(first());
   }
 
@@ -27,16 +26,17 @@ export class TasksRepositoryService {
     const body = JSON.stringify(filter);
     const headers = this.getHeaders();
     const path = this.baseUrl + 'api/Tasks/GetTasks';
-    return this.http.post<IObject[]>(path, body, { headers: headers.toJSON() })
+    return this.http.post<IObject[]>(path, body, { headers: headers })
       .pipe(first());
   }
 
-
-  private getHeaders(): Headers {
+  private getHeaders(): HttpHeaders {
     const token = this.userService.getToken();
-    const headers = new Headers();
-    headers.append('Authorization', "Bearer " + token);
-    headers.append('Content-Type', 'application/json');
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Authorization': "Bearer " + token,
+      'Content-Type': 'application/json'
+    });
     return headers;
   }
 }

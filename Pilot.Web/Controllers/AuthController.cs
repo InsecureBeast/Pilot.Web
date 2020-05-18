@@ -10,6 +10,12 @@ using Pilot.Web.Tools;
 
 namespace Pilot.Web.Controllers
 {
+    public class User
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -21,12 +27,12 @@ namespace Pilot.Web.Controllers
             _contextService = contextService;
         }
 
-        [HttpGet("[action]")]
-        public ActionResult SignIn([FromHeader]string username, [FromHeader]string password)
+        [HttpPost("[action]")]
+        public ActionResult SignIn([FromBody]User user)
         {
             try
             {
-                var credentials = Credentials.GetConnectionCredentials(username, password);
+                var credentials = Credentials.GetConnectionCredentials(user.Username, user.Password);
                 _contextService.CreateContext(credentials);
                 var tokenString = CreateToken(credentials);
                 return Ok(new { Token = tokenString });
