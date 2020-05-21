@@ -127,24 +127,28 @@ export class SourceFileService {
 
   private getImageDataType(filename: string): string {
 
-    if (filename.endsWith(".png")) {
+    if (filename.toLowerCase().endsWith(".png")) {
       return '.png';
     }
 
-    if (filename.endsWith(".svg")) {
+    if (filename.toLowerCase().endsWith(".svg")) {
       return 'svg+xml;charset=utf-8';
     }
 
-    if (filename.endsWith(".jpeg")) {
+    if (filename.toLowerCase().endsWith(".jpeg")) {
       return '.jpeg';
     }
 
-    if (filename.endsWith(".jpg")) {
+    if (filename.toLowerCase().endsWith(".jpg")) {
       return '.jpg';
     }
 
-    if (filename.endsWith(".bmp")) {
+    if (filename.toLowerCase().endsWith(".bmp")) {
       return '.bmp';
+    }
+
+    if (filename.toLowerCase().endsWith(".gif")) {
+      return '.gif';
     }
 
     return null;
