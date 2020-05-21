@@ -1,20 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
-import { SafeUrl } from '@angular/platform-browser';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
-import { Subscription, Subject } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
-import { IAttribute, AttributeType, IOrganizationUnit, IPerson, OrgUnitKind, IObject } from '../../../core/data/data.classes';
-import { Tools } from '../../../core/tools/tools';
+import { IObject } from '../../../core/data/data.classes';
 import { RepositoryService } from '../../../core/repository.service';
-import { SystemTaskAttributes } from '../../../core/data/system.types';
-import { TypeIconService } from '../../../core/type-icon.service';
 
 @Component({
     selector: 'app-task',
     templateUrl: './task.component.html',
-    styleUrls: ['./task.component.css']
+  styleUrls: ['./task.component.css', '../../../documents/shared/toolbar.css']
 })
 /** task component*/
 export class TaskComponent implements OnInit, OnDestroy {
@@ -26,10 +22,9 @@ export class TaskComponent implements OnInit, OnDestroy {
 
   /** task ctor */
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly repository: RepositoryService,
-    private readonly translate: TranslateService,
-    private readonly iconService: TypeIconService) {
+    private activatedRoute: ActivatedRoute,
+    private repository: RepositoryService,
+    private location: Location) {
 
   }
 
@@ -51,10 +46,10 @@ export class TaskComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.navigationSubscription.unsubscribe();
-    //this.routerSubscription.unsubscribe();
 
-    // cancel
-    //this.ngUnsubscribe.next();
-    //this.ngUnsubscribe.complete();
+  }
+
+  close($event): void {
+    this.location.back();
   }
 }
