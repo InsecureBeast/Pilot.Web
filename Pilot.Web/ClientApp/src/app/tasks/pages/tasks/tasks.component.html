@@ -19,11 +19,11 @@
 
 <div class="pt-6 row h-100" *ngIf="!error">
 
-  <div class="col-12 d-sm-none" *ngIf="selectedFilter">
+  <div class="col-12 d-sm-none noselect" *ngIf="selectedFilter">
     <a id="filters-button"
        [routerLink]=""
        (click)="showFilters();$event.stopPropagation()">
-      <span>{{ selectedFilter.name }}</span>
+      <span class="">{{ selectedFilter.name }}</span>
       <span class="material-icons">arrow_drop_down</span>
     </a>
   </div>
