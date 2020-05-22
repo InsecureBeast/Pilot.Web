@@ -84,8 +84,9 @@ export class RepositoryService {
   }
 
   initializeAsync(): Observable<boolean> {
-        
     const init = new BehaviorSubject<boolean>(false);
+    if (this.authService.getToken() === null)
+      return init;
 
     if (this.metadata)
       return new BehaviorSubject<boolean>(true);

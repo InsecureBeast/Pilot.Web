@@ -32,13 +32,13 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   
   /** documents ctor */
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private repository: RepositoryService,
-    private typeIconService: TypeIconService,
-    private translate: TranslateService,
-    private router: Router,
-    private navigationService: DocumentsNavigationService,
-    private documentsService: DocumentsService) {
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly repository: RepositoryService,
+    private readonly typeIconService: TypeIconService,
+    private readonly translate: TranslateService,
+    private readonly router: Router,
+    private readonly navigationService: DocumentsNavigationService,
+    private readonly documentsService: DocumentsService) {
 
   }
 

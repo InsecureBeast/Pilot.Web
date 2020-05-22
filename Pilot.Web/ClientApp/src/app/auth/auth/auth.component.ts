@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { first, skipWhile } from 'rxjs/operators';
 import { Subscription, Subject } from 'rxjs';
@@ -29,7 +29,8 @@ export class AuthComponent implements OnInit, OnDestroy{
     private readonly repositoryService: RepositoryService,
     private readonly authService: AuthService,
     private readonly errorService: ErrorHandlerService,
-    private readonly router: Router) {
+    private readonly router: Router,
+    private readonly  activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -39,7 +40,16 @@ export class AuthComponent implements OnInit, OnDestroy{
 
       this.repositoryService.initializeAsync().pipe(skipWhile(v => !v)).subscribe(isInit => {
         this.isProcessing = false;
-        this.router.navigate(['/documents/' + SystemIds.rootId]);
+
+        this.activatedRoute.queryParams.pipe(first()).subscribe((params: Params) => {
+          const returnUrl = params['returnUrl'];
+          if (!returnUrl) {
+            this.router.navigate(['/documents/' + SystemIds.rootId]);
+            return;
+          }
+
+          this.router.navigate([returnUrl]);
+        });
 
       }, (e: HttpErrorResponse) => {
         this.isProcessing = false;
