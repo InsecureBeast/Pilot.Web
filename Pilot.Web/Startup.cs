@@ -28,6 +28,7 @@ namespace Pilot.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {
@@ -39,19 +40,19 @@ namespace Pilot.Web
                             // укзывает, будет ли валидироваться издатель при валидации токена
                             ValidateIssuer = true,
                             // строка, представляющая издателя
-                            ValidIssuer = AuthOptions.ISSUER,
+                            ValidIssuer = authSettings.Issuer,
                             // будет ли валидироваться потребитель токена
                             ValidateAudience = false,
                             // установка потребителя токена
-                            ValidAudience = AuthOptions.AUDIENCE,
+                            ValidAudience = authSettings.GetAudience(),
                             // будет ли валидироваться время существования
                             ValidateLifetime = true,
                             // установка ключа безопасности
-                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                            IssuerSigningKey = authSettings.GetSymmetricSecurityKey(),
                             // валидация ключа безопасности
                             ValidateIssuerSigningKey = true,
                             // 
-                            ClockSkew = AuthOptions.CLOCK_CREW
+                            ClockSkew = authSettings.GetClockCrew()
                         };
                     });
 
@@ -67,6 +68,7 @@ namespace Pilot.Web
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
             services.Configure<ServerSettings>(Configuration.GetSection("PilotServer"));
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IConnectionService, ConnectionService>();

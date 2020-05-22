@@ -40,19 +40,12 @@ export class DownloadService {
       //To IE or Edge browser, using msSaveorOpenBlob method to download file.
       window.navigator.msSaveOrOpenBlob(blob, name);
     } else {
-      //To another browser, create a tag to downlad file.
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      document.body.appendChild(a);
-      a.setAttribute('style', 'display: none');
-      a.href = url;
-      a.download = name;
-      a.click();
-
-      window.URL.revokeObjectURL(url);
-      a.remove();
+      //To another browser, create a tag to download file.
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.target = '_blank';
+      link.download = name;
+      link.click();
     }
-    //document.body.removeChild(a);
-    //URL.revokeObjectURL(objectUrl);
   }
 }

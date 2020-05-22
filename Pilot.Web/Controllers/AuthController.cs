@@ -4,6 +4,7 @@ using System.Security.Claims;
 using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Pilot.Web.Model;
 using Pilot.Web.Model.Auth;
@@ -23,10 +24,12 @@ namespace Pilot.Web.Controllers
     {
         private readonly ILog _logger = LogManager.GetLogger(typeof(AuthController));
         private readonly IContextService _contextService;
+        private readonly AuthSettings _authSettings;
 
-        public AuthController(IContextService contextService)
+        public AuthController(IContextService contextService, IOptions<AuthSettings> authSettings)
         {
             _contextService = contextService;
+            _authSettings = authSettings.Value;
         }
 
         [HttpPost("[action]")]
@@ -67,9 +70,9 @@ namespace Pilot.Web.Controllers
             }
         }
         
-        private static string CreateToken(Credentials credentials)
+        private string CreateToken(Credentials credentials)
         {
-            var secretKey = AuthOptions.GetSymmetricSecurityKey();
+            var secretKey = _authSettings.GetSymmetricSecurityKey();
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -81,10 +84,10 @@ namespace Pilot.Web.Controllers
 
             var tokeOptions = new JwtSecurityToken(
                 claims: claims,
-                expires: AuthOptions.LIFETIME,
+                expires: _authSettings.GetTokenLifetime(_authSettings.TokenLifeTimeDays),
                 signingCredentials: signinCredentials,
-                audience: AuthOptions.AUDIENCE,
-                issuer: AuthOptions.ISSUER
+                audience: _authSettings.GetAudience(),
+                issuer: _authSettings.Issuer
             );
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
