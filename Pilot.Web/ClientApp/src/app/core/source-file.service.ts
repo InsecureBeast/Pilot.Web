@@ -48,6 +48,18 @@ export class SourceFileService {
     });
   }
 
+  getThumbnailFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+    return new Promise((resolve, reject) => {
+        this.fileStorageService.getFile(file.body.id, file.body.size)
+          .pipe(takeUntil(cancel))
+          .subscribe(bytes => {
+            var base64 = Tools.arrayBufferToBase64(bytes);
+            var url = Tools.getImage(base64, '.png', this.sanitizer);
+            resolve(url);
+          }, err => reject(err));
+    });
+  }
+
   isImageFile(snapshot: IFileSnapshot): boolean {
     const file = FilesSelector.getSourceFile(snapshot.files);
     if (!file)

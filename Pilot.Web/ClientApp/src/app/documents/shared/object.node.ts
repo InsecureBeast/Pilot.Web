@@ -80,6 +80,9 @@ export class ObjectNode implements IObjectNode {
   }
 
   loadPreview(): void {
+    if (!TypeExtensions.isDocument(this.source.type))
+      return;
+
     this.typeIconService.getPreviewAsync(this.source, this.cancel)
       .then(preview => {
           this.preview = preview;

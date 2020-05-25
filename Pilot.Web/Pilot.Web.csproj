@@ -20,13 +20,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.14.0" />
+    <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.19.0" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00007" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00007" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.4" />
-    <PackageReference Include="Microsoft.NETCore.Targets" Version="2.1.0" ExcludeAssets="all" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="3.1.0" ExcludeAssets="all" PrivateAssets="all">
+      <IncludeAssets>none</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
