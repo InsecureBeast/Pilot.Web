@@ -3,32 +3,32 @@
   "short_name": "Ng-PWA",
   "start_url": "./",
   "theme_color": "#343951",
-  "background_color": "#f5f6fc",
+  "background_color": "#343951",
   "display": "standalone",
-  "description": "A PWA that is built with Angular",
+  "description": "",
   "icons": [
     {
-      "src": "/assets/images/icons/icon-16x16.png",
+      "src": "/assets/images/icons/favicon-16x16.png",
       "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "/assets/images/icons/icon-32x32.png",
+      "src": "/assets/images/icons/favicon-32x32.png",
       "sizes": "32x32",
       "type": "image/png"
     },
-    //{
-    //  "src": "/assets/images/icons/icon-150x150.png",
-    //  "sizes": "150x150",
-    //  "type": "image/png"
-    //},
-    //{
-    //  "src": "/assets/images/icons/icon-180x180.png",
-    //  "sizes": "180x180",
-    //  "type": "image/png"
-    //},
     {
-      "src": "/assets/images/icons/icon-192x192.png",
+      "src": "/assets/images/icons/apple-touch-icon-152x152.png",
+      "sizes": "150x150",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icons/apple-touch-icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icons/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     }
