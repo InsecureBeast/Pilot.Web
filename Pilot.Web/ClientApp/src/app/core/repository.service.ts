@@ -33,7 +33,7 @@ export class RepositoryService {
   }
 
   getMetadata(): Observable<IMetadata> {
-    let headers = this.getHeaders();
+    const headers = this.getHeaders();
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
@@ -85,7 +85,7 @@ export class RepositoryService {
 
   initializeAsync(): Observable<boolean> {
     const init = new BehaviorSubject<boolean>(false);
-    if (this.authService.getToken() === null)
+    if (!this.isAuth())
       return init;
 
     if (this.metadata)
@@ -192,5 +192,9 @@ export class RepositoryService {
       'Content-Type': 'application/json'
     });
     return headers;
+  }
+
+  private isAuth(): boolean {
+    return this.authService.getToken() != null;
   }
 }
