@@ -2,16 +2,16 @@
   <ul class="navbar-nav">
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="download($event)">
       <span class="navbar-text toolbar-text material-icons nav-icon">file_download</span>
-      <span class="navbar-text toolbar-text hidden-phone" translate="download"></span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="download"></span>
     </li>
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="showVersions($event)"
         [class.checked]="isVersionsChecked">
       <span class="navbar-text toolbar-text material-icons nav-icon">query_builder</span>
-      <span class="navbar-text toolbar-text hidden-phone" translate="versions"></span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="versions"></span>
     </li>
   </ul>
 
-  <ul class="navbar-nav">
+  <ul class="navbar-nav noselect">
     <li class="nav-item">
       <span class="navbar-text toolbar-text">
         {{title}}
@@ -22,10 +22,10 @@
   <ul class="navbar-nav noselect">
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="previous($event)">
       <span class="navbar-text toolbar-text material-icons nav-icon">chevron_left</span>
-      <span class="navbar-text toolbar-text hidden-phone" translate="back"></span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="back"></span>
     </li>
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="next($event)">
-      <span class="navbar-text toolbar-text hidden-phone" translate="forward"></span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="forward"></span>
       <span class="navbar-text toolbar-text material-icons nav-icon">chevron_right</span>
     </li>
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button noselect" (click)="close($event)">

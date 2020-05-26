@@ -36,16 +36,21 @@ export class TypeIconService {
         return this.sourceFileService.getXpsThumbnailAsync(xpsfile, cancel);
       }
 
-      if (this.sourceFileService.isImageFile(item.actualFileSnapshot)) {
-        const imageFile = FilesSelector.getSourceThumbnailFile(item.actualFileSnapshot.files);
-        return this.sourceFileService.getThumbnailFileToShowAsync(imageFile, cancel);
+      if (this.sourceFileService.isSvgFile(item.actualFileSnapshot)) {
+        const imageFile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
+        return this.sourceFileService.getImageFileToShowAsync(imageFile, cancel);
       }
 
-      //const imageFile = FilesSelector.getSourceThumbnailFile(item.actualFileSnapshot.files);
-      //if (imageFile)
-      //  return this.sourceFileService.getThumbnailFileToShowAsync(imageFile, cancel);
-    }
+      if (this.sourceFileService.isImageFile(item.actualFileSnapshot)) {
+        let imageFile = FilesSelector.getSourceThumbnailFile(item.actualFileSnapshot.files);
+        if (imageFile) {
+          return this.sourceFileService.getThumbnailFileToShowAsync(imageFile, cancel);
+        }
 
+        imageFile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
+        return this.sourceFileService.getImageFileToShowAsync(imageFile, cancel);
+      }
+    }
 
     return new Promise((resolve, reject) => {
       resolve(null);

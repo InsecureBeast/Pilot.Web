@@ -84,7 +84,7 @@ namespace Pilot.Web.Controllers
             var actor = HttpContext.GetTokenActor();
             var fileLoader = _contextService.GetFileLoader(actor);
             var fileContent = fileLoader.Download(guid, size);
-            thumbnail = _documentRender.RenderPage(fileContent, 1, 0.1);
+            thumbnail = _documentRender.RenderPage(fileContent, 1, 0.2);
             if (thumbnail != null)
                 _filesStorage.PutThumbnailAsync(guid, thumbnail);
 

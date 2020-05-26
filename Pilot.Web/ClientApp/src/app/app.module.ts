@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS  } from '@angular/common/http';
 import { RouterModule, RouteReuseStrategy } from '@angular/router';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import { DocumentsComponent } from './documents/pages/documents/documents.compon
 import { ModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
 import { TasksModule } from './tasks/tasks.module';
+import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -54,11 +55,12 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     DocumentsModule,
-    TasksModule,
+    TasksModule
   ],
   providers: [
     AuthGuard,
-    { provide: RouteReuseStrategy, useClass: RouteReuseService}
+    { provide: RouteReuseStrategy, useClass: RouteReuseService },
+    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
