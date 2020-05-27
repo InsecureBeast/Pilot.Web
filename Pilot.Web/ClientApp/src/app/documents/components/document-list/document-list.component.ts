@@ -63,6 +63,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.isLoaded = false;
 
     // or get item from changes
+    this.cancelAllRequests(false);
     this.init(this.parent);
   }
 
