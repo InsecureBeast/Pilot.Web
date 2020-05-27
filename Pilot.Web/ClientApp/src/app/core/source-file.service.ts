@@ -6,10 +6,14 @@ import { Subject } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
 import { FilesRepositoryService } from './files-repository.service';
 import { Tools } from './tools/tools';
+import { IndexedStorageService } from './indexed-storage.service';
 
 @Injectable({ providedIn: 'root'})
 export class SourceFileService {
-  constructor(private fileStorageService: FilesRepositoryService, private sanitizer: DomSanitizer) {
+  constructor(
+    private readonly fileStorageService: FilesRepositoryService,
+    private readonly sanitizer: DomSanitizer,
+    private readonly indexedStorageService: IndexedStorageService ) {
 
   }
 
@@ -31,9 +35,9 @@ export class SourceFileService {
     });
   }
 
-  getImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+  async getImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
     var imageType = this.getImageDataType(file.name);
-    const result = this.getImageFromLocalStorage(file.body.id, imageType);
+    const result = await this.getImageFromLocalStorage(file.body.id, imageType);
     if (result.result)
       return result.promise;
 
@@ -45,7 +49,7 @@ export class SourceFileService {
           .pipe(takeUntil(cancel))
           .subscribe(bytes => {
             var base64 = Tools.arrayBufferToBase64(bytes);
-            localStorage.setItem(file.body.id, base64);
+            this.setImageToLocalStorage(file.body.id, base64);
             var url = Tools.getImage(base64, imageType, this.sanitizer);
             resolve(url);
           }, err => reject(err));
@@ -53,9 +57,9 @@ export class SourceFileService {
     });
   }
 
-  getThumbnailFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+  async getThumbnailFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
 
-    const result = this.getImageFromLocalStorage(file.body.id, '.png');
+    const result = await this.getImageFromLocalStorage(file.body.id, '.png');
     if (result.result)
       return result.promise;
 
@@ -64,15 +68,15 @@ export class SourceFileService {
           .pipe(takeUntil(cancel))
           .subscribe(bytes => {
             var base64 = Tools.arrayBufferToBase64(bytes);
-            localStorage.setItem(file.body.id, base64);
+            this.setImageToLocalStorage(file.body.id, base64);
             var url = Tools.getImage(base64, '.png', this.sanitizer);
             resolve(url);
           }, err => reject(err));
     });
   }
 
-  getXpsThumbnailAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
-    const result = this.getImageFromLocalStorage(file.body.id, '.png');
+  async getXpsThumbnailAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+    const result = await this.getImageFromLocalStorage(file.body.id, '.png');
     if (result.result)
       return result.promise;
 
@@ -82,7 +86,7 @@ export class SourceFileService {
         .pipe(takeUntil(cancel))
         .subscribe(bytes => {
           var base64 = Tools.arrayBufferToBase64(bytes);
-          localStorage.setItem(file.body.id, base64);
+          this.setImageToLocalStorage(file.body.id, base64);
           var url = Tools.getImage(base64, ".png", this.sanitizer);
           resolve(url);
         }, err => reject(err));
@@ -147,11 +151,11 @@ export class SourceFileService {
     });
   }
 
-  private getPageAsync(fileId: string, page: number, cancel: Subject<any>): Promise<SafeUrl> {
-    const key = fileId + "_page" + page;
-    const result = this.getImageFromLocalStorage(key, '.png');
-    if (result.result)
-      return result.promise;
+  private async getPageAsync(fileId: string, page: number, cancel: Subject<any>): Promise<SafeUrl> {
+    //const key = fileId + "_page" + page;
+    //const result = await this.getImageFromLocalStorage(key, '.png');
+    //if (result.result)
+    //  return result.promise;
 
     return new Promise((resolve, reject) => {
       this.fileStorageService.getDocumentPageContent(fileId, page)
@@ -159,7 +163,7 @@ export class SourceFileService {
         .pipe(takeUntil(cancel))
         .subscribe(page => {
           var base64 = Tools.arrayBufferToBase64(page);
-          localStorage.setItem(key, base64);
+          //this.setImageToLocalStorage(key, base64);
           var image = Tools.getImage(base64, ".png", this.sanitizer);
             resolve(image);
           },
@@ -208,24 +212,24 @@ export class SourceFileService {
     return null;
   }
 
-  private getImageFromLocalStorage(key:string, imageType: string): LocalStorageResult {
+  private async getImageFromLocalStorage(key:string, imageType: string): Promise<LocalStorageResult> {
     let result = false;
     let promise = null;
 
-    //var localBase64 = localStorage.getItem(key);
-
-    //if (localBase64) {
-    //  result = true;
-    //  promise = new Promise(resolve => {
-    //    var url = Tools.getImage(localBase64, imageType, this.sanitizer);
-    //    resolve(url);
-    //  });
-    //}
+    var localBase64 = await this.indexedStorageService.getImageFile(key);
+    if (localBase64) {
+      result = true;
+      promise = new Promise(resolve => {
+        var url = Tools.getImage(localBase64, imageType, this.sanitizer);
+        resolve(url);
+      });
+    }
 
     return new LocalStorageResult(result, promise);
   }
 
   private setImageToLocalStorage(key: string, value: string): void {
+    this.indexedStorageService.setImageFile(key, value);
   }
 }
 

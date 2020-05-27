@@ -6,11 +6,11 @@ import { RouterModule, RouteReuseStrategy } from '@angular/router';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgxIndexedDBModule, DBConfig } from 'ngx-indexed-db';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { AuthGuard } from './auth/auth.guard';
-
 import { ErrorModule } from './ui/error/error.module';
 import { AuthComponent } from './auth/auth/auth.component';
 import { AuthModule } from './auth/auth.module';
@@ -25,6 +25,19 @@ import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './c
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
 }
+
+const dbConfig: DBConfig = {
+  name: 'storage',
+  version: 1,
+  objectStoresMeta: [{
+    store: 'images',
+    storeConfig: { keyPath: 'key', autoIncrement: true },
+    storeSchema: [
+      { name: 'key', keypath: 'key', options: { unique: true } },
+      { name: 'value', keypath: 'value', options: { unique: false } }
+    ]
+  }]
+};
 
 @NgModule({
   declarations: [
@@ -55,7 +68,8 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     DocumentsModule,
-    TasksModule
+    TasksModule,
+    NgxIndexedDBModule.forRoot(dbConfig)
   ],
   providers: [
     AuthGuard,
