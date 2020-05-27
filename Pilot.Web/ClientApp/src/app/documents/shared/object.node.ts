@@ -1,5 +1,7 @@
 import { SafeUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
+import { first } from 'rxjs/operators';
+
 import { IObject, IType, IChild, IPerson } from '../../core/data/data.classes';
 import { EmptyObject } from '../../core/data/empty-data.classes';
 import { TypeExtensions } from '../../core/tools/type.extensions';
@@ -83,13 +85,12 @@ export class ObjectNode implements IObjectNode {
     if (!TypeExtensions.isDocument(this.source.type))
       return;
 
-    this.typeIconService.getPreviewAsync(this.source, this.cancel)
-      .then(preview => {
+    this.typeIconService.getPreview(this.source, this.cancel)
+      .pipe(first())
+      .subscribe(preview => {
           this.preview = preview;
-      })
-      .catch(err => {
-        this.preview = null;
-      });
+        },
+        err => this.preview = null);
   }
 
   private getTitle(source: IObject): string {
