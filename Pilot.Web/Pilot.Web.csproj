@@ -39,7 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ClientApp\src\app\documents\shared\document.ts" />
     <None Remove="ClientApp\src\app\tasks\shared\tasks.service.ts" />
   </ItemGroup>
 
@@ -53,7 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\documents\shared\document.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\tasks\shared\tasks.service.ts" />
   </ItemGroup>
 
