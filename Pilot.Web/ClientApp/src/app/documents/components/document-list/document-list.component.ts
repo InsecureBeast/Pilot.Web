@@ -26,6 +26,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
+  private navigation: string = "forward";
 
   @Input() parent: ObjectNode;
 
@@ -89,6 +90,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
+          this.navigation = "back";
         }
       }
     });
@@ -118,6 +120,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (!item.id)
       return;
 
+    this.navigation = "forward";
     this.clearChecked();
     this.onSelected.emit(item);
   }
@@ -171,7 +174,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (isSource)
       type = ChildrenType.Storage;
 
-    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
+    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe, this.navigation)
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
@@ -216,4 +219,5 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.ngUnsubscribe.complete();
     }
   }
+
 }

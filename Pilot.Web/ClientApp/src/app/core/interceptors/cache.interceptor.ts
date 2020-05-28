@@ -13,22 +13,18 @@ export class CacheInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    return next.handle(request);
-    //if ((request.url.indexOf("GetThumbnail") === -1) && (request.url.indexOf("GetFile") === -1)) {
-    //  return next.handle(request);
-    //}
-
-    //const cachedResponse = this.cache.get(request.url);
-    //if (cachedResponse) {
-    //  return of(cachedResponse);
-    //}
-
-    //return next.handle(request).pipe(
-    //  tap(event => {
-    //    if (event instanceof HttpResponse) {
-    //      this.cache.set(request.url, event);
-    //    }
-    //  })
-    //);
+    if (request.headers.get('Navigation') === 'back') {
+      const cachedResponse = this.cache.get(request.url);
+      if (cachedResponse) {
+        return of(cachedResponse);
+      }
+    }
+    return next.handle(request).pipe(
+      tap(event => {
+        if (event instanceof HttpResponse) {
+          this.cache.set(request.url, event);
+        }
+      })
+    );
   }
 }

@@ -37,9 +37,9 @@ export class RepositoryService {
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
-  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
+  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>, navigationHeader: string): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
-      let headers = this.getHeaders();
+      let headers = this.getHeaders(navigationHeader);
       let url = 'api/Documents/GetDocumentChildren?id=' + objectId + "&childrenType=" + childrenType;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
@@ -184,12 +184,13 @@ export class RepositoryService {
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
   }
 
-  private getHeaders(): HttpHeaders {
+  private getHeaders(navigationHeader: string = null): HttpHeaders {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Authorization': "Bearer " + token,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Navigation': navigationHeader ? navigationHeader : 'forward'
     });
     return headers;
   }
