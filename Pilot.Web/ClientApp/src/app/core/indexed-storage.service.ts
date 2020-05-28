@@ -1,24 +1,18 @@
 import { Injectable } from '@angular/core';
-import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { Store, set, get } from 'idb-keyval';
 
 @Injectable({providedIn: 'root'})
 export class IndexedStorageService {
-  constructor(private readonly dbService: NgxIndexedDBService) {
+  private customStore: Store;
+  constructor() {
+    this.customStore = new Store('images-db', 'thumbnails-store');
   }
 
   setImageFile(id: string, base64: string): void {
-    this.getImageFile(id).then(value => {
-      if (value)
-        this.dbService.update('images', { key: id, value: base64 }).catch(er => console.log(er));
-      else
-        this.dbService.add('images', { key: id, value: base64 }).catch(er => console.log(er));
-    });
+    set(id, base64, this.customStore);
   }
 
   async getImageFile(id: string): Promise<string> {
-    const pair = await this.dbService.getByKey('images', id);
-    if (pair)
-      return pair.value;
-    return null;
+    return get(id, this.customStore);
   }
 }
