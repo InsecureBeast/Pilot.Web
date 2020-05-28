@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpRequest, HttpHandler, HttpInterceptor, HttpResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap, shareReplay } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 
 @Injectable({providedIn:'root'})

@@ -19,6 +19,7 @@ import { ModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
 import { TasksModule } from './tasks/tasks.module';
 import { CacheInterceptor } from './core/interceptors/cache.interceptor';
+import { ImagesCacheInterceptor } from './core/interceptors/images-cache.interceptor';
 import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -59,7 +60,8 @@ export function createTranslateLoader(http: HttpClient) {
   providers: [
     AuthGuard,
     { provide: RouteReuseStrategy, useClass: RouteReuseService },
-    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ImagesCacheInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
