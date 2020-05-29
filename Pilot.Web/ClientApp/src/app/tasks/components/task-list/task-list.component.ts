@@ -126,7 +126,6 @@ export class TaskListComponent implements  OnInit, OnDestroy{
           index++;
           this.tasks.splice(index, 0, node);
           parent.loadedChildren.push(node);
-          //await node.loadChildren(this.tasks, this.taskNodeFactory)
           stages.push(node);
         }
 

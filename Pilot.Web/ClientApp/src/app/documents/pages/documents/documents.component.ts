@@ -12,6 +12,7 @@ import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
+import { ScrollPositionService } from '../../../core/scroll-position.service';
 
 @Component({
     selector: 'app-documents',
@@ -38,7 +39,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly translate: TranslateService,
     private readonly router: Router,
     private readonly navigationService: DocumentsNavigationService,
-    private readonly documentsService: DocumentsService) {
+    private readonly documentsService: DocumentsService,
+    private readonly scrollPositionService: ScrollPositionService) {
 
   }
 
@@ -88,12 +90,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onListLoaded(node: INode): void {
-    //if (this.repository.requestType === RequestType.New)
-    this.documentsService.restoreScrollPosition(this.currentItem);
+    this.scrollPositionService.restoreScrollPosition(this.currentItem.id);
   }
 
   onItemSelected(node: INode): void {
-    this.documentsService.saveScrollPosition(this.currentItem);
+    this.scrollPositionService.saveScrollPosition(this.currentItem.id);
 
     if (node.isDocument) {
       if (node.isSource) {

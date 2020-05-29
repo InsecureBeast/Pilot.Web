@@ -21,6 +21,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     
   private navigationSubscription: Subscription;
   private filtersModalId = "filtersModal";
+  private storageFilterName = "tasks_filter";
   private filterId: number;
 
   selectedFilter: TaskFilter;
@@ -32,18 +33,25 @@ export class TasksComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private tasksNavigationService: TasksNavigationService,
     private tasksService: TasksService,
-    private modalService: ModalService ) {
+    private modalService: ModalService) {
 
     this.checked = new Array();
   }
 
   ngOnInit(): void {
     this.navigationSubscription = this.activatedRoute.paramMap.pipe(first()).subscribe((params: ParamMap) => {
-      this.filterId = +params.get('filterId');
-      if (!this.filterId) {
-        // todo get filter id from store
-        this.tasksNavigationService.navigateToFilter(0);
+      let filterId = params.get('filterId');
+      this.filterId = +filterId;
+      if (!filterId) {
+        filterId = localStorage.getItem(this.storageFilterName);
+        if (filterId)
+          this.filterId = +filterId;
+        else
+          this.filterId = 0;
       }
+
+      this.tasksNavigationService.navigateToFilter(this.filterId);
+      localStorage.setItem(this.storageFilterName, this.filterId.toString());
     });
   }
 
@@ -73,6 +81,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.modalService.close(this.filtersModalId);
     this.selectedFilter = filter;
     this.clearChecked();
+    localStorage.setItem(this.storageFilterName, filter.id.toString());
     this.tasksNavigationService.navigateToFilter(filter.id);
   }
 
