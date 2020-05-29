@@ -19,6 +19,16 @@ export class ScrollPositionService {
     this.savePosition(id, pos);
   }
 
+  saveTasksScrollPosition(): void {
+    const pos = window.pageYOffset;
+    this.savePosition("tasks_position", pos);
+  }
+
+  restoreTasksScrollPosition(): void {
+    const pos = this.getPosition("tasks_position");
+    window.scrollTo(0, pos);
+  }
+
   private savePosition(key: string, pos: number): void {
     this.scrollPositions.set(key, pos);
   }

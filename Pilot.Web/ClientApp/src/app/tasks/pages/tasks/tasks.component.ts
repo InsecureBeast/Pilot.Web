@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, NavigationStart, Scroll  } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -18,8 +18,10 @@ import { ModalService } from 'src/app/ui/modal/modal.service';
 })
 /** tasks component*/
 export class TasksComponent implements OnInit, OnDestroy {
-    
+  
   private navigationSubscription: Subscription;
+  private routerSubscription: Subscription;
+
   private filtersModalId = "filtersModal";
   private storageFilterName = "tasks_filter";
   private filterId: number;
@@ -31,6 +33,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   /** tasks ctor */
   constructor(
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private tasksNavigationService: TasksNavigationService,
     private tasksService: TasksService,
     private modalService: ModalService) {
@@ -53,11 +56,22 @@ export class TasksComponent implements OnInit, OnDestroy {
       this.tasksNavigationService.navigateToFilter(this.filterId);
       localStorage.setItem(this.storageFilterName, this.filterId.toString());
     });
+
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof Scroll) {
+        if (event.position) {
+          window.scrollTo(0, event.position["1"]);
+        }
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.navigationSubscription)
       this.navigationSubscription.unsubscribe();
+
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
   }
 
   onFiltersLoaded(filters: [TaskFilter[], TaskFilter[]]): void {

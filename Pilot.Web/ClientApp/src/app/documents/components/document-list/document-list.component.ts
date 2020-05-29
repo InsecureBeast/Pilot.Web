@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, NavigationStart, Scroll } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -118,6 +118,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
     this.repository.requestType = RequestType.New;
     this.clearChecked();
+    this.nodes = null;
     this.onSelected.emit(item);
   }
 
@@ -212,11 +213,5 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       if (isCompleted)
         this.ngUnsubscribe.complete();
     }
-  }
-
-  // @HostListener('scroll', ['$event']) // for scroll events of the current element
-  @HostListener('window:scroll', ['$event']) // for window scroll events
-  onScroll(event) {
-    var t = event;
   }
 }
