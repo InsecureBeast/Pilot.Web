@@ -29,7 +29,7 @@ html, body {
   height: 100%;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 800px) {
   .hidden-phone {
     display: none;
   }
