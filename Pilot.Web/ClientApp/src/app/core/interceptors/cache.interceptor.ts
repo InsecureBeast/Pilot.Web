@@ -13,7 +13,7 @@ export class CacheInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    if (request.headers.get('Navigation') === 'back') {
+    if (request.headers.get('RequestType') === 'fromCache') {
       const cachedResponse = this.cache.get(request.url);
       if (cachedResponse) {
         return of(cachedResponse);

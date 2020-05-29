@@ -1,9 +1,14 @@
 import { Injectable, Inject } from '@angular/core';
 import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState } from './data/data.classes';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, Subject, combineLatest , zip,  BehaviorSubject } from 'rxjs';
-import { first, takeUntil, map, take, skip} from 'rxjs/operators';
+import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
+import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
+
+export enum RequestType {
+  New = 0,
+  FromCache = 1
+}
 
 @Injectable({ providedIn: 'root', })
 export class RepositoryService {
@@ -18,6 +23,14 @@ export class RepositoryService {
   private behaviorInitializedSubject = new BehaviorSubject<boolean>(false);
 
   initialized = this.behaviorInitializedSubject.value;
+
+  private _requestType: RequestType = RequestType.New;
+  set requestType(value: RequestType) {
+    this._requestType = value;
+  }
+  get requestType(): RequestType {
+    return this._requestType;
+  }
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private authService: AuthService) {
     this.types = new Map<number, IType>();
@@ -37,9 +50,9 @@ export class RepositoryService {
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
-  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>, navigationHeader: string): Promise<IObject[]> {
+  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
-      let headers = this.getHeaders(navigationHeader);
+      let headers = this.getHeaders();
       let url = 'api/Documents/GetDocumentChildren?id=' + objectId + "&childrenType=" + childrenType;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
@@ -184,15 +197,25 @@ export class RepositoryService {
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
   }
 
-  private getHeaders(navigationHeader: string = null): HttpHeaders {
+  private getHeaders(): HttpHeaders {
+    const requestHeader = this.getRequestTypeHeader();
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Authorization': "Bearer " + token,
       'Content-Type': 'application/json',
-      'Navigation': navigationHeader ? navigationHeader : 'forward'
-    });
+      'RequestType': requestHeader
+  });
     return headers;
+  }
+
+  private getRequestTypeHeader() {
+    if (this.requestType === RequestType.New)
+      return "new";
+    if (this.requestType === RequestType.FromCache)
+      return "fromCache";
+
+    return "";
   }
 
   private isAuth(): boolean {

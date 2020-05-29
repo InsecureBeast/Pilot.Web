@@ -11,7 +11,7 @@ import { INode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
-import { RepositoryService } from '../../../core/repository.service';
+import { RepositoryService, RequestType } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
 import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
@@ -87,6 +87,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
+          this.repository.requestType = RequestType.FromCache;
         }
       }
     });
@@ -111,6 +112,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   close($event): void {
     this.cancelAllRequests(false);
+    this.repository.requestType = RequestType.FromCache;
     this.location.back();
   }
 

@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RepositoryService } from '../../../core/repository.service';
+import { RepositoryService, RequestType } from '../../../core/repository.service';
 import { ObjectNode, EmptyObjectNode } from "../../shared/object.node";
 import { ChildrenType } from '../../../core/data/children.types';
 import { IObject } from '../../../core/data/data.classes';
@@ -26,7 +26,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
-  private navigation: string = "forward";
 
   @Input() parent: ObjectNode;
 
@@ -41,8 +40,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   isAnyItemChecked: boolean;
   isLoaded: boolean;
 
-  @ViewChild('contentDiv') contentDiv: ElementRef;
-
   /** documents-list ctor */
   constructor(
     private repository: RepositoryService,
@@ -51,8 +48,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
-    private router: Router,
-    public element: ElementRef) {
+    private router: Router) {
 
   }
 
@@ -90,7 +86,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
-          this.navigation = "back";
+          this.repository.requestType = RequestType.FromCache;
         }
       }
     });
@@ -120,7 +116,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (!item.id)
       return;
 
-    this.navigation = "forward";
+    this.repository.requestType = RequestType.New;
     this.clearChecked();
     this.onSelected.emit(item);
   }
@@ -174,7 +170,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (isSource)
       type = ChildrenType.Storage;
 
-    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe, this.navigation)
+    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
@@ -195,8 +191,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }
-
-    this.contentDiv.nativeElement.focus();
   }
 
   private clearChecked(): void {
@@ -220,4 +214,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
   }
 
+  // @HostListener('scroll', ['$event']) // for scroll events of the current element
+  @HostListener('window:scroll', ['$event']) // for window scroll events
+  onScroll(event) {
+    var t = event;
+  }
 }

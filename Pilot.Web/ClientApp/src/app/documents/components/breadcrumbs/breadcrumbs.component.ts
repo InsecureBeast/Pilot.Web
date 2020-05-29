@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
-import { SafeUrl } from '@angular/platform-browser';
 
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -7,7 +6,7 @@ import { first } from 'rxjs/operators';
 import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
-import { RepositoryService } from '../../../core/repository.service';
+import { RepositoryService, RequestType } from '../../../core/repository.service';
 import { INode } from '../../shared/node.interface';
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { SystemIds } from '../../../core/data/system.ids';
@@ -80,6 +79,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSelect(bc: BreadcrumbNode): void {
+    this.repository.requestType = RequestType.New;
     this.onSelected.emit(bc);
   }
 

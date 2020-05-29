@@ -6,7 +6,7 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SystemIds } from '../../../core/data/system.ids';
-import { RepositoryService } from '../../../core/repository.service';
+import { RepositoryService, RequestType } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
@@ -72,6 +72,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.documentsService.changeClearChecked(true);
+          this.repository.requestType = RequestType.FromCache;
         }
       }
     });
@@ -87,6 +88,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onListLoaded(node: INode): void {
+    //if (this.repository.requestType === RequestType.New)
     this.documentsService.restoreScrollPosition(this.currentItem);
   }
 

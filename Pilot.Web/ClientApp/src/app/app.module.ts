@@ -46,7 +46,7 @@ export function createTranslateLoader(http: HttpClient) {
 
       // otherwise redirect to home
       { path: '*', redirectTo: 'login' }
-    ]),
+    ], { scrollPositionRestoration: 'disabled' }),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
