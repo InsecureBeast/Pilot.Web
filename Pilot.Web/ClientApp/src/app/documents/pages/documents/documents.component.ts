@@ -13,6 +13,7 @@ import { INode } from '../../shared/node.interface';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
+import { BimTypeNames } from '../../../bim/shared/bim-type.names';
 
 @Component({
     selector: 'app-documents',
@@ -108,8 +109,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isSource)
       this.navigationService.navigateToFilesFolder(node.id);
-    else
+    else {
+      var modelType = this.repository.getTypeByName(BimTypeNames.bimCoordinationModel);
+      if (modelType && node.source.type.id === modelType.id) {
+        this.navigationService.navigateToCoordinationModel(node.id);
+        return;
+      }
       this.navigationService.navigateToDocumentsFolder(node.id);
+    }
   }
 
   onItemsChecked(nodes: INode[]): void {
@@ -119,4 +126,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onError(error): void {
     this.error = error;
   }
+
+  
 }

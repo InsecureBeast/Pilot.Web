@@ -36,4 +36,8 @@ export class DocumentsNavigationService {
   navigateToFilesFolder(folderId: string): void {
     this.router.navigateByUrl('/files/' + folderId);
   }
+
+  navigateToCoordinationModel(modelId: string): void {
+    this.router.navigateByUrl('/bim-document/' + modelId);
+  }
 }

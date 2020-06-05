@@ -13,7 +13,7 @@ export class DatabaseInfo {
 
 export interface IMetadata {
   version: number;
-  types;
+  types: IType[];
   userStates;
   stateMachines;
 }
