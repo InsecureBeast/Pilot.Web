@@ -1,6 +1,12 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterContentChecked, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Subscription, Subject } from 'rxjs';
+
+import { BimModelService } from '../shared/bim-model.service';
+import { ITessellation } from '../shared/bim-data.classes';
 
 @Component({
     selector: 'app-bim-document',
@@ -9,7 +15,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 })
 /** bim-document component*/
 export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterViewInit, OnDestroy  {
-    
+  private navigationSubscription: Subscription;
+  private ngUnsubscribe = new Subject<void>();
+
   private scene: THREE.Scene;
   private camera: THREE.Camera;
   private renderer: THREE.WebGLRenderer;
@@ -18,12 +26,21 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   @ViewChild('container3d') containerElement: ElementRef;
 
   /** bim-document ctor */
-  constructor() {
+  constructor(private activatedRoute: ActivatedRoute, private bimModelService: BimModelService) {
     
   }
 
   ngOnInit(): void {
+    this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const id = params.get('id');
+      if (!id)
+        return;
 
+      this.bimModelService.getPartTessellationsAsync(id, this.ngUnsubscribe).then(tessellations => {
+        this.generateGeometry(tessellations);
+
+      });
+    });
   }
 
   ngAfterViewInit(): void {
@@ -31,7 +48,6 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.createRenderer();
     this.createCamera();
     this.createOrbitControls();
-    this.generateGeometry();
     this.createLight();
     this.animate();
   }
@@ -45,6 +61,12 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.renderer = null;
 
     this.scene.dispose();
+
+    if (this.navigationSubscription)
+      this.navigationSubscription.unsubscribe();
+
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   protected createScene() {
@@ -104,7 +126,8 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  private generateGeometry(): void {
+  private generateGeometry(tessellations: ITessellation[]): void {
+
     var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
 
@@ -120,61 +143,37 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     }
 
     var material1 = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true });
-    var geometry1 = this.getGeometry();
+    var geometry1 = this.getGeometry(tessellations);
     var mesh1 = new THREE.Mesh(geometry1, material1);
     this.scene.add(mesh1);
   }
 
-  getGeometry() {
-    var geometry = new THREE.Geometry();
+  getGeometry(tessellations: ITessellation[]) {
+    const geometry = new THREE.Geometry();
+    const scale = 100;
+    for (const tessellation of tessellations) {
+      for (let i = 0; i < tessellation.modelMesh.vertices.length; i += 3) {
+        const p1 = tessellation.modelMesh.vertices[i] / scale;
+        const p2 = tessellation.modelMesh.vertices[i + 1] / scale;
+        const p3 = tessellation.modelMesh.vertices[i + 2] / scale;
+        const vector = new THREE.Vector3(p1, p2, p3);
+        geometry.vertices.push(vector);
+      }
 
-    geometry.vertices.push(
-      new THREE.Vector3(6.3, 16.5, 6.3),
-      new THREE.Vector3(6.3, 15.3, 6.3),
-      new THREE.Vector3(6.3, 15.3, 176.7),
+      for (let j = 0; j < tessellation.modelMesh.indices.length; j += 3) {
+        const a = tessellation.modelMesh.indices[j];
+        const b = tessellation.modelMesh.indices[j + 1];
+        const c = tessellation.modelMesh.indices[j + 2];
 
-      new THREE.Vector3(6.3, 16.5, 176.7),
-      new THREE.Vector3(6.3, 15.3, 6.3),
-      new THREE.Vector3(85.2, 15.3, 6.3),
+        const n1 = tessellation.modelMesh.normals[j];
+        const n2 = tessellation.modelMesh.normals[j + 1];
+        const n3 = tessellation.modelMesh.normals[j + 2];
+        const normal = new THREE.Vector3(n1, n2, n3);
+        const face = new THREE.Face3(a, b, c, normal);
+        geometry.faces.push(face);
+      }
+    }
 
-      new THREE.Vector3(85.2, 15.3, 176.7),
-      new THREE.Vector3(6.3, 15.3, 176.7),
-      new THREE.Vector3(85.2, 15.3, 6.3),
-
-      new THREE.Vector3(85.2, 16.5, 6.3),
-      new THREE.Vector3(85.2, 16.5, 176.7),
-      new THREE.Vector3(85.2, 15.3, 176.7),
-
-      new THREE.Vector3(85.2, 16.5, 6.3),
-      new THREE.Vector3(6.3, 16.5, 6.3),
-      new THREE.Vector3(6.3, 16.5, 176.7),
-
-      new THREE.Vector3(85.2, 16.5, 176.7),
-      new THREE.Vector3(6.3, 16.5, 176.7),
-      new THREE.Vector3(6.3, 15.3, 176.7),
-
-      new THREE.Vector3(85.2, 15.3, 176.7),
-      new THREE.Vector3(85.2, 16.5, 176.7),
-      new THREE.Vector3(6.3, 16.5, 6.3),
-
-      new THREE.Vector3(6.3, 15.3, 6.3),
-      new THREE.Vector3(85.2, 15.3, 6.3),
-      new THREE.Vector3(85.2, 16.5, 6.3),
-    );
-
-    geometry.faces.push(new THREE.Face3(0, 1, 2));
-    geometry.faces.push(new THREE.Face3(0, 2, 3));
-    geometry.faces.push(new THREE.Face3(4, 5, 6));
-    geometry.faces.push(new THREE.Face3(4, 6, 7));
-    geometry.faces.push(new THREE.Face3(8, 9, 10));
-    geometry.faces.push(new THREE.Face3(8, 10, 11));
-    geometry.faces.push(new THREE.Face3(12, 13, 14));
-    geometry.faces.push(new THREE.Face3(12, 14, 15));
-    geometry.faces.push(new THREE.Face3(16, 17, 18));
-    geometry.faces.push(new THREE.Face3(16, 18, 19));
-    geometry.faces.push(new THREE.Face3(22, 21, 20));
-    geometry.faces.push(new THREE.Face3(23, 22, 20));
-    //geometry.computeBoundingSphere();
     return geometry;
   }
 

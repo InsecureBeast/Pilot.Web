@@ -10,7 +10,7 @@ const routes: Routes = [
     path: 'bim-document/:id',
     component: BimDocumentComponent,
     canActivate: [AuthGuard],
-    data: { reuse: true }
+    data: { reuse: false }
   }
 ];
 

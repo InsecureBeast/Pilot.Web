@@ -29,6 +29,7 @@
     <PackageReference Include="Microsoft.NETCore.Targets" Version="3.1.0" ExcludeAssets="all" PrivateAssets="all">
       <IncludeAssets>none</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
   </ItemGroup>
 
   <ItemGroup>
