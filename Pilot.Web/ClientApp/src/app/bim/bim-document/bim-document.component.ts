@@ -83,7 +83,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
   protected createCamera() {
     const aspect = window.innerWidth / window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(60, aspect, 1, 1000);
+    this.camera = new THREE.PerspectiveCamera(45, aspect, 1, 2000);
     this.camera.position.set(200, 200, 200);
     this.camera.up.set(0, 0, 1);
   }
@@ -94,7 +94,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     this.controls.dampingFactor = 0.05;
     this.controls.minDistance = 100;
-    this.controls.maxDistance = 500;
+    this.controls.maxDistance = 2000;
     //this.controls.maxPolarAngle = Math.PI / 2;
     //this.controls.enableRotate = true;
   }
@@ -136,61 +136,49 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
   private generateGeometry(tessellations: ITessellation[], ifcNodes: IIfcNode[]): void {
 
-    //var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
-    //var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
-
-    //for (var i = 0; i < 500; i++) {
-
-    //  var mesh = new THREE.Mesh(geometry, material);
-    //  mesh.position.x = Math.random() * 1600 - 800;
-    //  mesh.position.y = 0;
-    //  mesh.position.z = Math.random() * 1600 - 800;
-    //  mesh.updateMatrix();
-    //  mesh.matrixAutoUpdate = false;
-    //  this.scene.add( mesh );
-    //}
-
-    const material = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true });
     const geometries = this.getGeometry(tessellations);
     for (let ifcNode of ifcNodes) {
-
+      if (!ifcNode.meshesProperties)
+        continue;
       Object.keys(ifcNode.meshesProperties).forEach(key => {
-        var meshProperties = ifcNode.meshesProperties[key];
+        const meshProperties = ifcNode.meshesProperties[key];
         const geometry = geometries.get(key);
         if (!geometry)
           return;
 
         for (let meshProperty of meshProperties) {
+          const a = (meshProperty.meshColor & 0x000000FF);
+          const b = (meshProperty.meshColor & 0x0000FF00) >> 8;
+          const g = (meshProperty.meshColor & 0x00FF0000) >> 16;
+          const r = (meshProperty.meshColor & 0xFF000000) >> 24;
+          const color = this.rgbaToHexA(r, g, b, a);
+          const material = new THREE.MeshPhongMaterial({ color: color, flatShading: true });
           const mesh = new THREE.Mesh(geometry, material);
-          let placement = new Array(meshProperty.meshPlacement.length);//[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-          //
-          
-          for (var i = 0; i < meshProperty.meshPlacement.length; i++) {
+          const placement = new Array(meshProperty.meshPlacement.length);
+          for (let i = 0; i < meshProperty.meshPlacement.length; i++) {
             const pl = meshProperty.meshPlacement[i];
             let value = pl;
             if (pl > 1 || pl < -1)
-              value = pl / 100;
+              value = pl / 1000;
 
             const index = Math.trunc(4 * (i % 4) + i / 4);
             placement[index] = value;
           }
           
-          //mesh.matrix.elements = placement;
-          //mesh.position.x = Math.random() * 160 - 80;
-          //mesh.position.y = 0;
-          //mesh.position.z = Math.random() * 160 - 80;
           const positionMatrix = new THREE.Matrix4();
           positionMatrix.elements = placement;
-          mesh.position.applyMatrix4(positionMatrix);
+          mesh.applyMatrix4(positionMatrix);
           this.scene.add(mesh);
         }
       });
     }
+
+    
   }
 
   getGeometry(tessellations: ITessellation[]): Map<string, THREE.Geometry> {
     let geometries = new Map<string, THREE.Geometry>();
-    const scale = 100;
+    const scale = 1000;
     for (const tessellation of tessellations) {
       const geometry = new THREE.Geometry();
       for (let i = 0; i < tessellation.modelMesh.vertices.length; i += 3) {
@@ -220,7 +208,34 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     return geometries;
   }
 
-  private div(val, by) : number {
-    return (val - val % by) / by;
+  private rgbaToHexA(r, g, b, a) {
+
+    if (r < 0)
+      r = 255 + r;
+
+    if (g < 0)
+      g = 255 + g;
+
+    if (b < 0)
+      b = 255 + b;
+
+    if (a < 0)
+      a = 255 + a;
+
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+    a = Math.round(a * 255).toString(16);
+
+    if (r.length === 1)
+      r = "0" + r;
+    if (g.length === 1)
+      g = "0" + g;
+    if (b.length === 1)
+      b = "0" + b;
+    if (a.length === 1)
+      a = "0" + a;
+
+    return "#" + r + g + b;
   }
 }
