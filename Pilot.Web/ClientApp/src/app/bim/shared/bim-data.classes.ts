@@ -12,3 +12,20 @@ export interface IModelMesh {
   edgeIndices: number[];
   color: number;
 }
+
+
+export interface IIfcNode {
+  parentGuid : string;
+  modelPartId: string;
+  guid: string;
+  name: string;
+  type: string;
+  attributes: string;
+  objectState: any;
+  meshesProperties: Map<string, IMeshProperties[]>;
+}
+
+export interface IMeshProperties {
+  meshColor: number; //r, b, g, a
+  meshPlacement: number[];
+}

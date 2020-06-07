@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Subscription, Subject } from 'rxjs';
 
 import { BimModelService } from '../shared/bim-model.service';
-import { ITessellation } from '../shared/bim-data.classes';
+import { ITessellation, IIfcNode, IMeshProperties } from '../shared/bim-data.classes';
 
 @Component({
     selector: 'app-bim-document',
@@ -36,10 +36,13 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
       if (!id)
         return;
 
-      this.bimModelService.getPartTessellationsAsync(id, this.ngUnsubscribe).then(tessellations => {
-        this.generateGeometry(tessellations);
-
-      });
+      this.bimModelService.getModelPartsAsync(id, this.ngUnsubscribe).then(async modelParts => {
+        for (var modelPart of modelParts) {
+          const tessellations = await this.bimModelService.getModelPartTessellationsAsync(modelPart, this.ngUnsubscribe);
+          const nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
+          this.generateGeometry(tessellations, nodes);
+        }
+      }); 
     });
   }
 
@@ -73,12 +76,16 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xcccccc);
     this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+
+    const axesHelper = new THREE.AxesHelper(50);
+    this.scene.add(axesHelper);
   }
 
   protected createCamera() {
     const aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(60, aspect, 1, 1000);
-    this.camera.position.set(400, 200, 0);
+    this.camera.position.set(200, 200, 200);
+    this.camera.up.set(0, 0, 1);
   }
 
   private createOrbitControls() {
@@ -88,7 +95,8 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.controls.dampingFactor = 0.05;
     this.controls.minDistance = 100;
     this.controls.maxDistance = 500;
-    this.controls.maxPolarAngle = Math.PI / 2;
+    //this.controls.maxPolarAngle = Math.PI / 2;
+    //this.controls.enableRotate = true;
   }
 
   protected createLight() {
@@ -126,32 +134,65 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     }
   }
 
-  private generateGeometry(tessellations: ITessellation[]): void {
+  private generateGeometry(tessellations: ITessellation[], ifcNodes: IIfcNode[]): void {
 
-    var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
-    var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
+    //var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
+    //var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
 
-    for (var i = 0; i < 500; i++) {
+    //for (var i = 0; i < 500; i++) {
 
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.position.x = Math.random() * 1600 - 800;
-      mesh.position.y = 0;
-      mesh.position.z = Math.random() * 1600 - 800;
-      mesh.updateMatrix();
-      mesh.matrixAutoUpdate = false;
-      this.scene.add( mesh );
+    //  var mesh = new THREE.Mesh(geometry, material);
+    //  mesh.position.x = Math.random() * 1600 - 800;
+    //  mesh.position.y = 0;
+    //  mesh.position.z = Math.random() * 1600 - 800;
+    //  mesh.updateMatrix();
+    //  mesh.matrixAutoUpdate = false;
+    //  this.scene.add( mesh );
+    //}
+
+    const material = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true });
+    const geometries = this.getGeometry(tessellations);
+    for (let ifcNode of ifcNodes) {
+
+      Object.keys(ifcNode.meshesProperties).forEach(key => {
+        var meshProperties = ifcNode.meshesProperties[key];
+        const geometry = geometries.get(key);
+        if (!geometry)
+          return;
+
+        for (let meshProperty of meshProperties) {
+          const mesh = new THREE.Mesh(geometry, material);
+          let placement = new Array(meshProperty.meshPlacement.length);//[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+          //
+          
+          for (var i = 0; i < meshProperty.meshPlacement.length; i++) {
+            const pl = meshProperty.meshPlacement[i];
+            let value = pl;
+            if (pl > 1 || pl < -1)
+              value = pl / 100;
+
+            const index = Math.trunc(4 * (i % 4) + i / 4);
+            placement[index] = value;
+          }
+          
+          //mesh.matrix.elements = placement;
+          //mesh.position.x = Math.random() * 160 - 80;
+          //mesh.position.y = 0;
+          //mesh.position.z = Math.random() * 160 - 80;
+          const positionMatrix = new THREE.Matrix4();
+          positionMatrix.elements = placement;
+          mesh.position.applyMatrix4(positionMatrix);
+          this.scene.add(mesh);
+        }
+      });
     }
-
-    var material1 = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true });
-    var geometry1 = this.getGeometry(tessellations);
-    var mesh1 = new THREE.Mesh(geometry1, material1);
-    this.scene.add(mesh1);
   }
 
-  getGeometry(tessellations: ITessellation[]) {
-    const geometry = new THREE.Geometry();
+  getGeometry(tessellations: ITessellation[]): Map<string, THREE.Geometry> {
+    let geometries = new Map<string, THREE.Geometry>();
     const scale = 100;
     for (const tessellation of tessellations) {
+      const geometry = new THREE.Geometry();
       for (let i = 0; i < tessellation.modelMesh.vertices.length; i += 3) {
         const p1 = tessellation.modelMesh.vertices[i] / scale;
         const p2 = tessellation.modelMesh.vertices[i + 1] / scale;
@@ -172,9 +213,14 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
         const face = new THREE.Face3(a, b, c, normal);
         geometry.faces.push(face);
       }
+
+      geometries.set(tessellation.id, geometry);
     }
 
-    return geometry;
+    return geometries;
   }
 
+  private div(val, by) : number {
+    return (val - val % by) / by;
+  }
 }

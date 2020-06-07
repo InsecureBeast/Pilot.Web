@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../auth/auth.service';
-import { ITessellation } from './bim-data.classes';
+import { ITessellation, IIfcNode } from './bim-data.classes';
 
 @Injectable({ providedIn: 'root' })
 export class BimFilesService {
@@ -15,12 +15,24 @@ export class BimFilesService {
 
   }
 
-  getFileTessellationsAsync(modelPartId: string, id: string, size: number, cancel: Subject<any>): Promise<any> {
+  getModelPartTessellationsAsync(modelPartId: string, id: string, size: number, cancel: Subject<any>): Promise<ITessellation[]> {
     return new Promise((resolve, reject) => {
       const headers = this.getHeaders();
-      const url = 'api/Bim/GetFileTessellations?modelPartId=' + modelPartId + '&fileId=' + id + '&size=' + size;
+      const url = 'api/Bim/GetTessellations?modelPartId=' + modelPartId + '&fileId=' + id + '&size=' + size;
       this.http
-        .get<ITessellation[]>(this.baseUrl + url, { headers: headers, responseType: 'json' })
+        .get<ITessellation[]>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((objects) => resolve(objects), e => reject(e));
+    });
+  }
+
+  getModelPartIfcNodesAsync(modelPartId: string, id: string, size: number, cancel: Subject<any>): Promise<IIfcNode[]> {
+    return new Promise((resolve, reject) => {
+      const headers = this.getHeaders();
+      const url = 'api/Bim/GetNodes?modelPartId=' + modelPartId + '&fileId=' + id + '&size=' + size;
+      this.http
+        .get<IIfcNode[]>(this.baseUrl + url, { headers: headers })
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe((objects) => resolve(objects), e => reject(e));

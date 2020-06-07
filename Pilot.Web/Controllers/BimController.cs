@@ -28,23 +28,51 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<Tessellation> GetFileTessellations(string modelPartId, string fileId, long size)
+        public IEnumerable<Tessellation> GetTessellations(string modelPartId, string fileId, long size)
         {
             var guid = Guid.Parse(fileId);
-            var actor = HttpContext.GetTokenActor();
-            var fileLoader = _contextService.GetFileLoader(actor);
-            var bytes = fileLoader.Download(guid, size);
 
             if (!Directory.Exists("D:\\webBimTest"))
                 Directory.CreateDirectory("D:\\webBimTest");
 
             var tempFile = "D:\\webBimTest\\" + fileId;
-            System.IO.File.WriteAllBytes(tempFile, bytes);
+            if (!System.IO.File.Exists(tempFile))
+            {
+                var actor = HttpContext.GetTokenActor();
+                var fileLoader = _contextService.GetFileLoader(actor);
+                var bytes = fileLoader.Download(guid, size);
+                System.IO.File.WriteAllBytes(tempFile, bytes);
+            }
+
             using (var databaseReader = new ModelPartDatabaseReader(tempFile, Guid.Parse(modelPartId)))
             {
                 var tessellations = databaseReader.GetTessellationsToCompare(DateTime.MinValue, DateTime.MaxValue);
-                var res = JsonConvert.SerializeObject(tessellations);
                 return tessellations.ToList();
+            }
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public IEnumerable<IfcNode> GetNodes(string modelPartId, string fileId, long size)
+        {
+            var guid = Guid.Parse(fileId);
+            
+            if (!Directory.Exists("D:\\webBimTest"))
+                Directory.CreateDirectory("D:\\webBimTest");
+
+            var tempFile = "D:\\webBimTest\\" + fileId;
+            if (!System.IO.File.Exists(tempFile))
+            {
+                var actor = HttpContext.GetTokenActor();
+                var fileLoader = _contextService.GetFileLoader(actor);
+                var bytes = fileLoader.Download(guid, size);
+                System.IO.File.WriteAllBytes(tempFile, bytes);
+            }
+
+            using (var databaseReader = new ModelPartDatabaseReader(tempFile, Guid.Parse(modelPartId)))
+            {
+                var ifcNodes = databaseReader.GetIfcNodesByVersion(DateTime.MinValue, DateTime.MaxValue);
+                return ifcNodes.ToList();
             }
         }
     }

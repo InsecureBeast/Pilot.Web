@@ -24,6 +24,7 @@ export class RepositoryService {
   private behaviorInitializedSubject = new BehaviorSubject<boolean>(false);
 
   initialized = this.behaviorInitializedSubject.value;
+  onInitialized$ = this.behaviorInitializedSubject;
 
   private _requestType: RequestType = RequestType.New;
   set requestType(value: RequestType) {
