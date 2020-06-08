@@ -22,6 +22,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   private camera: THREE.Camera;
   private renderer: THREE.WebGLRenderer;
   private controls: OrbitControls;
+  private scale = 1000;
 
   @ViewChild('container3d') containerElement: ElementRef;
 
@@ -77,14 +78,14 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.scene.background = new THREE.Color(0xcccccc);
     this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
 
-    const axesHelper = new THREE.AxesHelper(50);
+    const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
   }
 
   protected createCamera() {
     const aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 1, 2000);
-    this.camera.position.set(200, 200, 200);
+    this.camera.position.set(100, 100, 100);
     this.camera.up.set(0, 0, 1);
   }
 
@@ -93,7 +94,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     //this.controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
     this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     this.controls.dampingFactor = 0.05;
-    this.controls.minDistance = 100;
+    this.controls.minDistance = 1;
     this.controls.maxDistance = 2000;
     //this.controls.maxPolarAngle = Math.PI / 2;
     //this.controls.enableRotate = true;
@@ -104,9 +105,9 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     light.position.set(1, 1, 1);
     this.scene.add( light );
 
-    const light1 = new THREE.DirectionalLight(0x002288);
-    light1.position.set(- 1, - 1, - 1);
-    this.scene.add( light1 );
+    //const light1 = new THREE.DirectionalLight(0x002288);
+    //light1.position.set(- 1, - 1, - 1);
+    //this.scene.add( light1 );
 
     const light2 = new THREE.AmbientLight(0x222222);
     this.scene.add(light2);
@@ -152,14 +153,15 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
           const g = (meshProperty.meshColor & 0x00FF0000) >> 16;
           const r = (meshProperty.meshColor & 0xFF000000) >> 24;
           const color = this.rgbaToHexA(r, g, b, a);
-          const material = new THREE.MeshPhongMaterial({ color: color, flatShading: true });
+          const opacity = a / 255;
+          const material = new THREE.MeshBasicMaterial({ color: color, flatShading: true, transparent: a < 255, opacity: opacity });
           const mesh = new THREE.Mesh(geometry, material);
           const placement = new Array(meshProperty.meshPlacement.length);
           for (let i = 0; i < meshProperty.meshPlacement.length; i++) {
             const pl = meshProperty.meshPlacement[i];
             let value = pl;
             if (pl > 1 || pl < -1)
-              value = pl / 1000;
+              value = pl / this.scale;
 
             const index = Math.trunc(4 * (i % 4) + i / 4);
             placement[index] = value;
@@ -178,13 +180,12 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
   getGeometry(tessellations: ITessellation[]): Map<string, THREE.Geometry> {
     let geometries = new Map<string, THREE.Geometry>();
-    const scale = 1000;
     for (const tessellation of tessellations) {
       const geometry = new THREE.Geometry();
       for (let i = 0; i < tessellation.modelMesh.vertices.length; i += 3) {
-        const p1 = tessellation.modelMesh.vertices[i] / scale;
-        const p2 = tessellation.modelMesh.vertices[i + 1] / scale;
-        const p3 = tessellation.modelMesh.vertices[i + 2] / scale;
+        const p1 = tessellation.modelMesh.vertices[i] / this.scale;
+        const p2 = tessellation.modelMesh.vertices[i + 1] / this.scale;
+        const p3 = tessellation.modelMesh.vertices[i + 2] / this.scale;
         const vector = new THREE.Vector3(p1, p2, p3);
         geometry.vertices.push(vector);
       }
