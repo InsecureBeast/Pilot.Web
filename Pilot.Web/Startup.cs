@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Pilot.Web.Model;
 using Pilot.Web.Model.Auth;
+using Pilot.Web.Model.Bim;
 using Pilot.Web.Model.FileStorage;
 using Pilot.Web.Model.Middleware;
 
@@ -78,6 +79,7 @@ namespace Pilot.Web
             services.AddScoped<IFileSaver, FileSaver>();
             services.AddScoped<IFilesStorage, FilesStorage>();
             services.AddScoped<IFileStorageDirectoryProvider, FileStorageDirectoryProvider>();
+            services.AddScoped<IBimModelService, BimModelService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

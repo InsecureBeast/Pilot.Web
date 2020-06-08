@@ -9,6 +9,7 @@ namespace Pilot.Web.Model.FileStorage
     {
         Task PutThumbnailAsync(Guid id, byte[] buffer);
         Task PutFilesAsync(Guid id, List<byte[]> pages);
+        Task PutFileAsync(Guid id, byte[] bytes);
     }
 
     internal class FileSaver : IFileSaver
@@ -45,6 +46,18 @@ namespace Pilot.Web.Model.FileStorage
                         var filename = _directoryProvider.GetImagePath(id, i);
                         Save(buffer, filename);
                     }
+                }
+            });
+        }
+
+        public Task PutFileAsync(Guid id, byte[] bytes)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                lock (_lock)
+                {
+                    var filename = _directoryProvider.GetFilePath(id);
+                    Save(bytes, filename);
                 }
             });
         }

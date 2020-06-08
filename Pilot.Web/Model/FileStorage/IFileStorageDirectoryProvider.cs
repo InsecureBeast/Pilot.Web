@@ -10,6 +10,7 @@ namespace Pilot.Web.Model.FileStorage
         string GetImagesStorageDirectory(Guid imageFileId);
         string GetThumbnailPath(Guid imageFileId);
         string GetImagePath(Guid imageFileId, int page);
+        string GetFilePath(Guid fileId);
     }
 
     class FileStorageDirectoryProvider : IFileStorageDirectoryProvider
@@ -44,6 +45,13 @@ namespace Pilot.Web.Model.FileStorage
         {
             var imageDir = GetImagesStorageDirectory(imageFileId);
             return Path.Combine(imageDir, ToolProperties.GetPageFormat(page));
+        }
+
+        public string GetFilePath(Guid fileId)
+        {
+            var root = Path.Combine(_tempDirectory, "files");
+            var filePath = DirectoryProvider.GetStoragePath(fileId, root);
+            return filePath;
         }
     }
 }

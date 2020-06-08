@@ -20,7 +20,11 @@ namespace Pilot.Web.Model
         public static string GetStoragePath(Guid fileId, string archiveRootFolder)
         {
             var bytes = fileId.ToByteArray();
-            var result = Path.Combine(archiveRootFolder, bytes[14].ToString(CultureInfo.InvariantCulture), bytes[15].ToString(CultureInfo.InvariantCulture), fileId.ToString());
+            var dir = Path.Combine(archiveRootFolder, bytes[14].ToString(CultureInfo.InvariantCulture), bytes[15].ToString(CultureInfo.InvariantCulture));
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            var result = Path.Combine(dir, fileId.ToString());
             return result;
         }
     }

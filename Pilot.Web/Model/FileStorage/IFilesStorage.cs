@@ -11,6 +11,7 @@ namespace Pilot.Web.Model.FileStorage
         byte[] GetThumbnail(Guid id);
         byte[] GetImageFile(Guid id, int page);
         IEnumerable<byte[]> GetPages(Guid fileId);
+        Task<string> GetFileAsync(Guid id, long size, IFileLoader fileLoader);
     }
 
     class FilesStorage : IFilesStorage
@@ -40,6 +41,11 @@ namespace Pilot.Web.Model.FileStorage
             return _fileSaver.PutFilesAsync(id, pages);
         }
 
+        public Task PutFileAsync(Guid id, byte[] bytes)
+        {
+            return _fileSaver.PutFileAsync(id, bytes);
+        }
+
         public byte[] GetImageFile(Guid id, int page)
         {
             var imageFilename = _directoryProvider.GetImagePath(id, page);
@@ -64,6 +70,18 @@ namespace Pilot.Web.Model.FileStorage
             }
 
             return pages;
+        }
+
+        public async Task<string> GetFileAsync(Guid id, long size, IFileLoader fileLoader)
+        {
+            var filePath = _directoryProvider.GetFilePath(id);
+            if (!File.Exists(filePath))
+            {
+                var bytes = fileLoader.Download(id, size);
+                await _fileSaver.PutFileAsync(id, bytes);
+            }
+
+            return filePath;
         }
 
         private static byte[] ReadFile(string imageFilename)
