@@ -22,7 +22,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   private camera: THREE.Camera;
   private renderer: THREE.WebGLRenderer;
   private controls: OrbitControls;
-  private scale = 1000;
+  private scale = 100;
 
   @ViewChild('container3d') containerElement: ElementRef;
 
@@ -75,11 +75,17 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
   protected createScene() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xcccccc);
-    this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+    this.scene.background = new THREE.Color(0xffffff);
+    //this.scene.fog = new THREE.FogExp2(0xffffff, 0.002);
 
     const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
+
+    const gridHelper = new THREE.GridHelper(100, 40, 0x0000ff, 0x808080);
+    gridHelper.position.y = 0;
+    gridHelper.position.x = 0;
+    gridHelper.up.set(0, 0, 1);
+    //this.scene.add(gridHelper);
   }
 
   protected createCamera() {
@@ -92,12 +98,12 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   private createOrbitControls() {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     //this.controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-    this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    //this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     this.controls.dampingFactor = 0.05;
     this.controls.minDistance = 1;
     this.controls.maxDistance = 2000;
-    //this.controls.maxPolarAngle = Math.PI / 2;
-    //this.controls.enableRotate = true;
+    this.controls.maxPolarAngle = Math.PI / 2;
+    this.controls.enableRotate = true;
   }
 
   protected createLight() {
@@ -154,7 +160,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
           const r = (meshProperty.meshColor & 0xFF000000) >> 24;
           const color = this.rgbaToHexA(r, g, b, a);
           const opacity = a / 255;
-          const material = new THREE.MeshBasicMaterial({ color: color, flatShading: true, transparent: a < 255, opacity: opacity });
+          const material = new THREE.MeshBasicMaterial({ color: color, flatShading: true, transparent: a < 255, opacity: opacity  });
           const mesh = new THREE.Mesh(geometry, material);
           const placement = new Array(meshProperty.meshPlacement.length);
           for (let i = 0; i < meshProperty.meshPlacement.length; i++) {
@@ -169,8 +175,16 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
           
           const positionMatrix = new THREE.Matrix4();
           positionMatrix.elements = placement;
-          mesh.applyMatrix4(positionMatrix);
-          this.scene.add(mesh);
+
+          const group = new THREE.Group();
+          group.add(mesh);
+
+          const edges = new THREE.EdgesGeometry(geometry);
+          const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+          group.add(line);
+
+          group.applyMatrix4(positionMatrix);
+          this.scene.add(group);
         }
       });
     }
