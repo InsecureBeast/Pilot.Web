@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/rout
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import CameraControls from "camera-controls"
 import { Subscription, Subject } from 'rxjs';
 
 import { BimModelService } from '../shared/bim-model.service';
@@ -19,10 +20,11 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   private ngUnsubscribe = new Subject<void>();
 
   private scene: THREE.Scene;
-  private camera: THREE.Camera;
+  private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
-  private controls: OrbitControls;
+  private cameraControls: CameraControls;
   private scale = 100;
+  private clock = new THREE.Clock();
 
   @ViewChild('container3d') containerElement: ElementRef;
 
@@ -48,6 +50,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   ngAfterViewInit(): void {
+    this.clock.start();
     this.createScene();
     this.createRenderer();
     this.createCamera();
@@ -96,14 +99,16 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   private createOrbitControls() {
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    CameraControls.install({ THREE: THREE });
+    this.cameraControls = new CameraControls(this.camera, this.renderer.domElement);
+    this.cameraControls.updateCameraUp();
     //this.controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
     //this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    this.controls.dampingFactor = 0.05;
-    this.controls.minDistance = 1;
-    this.controls.maxDistance = 2000;
-    this.controls.maxPolarAngle = Math.PI / 2;
-    this.controls.enableRotate = true;
+    this.cameraControls.dampingFactor = 0.05;
+    this.cameraControls.minDistance = 1;
+    this.cameraControls.maxDistance = 2000;
+    //this.controls.maxPolarAngle = Math.PI / 2;
+    //this.controls.enableRotate = true;
   }
 
   protected createLight() {
@@ -135,6 +140,10 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   private animate() {
+    // snip
+    const delta = this.clock.getDelta();
+    const hasControlsUpdated = this.cameraControls.update(delta);
+
     if (this.renderer) {
       window.requestAnimationFrame(() => this.animate());
       this.renderer.render(this.scene, this.camera);
