@@ -1,16 +1,17 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterContentChecked, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
 
 import { BimModelService } from '../shared/bim-model.service';
 import { SceneFactoryService } from '../shared/scene-factory.service';
-import { IScene } from '../shared/scene';
+import { IScene } from "../model/iscene.interface";
 
 @Component({
     selector: 'app-bim-document',
     templateUrl: './bim-document.component.html',
-    styleUrls: ['./bim-document.component.scss']
+  styleUrls: ['./bim-document.component.scss', '../../ui/toolbar.css']
 })
 /** bim-document component*/
 export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterViewInit, OnDestroy  {
@@ -21,7 +22,11 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   @ViewChild('container3d') containerElement: ElementRef;
 
   /** bim-document ctor */
-  constructor(private activatedRoute: ActivatedRoute, private bimModelService: BimModelService, private sceneFactory: SceneFactoryService) {
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly location: Location,
+    private readonly bimModelService: BimModelService,
+    private readonly sceneFactory: SceneFactoryService) {
     
   }
 
@@ -60,5 +65,9 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  close($event): void {
+    this.location.back();
   }
 }

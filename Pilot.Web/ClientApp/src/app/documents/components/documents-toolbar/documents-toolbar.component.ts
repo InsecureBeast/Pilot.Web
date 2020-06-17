@@ -10,7 +10,7 @@ import { INode } from '../../shared/node.interface';
 @Component({
     selector: 'app-documents-toolbar',
     templateUrl: './documents-toolbar.component.html',
-    styleUrls: ['./documents-toolbar.component.css', '../../shared/toolbar.css']
+    styleUrls: ['./documents-toolbar.component.css', '../../../ui/toolbar.css']
 })
 
 /** documents-toolbar component*/

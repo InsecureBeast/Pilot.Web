@@ -8,7 +8,7 @@ import { IObject } from '../../../core/data/data.classes';
 @Component({
     selector: 'app-document-toolbar',
     templateUrl: './document-toolbar.component.html',
-    styleUrls: ['./document-toolbar.component.css', '../../shared/toolbar.css']
+    styleUrls: ['./document-toolbar.component.css', '../../../ui/toolbar.css']
 })
 /** document-toolbar component*/
 export class DocumentToolbarComponent implements OnDestroy {

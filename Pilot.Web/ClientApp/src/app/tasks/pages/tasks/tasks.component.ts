@@ -14,7 +14,7 @@ import { ModalService } from 'src/app/ui/modal/modal.service';
 @Component({
     selector: 'app-tasks',
     templateUrl: './tasks.component.html',
-    styleUrls: ['./tasks.component.css', '../../../documents/shared/toolbar.css']
+    styleUrls: ['./tasks.component.css', '../../../ui/toolbar.css']
 })
 /** tasks component*/
 export class TasksComponent implements OnInit, OnDestroy {

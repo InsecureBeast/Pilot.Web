@@ -4,15 +4,9 @@ import * as THREE from 'three';
 import CameraControls from "camera-controls"
 
 import { ITessellation, IIfcNode } from '../shared/bim-data.classes';
+import { IScene } from '../model/iscene.interface';
 
-
-export interface IScene {
-  updateObjects(tessellations: ITessellation[], ifcNodes: IIfcNode[]): void;
-  updateRendererSize();
-  dispose(): void;
-}
-
-export class Scene implements IScene {
+export class ThreeScene implements IScene {
 
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
@@ -92,10 +86,16 @@ export class Scene implements IScene {
   }
 
   updateRendererSize() {
+    const width = this.containerElement.nativeElement.offsetWidth - 2;
+    const height = this.containerElement.nativeElement.offsetHeight - 2;
+
     if (this.renderer) {
-      const width = this.containerElement.nativeElement.clientWidth - 0;
-      const height = this.containerElement.nativeElement.clientHeight - 64;
       this.renderer.setSize(width, height);
+    }
+    if (this.camera) {
+      const aspect = width / height;
+      this.camera.aspect = aspect;
+      this.camera.updateProjectionMatrix();
     }
   }
 
@@ -155,9 +155,10 @@ export class Scene implements IScene {
   }
 
   private animate() {
-    // snip
-    const delta = this.clock.getDelta();
-    const hasControlsUpdated = this.cameraControls.update(delta);
+    if (this.cameraControls) {
+      const delta = this.clock.getDelta();
+      this.cameraControls.update(delta);
+    }
 
     if (this.renderer) {
       window.requestAnimationFrame(() => this.animate());
