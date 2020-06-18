@@ -7,3 +7,7 @@
   --primary-dark: #EC971F;
   --primary-light: #EED485;
 }
+
+.bg-main {
+  background-color: var(--primary);
+}

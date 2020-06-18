@@ -20,6 +20,8 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   private scene: IScene;
 
   @ViewChild('container3d') containerElement: ElementRef;
+  isLoading: boolean;
+  progress: number;
 
   /** bim-document ctor */
   constructor(
@@ -41,11 +43,18 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
       if (!id)
         return;
 
+      this.isLoading = true;
+      this.progress = 25;
       this.bimModelService.getModelPartsAsync(id, this.ngUnsubscribe).then(async modelParts => {
         for (let modelPart of modelParts) {
+          this.progress = 50;
           const tessellations = await this.bimModelService.getModelPartTessellationsAsync(modelPart, this.ngUnsubscribe);
+          this.progress = 75;
           const nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
+          this.progress = 90;
           this.scene.updateObjects(tessellations, nodes);
+          this.progress = 100;
+          this.isLoading = false;
         }
       });
     });
