@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Ascon.Pilot.Transport;
 
 namespace Pilot.Web.Model.FileStorage
 {
-    public interface IFilesStorage : IFileSaver
+    public interface IFilesStorage
     {
         byte[] GetThumbnail(Guid id);
         byte[] GetImageFile(Guid id, int page);
@@ -16,28 +15,16 @@ namespace Pilot.Web.Model.FileStorage
     class FilesStorage : IFilesStorage
     {
         private readonly IFileStorageDirectoryProvider _directoryProvider;
-        private readonly IFileSaver _fileSaver;
         
-        public FilesStorage(IFileStorageDirectoryProvider directoryProvider, IFileSaver fileSaver)
+        public FilesStorage(IFileStorageDirectoryProvider directoryProvider)
         {
             _directoryProvider = directoryProvider;
-            _fileSaver = fileSaver;
         }
 
         public byte[] GetThumbnail(Guid id)
         {
             var imageFilename = _directoryProvider.GetThumbnailPath(id);
             return !File.Exists(imageFilename) ? null : ReadFile(imageFilename);
-        }
-
-        public Task PutThumbnailAsync(Guid id, byte[] buffer)
-        {
-            return _fileSaver.PutThumbnailAsync(id, buffer);
-        }
-
-        public Task PutFilesAsync(Guid id, List<byte[]> pages)
-        {
-            return _fileSaver.PutFilesAsync(id, pages);
         }
 
         public byte[] GetImageFile(Guid id, int page)

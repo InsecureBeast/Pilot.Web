@@ -22,12 +22,15 @@ namespace Pilot.Web.Controllers
         private readonly IContextService _contextService;
         private readonly IDocumentRender _documentRender;
         private readonly IFilesStorage _filesStorage;
-        
-        public FilesController(IContextService contextService, IDocumentRender documentRender, IFilesStorage filesStorage)
+        private readonly IFileSaver _fileSaver;
+
+        public FilesController(IContextService contextService, IDocumentRender documentRender, 
+            IFilesStorage filesStorage, IFileSaver fileSaver)
         {
             _contextService = contextService;
             _documentRender = documentRender;
             _filesStorage = filesStorage;
+            _fileSaver = fileSaver;
         }
 
         [Authorize]
@@ -46,7 +49,7 @@ namespace Pilot.Web.Controllers
             pages = _documentRender.RenderPages(file, scale).ToList();
             if (pages.Any())
             {
-                _filesStorage.PutFilesAsync(guid, pages);
+                _fileSaver.PutFilesAsync(guid, pages);
             }
 
             return pages.Count;
@@ -86,7 +89,7 @@ namespace Pilot.Web.Controllers
             var fileContent = fileLoader.Download(guid, size);
             thumbnail = _documentRender.RenderPage(fileContent, 1, 0.2);
             if (thumbnail != null)
-                _filesStorage.PutThumbnailAsync(guid, thumbnail);
+                _fileSaver.PutThumbnailAsync(guid, thumbnail);
 
             return File(thumbnail, "image/png");
         }
