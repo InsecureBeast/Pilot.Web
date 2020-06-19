@@ -76,7 +76,6 @@ namespace Pilot.Web
             services.AddSingleton<IContextService, ContextService>();
             services.AddScoped<IDocumentConverterFactory, DocumentConverterFactory>();
             services.AddScoped<IDocumentRender, DocumentRender.DocumentRender>();
-            services.AddScoped<IFileSaver, FileSaver>();
             services.AddScoped<IFilesStorage, FilesStorage>();
             services.AddScoped<IFileStorageDirectoryProvider, FileStorageDirectoryProvider>();
             services.AddScoped<IBimModelService, BimModelService>();

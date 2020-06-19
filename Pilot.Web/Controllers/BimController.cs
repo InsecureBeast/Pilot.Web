@@ -29,7 +29,8 @@ namespace Pilot.Web.Controllers
             var fileGuid = Guid.Parse(fileId);
             var modelPartGuid = Guid.Parse(modelPartId);
             var actor = HttpContext.GetTokenActor();
-            return _bimModelService.GetTessellationsAsync(modelPartGuid, fileGuid, size, actor);
+            var fileLoader = _contextService.GetFileLoader(actor);
+            return _bimModelService.GetTessellationsAsync(modelPartGuid, fileGuid, size, fileLoader);
         }
 
         [Authorize]
@@ -39,7 +40,8 @@ namespace Pilot.Web.Controllers
             var fileGuid = Guid.Parse(fileId);
             var modelPartGuid = Guid.Parse(modelPartId);
             var actor = HttpContext.GetTokenActor();
-            return _bimModelService.GetNodesAsync(modelPartGuid, fileGuid, size, actor);
+            var fileLoader = _contextService.GetFileLoader(actor);
+            return _bimModelService.GetNodesAsync(modelPartGuid, fileGuid, size, fileLoader);
         }
     }
 }
