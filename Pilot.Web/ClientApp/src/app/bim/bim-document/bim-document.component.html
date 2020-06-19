@@ -18,15 +18,12 @@
 </nav>
 
 <div class="pt-6 row h-100">
-  <div class="progress" style="height: 2px; width: 100%; margin-top: -0.5rem;" *ngIf="isLoading">
+  <div class="progress" *ngIf="isLoading">
     <div class="progress-bar bg-main" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
          [style.width]="progress + '%'"></div>
   </div>
 
   <div class="col-12 viewer-container">
-
-
     <div #container3d class="h-100 border bg-white" id="container3d"></div>
   </div>
-
 </div>

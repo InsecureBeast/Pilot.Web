@@ -48,6 +48,13 @@ html, body {
   padding-top: 4rem;
 }
 
+.progress {
+  height: 2px;
+  width: 100%;
+  margin-top: -0.6rem;
+  z-index: 1100;
+}
+
 /* fallback */
 @font-face {
   font-family: 'Material Icons';
