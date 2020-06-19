@@ -8,6 +8,6 @@
   --primary-light: #EED485;
 }
 
-.bg-main {
+.bg-accent {
   background-color: var(--primary);
 }

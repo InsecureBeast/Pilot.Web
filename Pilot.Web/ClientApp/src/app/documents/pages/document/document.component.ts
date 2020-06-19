@@ -9,7 +9,7 @@ import { Subscription, Subject } from 'rxjs';
 import { Tools } from '../../../core/tools/tools';
 import { INode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
-import { SourceFileService } from '../../../core/source-file.service';
+import { SourceFileService, IProgressUpdater } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
 import { RepositoryService, RequestType } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
@@ -23,7 +23,8 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
   styleUrls: ['./document.component.css']
 })
 /** document component*/
-export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
+export class DocumentComponent implements OnInit, OnDestroy, OnChanges, IProgressUpdater {
+    
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
@@ -36,6 +37,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   isLoading: boolean;
   isInfoShown: boolean;
   error: HttpErrorResponse;
+  progress: number;
   
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
@@ -155,6 +157,19 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.updateLocation(nextId);
   }
 
+  update(value: number): void {
+    this.progress = value;
+    this.isLoading = this.progress < this.getMaxValue();
+  }
+
+  getMinValue(): number {
+    return 10;
+  }
+
+  getMaxValue(): number {
+    return 100;
+  }
+
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
     this.error = null;
     this.repository.getObjectAsync(id)
@@ -193,11 +208,13 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       .then(parent => {
         for (const child of parent.children) {
           const type = this.repository.getType(child.typeId);
+          if (!type)
+            continue;
+
           if (TypeExtensions.isDocument(type))
             this.documents.push(child.objectId);
         }
       }).catch(e => {
-        this.isLoading = false;
         this.error = e;
       });
   }
@@ -213,11 +230,14 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private loadSnapshot(snapshot: IFileSnapshot): void {
     this.isLoading = true;
     this.images = new Array<SafeUrl>();
+    this.progress = this.getMinValue();
 
     if (this.sourceFileService.isXpsFile(snapshot)) {
       const file = FilesSelector.getSourceFile(snapshot.files);
-      this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
-        .then(_ => this.isLoading = false)
+      this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images, this)
+        .then(_ => {
+           
+        })
         .catch(e => {
           this.isLoading = false;
           this.images = null;

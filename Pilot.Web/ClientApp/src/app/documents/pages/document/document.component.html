@@ -6,8 +6,17 @@
                       (onShowVersions)="showDocumentVersions($event)">
 </app-document-toolbar>
 
+<div class="progress" *ngIf="isLoading"
+     style="position: fixed; margin-top: 3.3rem; margin-left: -15px;" >
+  <div class="progress-bar bg-accent" role="progressbar"
+       aria-valuenow="75"
+       aria-valuemin="0" aria-valuemax="100"
+       [style.width]="progress + '%'"></div>
+</div>
+
 <div class="pt-6" *ngIf="!error">
-  <div class="row m-0">
+  <div class="row">
+
     <div class="col-12 p-0 pb-5"
          [class.col-md-8]="isInfoShown"
          [class.info-open]="isInfoShown">
@@ -34,12 +43,6 @@
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           <span class="ml-1" translate="downloading"></span>
         </button>
-      </div>
-
-      <div class="content-center" *ngIf="isLoading">
-        <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only"></span>
-        </div>
       </div>
     </div>
 

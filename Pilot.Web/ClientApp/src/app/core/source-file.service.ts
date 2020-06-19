@@ -17,20 +17,25 @@ export class SourceFileService {
 
   }
 
-  showXpsDocumentAsync(file: IFile, scale: number, cancel: Subject<any>, images: Array<SafeUrl>): Promise<void> {
+  showXpsDocumentAsync(file: IFile, scale: number, cancel: Subject<any>, images: Array<SafeUrl>, progressUpdater: IProgressUpdater): Promise<void> {
     return new Promise((resolve, reject) => {
       this.fileStorageService.getDocumentPagesCount(file.body.id, file.body.size, scale)
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe(async count => {
+            let progress = progressUpdater.getMinValue();
+            const part = (100 - progress) / (count as number);
             for (let i = 0; i < count; i++) {
               const page = await this.getPageAsync(file.body.id, i, cancel);
               images.push(page);
+              progress += part;
+              progressUpdater.update(progress);
               resolve();
             }
 
+            progressUpdater.update(progressUpdater.getMaxValue());
             resolve();
-          },
+        },
         e => reject(e));
     });
   }
@@ -189,4 +194,10 @@ export class SourceFileService {
 
     return null;
   }
+}
+
+export interface IProgressUpdater {
+  update(value: number): void;
+  getMinValue(): number;
+  getMaxValue(): number;
 }
