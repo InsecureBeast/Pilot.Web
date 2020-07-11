@@ -4,4 +4,6 @@ export interface IScene {
   updateObjects(tessellations: ITessellation[], ifcNodes: IIfcNode[]): void;
   updateRendererSize();
   dispose(): void;
+  startAnimate();
+  stopAnimate();
 }

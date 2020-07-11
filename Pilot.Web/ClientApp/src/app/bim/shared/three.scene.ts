@@ -7,13 +7,13 @@ import { ITessellation, IIfcNode } from '../shared/bim-data.classes';
 import { IScene } from '../model/iscene.interface';
 
 export class ThreeScene implements IScene {
-
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
   private cameraControls: CameraControls;
   private scale = 100;
   private clock = new THREE.Clock();
+  private isAnimated: boolean = false;
 
   constructor(private readonly containerElement: ElementRef) {
     this.clock.start();
@@ -22,12 +22,17 @@ export class ThreeScene implements IScene {
     this.createCamera();
     this.createCameraControls();
     this.createLight();
-    this.animate();
+    this.startAnimate();
   }
 
   updateObjects(tessellations: ITessellation[], ifcNodes: IIfcNode[]): void {
+    if (!ifcNodes || !tessellations)
+      return;
 
     const geometries = this.getGeometry(tessellations);
+    const box = new THREE.Box3();
+    const bigGroup = new THREE.Group();
+
     for (let ifcNode of ifcNodes) {
       if (!ifcNode.meshesProperties)
         continue;
@@ -65,15 +70,18 @@ export class ThreeScene implements IScene {
           group.add(mesh);
 
           const edges = new THREE.EdgesGeometry(geometry);
-          const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+          const line = new THREE.LineSegments(edges, new THREE.MeshBasicMaterial ({ color: 0x000000 }));
           group.add(line);
-
           group.applyMatrix4(positionMatrix);
-          this.scene.add(group);
+          bigGroup.add(group);
+          box.expandByObject(group);
         }
       });
     }
+    this.scene.add(bigGroup);
+    this.zoomToFit(box);
   }
+
 
   dispose(): void {
     this.renderer.dispose();
@@ -97,6 +105,15 @@ export class ThreeScene implements IScene {
       this.camera.aspect = aspect;
       this.camera.updateProjectionMatrix();
     }
+  }
+
+  startAnimate() {
+    this.isAnimated = true;
+    this.animate();
+  }
+
+  stopAnimate() {
+    this.isAnimated = false;
   }
 
   private createScene() {
@@ -148,26 +165,29 @@ export class ThreeScene implements IScene {
   }
 
   private createRenderer(): void {
-    this.renderer = new THREE.WebGLRenderer();
+    //this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({
+      powerPreference: "high-performance",
+    });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.updateRendererSize();
     this.containerElement.nativeElement.appendChild(this.renderer.domElement);
   }
 
-  private animate() {
+  public animate() {
     if (this.cameraControls) {
       const delta = this.clock.getDelta();
       this.cameraControls.update(delta);
     }
 
-    if (this.renderer) {
+    if (this.renderer && this.isAnimated) {
       window.requestAnimationFrame(() => this.animate());
       this.renderer.render(this.scene, this.camera);
     }
   }
 
-  private getGeometry(tessellations: ITessellation[]): Map<string, THREE.Geometry> {
-    const geometries = new Map<string, THREE.Geometry>();
+  private getGeometry(tessellations: ITessellation[]): Map<string, THREE.BufferGeometry> {
+    const geometries = new Map<string, THREE.BufferGeometry>();
     for (const tessellation of tessellations) {
       const geometry = new THREE.Geometry();
       for (let i = 0; i < tessellation.modelMesh.vertices.length; i += 3) {
@@ -191,7 +211,8 @@ export class ThreeScene implements IScene {
         geometry.faces.push(face);
       }
 
-      geometries.set(tessellation.id, geometry);
+      const bufferGeometry = new THREE.BufferGeometry().fromGeometry(geometry);
+      geometries.set(tessellation.id, bufferGeometry);
     }
 
     return geometries;
@@ -228,4 +249,21 @@ export class ThreeScene implements IScene {
     return "#" + r + g + b;
   }
 
+  private zoomToFit(box: THREE.Box3): void {
+    const fitOffset = 1.2;
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+
+    const maxSize = Math.max(size.x, size.y, size.z);
+    const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * this.camera.fov / 360));
+    const fitWidthDistance = fitHeightDistance / this.camera.aspect;
+    const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+
+    this.cameraControls.maxDistance = distance;// * 10;
+    this.camera.far = distance * 10;
+    this.camera.updateProjectionMatrix();
+
+    this.cameraControls.setTarget(center.x, center.y, center.z);
+    this.cameraControls.update(this.clock.getDelta());
+  }
 }

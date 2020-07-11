@@ -33,7 +33,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   }
 
   ngOnInit(): void {
-    
+    this.isLoading = false;
   }
 
   ngAfterViewInit(): void {
@@ -44,18 +44,23 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
         return;
 
       this.isLoading = true;
-      this.progress = 25;
+      this.progress = 0;
       this.bimModelService.getModelPartsAsync(id, this.ngUnsubscribe).then(async modelParts => {
+        this.scene.stopAnimate();
+        let part = 100 / modelParts.length / 4;
         for (let modelPart of modelParts) {
-          this.progress = 50;
+          this.progress = this.progress + part;
           const tessellations = await this.bimModelService.getModelPartTessellationsAsync(modelPart, this.ngUnsubscribe);
-          this.progress = 75;
+          this.progress = this.progress + part;
           const nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
-          this.progress = 90;
+          this.progress = this.progress + part;
           this.scene.updateObjects(tessellations, nodes);
-          this.progress = 100;
-          this.isLoading = false;
+          this.progress = this.progress + part;
         }
+
+        this.isLoading = false;
+        this.progress = 100;
+        this.scene.startAnimate();
       });
     });
   }
