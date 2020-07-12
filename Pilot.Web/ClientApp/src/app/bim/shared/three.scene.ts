@@ -1,9 +1,9 @@
-import { ElementRef } from '@angular/core';
+import { ElementRef, HostListener } from '@angular/core';
 
 import * as THREE from 'three';
 import CameraControls from "camera-controls"
 
-import { ITessellation, IIfcNode } from '../shared/bim-data.classes';
+import { ITessellation, IIfcNode, IMeshProperties } from '../shared/bim-data.classes';
 import { IScene } from '../model/iscene.interface';
 
 export class ThreeScene implements IScene {
@@ -13,7 +13,7 @@ export class ThreeScene implements IScene {
   private cameraControls: CameraControls;
   private scale = 100;
   private clock = new THREE.Clock();
-  private isAnimated: boolean = false;
+  private isAnimated: boolean = true;
 
   constructor(private readonly containerElement: ElementRef) {
     this.clock.start();
@@ -22,6 +22,7 @@ export class ThreeScene implements IScene {
     this.createCamera();
     this.createCameraControls();
     this.createLight();
+    this.startAnimationLoop();
     this.startAnimate();
   }
 
@@ -32,6 +33,9 @@ export class ThreeScene implements IScene {
     const geometries = this.getGeometry(tessellations);
     const box = new THREE.Box3();
     const bigGroup = new THREE.Group();
+    const materials = new Map<number, THREE.Material>();
+    const buffers = new Map<number, THREE.BufferGeometry>();
+    const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 })
 
     for (let ifcNode of ifcNodes) {
       if (!ifcNode.meshesProperties)
@@ -44,13 +48,7 @@ export class ThreeScene implements IScene {
           return;
 
         for (let meshProperty of meshProperties) {
-          const a = (meshProperty.meshColor & 0x000000FF);
-          const b = (meshProperty.meshColor & 0x0000FF00) >> 8;
-          const g = (meshProperty.meshColor & 0x00FF0000) >> 16;
-          const r = (meshProperty.meshColor & 0xFF000000) >> 24;
-          const color = this.rgbaToHexA(r, g, b, a);
-          const opacity = a / 255;
-          const material = new THREE.MeshBasicMaterial({ color: color, flatShading: true, transparent: a < 255, opacity: opacity });
+          const material = this.getMaterial(materials, meshProperty);
           const mesh = new THREE.Mesh(geometry, material);
           const placement = new Array(meshProperty.meshPlacement.length);
           for (let i = 0; i < meshProperty.meshPlacement.length; i++) {
@@ -70,7 +68,7 @@ export class ThreeScene implements IScene {
           group.add(mesh);
 
           const edges = new THREE.EdgesGeometry(geometry);
-          const line = new THREE.LineSegments(edges, new THREE.MeshBasicMaterial ({ color: 0x000000 }));
+          const line = new THREE.LineSegments(edges, lineMaterial);
           group.add(line);
           group.applyMatrix4(positionMatrix);
           bigGroup.add(group);
@@ -80,6 +78,10 @@ export class ThreeScene implements IScene {
     }
     this.scene.add(bigGroup);
     this.zoomToFit(box);
+
+    geometries.clear();
+    materials.clear();
+    //bigGroup.children = null;
   }
 
 
@@ -109,7 +111,6 @@ export class ThreeScene implements IScene {
 
   startAnimate() {
     this.isAnimated = true;
-    this.animate();
   }
 
   stopAnimate() {
@@ -149,6 +150,22 @@ export class ThreeScene implements IScene {
     this.cameraControls.maxDistance = 2000;
     //this.controls.maxPolarAngle = Math.PI / 2;
     //this.controls.enableRotate = true;
+
+    //this.cameraControls.addEventListener("controlstart", () => {
+    //  this.startAnimate();
+    //});
+
+    //this.cameraControls.addEventListener("controlend", () => {
+    //  this.stopAnimate();
+    //});
+
+    //this.cameraControls.addEventListener("awake", () => {
+    //  this.startAnimate();
+    //});
+
+    //this.cameraControls.addEventListener("sleep", () => {
+    //  this.stopAnimate();
+    //});
   }
 
   private createLight() {
@@ -174,16 +191,17 @@ export class ThreeScene implements IScene {
     this.containerElement.nativeElement.appendChild(this.renderer.domElement);
   }
 
-  public animate() {
+  private startAnimationLoop() {
     if (this.cameraControls) {
       const delta = this.clock.getDelta();
       this.cameraControls.update(delta);
     }
 
     if (this.renderer && this.isAnimated) {
-      window.requestAnimationFrame(() => this.animate());
       this.renderer.render(this.scene, this.camera);
     }
+
+    window.requestAnimationFrame(() => this.startAnimationLoop());
   }
 
   private getGeometry(tessellations: ITessellation[]): Map<string, THREE.BufferGeometry> {
@@ -265,5 +283,22 @@ export class ThreeScene implements IScene {
 
     this.cameraControls.setTarget(center.x, center.y, center.z);
     this.cameraControls.update(this.clock.getDelta());
+  }
+
+  private getMaterial(materials: Map<number, THREE.Material>, meshProperty: IMeshProperties): THREE.Material {
+    let material = materials.get(meshProperty.meshColor);
+    if (!material) {
+
+      const a = (meshProperty.meshColor & 0x000000FF);
+      const b = (meshProperty.meshColor & 0x0000FF00) >> 8;
+      const g = (meshProperty.meshColor & 0x00FF0000) >> 16;
+      const r = (meshProperty.meshColor & 0xFF000000) >> 24;
+      const color = this.rgbaToHexA(r, g, b, a);
+      const opacity = a / 255;
+      material = new THREE.MeshBasicMaterial({ color: color, flatShading: true, transparent: a < 255, opacity: opacity });
+      materials[meshProperty.meshColor] = material;
+    }
+
+    return material;
   }
 }

@@ -1,3 +1,5 @@
 /.vs/*
 /documentRender/bin/*
 /documentRender/obj/*
+/Serializer/bin/*
+/Serializer/obj/*
