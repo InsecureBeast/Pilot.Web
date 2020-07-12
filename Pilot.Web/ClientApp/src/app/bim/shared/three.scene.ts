@@ -30,26 +30,25 @@ export class ThreeScene implements IScene {
     if (!ifcNodes || !tessellations)
       return;
 
-    const geometries = this.getGeometry(tessellations);
+    const tessellationGeometries = this.getGeometry(tessellations);
     const box = new THREE.Box3();
-    const bigGroup = new THREE.Group();
+    //const bigGroup = new THREE.Group();
     const materials = new Map<number, THREE.Material>();
-    const buffers = new Map<number, THREE.BufferGeometry>();
-    const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 })
+    const objectGeometries = new Map<number, THREE.Geometry>();
 
+    let geometryCount = 0;
     for (let ifcNode of ifcNodes) {
       if (!ifcNode.meshesProperties)
         continue;
 
       Object.keys(ifcNode.meshesProperties).forEach(key => {
         const meshProperties = ifcNode.meshesProperties[key];
-        const geometry = geometries.get(key);
-        if (!geometry)
+        const tessellationGeometry = tessellationGeometries.get(key);
+        if (!tessellationGeometry)
           return;
 
         for (let meshProperty of meshProperties) {
-          const material = this.getMaterial(materials, meshProperty);
-          const mesh = new THREE.Mesh(geometry, material);
+          
           const placement = new Array(meshProperty.meshPlacement.length);
           for (let i = 0; i < meshProperty.meshPlacement.length; i++) {
             const pl = meshProperty.meshPlacement[i];
@@ -64,22 +63,50 @@ export class ThreeScene implements IScene {
           const positionMatrix = new THREE.Matrix4();
           positionMatrix.elements = placement;
 
-          const group = new THREE.Group();
-          group.add(mesh);
+          //const group = new THREE.Group();
+          const material = this.getMaterial(materials, meshProperty);
+          //const mesh = new THREE.Mesh(tessellationGeometry, material);
+          //mesh.applyMatrix4(positionMatrix);
 
-          const edges = new THREE.EdgesGeometry(geometry);
-          const line = new THREE.LineSegments(edges, lineMaterial);
-          group.add(line);
-          group.applyMatrix4(positionMatrix);
-          bigGroup.add(group);
-          box.expandByObject(group);
+          var objGeo = tessellationGeometry.clone();
+          objGeo.applyMatrix4(positionMatrix);
+
+          let objectGeometry = this.getObjectGeometry(objectGeometries, meshProperty.meshColor);
+          objectGeometry.merge(objGeo);
+          
+          objGeo.dispose();
+          //objectGeometry.mergeMesh(mesh);
+          //objectGeometry.mergeVertices();
+
+          //group.add(mesh);
+
+          //const edges = new THREE.EdgesGeometry(geometry);
+          //const line = new THREE.LineSegments(edges, lineMaterial);
+          //group.add(line);
+          //mesh.applyMatrix4(positionMatrix);
+          //bigGroup.add(group);
+          geometryCount++;
+          console.log(geometryCount);
+
         }
       });
     }
-    this.scene.add(bigGroup);
+
+    Object.keys(objectGeometries).forEach(key => {
+      var objGeometry = objectGeometries[key];
+      const bufferObjGeometry = new THREE.BufferGeometry().fromGeometry(objGeometry);
+      const material = materials[key];
+      const mesh = new THREE.Mesh(bufferObjGeometry, material);
+      box.expandByObject(mesh);
+      this.scene.add(mesh);
+      bufferObjGeometry.dispose();
+    });
+
+    //this.scene.add(bigGroup);
     this.zoomToFit(box);
 
-    geometries.clear();
+
+    tessellationGeometries.clear();
     materials.clear();
     //bigGroup.children = null;
   }
@@ -204,8 +231,8 @@ export class ThreeScene implements IScene {
     window.requestAnimationFrame(() => this.startAnimationLoop());
   }
 
-  private getGeometry(tessellations: ITessellation[]): Map<string, THREE.BufferGeometry> {
-    const geometries = new Map<string, THREE.BufferGeometry>();
+  private getGeometry(tessellations: ITessellation[]): Map<string, THREE.Geometry> {
+    const geometries = new Map<string, THREE.Geometry>();
     for (const tessellation of tessellations) {
       const geometry = new THREE.Geometry();
       for (let i = 0; i < tessellation.modelMesh.vertices.length; i += 3) {
@@ -229,8 +256,7 @@ export class ThreeScene implements IScene {
         geometry.faces.push(face);
       }
 
-      const bufferGeometry = new THREE.BufferGeometry().fromGeometry(geometry);
-      geometries.set(tessellation.id, bufferGeometry);
+      geometries.set(tessellation.id, geometry);
     }
 
     return geometries;
@@ -300,5 +326,14 @@ export class ThreeScene implements IScene {
     }
 
     return material;
+  }
+
+  private getObjectGeometry(geometries: Map<number, THREE.Geometry>, group: number): THREE.Geometry {
+    let geometry = geometries[group];
+    if (!geometry) {
+      geometry = new THREE.Geometry();
+      geometries[group] = geometry;
+    }
+    return geometry;
   }
 }
