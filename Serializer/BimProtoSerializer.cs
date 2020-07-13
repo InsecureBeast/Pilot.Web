@@ -4,7 +4,7 @@ using K4os.Compression.LZ4;
 
 namespace Serializer
 {
-    public class BimProtoSerializer
+    public class BimProtoSerializer2
     {
         public static byte[] Serialize<T>(T obj)
         {

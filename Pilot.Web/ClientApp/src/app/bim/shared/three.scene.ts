@@ -2,6 +2,7 @@ import { ElementRef, HostListener } from '@angular/core';
 
 import * as THREE from 'three';
 import CameraControls from "camera-controls"
+//import EdgesHelper from "three/"
 
 import { ITessellation, IIfcNode, IMeshProperties } from '../shared/bim-data.classes';
 import { IScene } from '../model/iscene.interface';
@@ -14,6 +15,7 @@ export class ThreeScene implements IScene {
   private scale = 100;
   private clock = new THREE.Clock();
   private isAnimated: boolean = true;
+  private geometryCount = 0;
 
   constructor(private readonly containerElement: ElementRef) {
     this.clock.start();
@@ -22,8 +24,7 @@ export class ThreeScene implements IScene {
     this.createCamera();
     this.createCameraControls();
     this.createLight();
-    this.startAnimationLoop();
-    this.startAnimate();
+    this.stopAnimate();
   }
 
   updateObjects(tessellations: ITessellation[], ifcNodes: IIfcNode[]): void {
@@ -32,11 +33,10 @@ export class ThreeScene implements IScene {
 
     const tessellationGeometries = this.getGeometry(tessellations);
     const box = new THREE.Box3();
-    //const bigGroup = new THREE.Group();
     const materials = new Map<number, THREE.Material>();
     const objectGeometries = new Map<number, THREE.Geometry>();
 
-    let geometryCount = 0;
+   
     for (let ifcNode of ifcNodes) {
       if (!ifcNode.meshesProperties)
         continue;
@@ -63,11 +63,7 @@ export class ThreeScene implements IScene {
           const positionMatrix = new THREE.Matrix4();
           positionMatrix.elements = placement;
 
-          //const group = new THREE.Group();
           const material = this.getMaterial(materials, meshProperty);
-          //const mesh = new THREE.Mesh(tessellationGeometry, material);
-          //mesh.applyMatrix4(positionMatrix);
-
           var objGeo = tessellationGeometry.clone();
           objGeo.applyMatrix4(positionMatrix);
 
@@ -75,18 +71,11 @@ export class ThreeScene implements IScene {
           objectGeometry.merge(objGeo);
           
           objGeo.dispose();
-          //objectGeometry.mergeMesh(mesh);
-          //objectGeometry.mergeVertices();
-
-          //group.add(mesh);
-
           //const edges = new THREE.EdgesGeometry(geometry);
           //const line = new THREE.LineSegments(edges, lineMaterial);
           //group.add(line);
-          //mesh.applyMatrix4(positionMatrix);
-          //bigGroup.add(group);
-          geometryCount++;
-          console.log(geometryCount);
+          this.geometryCount++;
+          console.log(this.geometryCount);
 
         }
       });
@@ -102,13 +91,9 @@ export class ThreeScene implements IScene {
       bufferObjGeometry.dispose();
     });
 
-    //this.scene.add(bigGroup);
     this.zoomToFit(box);
-
-
     tessellationGeometries.clear();
     materials.clear();
-    //bigGroup.children = null;
   }
 
 
@@ -138,10 +123,12 @@ export class ThreeScene implements IScene {
 
   startAnimate() {
     this.isAnimated = true;
+    this.startAnimationLoop();
   }
 
   stopAnimate() {
     this.isAnimated = false;
+    this.renderer.render(this.scene, this.camera);
   }
 
   private createScene() {
@@ -178,21 +165,13 @@ export class ThreeScene implements IScene {
     //this.controls.maxPolarAngle = Math.PI / 2;
     //this.controls.enableRotate = true;
 
-    //this.cameraControls.addEventListener("controlstart", () => {
-    //  this.startAnimate();
-    //});
+    this.cameraControls.addEventListener("controlstart", () => {
+      this.startAnimate();
+    });
 
-    //this.cameraControls.addEventListener("controlend", () => {
-    //  this.stopAnimate();
-    //});
-
-    //this.cameraControls.addEventListener("awake", () => {
-    //  this.startAnimate();
-    //});
-
-    //this.cameraControls.addEventListener("sleep", () => {
-    //  this.stopAnimate();
-    //});
+    this.cameraControls.addEventListener("controlend", () => {
+      this.stopAnimate();
+    });
   }
 
   private createLight() {
@@ -226,9 +205,8 @@ export class ThreeScene implements IScene {
 
     if (this.renderer && this.isAnimated) {
       this.renderer.render(this.scene, this.camera);
+      window.requestAnimationFrame(() => this.startAnimationLoop());
     }
-
-    window.requestAnimationFrame(() => this.startAnimationLoop());
   }
 
   private getGeometry(tessellations: ITessellation[]): Map<string, THREE.Geometry> {

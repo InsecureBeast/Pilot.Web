@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
-using Serializer;
 
 namespace Pilot.Web.Model.Bim.Database.ModelPart
 {

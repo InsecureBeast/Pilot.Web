@@ -60,7 +60,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
         this.isLoading = false;
         this.progress = 100;
-        this.scene.startAnimate();
+        this.scene.stopAnimate();
       });
     });
   }
