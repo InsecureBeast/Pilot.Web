@@ -11,6 +11,7 @@ namespace Pilot.Web.Model.Auth
         public string Issuer { get; set; } // издатель токена
         public string SecretKey { get; set; } // ключ для шифрации
         public int TokenLifeTimeDays { get; set; } // время жизни токена
+        public int IdleSessionTimeout { get; set; } // время неативности пользователя. По окончанию этого таймаута сбрасывается подключение к Pilot
 
         public string GetAudience()
         {

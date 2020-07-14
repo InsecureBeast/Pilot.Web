@@ -95,6 +95,7 @@ namespace Pilot.Web
             }
 
             app.UseExceptionHandlerMiddleware();
+            app.UseServiceLifetimeMiddleware();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
