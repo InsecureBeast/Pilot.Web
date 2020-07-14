@@ -30,6 +30,9 @@ namespace Pilot.Web.Model.Middleware
 
         public Task Invoke(HttpContext context)
         {
+            if (context.Request.Path == "/api/Auth/SignOut")
+                return _next.Invoke(context);
+
             lock (_contextTable)
             {
                 var actor = context.GetTokenActor();

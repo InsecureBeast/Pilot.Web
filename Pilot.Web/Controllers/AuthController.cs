@@ -52,12 +52,15 @@ namespace Pilot.Web.Controllers
         }
 
         [HttpGet("[action]")]
-        [Authorize]
+        //[Authorize]
         public ActionResult SignOut()
         {
             try
             {
                 var actor = HttpContext.GetTokenActor();
+                if (actor == null)
+                    return Ok();
+
                 _contextService.RemoveContext(actor);
                 _logger.Info($"Signed out successfully. Username: {actor}.");
                 return Ok();
