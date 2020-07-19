@@ -4,7 +4,7 @@
     "password": "Пароль",
     "account": "Учетная запись"
   },
-  "signInCardTitle": "Вход",
+  "signInCardTitle": "Вход в Pilot.Web",
   "signIn": "Вход",
   "signingIn": "Вход ...",
   "signOut": "Выйти",

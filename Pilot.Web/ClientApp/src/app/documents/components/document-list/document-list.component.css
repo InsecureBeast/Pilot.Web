@@ -37,7 +37,7 @@
 .card {
   height: 13rem;
   overflow: hidden;
-  border: 0;
+  border-color: #f2f2f2;
 }
 
 .card-body {
