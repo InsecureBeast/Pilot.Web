@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { first, skipWhile } from 'rxjs/operators';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { AuthService } from '../auth.service';
 import { ErrorHandlerService } from '../../ui/error/error-handler.service';
@@ -18,6 +18,7 @@ import { RepositoryService } from '../../core/repository.service';
 /** auth component*/
 export class AuthComponent implements OnInit, OnDestroy{
   private loginSubscription: Subscription;
+  private errorSubscription: Subscription;
 
   username: string;
   password: string;
@@ -30,7 +31,7 @@ export class AuthComponent implements OnInit, OnDestroy{
     private readonly authService: AuthService,
     private readonly errorService: ErrorHandlerService,
     private readonly router: Router,
-    private readonly  activatedRoute: ActivatedRoute) {
+    private readonly activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -58,10 +59,18 @@ export class AuthComponent implements OnInit, OnDestroy{
       });
 
     });
+    this.errorSubscription = this.authService.error.subscribe(err => {
+      this.isProcessing = false;
+      if (!err)
+        return;
+
+      this.error = this.errorService.handleErrorMessage(err);
+    });
   }
 
   ngOnDestroy(): void {
     this.loginSubscription.unsubscribe();
+    this.errorSubscription.unsubscribe();
   }
 
   onEnter() {
@@ -72,12 +81,6 @@ export class AuthComponent implements OnInit, OnDestroy{
   login(): void {
     this.isProcessing = true;
     this.error = null;
-    this.authService.login(this.username, this.password).subscribe(token => {
-
-    }, (e: HttpErrorResponse) => {
-      this.isProcessing = false;
-      this.error = this.errorService.handleErrorMessage(e);
-    });
+    this.authService.login(this.username, this.password);
   }
-
 }

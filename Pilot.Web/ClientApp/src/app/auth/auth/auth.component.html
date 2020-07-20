@@ -1,16 +1,19 @@
-<div class="card content-center" style="text-align: left; width: 19rem;">
-  <div class="card-body">
-    <h5 class="card-title" translate="signInCardTitle"></h5>
+<div class="content-center" style="width: 19rem;">
+  <img src="assets/images/icons/safari-pinned-tab.svg"
+       alt=""
+       height="100"
+       width="100"
+       class="mb-4">
+  <h2 class="" translate="signInCardTitle" style="font-weight: 300;"></h2>
+  <div class="card-body text-left">
     <div class="form-group">
-      <label for="username" translate="login.account"></label>
       <input type="text" class="form-control" id="username" placeholder="{{ 'login.username' | translate }}" [(ngModel)]="username">
     </div>
     <div class="form-group">
-      <!--<label for="password">Password</label>-->
       <input type="password" class="form-control" id="password" placeholder="{{ 'login.password' | translate }}" [(ngModel)]="password" (keyup.enter)="onEnter()">
     </div>
-    <button type="submit" class="btn btn-primary" (click)="login()" *ngIf="!isProcessing" translate="signIn"></button>
-    <button class="btn btn-primary" type="button" disabled *ngIf="isProcessing">
+    <button type="submit" class="btn btn-primary btn-block" (click)="login()" *ngIf="!isProcessing" translate="signIn"></button>
+    <button class="btn btn-primary btn-block" type="button" disabled *ngIf="isProcessing">
       <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
       <span class="ml-1" translate="signingIn"> </span>
     </button>

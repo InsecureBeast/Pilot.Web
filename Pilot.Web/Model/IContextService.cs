@@ -39,15 +39,24 @@ namespace Pilot.Web.Model
 
         public void CreateContext(Credentials credentials)
         {
-            var httpClient = _connectionService.Connect(credentials);
-            var apiService = new RemoteService(httpClient);
-            _services[credentials.Username] = apiService;
+            lock (_services)
+            {
+                if (_services.ContainsKey(credentials.Username))
+                    return;
+
+                var httpClient = _connectionService.Connect(credentials);
+                var apiService = new RemoteService(httpClient);
+                _services[credentials.Username] = apiService;
+            }
         }
 
         public void RemoveContext(string actor)
         {
-            if (_services.Remove(actor, out var remoteService))
-                remoteService.Dispose();
+            lock (_services)
+            {
+                if (_services.Remove(actor, out var remoteService))
+                    remoteService.Dispose();
+            }
         }
 
         private IRemoteService GetRemoteService(string actor)
@@ -59,9 +68,6 @@ namespace Pilot.Web.Model
             if (!apiService.IsActive)
             {
                 throw new UnauthorizedAccessException();
-
-                //RemoveContext(actor);
-                //CreateContext(actor);
             }
 
             return apiService;

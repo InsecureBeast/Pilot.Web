@@ -12,6 +12,9 @@ namespace Pilot.Web.Tools
                 return null;
 
             var token = tokenSource.ToString().Replace("Bearer ", "");
+            if (string.IsNullOrEmpty(token) || token == "null")
+                return null;
+
             var jwtToken = new JwtSecurityToken(token);
             return jwtToken.Actor;
         }
