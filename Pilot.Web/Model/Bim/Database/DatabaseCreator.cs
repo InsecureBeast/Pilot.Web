@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Globalization;
 using log4net;
 
 namespace Pilot.Web.Model.Bim.Database
 {
     public class DatabaseCreator
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(DatabaseCreator));
+
         public void CreateModelPartDatabase(string filename)
         {
             using (var connection = new DatabaseConnector().Connect(filename))
@@ -32,21 +33,23 @@ namespace Pilot.Web.Model.Bim.Database
             @"
             CREATE TABLE [nodes] (
                 [object_id] GUID,
-                [revision] TEXT,
-                [version_id] GUID NOT NULL,
-                [parent_id] GUID,
-                [name] TEXT,
-                [type] TEXT,
-                [data] TEXT,
-                [placement] BLOB,
+                [revision] INT,
+                [data] BLOB,
                 PRIMARY KEY (object_id, revision)
             ) WITHOUT ROWID;
 
             CREATE TABLE [tessellations] (
               [id] GUID PRIMARY KEY, 
               [object_id] GUID, 
-              [revision] TEXT, 
+              [revision] INT, 
               [data] BLOB
+            ) WITHOUT ROWID;
+
+            CREATE TABLE [attributes] (
+                [object_id] GUID,
+                [revision] INT,
+                [data] BLOB,
+                PRIMARY KEY (object_id, revision)
             ) WITHOUT ROWID;
 
             CREATE INDEX [1] ON [tessellations]([object_id]);

@@ -41,7 +41,7 @@ export class BimModelService {
       for (let file of modelPart.actualFileSnapshot.files) {
         this.bimService.getModelPartTessellationsAsync(modelPart.id, file.body.id, file.body.size, cancel).then(t => {
           resolve(t);
-        });
+        }, e => reject(e));
       }
     });
   }
@@ -51,7 +51,7 @@ export class BimModelService {
       for (let file of modelPart.actualFileSnapshot.files) {
         this.bimService.getModelPartIfcNodesAsync(modelPart.id, file.body.id, file.body.size, cancel).then(t => {
           resolve(t);
-        });
+        }, e => reject(e));
       }
     });
   }

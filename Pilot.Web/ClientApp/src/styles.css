@@ -51,8 +51,10 @@ html, body {
 .progress {
   height: 2px;
   width: 100%;
-  margin-top: -0.6rem;
   z-index: 1100;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 
 /* fallback */

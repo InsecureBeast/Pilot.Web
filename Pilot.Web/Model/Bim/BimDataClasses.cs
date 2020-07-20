@@ -79,23 +79,20 @@ namespace Pilot.Web.Model.Bim
         public Guid Guid { get; set; }
         public Guid ModelPartId { get; set; }
         public IfcNodeState ObjectState { get; set; } = IfcNodeState.Undefined;
-        //private bool IsAttributesLoaded => Attributes.Length == 1 && Attributes.First().Name == "";
+        public ElementPropertySet[] Attributes { get; set; }
         #endregion
 
         #region serialized properties
         [ProtoMember(1)]
-        public ElementPropertySet[] Attributes { get; set; }
-
-        [ProtoMember(2)]
         public Dictionary<Guid, List<MeshProperties>> MeshesProperties { get; set; }
 
-        [ProtoMember(3, IsPacked = true)]
+        [ProtoMember(2, IsPacked = true)]
         public Guid ParentGuid { get; set; }
 
-        [ProtoMember(4, IsPacked = true)]
+        [ProtoMember(3, IsPacked = true)]
         public string Name { get; set; }
 
-        [ProtoMember(5, IsPacked = true)]
+        [ProtoMember(4, IsPacked = true)]
         public string Type { get; set; }
         #endregion
 
@@ -115,18 +112,6 @@ namespace Pilot.Web.Model.Bim
         {
             ObjectState = state;
             return this;
-        }
-
-        ////TODO, merge by Set name
-        //public IfcNode WithAttributes(ElementPropertySet[] attributes)
-        //{
-        //    Attributes = Attributes.Concat(attributes).ToArray();
-        //    return this;
-        //}
-
-        private ElementProperty GetProperty(string propertyName)
-        {
-            return Attributes.SelectMany(x => x.Properties).FirstOrDefault(y => y.Name == propertyName);
         }
     }
 
@@ -244,7 +229,7 @@ namespace Pilot.Web.Model.Bim
             {
                 var hashCode = (int)meshColor * 397;
 
-                if (meshPlacement != null)
+                if(meshPlacement != null)
                     hashCode = meshPlacement.Aggregate(hashCode, (current, x) => (current * 397) ^ x.GetHashCode());
 
                 return hashCode;
@@ -448,10 +433,39 @@ namespace Pilot.Web.Model.Bim
 
         [ProtoMember(2)]
         public ElementProperty[] Properties { get; set; }
+
+        #region Comparable
+        public bool Equals(ElementPropertySet other)
+        {
+            return Name.Equals(other.Name)
+                   && Properties.SequenceEqual(other.Properties);
+        }
+
+        public override bool Equals(object target)
+        {
+            return target is ElementPropertySet other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (Name != null ? Name.GetHashCode() : 0) * 397;
+
+                if (Properties != null)
+                    hashCode = Properties.Aggregate(hashCode, (current, x) => (current * 397) ^ x.GetHashCode());
+
+                return hashCode;
+            }
+        }
+
+
+
+        #endregion
     }
 
     [ProtoContract]
-    public class ElementProperty
+    public class ElementProperty : IEquatable<ElementProperty>
     {
         [ProtoMember(1, IsPacked = true)]
         public string Name { get; set; }
@@ -459,8 +473,44 @@ namespace Pilot.Web.Model.Bim
         [ProtoMember(2, IsPacked = true)]
         public short Unit { get; set; }
 
-        [ProtoMember(3)]
+        [ProtoMember(3)] 
         public DValue Value { get; set; }
+
+        #region Comparable
+        public bool Equals(ElementProperty other)
+        {
+            return other != null && (Name.Equals(other.Name) 
+                                     && Unit.Equals(other.Unit) 
+                                     && Value.Equals(other.Value));
+        }
+
+        public override bool Equals(object target)
+        {
+            return target is ElementProperty other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ Unit.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Value != null ? Value.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(ElementProperty left, ElementProperty right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ElementProperty left, ElementProperty right)
+        {
+            return !Equals(left, right);
+        }
+
+        #endregion
     }
 
     [ProtoContract]
@@ -702,7 +752,7 @@ namespace Pilot.Web.Model.Bim
             throw new Exception($"Error converting attribute value [{value}] to DValue");
         }
     }
-
+    
     public enum UnitPrefix : short
     {
         ENUM_NONE,

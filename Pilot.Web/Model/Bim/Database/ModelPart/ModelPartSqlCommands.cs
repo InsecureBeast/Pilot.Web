@@ -2,23 +2,138 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Globalization;
+using Pilot.Web.Model.Bim.Serialization;
 
 namespace Pilot.Web.Model.Bim.Database.ModelPart
 {
-    static class ModelPartSqlConstants
+    public static class ModelPartSqlConstants
     {
         public const string DATE_FORMAT = "yyyyMMddHHmmssFFF";
     }
 
-    static class ModelPartSqlDataConverter
+    public static class ModelPartSqlDataConverter
     {
-        public static long ConvertDateTimeToInt(DateTime dt)
+        public static long ConvertDateTimeToInt(DateTime dateDate)
         {
-            return long.Parse(dt.ToString(ModelPartSqlConstants.DATE_FORMAT));
+            return dateDate.Ticks;
         }
     }
 
+    #region Updaters
+    class NodeUpdater : IDisposable
+    {
+        private SQLiteCommand _commandAdd;
+        private SQLiteCommand _commandRemove;
+
+        private readonly SQLiteParameter _paramId;
+        private readonly SQLiteParameter _paramRevision;
+        private readonly SQLiteParameter _paramData;
+        private readonly SQLiteParameter _aParamData;
+
+        public NodeUpdater(SQLiteConnection connection)
+        {
+            _commandAdd = new SQLiteCommand(connection)
+            {
+                CommandText =
+                  "INSERT INTO [nodes] (object_id, revision, data) VALUES (@object_id, @revision, @data); " +
+                  "INSERT INTO [attributes] (object_id, revision, data) VALUES (@object_id, @revision, @attributes); "
+            };
+
+            _commandRemove = new SQLiteCommand(connection)
+            {
+                CommandText = "INSERT INTO [nodes] (object_id, revision, data) VALUES (@object_id, @revision, @data)"
+            };
+
+            _paramId = new SQLiteParameter { DbType = DbType.Guid, ParameterName = "@object_id" };
+            _paramRevision = new SQLiteParameter { DbType = DbType.Int64, ParameterName = "@revision" };
+            _paramData = new SQLiteParameter { DbType = DbType.Binary, ParameterName = "@data" };
+            _aParamData = new SQLiteParameter { DbType = DbType.Binary, ParameterName = "@attributes" };
+
+            _commandAdd.Parameters.Add(_paramId);
+            _commandAdd.Parameters.Add(_paramRevision);
+            _commandAdd.Parameters.Add(_paramData);
+            _commandAdd.Parameters.Add(_aParamData);
+
+            _commandRemove.Parameters.Add(_paramId);
+            _commandRemove.Parameters.Add(_paramRevision);
+            _commandRemove.Parameters.Add(_paramData);
+        }
+
+        public void Insert(IfcNode node, Guid versionId, DateTime revision)
+        {
+            _paramId.Value = node.Guid;
+            _paramRevision.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revision);
+            _paramData.Value = BimProtoSerializer.Serialize(node);
+            _aParamData.Value = BimProtoSerializer.Serialize(node.Attributes);
+
+            _commandAdd.ExecuteNonQuery();
+        }
+
+        public void InsertDeleted(Guid node, Guid versionId, DateTime revision)
+        {
+            _paramId.Value = node;
+            _paramRevision.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revision);
+            _paramData.Value = null;
+
+            _commandRemove.ExecuteNonQuery();
+        }
+
+        public void Dispose()
+        {
+            _commandAdd.Dispose();
+            _commandRemove.Dispose();
+        }
+    }
+
+    class TessellationUpdater : IDisposable
+    {
+        private readonly SQLiteCommand _command;
+
+        private readonly SQLiteParameter _paramId;
+        private readonly SQLiteParameter _paramObjectId;
+        private readonly SQLiteParameter _paramRevision;
+        private readonly SQLiteParameter _paramData;
+
+        public TessellationUpdater(SQLiteConnection connection)
+        {
+            _command = new SQLiteCommand(connection)
+            {
+                CommandText = "REPLACE INTO [tessellations] (id, object_id, revision, data) VALUES (?, ?, ?, ?)"
+            };
+
+            _paramId = new SQLiteParameter { DbType = DbType.Guid };
+            _paramObjectId = new SQLiteParameter { DbType = DbType.Guid };
+            _paramRevision = new SQLiteParameter { DbType = DbType.Int64 };
+            _paramData = new SQLiteParameter { DbType = DbType.Binary };
+
+            _command.Parameters.Add(_paramId);
+            _command.Parameters.Add(_paramObjectId);
+            _command.Parameters.Add(_paramRevision);
+            _command.Parameters.Add(_paramData);
+        }
+
+        public int InsertOrUpdate(Guid id, ModelMesh tessellation, Guid objectId, Guid versionId, DateTime revision)
+        {
+            var data = BimProtoSerializer.Serialize(tessellation);
+            _paramId.Value = id;
+            _paramObjectId.Value = objectId;
+            _paramRevision.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revision);
+            _paramData.Value = data;
+
+            _command.ExecuteNonQuery();
+
+            return data.Length;
+        }
+
+        public void Dispose()
+        {
+            _command.Dispose();
+        }
+    }
+
+    #endregion
+
+    #region Selectors
     class VersionIdSelector : IDisposable
     {
         protected SQLiteCommand Command;
@@ -38,11 +153,56 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
             {
                 while (reader.Read())
                 {
-                    return reader.IsDBNull(0) ? DateTime.MinValue : DateTime.ParseExact(reader.GetInt64(0).ToString(), ModelPartSqlConstants.DATE_FORMAT, CultureInfo.InvariantCulture);
+                    return reader.IsDBNull(0) ? DateTime.MinValue : new DateTime(reader.GetInt64(0));
                 }
             }
 
             return DateTime.MinValue;
+        }
+
+        public void Dispose()
+        {
+            Command.Dispose();
+        }
+    }
+
+    class NodeAttributesSelector : IDisposable
+    {
+        protected SQLiteCommand Command;
+
+        protected readonly SQLiteParameter ParamRevision;
+        protected readonly SQLiteParameter ParamId;
+
+        public NodeAttributesSelector(SQLiteConnection connection)
+        {
+            Command = new SQLiteCommand(connection)
+            {
+                CommandText = "SELECT data, MAX(revision) as revision " +
+                              "FROM attributes " +
+                              "WHERE revision <= @revision AND object_id = @id"
+            };
+
+            ParamRevision = new SQLiteParameter { DbType = DbType.Int64, ParameterName = "@revision" };
+            ParamId = new SQLiteParameter { DbType = DbType.Guid, ParameterName = "@id" };
+
+            Command.Parameters.Add(ParamId);
+            Command.Parameters.Add(ParamRevision);
+        }
+
+        public ElementPropertySet[] Select(Guid id, DateTime revision)
+        {
+            ParamId.Value = id;
+            ParamRevision.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revision);
+
+            using (var reader = Command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return reader.IsDBNull(0) ? Array.Empty<ElementPropertySet>() : BimProtoSerializer.Deserialize<ElementPropertySet[]>(reader.GetFieldValue<byte[]>(0));
+                }
+            }
+
+            return Array.Empty<ElementPropertySet>();
         }
 
         public void Dispose()
@@ -69,9 +229,6 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
 
         public IEnumerable<IfcNode> Select(DateTime revisionFrom, DateTime revisionTo)
         {
-            //ParamTo.Value = revisionTo.ToString(ModelPartSqlConstants.DATE_FORMAT);
-            //ParamFrom.Value = revisionFrom.ToString(ModelPartSqlConstants.DATE_FORMAT);
-
             ParamTo.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revisionTo);
             ParamFrom.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revisionFrom);
 
@@ -164,8 +321,8 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
                               "GROUP BY A.object_id"
             };
 
-            _paramTo = new SQLiteParameter { DbType = DbType.String, ParameterName = "@revisionTo" };
-            _paramFrom = new SQLiteParameter { DbType = DbType.String, ParameterName = "@revisionFrom" };
+            _paramTo = new SQLiteParameter { DbType = DbType.Int64, ParameterName = "@revisionTo" };
+            _paramFrom = new SQLiteParameter { DbType = DbType.Int64, ParameterName = "@revisionFrom" };
 
             _command.Parameters.Add(_paramTo);
             _command.Parameters.Add(_paramFrom);
@@ -173,8 +330,8 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
 
         public IEnumerable<IfcNode> Select(DateTime revisionFrom, DateTime revisionTo, Dictionary<Guid, Tessellation> contextTessellations)
         {
-            _paramTo.Value = revisionTo.ToString(ModelPartSqlConstants.DATE_FORMAT);
-            _paramFrom.Value = revisionFrom.ToString(ModelPartSqlConstants.DATE_FORMAT);
+            _paramTo.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revisionTo);
+            _paramFrom.Value = ModelPartSqlDataConverter.ConvertDateTimeToInt(revisionFrom);
 
             using (var reader = _command.ExecuteReader())
             {
@@ -182,11 +339,11 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
                 {
                     var id = reader.IsDBNull(0) ? Guid.Empty : reader.GetGuid(0);
 
-                    var newRevision = reader.IsDBNull(1) ? null : reader.GetString(1);
-                    var newNode = BimProtoSerializer.Deserialize<IfcNode>(reader.GetFieldValue<byte[]>(3));
+                    var newRevision = reader.IsDBNull(1) ? null : reader.GetInt64(1).ToString();
+                    var newNode = reader.IsDBNull(3) ? null : BimProtoSerializer.Deserialize<IfcNode>(reader.GetFieldValue<byte[]>(3));
 
-                    var oldRevision = reader.IsDBNull(2) ? null : reader.GetString(2);
-                    var oldNode = BimProtoSerializer.Deserialize<IfcNode>(reader.GetFieldValue<byte[]>(4));
+                    var oldRevision = reader.IsDBNull(2) ? null : reader.GetInt64(2).ToString();
+                    var oldNode = reader.IsDBNull(4) ? null : BimProtoSerializer.Deserialize<IfcNode>(reader.GetFieldValue<byte[]>(4));
 
                     if (newNode == null && oldNode == null)
                     {
@@ -207,20 +364,12 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
                     else if (oldRevision != null && !oldRevision.Equals(newRevision)) //modified
                     {
                         //TODO need to check attributes changed
-                        //if (IfcNodeChangeAnalyzer.Compare(oldPlacement, newPlacement, contextTessellations))
-                        //{
-                        //    yield return new IfcNode
-                        //    {
-                        //        Guid = id,
-                        //        ModelPartId = _modelPartId,
-                        //        ParentGuid = reader.IsDBNull(4) ? Guid.Empty : reader.GetGuid(4),
-                        //        Name = newName,
-                        //        Type = type,
-                        //        Attributes = newData,
-                        //        MeshesProperties = newPlacement,
-                        //        ObjectState = IfcNodeState.PlacementAndAttributesModified
-                        //    };
-                        //}
+                        if (IfcNodeChangeAnalyzer.Compare(newNode.MeshesProperties, oldNode.MeshesProperties, contextTessellations))
+                        {
+                            yield return newNode.WithId(id)
+                                .WithModelPartId(_modelPartId)
+                                .WithObjectState(IfcNodeState.PlacementAndAttributesModified);
+                        }
                     }
                 }
             }
@@ -359,6 +508,43 @@ namespace Pilot.Web.Model.Bim.Database.ModelPart
 
             Command.Parameters.Add(ParamTo);
             Command.Parameters.Add(ParamFrom);
+        }
+    }
+
+    #endregion
+
+    public class DatabaseMerger : IDisposable
+    {
+        private readonly SQLiteCommand _command;
+        private readonly SQLiteParameter _paramToMergePath;
+
+        public DatabaseMerger(SQLiteConnection connection)
+        {
+            _command = new SQLiteCommand(connection)
+            {
+                CommandText = "attach @toMergePath as toMerge; " +
+                              "BEGIN; " +
+
+                              "insert or replace into nodes select * from toMerge.nodes; " +
+                              "insert or replace into attributes select * from toMerge.attributes; " +
+                              "insert or replace into tessellations select * from toMerge.tessellations; " +
+
+                              "COMMIT; " +
+                              "detach toMerge;"
+            };
+            _paramToMergePath = new SQLiteParameter { DbType = DbType.String, ParameterName = "@toMergePath" };
+            _command.Parameters.Add(_paramToMergePath);
+        }
+
+        public void Merge(string patToMerge)
+        {
+            _paramToMergePath.Value = patToMerge;
+            _command.ExecuteNonQuery();
+        }
+
+        public void Dispose()
+        {
+            _command.Dispose();
         }
     }
 }
