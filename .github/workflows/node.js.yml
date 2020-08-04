@@ -37,6 +37,6 @@ jobs:
         npm install
         npm run build
         npm test
-      working-directory: ./wwwroot
+      working-directory: .ClientApp
       env:
         CI: true
