@@ -37,6 +37,6 @@ jobs:
         npm install
         npm run build
         npm test
-      working-directory: clientapp
+      working-directory: ./Pilot.Web/ClientApp
       env:
         CI: true
