@@ -24,6 +24,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: Build Angular Client App
+      run: echo Build Angular Client App
     - name: Cache node modules
       uses: actions/cache@v1
       with:
