@@ -11,13 +11,8 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: /home/runner/work/Pilot.Web/Pilot.Web/ClientApp
-        
+            
     strategy:
       matrix:
         node-version: [12.x]
@@ -40,5 +35,6 @@ jobs:
         npm install
         npm run build
         npm test
+      working-directory: ./ClientApp 
       env:
         CI: true
