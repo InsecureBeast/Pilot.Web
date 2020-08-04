@@ -15,8 +15,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: cd
-      run: cd ./ClientApp 
     - name: Cache node modules
       uses: actions/cache@v1
       with:
@@ -28,6 +26,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Echo
+      run: pwd
+    - name: cd
+      run: cd ./ClientApp
     - name: Echo
       run: pwd
     - name: Install, build, test
