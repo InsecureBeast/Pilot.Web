@@ -3,9 +3,7 @@
 
 name: Build Angular App
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
     
 jobs:
   build:
@@ -33,6 +31,6 @@ jobs:
         npm install
         npm run build
         npm test
-      working-directory: ./ClientApp
+      working-directory: ./wwwroot
       env:
         CI: true
