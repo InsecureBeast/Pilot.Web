@@ -27,9 +27,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Echo
-      run: echo pwd
+      run: pwd
     - name: Echo ClientApp
-      run: echo pwd
+      run: pwd
       working-directory: ./ClientApp
     - name: Install, build, test
       run: |
