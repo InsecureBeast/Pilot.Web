@@ -9,15 +9,13 @@ on:
   pull_request:
     branches: [ master ]
 
-defaults:
-  run:
-    working-directory: ./ClientApp
-    
 jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./ClientApp
     strategy:
       matrix:
         node-version: [12.x]
