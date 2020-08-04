@@ -1,4 +1,4 @@
-name: .NET Core
+name: Build project
 
 on:
   push:
@@ -23,8 +23,8 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Build Angular Client App
-      run: echo Build Angular Client App
+    - name: Setup Angular
+      run: echo Build Angular client app
     - name: Cache node modules
       uses: actions/cache@v1
       with:
