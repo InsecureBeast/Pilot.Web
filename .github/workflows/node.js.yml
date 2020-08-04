@@ -5,13 +5,7 @@ name: Build Angular App
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
-
-defaults:
-  run:
-    working-directory: ClientApp
     
 jobs:
   build:
@@ -39,5 +33,6 @@ jobs:
         npm install
         npm run build
         npm test
+      working-directory: ./ClientApp
       env:
         CI: true
