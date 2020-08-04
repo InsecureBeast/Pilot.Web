@@ -29,7 +29,7 @@ jobs:
     - name: Echo
       run: pwd
     - name: cd
-      run: cd ./
+      run: cd ClientApp
     - name: Echo
       run: pwd
     - name: Install, build, test
