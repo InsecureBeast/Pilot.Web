@@ -19,10 +19,18 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    #- name: Test
-    #  run: dotnet test --no-restore --verbosity normal
     - name: Publish Linux x64
       run: dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\Linux64.pubxml
+    - name: Zip to archive  
+      uses: papeloto/action-zip@v1
+      with:
+        files: Pilot.Web/bin/Release/netcoreapp3.1/publish/
+        dest: pilot-web_linux.zip
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: pilot-web_linux
+        path: ${{ github.workspace }}/pilot-web_linux.zip
     - name: Publish Windows x64
       run: dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\Windows64.pubxml
     
