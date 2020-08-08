@@ -63,13 +63,13 @@ jobs:
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v2
       with:
-        name: pilot-web_linux-${{ steps.gitversion.outputs.fullSemVer }}"
+        name: pilot-web_linux-${{ steps.gitversion.outputs.fullSemVer }}
         path: Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_linux/
     - name: Publish Windows x64
       run: dotnet publish --runtime win-x64 --self-contained true -c Release -o Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_windows/ /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.Sha }}
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v2
       with:
-        name: pilot-web_windows-${{ steps.gitversion.outputs.fullSemVer }}"
+        name: pilot-web_windows-${{ steps.gitversion.outputs.fullSemVer }}
         path: Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_windows/
     
