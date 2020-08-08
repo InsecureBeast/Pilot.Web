@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DocumentRender.Tools;
-using log4net;
 
 namespace DocumentRender.DocumentConverter
 {
     internal class LinuxDocumentConverter : IDocumentConverter
     {
-        private readonly ILog _logger = LogManager.GetLogger(typeof(LinuxDocumentConverter));
         private readonly DrawToolProvider _toolProvider;
         private readonly ToolRunner _toolRunner;
 
         public LinuxDocumentConverter()
         {
-            _toolProvider = new DrawToolProvider(_logger);
+            _toolProvider = new DrawToolProvider();
             _toolRunner = new ToolRunner();
         }
 

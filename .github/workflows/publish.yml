@@ -21,6 +21,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Publish Linux x64
       run: dotnet publish -c Release /p:PublishProfile=Properties\PublishProfiles\Linux64.pubxml
+#      run: dotnet publish --runtime linux-x64 --self-contained true -c Release -o Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_linux/
 #    - name: Zip linux version to archive  
 #      uses: papeloto/action-zip@v1
 #      with:
