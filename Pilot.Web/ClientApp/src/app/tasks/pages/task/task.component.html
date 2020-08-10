@@ -1,22 +1,7 @@
-<nav class="navbar navbar-expand fixed-top navbar-light bg-content justify-content-between">
-  <ul class="navbar-nav">
-    
-  </ul>
+<app-task-toolbar [task]="selectedTask"
+                  (onDocumentClosed)="close($event)">
 
-  <ul class="navbar-nav">
-    <!--<li class="nav-item">
-      <span class="navbar-text toolbar-text">
-        {{selectedTask.title}}
-      </span>
-    </li>-->
-  </ul>
-
-  <ul class="navbar-nav">
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="close($event)">
-      <span class="navbar-text toolbar-text material-icons nav-icon">close</span>
-    </li>
-  </ul>
-</nav>
+</app-task-toolbar>
 
 
 <div class="pt-6 row pl-3 pr-3 task-details">

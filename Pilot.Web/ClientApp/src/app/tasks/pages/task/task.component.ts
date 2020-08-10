@@ -4,7 +4,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
-import { IObject, AttributeType } from '../../../core/data/data.classes';
+import { IObject, AttributeType, ITransition } from '../../../core/data/data.classes';
 import { RepositoryService } from '../../../core/repository.service';
 import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
@@ -21,6 +21,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
 
   selectedTask: IObject;
+  toolbarItems : ITransition[];
 
   /** task ctor */
   constructor(
@@ -29,6 +30,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     private location: Location,
     private readonly transitionsManager: TransitionsManager) {
 
+    this.toolbarItems = new Array<ITransition>();  
   }
 
   ngOnInit(): void {
@@ -44,7 +46,9 @@ export class TaskComponent implements OnInit, OnDestroy {
           for (const stateAttr of userStatesAttrs) {
             const attrsMap = IObjectExtensions.objectAttributesToMap(this.selectedTask.attributes);
             const transitions = this.transitionsManager.getAvailableTransitions(stateAttr, attrsMap, currentPerson);
-            let s = transitions.length;
+            transitions.forEach(t => {
+              this.toolbarItems.push(t);
+            });
           }
         })
         .catch(err => {

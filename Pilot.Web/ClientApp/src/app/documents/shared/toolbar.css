@@ -45,3 +45,8 @@ li.nav-item-button span {
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
   touch-action: none;
 }
+
+.nav-icon-svg {
+  width: 24px;
+  height: 24px;
+}
