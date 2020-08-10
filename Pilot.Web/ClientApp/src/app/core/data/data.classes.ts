@@ -1,4 +1,5 @@
 import { OnInit } from "@angular/core";
+import { IObjectExtensions } from "../tools/iobject.extensions";
 
 export class DatabaseInfo {
 
@@ -23,7 +24,7 @@ export interface IObject {
   parentId: string;
   title: string;
   type: IType;
-  attributes: Map<string, any>;
+  attributes: { [key: string]: any; };// Map<string, IValue>;
   children: IChild[];
   creator: IPerson;
   created: string;
@@ -193,4 +194,34 @@ export enum RelationType {
   MessageAttachments = 4,
   Custom = 5,
   TaskAttachments = 6,
+}
+
+export interface ITransition {
+  stateTo: string;
+  displayName: string;
+  availableForPositionsSource: string[];
+}
+
+export interface IUserStateMachine {
+  id: string;
+  title: string;
+  stateTransitions: Map<string, ITransition[]>
+}
+
+export class MUserStateMachine {
+  static readonly Null : IUserStateMachine = { 
+    id : "",
+    title:"",
+    stateTransitions: new Map<string, ITransition[]>()
+  };
+
+  constructor(stateMachine: IUserStateMachine) {
+    this.id = stateMachine.id;
+    this.title = stateMachine.title;
+    this.stateTransitions = IObjectExtensions.objectToMap<ITransition[]>(stateMachine.stateTransitions);
+  }
+
+  id: string;
+  title: string;
+  stateTransitions: Map<string, ITransition[]>;
 }

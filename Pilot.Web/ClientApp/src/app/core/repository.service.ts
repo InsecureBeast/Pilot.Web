@@ -1,9 +1,10 @@
 import { Injectable, Inject } from '@angular/core';
-import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState } from './data/data.classes';
+import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
+import { newArray } from '@angular/compiler/src/util';
 
 export enum RequestType {
   New = 0,
@@ -19,6 +20,7 @@ export class RepositoryService {
   private organizationUnits: Map<number, IOrganizationUnit>;
   private userStates: Map<string, IUserState>;
   private currentPerson: IPerson;
+  private stateMachines: Map<string, MUserStateMachine>;
 
   private behaviorInitializedSubject = new BehaviorSubject<boolean>(false);
 
@@ -37,6 +39,7 @@ export class RepositoryService {
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
     this.userStates = new Map<string, IUserState>();
+    this.stateMachines = new Map<string, MUserStateMachine>();
 
     this.initializeAsync();
   }
@@ -64,8 +67,8 @@ export class RepositoryService {
 
   getObjectParentsAsync(id: string, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
-      let headers = this.getHeaders();
-      let url = 'api/Documents/GetDocumentParents?id=' + id;
+      const headers = this.getHeaders();
+      const url = 'api/Documents/GetDocumentParents?id=' + id;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
         .pipe(first())
@@ -75,7 +78,7 @@ export class RepositoryService {
   }
 
   getObjectAsync(id: string): Promise<IObject> {
-    let headers = this.getHeaders();
+    const headers = this.getHeaders();
     return new Promise((resolve, reject) => {
       this.http
         .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers })
@@ -135,6 +138,11 @@ export class RepositoryService {
           this.userStates.set(state.id, state);
         }
 
+        this.stateMachines = new Map<string, MUserStateMachine>();
+        for (let stateMachine of metadata.stateMachines) {
+          this.stateMachines.set(stateMachine.id, new MUserStateMachine(stateMachine));
+        }
+
         init.next(true);
         init.complete();
         zip$.unsubscribe();
@@ -175,6 +183,13 @@ export class RepositoryService {
 
   getUserState(id: string): IUserState {
     return this.userStates.get(id);
+  }
+
+  GetStateMachine(id: string) : IUserStateMachine {
+    if (!this.stateMachines.has(id))
+      return MUserStateMachine.Null;
+      
+    return this.stateMachines.get(id);
   }
 
   private getPeople(): Observable<IPerson[]> {

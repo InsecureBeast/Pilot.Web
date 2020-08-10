@@ -4,8 +4,10 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
-import { IObject } from '../../../core/data/data.classes';
+import { IObject, AttributeType } from '../../../core/data/data.classes';
 import { RepositoryService } from '../../../core/repository.service';
+import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
+import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 
 @Component({
     selector: 'app-task',
@@ -24,7 +26,8 @@ export class TaskComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private repository: RepositoryService,
-    private location: Location) {
+    private location: Location,
+    private readonly transitionsManager: TransitionsManager) {
 
   }
 
@@ -36,7 +39,13 @@ export class TaskComponent implements OnInit, OnDestroy {
       this.repository.getObjectAsync(id)
         .then(source => {
           this.selectedTask = source;
-
+          const userStatesAttrs = source.type.attributes.filter(x => x.type === AttributeType.UserState);
+          const currentPerson = this.repository.getCurrentPerson();
+          for (const stateAttr of userStatesAttrs) {
+            const attrsMap = IObjectExtensions.objectAttributesToMap(this.selectedTask.attributes);
+            const transitions = this.transitionsManager.getAvailableTransitions(stateAttr, attrsMap, currentPerson);
+            let s = transitions.length;
+          }
         })
         .catch(err => {
           this.error = err;
