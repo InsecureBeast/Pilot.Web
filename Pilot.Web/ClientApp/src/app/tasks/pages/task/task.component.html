@@ -1,5 +1,6 @@
 <app-task-toolbar [task]="selectedTask"
-                  (onDocumentClosed)="close($event)">
+                  (onClosed)="close($event)"
+                  (onTransition)="makeTransition($event)">
 
 </app-task-toolbar>
 

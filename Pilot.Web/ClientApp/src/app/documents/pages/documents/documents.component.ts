@@ -6,13 +6,14 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SystemIds } from '../../../core/data/system.ids';
-import { RepositoryService, RequestType } from '../../../core/repository.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
+import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
     selector: 'app-documents',

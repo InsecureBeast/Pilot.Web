@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 
 import { IObject, ICommonSettings } from '../../core/data/data.classes';
 import { AuthService } from '../../auth/auth.service';
+import { HeadersProvider } from 'src/app/core/headers.provider';
 
 @Injectable({ providedIn: 'root' })
 export class TasksRepositoryService {
@@ -12,31 +13,22 @@ export class TasksRepositoryService {
     private readonly http: HttpClient,
     @Inject('BASE_URL')
     private readonly baseUrl: string,
-    private readonly userService: AuthService) {
+    private readonly userService: AuthService,
+    private readonly headersProvider: HeadersProvider) {
 
   }
 
   getPersonalSettings(key: string): Observable<ICommonSettings> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return this.http.get<ICommonSettings>(this.baseUrl + 'api/Metadata/GetPersonalSettings?key=' + key, { headers: headers })
       .pipe(first());
   }
 
   getTasks(filter: string): Observable<IObject[]> {
     const body = JSON.stringify(filter);
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     const path = this.baseUrl + 'api/Tasks/GetTasks';
     return this.http.post<IObject[]>(path, body, { headers: headers })
       .pipe(first());
-  }
-
-  private getHeaders(): HttpHeaders {
-    const token = this.userService.getToken();
-    const headers = new HttpHeaders({
-      'Accept': 'application/json',
-      'Authorization': "Bearer " + token,
-      'Content-Type': 'application/json'
-    });
-    return headers;
   }
 }

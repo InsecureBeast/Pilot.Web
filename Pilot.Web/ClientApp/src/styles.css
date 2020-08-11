@@ -48,6 +48,10 @@ html, body {
   padding-top: 4rem;
 }
 
+.pt-2h {
+  padding-top: .4rem;
+}
+
 /* fallback */
 @font-face {
   font-family: 'Material Icons';

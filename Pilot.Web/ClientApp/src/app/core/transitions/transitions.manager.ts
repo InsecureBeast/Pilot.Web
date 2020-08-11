@@ -25,7 +25,7 @@ export class TransitionsManager implements ITransitionsManager {
         if (!Guid.isGuid(stateMachineId))
             return new Array<ITransition>();
 
-        var stateMachine = this.repository.GetStateMachine(stateMachineId);
+        var stateMachine = this.repository.getStateMachine(stateMachineId);
         if (!stateMachine)
             return new Array<ITransition>();;
         

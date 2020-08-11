@@ -11,11 +11,12 @@ import { INode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
-import { RepositoryService, RequestType } from '../../../core/repository.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { Constants } from '../../../core/constants';
 import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
+import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
   selector: 'app-document',

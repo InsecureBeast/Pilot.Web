@@ -7,7 +7,7 @@ using Ascon.Pilot.DataClasses;
 
 namespace Pilot.Web.Tools
 {
-    public class AttributeFormatter
+    public static class AttributeFormatter
     {
         public static IReadOnlyDictionary<string, DValue> Format(INType objectType, IReadOnlyDictionary<string, DValue> values)
         {
@@ -64,5 +64,28 @@ namespace Pilot.Web.Tools
             }
             return cloneValues;
         }
+
+        public static DValue ToDValue(this string value)
+        {
+            if (Guid.TryParse(value, out var guid))
+                return new DValue { GuidValue = guid};
+
+            if (int.TryParse(value, out var i))
+                return new DValue { IntValue = i};
+
+            if (double.TryParse(value, out var d))
+                return new DValue { DoubleValue = d};
+
+            if (decimal.TryParse(value, out var dc))
+                return new DValue { DecimalValue = dc };
+
+            if (DateTime.TryParse(value, out var dt))
+                return new DValue { DateValue = dt };
+
+            //TODO int array and string[]
+
+            return new DValue {StrValue = value};
+        }
+
     }
 }

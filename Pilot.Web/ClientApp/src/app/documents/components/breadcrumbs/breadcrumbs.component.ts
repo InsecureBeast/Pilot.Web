@@ -6,10 +6,11 @@ import { first } from 'rxjs/operators';
 import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
-import { RepositoryService, RequestType } from '../../../core/repository.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { INode } from '../../shared/node.interface';
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { SystemIds } from '../../../core/data/system.ids';
+import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
     selector: 'app-breadcrumbs',

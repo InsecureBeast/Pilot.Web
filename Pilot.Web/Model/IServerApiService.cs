@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.DataModifier;
 using Ascon.Pilot.Server.Api.Contracts;
 using Pilot.Web.Model.CommonSettings;
 using Pilot.Web.Model.DataObjects;
@@ -32,6 +33,8 @@ namespace Pilot.Web.Model
         INUserStateMachine GetStateMachine(Guid stateMachineId);
         INUserState GetUserState(Guid id);
         IReadOnlyDictionary<int, INOrganisationUnit> GetOrganizationUnits();
+
+        IModifier NewModifier();
     }
 
     public class ServerApiService : IServerApiService, IRemoteServiceListener
@@ -47,13 +50,15 @@ namespace Pilot.Web.Model
         private readonly Dictionary<Guid, INUserState> _statesById = new Dictionary<Guid, INUserState>();
         private readonly Dictionary<Guid, INUserStateMachine> _stateMachines = new Dictionary<Guid, INUserStateMachine>();
         private readonly INPerson _currentPerson;
-
-        public ServerApiService(IServerApi serverApi, DDatabaseInfo dbInfo, ISearchServiceFactory searchServiceFactory)
+        private readonly IBackend _backend;
+        
+        public ServerApiService(IServerApi serverApi, DDatabaseInfo dbInfo, ISearchServiceFactory searchServiceFactory, IBackend backend)
         {
             _serverApi = serverApi;
             _dbInfo = dbInfo;
             _searchServiceFactory = searchServiceFactory;
             _currentPerson = dbInfo.Person;
+            _backend = backend;
 
             LoadPeople();
             LoadOrganizationUnits();
@@ -198,6 +203,11 @@ namespace Pilot.Web.Model
         public IReadOnlyDictionary<int, INOrganisationUnit> GetOrganizationUnits()
         {
             return _orgUnits;
+        }
+
+        public IModifier NewModifier()
+        {
+            return new Modifier(_backend);
         }
 
         public void AddSearch(DSearchDefinition searchDefinition)

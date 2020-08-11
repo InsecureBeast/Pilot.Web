@@ -1,17 +1,15 @@
 import { Injectable, Inject } from '@angular/core';
-import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
+
 import { AuthService } from '../auth/auth.service';
-import { newArray } from '@angular/compiler/src/util';
+import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
+import { RequestType, HeadersProvider } from './headers.provider';
+import { Change } from './modifier/change';
+import { Modifier } from './modifier/modifier';
 
-export enum RequestType {
-  New = 0,
-  FromCache = 1
-}
-
-@Injectable({ providedIn: 'root', })
+@Injectable({ providedIn: 'root' })
 export class RepositoryService {
 
   private metadata: IMetadata;
@@ -26,15 +24,18 @@ export class RepositoryService {
 
   initialized = this.behaviorInitializedSubject.value;
 
-  private _requestType: RequestType = RequestType.New;
   set requestType(value: RequestType) {
-    this._requestType = value;
-  }
-  get requestType(): RequestType {
-    return this._requestType;
+    this.headersProvider.requestType = value;
   }
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private authService: AuthService) {
+  get requestType(): RequestType {
+    return this.headersProvider.requestType;
+  }
+
+  constructor(private http: HttpClient, 
+              @Inject('BASE_URL') private baseUrl: string, 
+              private authService: AuthService, 
+              private readonly headersProvider: HeadersProvider) {
     this.types = new Map<number, IType>();
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
@@ -49,13 +50,13 @@ export class RepositoryService {
   }
 
   getMetadata(): Observable<IMetadata> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
   getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
-      let headers = this.getHeaders();
+      let headers = this.headersProvider.getHeaders();
       let url = 'api/Documents/GetDocumentChildren?id=' + objectId + "&childrenType=" + childrenType;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
@@ -67,7 +68,7 @@ export class RepositoryService {
 
   getObjectParentsAsync(id: string, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
-      const headers = this.getHeaders();
+      const headers = this.headersProvider.getHeaders();
       const url = 'api/Documents/GetDocumentParents?id=' + id;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
@@ -78,7 +79,7 @@ export class RepositoryService {
   }
 
   getObjectAsync(id: string): Promise<IObject> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return new Promise((resolve, reject) => {
       this.http
         .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers })
@@ -90,7 +91,7 @@ export class RepositoryService {
   getObjectsAsync(ids: string[]): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
       const body = JSON.stringify(ids);
-      const headers = this.getHeaders();
+      const headers = this.headersProvider.getHeaders();
       const path = this.baseUrl + 'api/Documents/GetObjects';
       this.http
         .post<IObject[]>(path, body, { headers: headers })
@@ -185,52 +186,41 @@ export class RepositoryService {
     return this.userStates.get(id);
   }
 
-  GetStateMachine(id: string) : IUserStateMachine {
+  getStateMachine(id: string) : IUserStateMachine {
     if (!this.stateMachines.has(id))
       return MUserStateMachine.Null;
       
     return this.stateMachines.get(id);
   }
 
+  applyChange(changes: Change[]): Observable<any> {
+    const headers = this.headersProvider.getHeaders();
+    const body = JSON.stringify(changes);
+    return this.http.post<any>(this.baseUrl + 'api/Modifier/Change', body, { headers: headers }).pipe(first());
+  }
+
+  newModifier() : Modifier {
+    return new Modifier(this);
+  }
+
   private getPeople(): Observable<IPerson[]> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return this.http.get<IPerson[]>(this.baseUrl + 'api/Metadata/GetPeople', { headers: headers }).pipe(first());
   }
 
   private getCurrentPersonInternal(): Observable<IPerson> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return this.http.get<IPerson>(this.baseUrl + 'api/Metadata/GetCurrentPerson', { headers: headers }).pipe(first());
   }
 
   private getOrganizationUnits(): Observable<IOrganizationUnit[]> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return this.http.get<IOrganizationUnit[]>(this.baseUrl + 'api/Metadata/GetOrganizationUnits', { headers: headers }).pipe(first());
   }
 
   private getUserStates(): Observable<IUserState[]> {
-    const headers = this.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
-  }
-
-  private getHeaders(): HttpHeaders {
-    const requestHeader = this.getRequestTypeHeader();
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({
-      'Accept': 'application/json',
-      'Authorization': "Bearer " + token,
-      'Content-Type': 'application/json',
-      'RequestType': requestHeader
-  });
-    return headers;
-  }
-
-  private getRequestTypeHeader() {
-    if (this.requestType === RequestType.New)
-      return "new";
-    if (this.requestType === RequestType.FromCache)
-      return "fromCache";
-
-    return "";
   }
 
   private isAuth(): boolean {

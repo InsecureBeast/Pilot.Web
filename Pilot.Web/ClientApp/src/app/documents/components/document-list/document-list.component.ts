@@ -5,7 +5,7 @@ import { Router, NavigationStart, Scroll } from '@angular/router';
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RepositoryService, RequestType } from '../../../core/repository.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode, EmptyObjectNode } from "../../shared/object.node";
 import { ChildrenType } from '../../../core/data/children.types';
 import { IObject } from '../../../core/data/data.classes';
@@ -14,6 +14,7 @@ import { TypeIconService } from '../../../core/type-icon.service';
 import { INode, IObjectNode } from '../../shared/node.interface';
 import { DownloadService } from '../../../core/download.service';
 import { DocumentsService } from '../../shared/documents.service';
+import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
     selector: 'app-document-list',

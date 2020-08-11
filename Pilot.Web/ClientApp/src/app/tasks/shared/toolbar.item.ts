@@ -5,9 +5,11 @@ export class ToolbarItem {
 
   title: string;
   icon: SafeUrl;
+  source: any;
   
-  constructor(title: string, icon: string,  sanitizer: DomSanitizer) {
+  constructor(title: string, icon: string, source: any, sanitizer: DomSanitizer) {
     this.title = title;
-    this.icon = Tools.getSvgImage(icon, sanitizer);    
+    this.icon = Tools.getSvgImage(icon, sanitizer);
+    this.source = source;
   }
 }

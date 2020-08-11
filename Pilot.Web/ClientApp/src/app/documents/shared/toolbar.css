@@ -17,9 +17,13 @@ li.nav-item-button span {
   color: var(--gray);
 }
 
-  li.nav-item-button:hover span {
-    color: var(--dark);
-  }
+li.nav-item-button:hover span {
+  color: var(--dark);
+}
+
+li.nav-item-button:hover {
+  background-color: var(--gray-light);
+}
 
 .nav-link {
   padding: .3rem 1rem;
@@ -49,4 +53,6 @@ li.nav-item-button span {
 .nav-icon-svg {
   width: 24px;
   height: 24px;
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
 }
