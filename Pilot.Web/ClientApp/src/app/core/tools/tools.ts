@@ -42,7 +42,10 @@ export class Tools {
 
   static toLocalDateTime(scDateTime: string, currentLang: string, format: string = "short"): string {
     if (scDateTime === "9999-12-31T23:59:59.9999999")
-      return null;
+      return undefined;
+
+    if (scDateTime === "9999-12-31T20:59:59.9999999")
+      return undefined;
 
     const utcDate = Tools.toUtcCsDateTime(scDateTime);
     const datePipe = new DatePipe(currentLang);

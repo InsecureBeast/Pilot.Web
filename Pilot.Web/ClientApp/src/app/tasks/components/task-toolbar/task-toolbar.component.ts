@@ -46,6 +46,9 @@ export class TaskToolbarComponent {
   
   loadToolbar(value: IObject) {
     this.toolbarItems = new Array<ToolbarItem>();
+    if (!value)
+      return;
+    
     const userStatesAttrs = value.type.attributes.filter(x => x.type === AttributeType.UserState);
     const currentPerson = this.repository.getCurrentPerson();
     for (const stateAttr of userStatesAttrs) {

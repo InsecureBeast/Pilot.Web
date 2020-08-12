@@ -34,5 +34,6 @@
   "itemsSelected": "Items selected:",
   "pilotServerUnavailable": "Looks like Pilot-Server is unavailable. Please try again later",
   "cancel": "Cancel",
-  "tryAgain":  "Try again" 
+  "tryAgain":  "Try again",
+  "currentTaskState": "Current task state"
 }

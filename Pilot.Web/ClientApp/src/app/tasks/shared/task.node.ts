@@ -158,8 +158,8 @@ export class TaskNode {
     const deadlineAttrString = this.getDateString(source, SystemTaskAttributes.DEADLINE_DATE);
     if (deadlineAttrString) {
       this.deadline = Tools.toLocalDateTime(deadlineAttrString, this.translate.currentLang);
-      const deadlineDate = Tools.toUtcCsDateTime(dateAttrString);
-      this.isOutdated = deadlineDate.valueOf() - Date.now() < 0;
+      const deadlineDate = Tools.toUtcCsDateTime(deadlineAttrString);
+      this.isOutdated = deadlineDate.valueOf() - new Date().valueOf() < 0;
     }
     
   }

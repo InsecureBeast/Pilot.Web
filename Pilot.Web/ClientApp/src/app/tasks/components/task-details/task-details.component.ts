@@ -35,6 +35,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   error;
   taskTypeIcon: SafeUrl;
   taskTypeTitle: string;
+
+  stateTitle: string;
   stateIcon: SafeUrl;
 
   initiator: AttributeItem;
@@ -97,6 +99,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
         
         var state = this.repository.getUserState(value);
         this.stateIcon = this.iconService.getSvgIcon(state.icon);
+        this.stateTitle = state.title;
       }
 
       if (typeAttr.isService)
