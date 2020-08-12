@@ -18,18 +18,7 @@ export class TaskNode {
     protected repository: RepositoryService,
     private translate: TranslateService) {
 
-    this.title = this.getTitle(source);
-    this.description = this.getDescription(source);
-    this.type = source.type;
-    this.icon = Tools.getSvgImage(source.type.icon, sanitizer);
-    this.setTaskData(source);
-    this.id = source.id;
-    this.parentId = source.parentId;
-    this.hasChildren = source.children.length > 0;
-    this.loadedChildren = new Array();
-    this._isVisible = true;
-    if (source.context)
-      this.intent = source.context.length;
+    this.update(source);
   }
 
   id: string;
@@ -84,6 +73,22 @@ export class TaskNode {
         resolve();
       });
     });
+  }
+
+  update (source: IObject) : void {
+    this.source = source;
+    this.title = this.getTitle(source);
+    this.description = this.getDescription(source);
+    this.type = source.type;
+    this.icon = Tools.getSvgImage(source.type.icon, this.sanitizer);
+    this.setTaskData(source);
+    this.id = source.id;
+    this.parentId = source.parentId;
+    this.hasChildren = source.children.length > 0;
+    this.loadedChildren = new Array();
+    this._isVisible = true;
+    if (source.context)
+      this.intent = source.context.length;
   }
 
   private getOrgUnit(source: IObject, attrName: string): IOrganizationUnit {
@@ -208,8 +213,6 @@ export class TaskStageNode extends TaskNode {
     return order;
   }
 }
-
-
 
 export class UserState {
 

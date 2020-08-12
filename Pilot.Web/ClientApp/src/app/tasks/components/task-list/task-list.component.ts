@@ -7,7 +7,7 @@ import { TaskFilter } from '../task-filters/task-filters.component';
 import { TasksRepositoryService } from '../../shared/tasks-repository.service';
 import { TaskNode, TaskWorkflowNode, TaskStageNode } from "../../shared/task.node";
 import { TaskNodeFactory } from "../../shared/task-node.factory";
-import { TasksService } from "../../shared/tasks.service";
+import { TasksSyncService as TasksService } from "../../shared/tasks.service";
 import { RepositoryService } from 'src/app/core/repository.service';
 
 @Component({
@@ -70,6 +70,12 @@ export class TaskListComponent implements  OnInit, OnDestroy{
 
     const checked = this.tasks.filter(n => n.isChecked);
     this.onChecked.emit(checked);
+  }
+
+  update(node: TaskNode) : void {
+    this.repositoryService.getObjectAsync(node.source.id).then(source => {
+      node.update(source);
+    })
   }
 
   addChecked(node: TaskNode): void {

@@ -12,6 +12,7 @@ import { TransitionCommand } from '../../shared/transition.command';
 import { ToolbarItem } from '../../shared/toolbar.item';
 import { TaskToolbarComponent } from '../../components/task-toolbar/task-toolbar.component';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-task',
@@ -20,11 +21,12 @@ import { TaskDetailsComponent } from '../../components/task-details/task-details
 })
 /** task component*/
 export class TaskComponent implements OnInit, OnDestroy {
-  error;
 
   private navigationSubscription: Subscription;
-  selectedTask: IObject;
 
+  selectedTask: IObject;
+  error: HttpErrorResponse;
+  
   @ViewChild(TaskToolbarComponent, { static: false })
   private toolbar: TaskToolbarComponent;
 

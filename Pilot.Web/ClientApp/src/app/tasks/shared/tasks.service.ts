@@ -5,18 +5,29 @@ import {TaskNode } from './task.node';
 
 
 @Injectable({ providedIn: 'root' })
-export class TasksService {
+export class TasksSyncService {
 
   private clearCheckedSubject = new BehaviorSubject<boolean>(false);
+  //private selectedNodeSubject = new BehaviorSubject<TaskNode>(undefined);
   //private readonly scrollPositions: KeyedCollection<number>;
 
   clearChecked = this.clearCheckedSubject.asObservable();
+  selectedNode: TaskNode;// = this.selectedNodeSubject.asObservable();
 
   constructor() {
   }
 
   changeClearChecked(value: boolean): void {
     this.clearCheckedSubject.next(value);
+  }
+
+  changeSelectedNode(value: TaskNode): void {
+    //this.selectedNodeSubject.next(value);
+    this.selectedNode = value;
+  }
+
+  getSelectedNode(): TaskNode {
+    return this.selectedNode;
   }
 
   //restoreScrollPosition(node: TaskNode): void {
