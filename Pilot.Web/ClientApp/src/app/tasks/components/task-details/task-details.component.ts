@@ -10,6 +10,7 @@ import { Tools } from '../../../core/tools/tools';
 import { RepositoryService } from '../../../core/repository.service';
 import { SystemTaskAttributes } from '../../../core/data/system.types';
 import { TypeIconService } from '../../../core/type-icon.service';
+import { Guid } from 'guid-typescript';
 
 @Component({
     selector: 'app-task-details',
@@ -34,6 +35,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   error;
   taskTypeIcon: SafeUrl;
   taskTypeTitle: string;
+  stateIcon: SafeUrl;
 
   initiator: AttributeItem;
   executor: AttributeItem;
@@ -57,7 +59,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
-  private loadTask(source: IObject): void {
+  loadTask(source: IObject): void {
     if (!source)
       return;
 
@@ -87,6 +89,14 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
         const orgUnits = this.getOrgUnits(value);
         this.initiator = new OrgUnitAttributeItem(typeAttr, orgUnits, this.repository);
         continue;
+      }
+
+      if (typeAttr.name == "state"){
+        if (!Guid.isGuid(value))
+          continue;
+        
+        var state = this.repository.getUserState(value);
+        this.stateIcon = this.iconService.getSvgIcon(state.icon);
       }
 
       if (typeAttr.isService)

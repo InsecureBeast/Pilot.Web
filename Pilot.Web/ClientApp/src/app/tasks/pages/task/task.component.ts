@@ -11,6 +11,7 @@ import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { TransitionCommand } from '../../shared/transition.command';
 import { ToolbarItem } from '../../shared/toolbar.item';
 import { TaskToolbarComponent } from '../../components/task-toolbar/task-toolbar.component';
+import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 
 @Component({
     selector: 'app-task',
@@ -26,6 +27,9 @@ export class TaskComponent implements OnInit, OnDestroy {
 
   @ViewChild(TaskToolbarComponent, { static: false })
   private toolbar: TaskToolbarComponent;
+
+  @ViewChild(TaskDetailsComponent, { static: false })
+  private taskDetails: TaskDetailsComponent;
 
   /** task ctor */
   constructor(
@@ -77,6 +81,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         .then(source => {
           this.selectedTask = source;
           this.toolbar.loadToolbar(this.selectedTask);
+          this.taskDetails.loadTask(this.selectedTask);
         })
         .catch(err => {
           this.error = err;

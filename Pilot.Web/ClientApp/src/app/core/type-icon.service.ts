@@ -65,6 +65,10 @@ export class TypeIconService {
     return Tools.getImage(typeIcon, "svg+xml;charset=utf-8", this.sanitizer);
   }
 
+  getSvgIcon(svgIcon: string): SafeUrl {
+    return Tools.getSvgImage(svgIcon, this.sanitizer);
+  }
+
   private getPreviewAsync(item: IObject, cancel: Subject<any>): Promise<SafeUrl> {
 
     if (this.nodeStyleService.currentNodeStyle === NodeStyle.GridView) {
