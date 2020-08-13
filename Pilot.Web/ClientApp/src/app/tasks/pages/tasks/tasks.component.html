@@ -19,17 +19,6 @@
 
 <div class="pt-6 row h-100" *ngIf="!error">
 
-  <div class="fixed-bottom col-12 d-sm-none noselect bg-white border-top text-center" 
-      *ngIf="selectedFilter" >
-    <div class="bt-button pointer p-2" 
-        (click)="showFilters();$event.stopPropagation()">
-      <a [routerLink]="" >
-        <span class="material-icons">filter_list</span>
-        <span class="align-top ml-2">{{ selectedFilter.name }}</span>
-      </a>
-    </div>
-  </div>
-
   <div class="d-none d-sm-block col-sm-3 col-md-3 col-xl-2">
     <app-task-filters class="fixed"
                       [selectedFilter]="selectedFilter"
@@ -50,6 +39,18 @@
       </app-task-list>
     </div>
   </div>
+
+  <div class="fixed-bottom col-12 d-sm-none noselect bg-white border-top text-center shadow" 
+      *ngIf="selectedFilter" >
+    <div class="bt-button pointer p-2" 
+        (click)="showFilters();$event.stopPropagation()">
+      <a [routerLink]="" >
+        <span class="material-icons">filter_list</span>
+        <span class="align-top ml-2">{{ selectedFilter.name }}</span>
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <pw-modal id="filtersModal">
