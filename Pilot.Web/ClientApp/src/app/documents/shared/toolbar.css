@@ -55,4 +55,6 @@ li.nav-item-button:hover {
   height: 24px;
   filter: grayscale(100%);
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  margin-left: 4px;
+  margin-right: 4px;
 }

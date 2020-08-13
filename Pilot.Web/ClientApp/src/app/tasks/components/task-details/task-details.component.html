@@ -1,12 +1,12 @@
   <div class="mt-2" style="margin-left: -2px;">
     <img [src]="taskTypeIcon" width="24" *ngIf="taskTypeIcon != null">
-    <span class="ml-2" style="vertical-align: middle;">{{taskTypeTitle}}</span>
+    <span class="ml-2 align-middle">{{taskTypeTitle}}</span>
   </div>
 
   <div class="mt-4" *ngIf="stateIcon">
     <div class="text-second" translate="currentTaskState"></div>
     <img [src]="stateIcon" width="24" *ngIf="stateIcon != null">
-    <span class="ml-2" style="vertical-align: middle;">{{stateTitle}}</span>
+    <span class="ml-2 align-middle">{{stateTitle}}</span>
   </div>
 
   <div class="mt-2" *ngIf="initiator">
