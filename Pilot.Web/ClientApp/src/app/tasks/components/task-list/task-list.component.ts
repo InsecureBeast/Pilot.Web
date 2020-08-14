@@ -169,25 +169,27 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     });
   }
 
-  affectChange(filter: TaskFilter, taskId: string) : void {
-    this.tasksRepositoryService.getTasksWithFilter(filter.searchValue, taskId).pipe(first()).subscribe(objects => {
+  affectChange(filter: TaskFilter, task: TaskNode): void {
+    if (!task)
+      return;
+
+    if (TypeExtensions.isTask(task.type)){
+      const parent = this.findWorkflowParent(task);
+      if (parent)
+        return;
+    }
+
+    this.tasksRepositoryService.getTasksWithFilter(filter.searchValue, task.id).pipe(first()).subscribe(objects => {
       if (!objects || objects.length === 0) {
-        const index = this.tasks.findIndex(t => t.id === taskId);
-        if (index > -1){
-          const task = this.tasks.find(t => t.id === taskId);
-          let deleteCount = {count: 1};
+        const index = this.tasks.findIndex(t => t.id === task.id);
+        if (index > -1) {
           if (TypeExtensions.isWorkflow(task.type)) {
-            // task.loadedChildren.forEach(c => {
-            //   deleteCount += c.loadedChildren.length
-            // });
-            // deleteCount += task.loadedChildren.length;
-            this.countVisibleChildren(task, deleteCount);
+            this.removeWorkflowChildren(task);
           }
           if (TypeExtensions.isStage(task.type)) {
-            this.countVisibleChildren(task, deleteCount);
+            this.removeWorkflowChildren(task);
           }  
-
-          this.tasks.splice(index, deleteCount.count);
+          this.tasks.splice(index, 1);
         }
       }
     }, error => {
@@ -207,15 +209,30 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     this.onChecked.emit(null);
   }
 
-  private countVisibleChildren(task: TaskNode, deleteCount: { count:number }): void {
+  private removeWorkflowChildren(task: TaskNode): void {
+    if (!task)
+      return;
+    
     task.source.children.forEach(c => {
-      const child = this.tasks.find(tc => tc.id === c.objectId);
-      if (!child)
+      const childIndex = this.tasks.findIndex(tc => tc.id === c.objectId);
+      if (childIndex < 0)
         return;
 
-      deleteCount.count += child.source.children.length;
-      this.countVisibleChildren(child, deleteCount);
+      const child = this.tasks.find(t => t.id === c.objectId);
+      this.tasks.splice(childIndex, 1);
+      this.removeWorkflowChildren(child);
     });
-    deleteCount.count += task.source.children.length;
+  }
+
+  private findWorkflowParent(task: TaskNode): TaskNode {
+    let parent = this.tasks.find(p => p.id === task.source.parentId);
+    if (!parent)
+      return undefined;
+    
+    if (TypeExtensions.isWorkflow(parent.type))  {
+      return parent;
+    }
+
+    return this.findWorkflowParent(parent);
   }
 }

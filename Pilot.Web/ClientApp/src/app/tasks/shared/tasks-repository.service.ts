@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 import { IObject, ICommonSettings } from '../../core/data/data.classes';
 import { AuthService } from '../../auth/auth.service';
 import { HeadersProvider } from 'src/app/core/headers.provider';
+import { resolve } from 'url';
 
 @Injectable({ providedIn: 'root' })
 export class TasksRepositoryService {
@@ -38,5 +39,16 @@ export class TasksRepositoryService {
     const path = this.baseUrl + 'api/Tasks/GetTaskWithFilter';
     return this.http.post<IObject[]>(path, body, { headers: headers })
       .pipe(first());
+  }
+
+  getTasksWithFilterAsync(filter: string, taskId: string): Promise<IObject[]> {
+    return new Promise<IObject[]>((resolve, reject) => {
+      const body = JSON.stringify({ filter, taskId });
+      const headers = this.headersProvider.getHeaders();
+      const path = this.baseUrl + 'api/Tasks/GetTaskWithFilter';
+      this.http.post<IObject[]>(path, body, { headers: headers })
+        .pipe(first())
+        .subscribe(objects => resolve(objects), err => reject(err));
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router, NavigationStart, Scroll  } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, NavigationStart, Scroll, Event  } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -62,19 +62,8 @@ export class TasksComponent implements OnInit, OnDestroy {
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof Scroll) {
-        if (event.position) {
-          window.scrollTo(0, event.position["1"]);
-        }
-      }
-      if (event instanceof NavigationStart) {
-        const startEvent = <NavigationStart>event;
-        if (startEvent.navigationTrigger === 'popstate') {
-          const node = this.tasksService.getSelectedNode();
-          this.taskListComponent.affectChange(this.selectedFilter, node.id);
-          this.taskListComponent.update(node);
-        }
-      }
+      this.processScrollEvent(event);
+      this.processBackEvent(event);
     });
   }
 
@@ -136,5 +125,24 @@ export class TasksComponent implements OnInit, OnDestroy {
   clearChecked(): void {
     this.checked = new Array();
     this.tasksService.changeClearChecked(true);
+  }
+
+  private processBackEvent(event: Event): void {
+    if (event instanceof NavigationStart) {
+      const startEvent = <NavigationStart>event;
+      if (startEvent.navigationTrigger === 'popstate') {
+        const node = this.tasksService.getSelectedNode();
+        this.taskListComponent.affectChange(this.selectedFilter, node);
+        this.taskListComponent.update(node);
+      }
+    }
+  }
+
+  private processScrollEvent(event: Event) : void {
+    if (event instanceof Scroll) {
+      if (event.position) {
+        window.scrollTo(0, event.position["1"]);
+      }
+    }
   }
 }
