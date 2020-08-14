@@ -9,6 +9,7 @@ import { TaskNode, TaskWorkflowNode, TaskStageNode } from "../../shared/task.nod
 import { TaskNodeFactory } from "../../shared/task-node.factory";
 import { TasksSyncService as TasksService } from "../../shared/tasks.service";
 import { RepositoryService } from 'src/app/core/repository.service';
+import { TypeExtensions } from 'src/app/core/tools/type.extensions';
 
 @Component({
     selector: 'app-task-list',
@@ -158,7 +159,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
         const task = this.taskNodeFactory.createNode(source);
         // is not a task. is Workflow?
         if (task == null)
-          continue;;
+          continue;
 
         this.tasks.push(task);
       }
@@ -170,10 +171,24 @@ export class TaskListComponent implements  OnInit, OnDestroy{
 
   affectChange(filter: TaskFilter, taskId: string) : void {
     this.tasksRepositoryService.getTasksWithFilter(filter.searchValue, taskId).pipe(first()).subscribe(objects => {
-      if (!objects || objects.length == 0) {
-        const index = this.tasks.findIndex(t => t.id == taskId);
-        if (index > -1)
-          this.tasks.splice(index, 1);
+      if (!objects || objects.length === 0) {
+        const index = this.tasks.findIndex(t => t.id === taskId);
+        if (index > -1){
+          const task = this.tasks.find(t => t.id === taskId);
+          let deleteCount = {count: 1};
+          if (TypeExtensions.isWorkflow(task.type)) {
+            // task.loadedChildren.forEach(c => {
+            //   deleteCount += c.loadedChildren.length
+            // });
+            // deleteCount += task.loadedChildren.length;
+            this.countVisibleChildren(task, deleteCount);
+          }
+          if (TypeExtensions.isStage(task.type)) {
+            this.countVisibleChildren(task, deleteCount);
+          }  
+
+          this.tasks.splice(index, deleteCount.count);
+        }
       }
     }, error => {
       this.onError.emit(error);
@@ -190,5 +205,17 @@ export class TaskListComponent implements  OnInit, OnDestroy{
 
     this.isAnyItemChecked = false;
     this.onChecked.emit(null);
+  }
+
+  private countVisibleChildren(task: TaskNode, deleteCount: { count:number }): void {
+    task.source.children.forEach(c => {
+      const child = this.tasks.find(tc => tc.id === c.objectId);
+      if (!child)
+        return;
+
+      deleteCount.count += child.source.children.length;
+      this.countVisibleChildren(child, deleteCount);
+    });
+    deleteCount.count += task.source.children.length;
   }
 }
