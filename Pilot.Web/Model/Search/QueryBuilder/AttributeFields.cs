@@ -31,7 +31,7 @@ namespace Pilot.Web.Model.Search.QueryBuilder
 
         public static GuidField State(string attributeName)
         {
-            return new GuidField(AttributeFieldTypePrefixes.Add(AttributeFieldTypePrefixes.STRING, attributeName));
+            return new UserStateIdField(AttributeFieldTypePrefixes.Add(AttributeFieldTypePrefixes.STRING, attributeName));
         }
     }
 }
