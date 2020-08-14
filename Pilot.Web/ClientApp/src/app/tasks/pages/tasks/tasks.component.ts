@@ -72,6 +72,7 @@ export class TasksComponent implements OnInit, OnDestroy {
         if (startEvent.navigationTrigger === 'popstate') {
           const node = this.tasksService.getSelectedNode();
           this.taskListComponent.update(node);
+          this.taskListComponent.affectChange(this.selectedFilter, node.id);
         }
       }
     });

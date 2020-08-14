@@ -31,4 +31,12 @@ export class TasksRepositoryService {
     return this.http.post<IObject[]>(path, body, { headers: headers })
       .pipe(first());
   }
+
+  getTasksWithFilter(filter: string, taskId: string): Observable<IObject[]> {
+    const body = JSON.stringify({ filter, taskId });
+    const headers = this.headersProvider.getHeaders();
+    const path = this.baseUrl + 'api/Tasks/GetTaskWithFilter';
+    return this.http.post<IObject[]>(path, body, { headers: headers })
+      .pipe(first());
+  }
 }

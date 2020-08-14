@@ -21,6 +21,7 @@ namespace Pilot.Web.Model
         INType GetType(int id);
 
         Task<IEnumerable<PObject>> GetTasksAsync(string filter);
+        Task<IEnumerable<PObject>> GetTasksWithFilterAsync(string filter, Guid taskId);
 
         ICommonSettings GetPersonalSettings(string key);
         INPerson GetPerson(int id);
@@ -138,6 +139,19 @@ namespace Pilot.Web.Model
             var searchResult = await searchService.Search(filter);
             if (searchResult.Found == null)
                 return Array.Empty<PObject>();
+
+            var objects = GetObjects(searchResult.Found.ToArray());
+            var tasks = LoadTasks(objects, searchResult.Found);
+            return tasks;
+        }
+
+        public async Task<IEnumerable<PObject>> GetTasksWithFilterAsync(string filter, Guid taskId)
+        {
+            CheckApi();
+            var searchService = _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
+            var searchResult = await searchService.SearchObjectWithFilter(filter, taskId);
+            if (searchResult.Found == null)
+                return Enumerable.Empty<PObject>();
 
             var objects = GetObjects(searchResult.Found.ToArray());
             var tasks = LoadTasks(objects, searchResult.Found);

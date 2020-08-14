@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { first } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 import { TaskFilter } from '../task-filters/task-filters.component';
 import { TasksRepositoryService } from '../../shared/tasks-repository.service';
@@ -166,6 +166,19 @@ export class TaskListComponent implements  OnInit, OnDestroy{
       this.onError.emit(error);
       this.isLoading = false;
     });
+  }
+
+  affectChange(filter: TaskFilter, taskId: string) : void {
+    this.tasksRepositoryService.getTasksWithFilter(filter.searchValue, taskId).pipe(first()).subscribe(objects => {
+      if (!objects || objects.length == 0) {
+        const index = this.tasks.findIndex(t => t.id == taskId);
+        if (index > -1)
+          this.tasks.splice(index, 1);
+      }
+    }, error => {
+      this.onError.emit(error);
+      this.isLoading = false;}
+    );
   }
 
   private clearChecked(): void {
