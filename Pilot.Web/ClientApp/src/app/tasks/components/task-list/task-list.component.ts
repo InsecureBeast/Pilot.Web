@@ -112,7 +112,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   }
 
   isInWorkflow(task: TaskNode): boolean {
-    return task.intent > 0 || task instanceof TaskWorkflowNode;
+    return task.isInWorkflow || task instanceof TaskWorkflowNode;
   }
 
   isWorkflow(task: TaskNode): boolean {
@@ -129,6 +129,8 @@ export class TaskListComponent implements  OnInit, OnDestroy{
           const node = this.taskNodeFactory.createNode(source);
           if (!node)
             continue;
+          
+          node.setIntent();
 
           index++;
           this.tasks.splice(index, 0, node);
@@ -136,8 +138,8 @@ export class TaskListComponent implements  OnInit, OnDestroy{
           stages.push(node);
         }
 
-        for (var s of stages) {
-           await s.loadChildren(this.tasks, this.taskNodeFactory)
+        for (let s of stages) {
+          await s.loadChildren(this.tasks, this.taskNodeFactory);
         }
        
       })

@@ -40,15 +40,4 @@ export class TasksRepositoryService {
     return this.http.post<IObject[]>(path, body, { headers: headers })
       .pipe(first());
   }
-
-  getTasksWithFilterAsync(filter: string, taskId: string): Promise<IObject[]> {
-    return new Promise<IObject[]>((resolve, reject) => {
-      const body = JSON.stringify({ filter, taskId });
-      const headers = this.headersProvider.getHeaders();
-      const path = this.baseUrl + 'api/Tasks/GetTaskWithFilter';
-      this.http.post<IObject[]>(path, body, { headers: headers })
-        .pipe(first())
-        .subscribe(objects => resolve(objects), err => reject(err));
-    });
-  }
 }

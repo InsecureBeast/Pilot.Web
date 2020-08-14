@@ -19,6 +19,7 @@ export class TaskNode {
     private translate: TranslateService) {
 
     this.update(source);
+    this.isInWorkflow = false;
   }
 
   id: string;
@@ -65,6 +66,9 @@ export class TaskNode {
           if (!node)
             continue;
 
+          if (TypeExtensions.isStage(this.type))
+            node.isInWorkflow = true;
+
           index++;
           list.splice(index, 0, node);
           this.loadedChildren.push(node);
@@ -87,8 +91,11 @@ export class TaskNode {
     this.hasChildren = source.children.length > 0;
     this.loadedChildren = new Array();
     this._isVisible = true;
-    if (source.context)
-      this.intent = source.context.length;
+  }
+
+  setIntent():void {
+    if (this.source.context)
+      this.intent = this.source.context.length;
   }
 
   private getOrgUnit(source: IObject, attrName: string): IOrganizationUnit {
@@ -156,7 +163,7 @@ export class TaskNode {
     if (state)
       this.userState = new UserState(state, this.sanitizer);
 
-    this.isInWorkflow = !this.isTask || source.context.length > 1;
+    //this.isInWorkflow = !this.isTask || source.context.length > 1;
     this.attachments = source.relations.filter(r => r.type === RelationType.TaskAttachments);
     this.attributes = new Map(Object.entries(source.attributes));
 
