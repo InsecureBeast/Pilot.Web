@@ -138,8 +138,8 @@ export class TaskListComponent implements  OnInit, OnDestroy{
           stages.push(node);
         }
 
-        for (let s of stages) {
-          await s.loadChildren(this.tasks, this.taskNodeFactory);
+        for (var s of stages) {
+           await s.loadChildren(this.tasks, this.taskNodeFactory);
         }
        
       })

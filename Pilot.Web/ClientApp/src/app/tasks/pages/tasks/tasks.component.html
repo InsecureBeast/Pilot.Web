@@ -58,7 +58,8 @@
     <div class="bg-white rounded-lg p-3">
       <app-task-filters class=""
                         [selectedFilter]="selectedFilter"
-                        (onSelected)="onFilterSelected($event)">
+                        (onSelected)="onFilterSelected($event)"
+                        (onError)="onError($event)">
       </app-task-filters>
     </div>
 

@@ -85,7 +85,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       return;
     }
 
-    selected = personalFilters.find(f => f.id === this.filterId)
+    selected = personalFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;

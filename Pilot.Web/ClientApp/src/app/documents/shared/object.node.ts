@@ -2,7 +2,7 @@ import { SafeUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { IObject, IType, IChild, IPerson } from '../../core/data/data.classes';
+import { IObject, IType, IChild, IPerson, IUserState, IValue, AttributeType, IAttribute } from '../../core/data/data.classes';
 import { EmptyObject } from '../../core/data/empty-data.classes';
 import { TypeExtensions } from '../../core/tools/type.extensions';
 import { TypeIconService } from '../../core/type-icon.service';

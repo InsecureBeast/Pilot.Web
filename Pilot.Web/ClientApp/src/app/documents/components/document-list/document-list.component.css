@@ -77,8 +77,11 @@
   line-height: 1.2rem;
 }
 
-.checker-img {
-  opacity: 0.2;
+.three-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 3.8rem;
+  line-height: 1.2rem;
 }
 
 .checker {
