@@ -7,6 +7,7 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
 import { TransitionCommand } from '../../shared/transition.command';
+import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
     selector: 'app-task-toolbar',
@@ -19,6 +20,7 @@ export class TaskToolbarComponent {
   //private _task: IObject;
 
   toolbarItems : ToolbarItem[];
+  requestState = RequestState.None;
 
   @Input()
   set task(value: IObject) {
@@ -41,7 +43,10 @@ export class TaskToolbarComponent {
   }
 
   onTransitionClick($event: ToolbarItem): void {
-    this.onTransition.emit($event.source);
+    if (this.requestState === RequestState.Run)
+      return;
+
+    $event.event.emit($event.source);
   }
   
   loadToolbar(value: IObject) {
@@ -63,12 +68,24 @@ export class TaskToolbarComponent {
     }
   }
 
+  setRequestState(state: RequestState): void {
+    this.requestState = state;
+  }
+
   private addTransitionToolbarItem(transitionCommand: TransitionCommand): void {
     if (!transitionCommand.transition.displayName || transitionCommand.transition.displayName === "")
       return;
     
     var stateTo = this.repository.getUserState(transitionCommand.transition.stateTo);
     const toolbarItem = new ToolbarItem(transitionCommand.transition.displayName, stateTo.icon, transitionCommand, this.sanitizer);
+    toolbarItem.event = this.onTransition;
     this.toolbarItems.push(toolbarItem);
   }
+}
+
+export enum RequestState {
+  None = 0,
+  Run = 1,
+  End = 2,
+  Error = 3
 }

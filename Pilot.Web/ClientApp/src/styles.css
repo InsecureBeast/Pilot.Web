@@ -52,6 +52,10 @@ html, body {
   padding-top: .4rem;
 }
 
+.opacity-02 {
+  opacity: 0.2;
+}
+
 /* fallback */
 @font-face {
   font-family: 'Material Icons';

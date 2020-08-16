@@ -2,6 +2,7 @@
   <ul class="navbar-nav">
     <li *ngFor="let item of toolbarItems"
         class="nav-item nav-item-button pt-2h"
+        [class.opacity-02]="requestState === 1"
         click-stop-propagation click-prevent-default
         (click)="onTransitionClick(item)">
         <img [src]="item.icon"

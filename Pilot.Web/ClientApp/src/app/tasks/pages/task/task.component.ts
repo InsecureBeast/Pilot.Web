@@ -10,7 +10,7 @@ import { TransitionsManager } from 'src/app/core/transitions/transitions.manager
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { TransitionCommand } from '../../shared/transition.command';
 import { ToolbarItem } from '../../shared/toolbar.item';
-import { TaskToolbarComponent } from '../../components/task-toolbar/task-toolbar.component';
+import { TaskToolbarComponent, RequestState } from '../../components/task-toolbar/task-toolbar.component';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -76,6 +76,7 @@ export class TaskComponent implements OnInit, OnDestroy {
     if ($event.transition.stateTo === "")
       return;
 
+    this.toolbar.setRequestState(RequestState.Run);
     const modifier = this.repository.newModifier();
     modifier.edit(this.selectedTask.id).setAttribute($event.attrName, $event.transition.stateTo);
     modifier.apply().subscribe(r => {
@@ -83,13 +84,16 @@ export class TaskComponent implements OnInit, OnDestroy {
         .then(source => {
           this.selectedTask = source;
           this.toolbar.loadToolbar(this.selectedTask);
+          this.toolbar.setRequestState(RequestState.End);
           this.taskDetails.loadTask(this.selectedTask);
         })
         .catch(err => {
           this.error = err;
+          this.toolbar.setRequestState(RequestState.Error);
         });
     }, e => {
       this.error = e;
+      this.toolbar.setRequestState(RequestState.Error);
     });
     //if (stateId == SystemStates.TASK_REVOKED_STATE_ID) {
     //  string deleteMessage;
