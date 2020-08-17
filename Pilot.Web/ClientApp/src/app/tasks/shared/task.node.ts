@@ -7,7 +7,7 @@ import { SystemTaskAttributes } from "../../core/data/system.types";
 import { Tools } from "../../core/tools/tools";
 import { TypeExtensions } from "../../core/tools/type.extensions";
 import { TaskNodeFactory } from "./task-node.factory";
-import { UserState } from "src/app/core/data/user.state";
+import { UserState, UserStateColorService } from "src/app/core/data/user.state";
 import { TypeIconService } from "src/app/core/type-icon.service";
 
 export class TaskNode {
@@ -18,7 +18,8 @@ export class TaskNode {
     public source: IObject,
     private typeIconService: TypeIconService,
     protected repository: RepositoryService,
-    private translate: TranslateService) {
+    private translate: TranslateService,
+    private userStateColorService: UserStateColorService) {
 
     this.update(source);
     this.isInWorkflow = false;
@@ -163,7 +164,7 @@ export class TaskNode {
     this.isTask = TypeExtensions.isTask(source.type);
     const state = this.getState(source, this.repository);
     if (state)
-      this.userState = new UserState(state, this.typeIconService);
+      this.userState = new UserState(state, this.typeIconService, this.userStateColorService);
 
     //this.isInWorkflow = !this.isTask || source.context.length > 1;
     this.attachments = source.relations.filter(r => r.type === RelationType.TaskAttachments);
@@ -202,8 +203,9 @@ export class TaskWorkflowNode extends TaskNode {
   constructor(source: IObject,
     typeIconService: TypeIconService,
     repository: RepositoryService,
-    translate: TranslateService) {
-    super(source, typeIconService, repository, translate);
+    translate: TranslateService,
+    userStateColorService: UserStateColorService) {
+    super(source, typeIconService, repository, translate, userStateColorService);
   }
 }
 
@@ -212,8 +214,9 @@ export class TaskStageNode extends TaskNode {
   constructor(source: IObject,
     typeIconService: TypeIconService,
     repository: RepositoryService,
-    translate: TranslateService) {
-    super(source, typeIconService, repository, translate);
+    translate: TranslateService,
+    userStateColorService: UserStateColorService) {
+    super(source, typeIconService, repository, translate, userStateColorService);
     this.title = this.getStageTitle(source);
   }
 
