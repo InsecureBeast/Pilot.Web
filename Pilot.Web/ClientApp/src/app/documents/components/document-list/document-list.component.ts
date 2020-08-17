@@ -15,6 +15,7 @@ import { INode, IObjectNode } from '../../shared/node.interface';
 import { DownloadService } from '../../../core/download.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
+import { SystemStates } from 'src/app/core/data/system.states';
 
 @Component({
     selector: 'app-document-list',
@@ -155,6 +156,18 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   isEmptyNode(node: IObjectNode): boolean {
     return node instanceof EmptyObjectNode;
+  }
+
+  isStatesExists(node: IObjectNode): boolean {
+    const noneStates = node.stateAttributes.filter(a => {
+      const value = node.source.attributes[a.name];
+      if (!value)
+        return true;
+
+      return value === SystemStates.NONE_STATE_ID;
+    });
+
+    return noneStates.length !== node.stateAttributes.length;
   }
 
   private init(item: IObjectNode) {

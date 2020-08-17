@@ -41,7 +41,7 @@ export class UserStateComponent {
     if (!node)
       return;
     
-    const stateAttrs = node.source.type.attributes.filter(at => at.type === AttributeType.UserState);
+    const stateAttrs = node.stateAttributes;
     for (const attr of stateAttrs) {
       const value = node.source.attributes[attr.name];
       if (!value)
@@ -54,7 +54,7 @@ export class UserStateComponent {
       const userState = new UserState(state, this.typeIconService, this.userStateColorService);
       if (userState.id === SystemStates.NONE_STATE_ID)
         continue;
-        
+
       this.userStates.push(userState);
     }
   }

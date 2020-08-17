@@ -28,6 +28,7 @@ export class ObjectNode implements IObjectNode {
     this.children = source.children;
     this.creator = source.creator;
     this.isDocument = this.getIsDocument(source.type);
+    this.stateAttributes = source.type.attributes.filter(at => at.type === AttributeType.UserState);
 
     if (this.isDocument)
       this.childrenCount = -1;
@@ -46,6 +47,7 @@ export class ObjectNode implements IObjectNode {
     this.loadTypeIcon();
     this.loadPreview();
   }
+  
 
   id: string;
   parentId: string;
@@ -61,6 +63,7 @@ export class ObjectNode implements IObjectNode {
   url: string;
   context: string[];
   childrenCount: number;
+  stateAttributes: IAttribute[];
 
   isSelected: boolean;
   isChecked: boolean;
@@ -118,6 +121,7 @@ export class EmptyObjectNode implements IObjectNode {
     this.source = new EmptyObject();
     this.children = this.source.children;
     this.childrenCount = -1;
+    this.stateAttributes = new Array<IAttribute>();
   }
 
   id: string;
@@ -129,6 +133,7 @@ export class EmptyObjectNode implements IObjectNode {
   title: string;
   icon: SafeUrl;
   childrenCount: number;
+  stateAttributes: IAttribute[];
 
   loadPreview(): void {
     // do nothing

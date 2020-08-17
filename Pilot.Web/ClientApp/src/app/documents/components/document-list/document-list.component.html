@@ -47,9 +47,9 @@
                  [class.text-primary]="node?.isChecked" *ngIf="node">{{ node.title }}</div>
             <div>
               <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
-            <app-user-state [node]="node"
-                            [style]="nodeStyle">
-            </app-user-state>
+              <app-user-state [node]="node"
+                              [style]="nodeStyle">
+              </app-user-state>
             </div>     
           </div>
         </div>
@@ -88,7 +88,11 @@
           <div class="text-center pointer">
             <div class="card-name"
                  [class.text-primary]="node.isChecked" *ngIf="node">{{ node.title }}</div>
-            <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
+            <small class="text-muted" *ngIf="node.type && !isStatesExists(node)">{{node.type.title}}</small>
+            <app-user-state [node]="node"
+                            [style]="nodeStyle"
+                            *ngIf="isStatesExists(node)">
+            </app-user-state>
           </div>
         </div>
       </div>
