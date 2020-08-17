@@ -34,14 +34,14 @@ export class UserState {
     private colors = new Map<UserStateColors, string>();
 
     constructor() {
-      this.colors.set(UserStateColors.None, "#ffffff");
-      this.colors.set(UserStateColors.Color1, "#BABABA");
-      this.colors.set(UserStateColors.Color2, "#B7E281");
-      this.colors.set(UserStateColors.Color3, "#92E1D5");
-      this.colors.set(UserStateColors.Color4, "#A6E0FC");
-      this.colors.set(UserStateColors.Color5, "#FFC8EA");
-      this.colors.set(UserStateColors.Color6, "#FE9F79");
-      this.colors.set(UserStateColors.Color7, "#E0C378");
+      this.colors.set(UserStateColors.None, "#FFFFFF");
+      this.colors.set(UserStateColors.Color1, "#DBDBDB");
+      this.colors.set(UserStateColors.Color2, "#DAF0BE");
+      this.colors.set(UserStateColors.Color3, "#C7EFE9");
+      this.colors.set(UserStateColors.Color4, "#D1EFFD");
+      this.colors.set(UserStateColors.Color5, "#FFE2F4");
+      this.colors.set(UserStateColors.Color6, "#FECEBA");
+      this.colors.set(UserStateColors.Color7, "#EFE0BA");
     }
 
     getColor(userStateColor : UserStateColors): string {
