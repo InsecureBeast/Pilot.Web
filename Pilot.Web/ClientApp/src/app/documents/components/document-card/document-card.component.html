@@ -1,34 +1,20 @@
 ﻿<div class="mt-2" style="margin-left: -2px;">
     <img [src]="typeIcon" width="24" *ngIf="typeIcon != null">
-    <span class="ml-2 align-middle">{{taskTypeTitle}}</span>
+    <span class="ml-2 align-middle">{{typeTitle}}</span>
 </div>
-
-<!-- <div class="mt-2" *ngIf="initiator">
-    <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:initiator}"></div>
-</div>
-
-<div class="" *ngIf="executor">
-    <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:executor}"></div>
-</div> -->
-
-<div class="" *ngFor="let attr of attributes">
-    <ng-container *ngIf="attr.type === 8">
-        <ng-container *ngIf="attr.value">
-            <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
-        </ng-container>
-    </ng-container>
-    <ng-container *ngIf="attr.type !== 8">
-        <ng-container *ngIf="attr.value">
+<form>
+    <div class="" *ngFor="let attr of attributes">
+        <ng-container *ngIf="attr.type === 3">
             <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
-    </ng-container>
-</div>
-
-<!-- <div class=" mt-4" *ngIf="hasAttachments">
-    <div class=" border-top pb-3">
-        <app-task-attachments [taskNode]="task"></app-task-attachments>
+        <ng-container *ngIf="attr.type === 8">
+            <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
+        </ng-container>
+        <ng-container *ngIf="attr.type === 7">
+            <div *ngTemplateOutlet="stateAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
     </div>
-</div> -->
+</form>
 
 <ng-template #orgUnitAttributeTemplate let-item="item">
   <div class="f-md text-second mt-2">{{item.title}}</div>
@@ -41,8 +27,27 @@
 </ng-template>
 
 <ng-template #stringAttributeTemplate let-item="attr">
-  <div class="mt-2">
-    <div class="text-second">{{item.title}}</div>
-    <div class="">{{item.value}}</div>
-  </div>
+    <div class="form-group mt-2">
+        <label for="{{item.name}}">{{item.title}}</label>
+        <textarea class="form-control" 
+                  [readonly]="isReadonly()"
+                  id="{{item.name}}" 
+                  rows="{{item.displayHeight}}"
+                  value="{{item.value}}">
+        </textarea>
+    </div>
+</ng-template>
+
+<ng-template #stateAttributeTemplate let-item="attr">
+    <div class="form-group mt-2">
+        <label for="{{item.name}}">{{item.title}}</label>
+        <select class="form-control" 
+                [disabled]="isReadonly()"
+                id="{{item.name}}" >
+            <option *ngFor="let opt of item.options" 
+                    [value]="opt.id" >
+                {{opt.title}}
+            </option>
+        </select>
+    </div>
 </ng-template>

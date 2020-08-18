@@ -1,8 +1,17 @@
 
 .document-card-view {
-  height: 97vh;
-  max-width: 800px;
+  min-height: 94vh;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 1rem;
+  margin-top: 2rem;
+  /*margin-bottom: auto; */
+}
+
+@media screen and (max-width: 600px) {
+  .document-card-view{
+    min-height: 100vh;
+    margin-top: 0px;
+    border-radius: 0px!important;
+  }
 }

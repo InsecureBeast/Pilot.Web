@@ -1,10 +1,12 @@
 ﻿import { Component, Input } from '@angular/core';
-import { IObject, AttributeType, IOrganizationUnit } from 'src/app/core/data/data.classes';
+import { IObject, AttributeType, IOrganizationUnit, IAttribute } from 'src/app/core/data/data.classes';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { SafeUrl } from '@angular/platform-browser';
-import { AttributeItem, DateAttributeItem, OrgUnitAttributeItem, StringAttributeItem } from 'src/app/core/ui/attribute.item';
+import { AttributeItem, DateAttributeItem, OrgUnitAttributeItem, StringAttributeItem, StateAttributeItem } from 'src/app/core/ui/attribute.item';
 import { TranslateService } from '@ngx-translate/core';
 import { RepositoryService } from 'src/app/core/repository.service';
+import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
+import { UserStateColorService } from 'src/app/core/data/user.state';
 
 @Component({
     selector: 'app-document-card',
@@ -30,11 +32,18 @@ export class DocumentCardComponent {
   constructor(
       private iconService: TypeIconService,
       private translate: TranslateService,
-      private repository: RepositoryService) {
+      private repository: RepositoryService,
+      private transitionManager: TransitionsManager,
+      private userStateColorService: UserStateColorService,
+      private typeIconService: TypeIconService) {
 
   }
 
-  loadObject(source: IObject): void {
+  isReadonly(): boolean {
+    return true;
+  }
+
+  private loadObject(source: IObject): void {
     if (!source)
       return;
 
@@ -45,15 +54,6 @@ export class DocumentCardComponent {
     const sortedAttributes = source.type.attributes.sort((a, b) => a.displaySortOrder - b.displaySortOrder);
     for (let typeAttr of sortedAttributes) {
       const value = source.attributes[typeAttr.name];
-
-    //   if (typeAttr.name == "state"){
-    //     if (!Guid.isGuid(value))
-    //       continue;
-        
-    //     var state = this.repository.getUserState(value);
-    //     this.stateIcon = this.iconService.getSvgIcon(state.icon);
-    //     this.stateTitle = state.title;
-    //   }
 
       if (typeAttr.isService)
         continue;
@@ -68,6 +68,12 @@ export class DocumentCardComponent {
         const orgUnits = this.getOrgUnits(value);
         const orgUnitItem = new OrgUnitAttributeItem(typeAttr, orgUnits, this.repository);
         this.attributes.push(orgUnitItem);
+        continue;
+      }
+
+      if (typeAttr.type === AttributeType.UserState) {
+        const stateItem = new StateAttributeItem(source, typeAttr, value, this.repository, this.transitionManager, this.typeIconService, this.userStateColorService);
+        this.attributes.push(stateItem);
         continue;
       }
 

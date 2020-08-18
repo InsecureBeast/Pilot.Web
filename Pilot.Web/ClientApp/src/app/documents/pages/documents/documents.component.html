@@ -32,5 +32,13 @@
     <app-document-card class="" *ngIf="getCheckedNode()"
                       [document]="getCheckedNode().source" >
     </app-document-card>
+  <div class="d-flex justify-content-end mt-5">
+    <button type="submit" class="btn btn-primary" (click)="save()" *ngIf="!isProcessing" translate="save"></button>
+    <button type="button" class="btn btn-outline-secondary ml-2" (click)="onCloseDocumentCard()" translate="cancel"></button>
+    <!-- <button class="btn btn-primary" type="button" disabled *ngIf="isProcessing">
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
+      <span class="ml-1" translate="signingIn"> </span>
+    </button> -->
+  </div>
   </div>
 </pw-modal>
