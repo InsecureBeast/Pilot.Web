@@ -4,6 +4,9 @@
 </div>
 <form>
     <div class="" *ngFor="let attr of attributes">
+        <ng-container *ngIf="attr.type === 0">
+            <div *ngTemplateOutlet="intAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
         <ng-container *ngIf="attr.type === 3">
             <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
@@ -49,5 +52,16 @@
                 {{opt.title}}
             </option>
         </select>
+    </div>
+</ng-template>
+
+<ng-template #intAttributeTemplate let-item="attr">
+    <div class="form-group mt-2">
+        <label for="{{item.name}}">{{item.title}}</label>
+        <input  class="form-control" 
+                [readonly]="isReadonly()"
+                id="{{item.name}}" 
+                value="{{item.value}}"
+                style="width: 150px;">
     </div>
 </ng-template>

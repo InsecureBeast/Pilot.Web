@@ -14,8 +14,10 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
-import { IObject } from 'src/app/core/data/data.classes';
+import { IObject, AccessLevel } from 'src/app/core/data/data.classes';
 import { ModalService } from 'src/app/ui/modal/modal.service';
+import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
+import { AccessCalculator } from 'src/app/core/tools/access.calculator';
 
 @Component({
     selector: 'app-documents',
@@ -31,7 +33,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private documentCardModalId = "documentCardModal";
 
   checked = new Array<INode>();
-  checkedNode: INode;
   currentItem: ObjectNode;
   isLoading: boolean;
   error: HttpErrorResponse;
@@ -46,7 +47,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService) {
+    private readonly modalService: ModalService,
+    private readonly accessCalculator: AccessCalculator) {
 
   }
 
@@ -139,5 +141,15 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       return this.checked[0];
 
     return undefined;  
+  }
+
+  isReadonly(): boolean {
+    const checkedNode = this.getCheckedNode(); 
+    if (! checkedNode)
+      return true;  
+       
+    const accessLevel = this.accessCalculator.calcAccess(checkedNode.source);
+    const hasWriteAccess = IObjectExtensions.hasAccess(accessLevel, AccessLevel.Edit);
+    return !hasWriteAccess;
   }
 }

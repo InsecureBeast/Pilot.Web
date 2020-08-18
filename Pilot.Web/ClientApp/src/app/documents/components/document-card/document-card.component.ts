@@ -1,5 +1,5 @@
 ﻿import { Component, Input } from '@angular/core';
-import { IObject, AttributeType, IOrganizationUnit, IAttribute } from 'src/app/core/data/data.classes';
+import { IObject, AttributeType, IOrganizationUnit, IAttribute, AccessLevel } from 'src/app/core/data/data.classes';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { SafeUrl } from '@angular/platform-browser';
 import { AttributeItem, DateAttributeItem, OrgUnitAttributeItem, StringAttributeItem, StateAttributeItem } from 'src/app/core/ui/attribute.item';
@@ -7,6 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
 import { UserStateColorService } from 'src/app/core/data/user.state';
+import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
+import { AccessCalculator } from 'src/app/core/tools/access.calculator';
 
 @Component({
     selector: 'app-document-card',
@@ -15,6 +17,8 @@ import { UserStateColorService } from 'src/app/core/data/user.state';
 })
 /** document-card component*/
 export class DocumentCardComponent {
+
+  private hasWriteAccess: boolean;
 
   typeIcon: SafeUrl;
   typeTitle: string;
@@ -30,17 +34,18 @@ export class DocumentCardComponent {
   
   /** document-card ctor */
   constructor(
-      private iconService: TypeIconService,
-      private translate: TranslateService,
-      private repository: RepositoryService,
-      private transitionManager: TransitionsManager,
-      private userStateColorService: UserStateColorService,
-      private typeIconService: TypeIconService) {
+      private readonly iconService: TypeIconService,
+      private readonly translate: TranslateService,
+      private readonly repository: RepositoryService,
+      private readonly transitionManager: TransitionsManager,
+      private readonly userStateColorService: UserStateColorService,
+      private readonly typeIconService: TypeIconService,
+      private readonly accessCalculator: AccessCalculator) {
 
   }
 
   isReadonly(): boolean {
-    return true;
+    return !this.hasWriteAccess;
   }
 
   private loadObject(source: IObject): void {
@@ -50,6 +55,8 @@ export class DocumentCardComponent {
     this.typeIcon = this.iconService.getTypeIcon(source);
     this.typeTitle = source.type.title;
 
+    const accessLevel = this.accessCalculator.calcAccess(source);
+    this.hasWriteAccess = IObjectExtensions.hasAccess(accessLevel, AccessLevel.Edit);
     this.attributes = new Array<AttributeItem>();
     const sortedAttributes = source.type.attributes.sort((a, b) => a.displaySortOrder - b.displaySortOrder);
     for (let typeAttr of sortedAttributes) {

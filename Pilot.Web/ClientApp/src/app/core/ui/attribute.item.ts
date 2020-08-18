@@ -87,7 +87,6 @@ export class StateAttributeItem extends AttributeItem {
 
     const currentState = repository.getUserState(value);
     const currentUserState = new UserState(currentState, typeIconService, userStateColorService);
-    //const selectedOption = new UserStateOption(currentUserState);
     this.options.push(currentUserState);
 
     const currentPerson = repository.getCurrentPerson();
@@ -96,7 +95,6 @@ export class StateAttributeItem extends AttributeItem {
     for (const transition of transitions) {
       const state = repository.getUserState(transition.stateTo);
       const userState = new UserState(state, typeIconService, userStateColorService);
-      //const option = new UserStateOption(userState);
       this.options.push(userState);
     }
   }

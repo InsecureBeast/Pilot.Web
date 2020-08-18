@@ -32,6 +32,8 @@ export interface IObject {
   previousFileSnapshots: IFileSnapshot[];
   context: string[];
   relations: IRelation[];
+  access: AccessRecord[];
+  stateInfo: StateInfo;
 }
 
 export interface IType {
@@ -224,4 +226,76 @@ export class MUserStateMachine {
   id: string;
   title: string;
   stateTransitions: Map<string, ITransition[]>;
+}
+
+export enum AccessLevel {
+  None = 0,
+  Create = 1 << 0,
+  Edit = 1 << 1,
+  View = 1 << 2,
+  Freeze = 1 << 3,
+  Agreement = 1 << 4,
+
+  ViewCreate = View | Create,
+  ViewEdit = View | Create | Edit,
+  ViewEditAgrement = ViewEdit | Agreement,
+  Full = View | Create | Edit | Freeze | Agreement
+}
+
+export class AccessRecord {
+  static readonly Empty: AccessRecord;
+  RECORD_OWNER_UNDEFINED = 0;
+
+  orgUnitId: number;
+  access: Access;
+  recordOwnerPosition: number;
+  inheritanceSource: string;
+
+  equals(other:AccessRecord) : boolean
+  {
+    if (this.orgUnitId === other.orgUnitId && (this.access.Equals(other.access) && this.recordOwnerPosition === other.recordOwnerPosition))
+      return this.inheritanceSource === other.inheritanceSource;
+    return false;
+  }
+
+  // isTwinTo(other: AccessRecord): boolean
+  // {
+  //   if (this.orgUnitId === other.orgUnitId && this.recordOwnerPosition === other.recordOwnerPosition)
+  //     return object.Equals((object) this.Access, (object) other.Access);
+  //   return false;
+  // }  
+}
+
+export class Access {
+  accessLevel: AccessLevel;
+  validThrough: Date;
+  isInheritable: boolean;
+
+  Equals(other: Access )
+  {
+    return this.accessLevel === other.accessLevel &&
+          this.isInheritable === other.isInheritable &&
+          this.validThrough === other.validThrough;
+  }
+}
+
+export enum ObjectState {
+    Alive,
+    InRecycleBin,
+    DeletedPermanently,
+    Frozen,
+    LockRequested,
+    LockAccepted
+}
+
+export class StateInfo {
+  constructor() {
+    this.state = ObjectState.Alive;
+    
+  }  
+
+  state: ObjectState;
+  date: Date;
+  personId: number;
+  positionId: number;
 }

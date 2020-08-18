@@ -26,14 +26,14 @@
 <app-error *ngIf="error" [response]="error"></app-error>
 
 <pw-modal id="documentCardModal">
-  <div class="bg-white rounded-lg p-3 document-card-view">
-    <span class="material-icons pointer btn float-right" 
+  <div class="bg-white rounded-lg p-3 document-card-view d-flex align-items-start flex-column">
+    <span class="material-icons pointer tb-btn align-self-end" 
           (click)="onCloseDocumentCard()">clear</span>
-    <app-document-card class="" *ngIf="getCheckedNode()"
+    <app-document-card class="mb-auto w-100" *ngIf="getCheckedNode()"
                       [document]="getCheckedNode().source" >
     </app-document-card>
-  <div class="d-flex justify-content-end mt-5">
-    <button type="submit" class="btn btn-primary" (click)="save()" *ngIf="!isProcessing" translate="save"></button>
+  <div class="align-self-end">
+    <button type="submit" class="btn btn-primary" (click)="save()" translate="save" [disabled]="isReadonly()"></button>
     <button type="button" class="btn btn-outline-secondary ml-2" (click)="onCloseDocumentCard()" translate="cancel"></button>
     <!-- <button class="btn btn-primary" type="button" disabled *ngIf="isProcessing">
       <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
