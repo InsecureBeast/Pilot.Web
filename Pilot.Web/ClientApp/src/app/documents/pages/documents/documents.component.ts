@@ -14,11 +14,13 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
+import { IObject } from 'src/app/core/data/data.classes';
+import { ModalService } from 'src/app/ui/modal/modal.service';
 
 @Component({
     selector: 'app-documents',
     templateUrl: './documents.component.html',
-    styleUrls: ['./documents.component.css']
+    styleUrls: ['./documents.component.css', '../../shared/toolbar.css']
 })
 /** documents component*/
 export class DocumentsComponent implements OnInit, OnDestroy {
@@ -26,8 +28,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
+  private documentCardModalId = "documentCardModal";
 
   checked = new Array<INode>();
+  checkedNode: INode;
   currentItem: ObjectNode;
   isLoading: boolean;
   error: HttpErrorResponse;
@@ -41,7 +45,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
-    private readonly scrollPositionService: ScrollPositionService) {
+    private readonly scrollPositionService: ScrollPositionService,
+    private readonly modalService: ModalService) {
 
   }
 
@@ -119,5 +124,20 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   onError(error): void {
     this.error = error;
+  }
+
+  onShowDocumentCard() : void {
+    this.modalService.open(this.documentCardModalId);
+  }
+
+  onCloseDocumentCard() : void {
+    this.modalService.close(this.documentCardModalId);
+  }
+
+  getCheckedNode() : INode{
+    if (this.checked && this.checked.length > 0)
+      return this.checked[0];
+
+    return undefined;  
   }
 }

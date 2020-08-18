@@ -35,5 +35,6 @@
   "pilotServerUnavailable": "Похоже, Pilot-Server на данный момент недоступен. Попробуте повторить запрос позже",
   "cancel": "Отмена",
   "tryAgain": "Повторить",
-  "currentTaskState": "Текущее состояние задания"
+  "currentTaskState": "Текущее состояние задания",
+  "card":"Карточка"
 }

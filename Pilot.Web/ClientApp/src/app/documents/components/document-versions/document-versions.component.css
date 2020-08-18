@@ -5,14 +5,3 @@
   .list-group-item-primary:hover {
     background-color: #eaeaea;
   }
-
-
-.btn {
-  color: var(--gray);
-  font-size: 20px;
-  padding-right: 0;
-}
-
-.btn:hover {
-  color: var(--dark);
-}

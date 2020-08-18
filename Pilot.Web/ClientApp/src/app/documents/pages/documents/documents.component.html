@@ -3,7 +3,8 @@
 
     <app-documents-toolbar class="col-12 p-0"
                            *ngIf="checked != null && checked.length > 0"
-                           [checkedNodes]="checked">
+                           [checkedNodes]="checked"
+                           (onShowDocumentCard)="onShowDocumentCard($event)">
     </app-documents-toolbar>
 
 
@@ -24,3 +25,12 @@
 
 <app-error *ngIf="error" [response]="error"></app-error>
 
+<pw-modal id="documentCardModal">
+  <div class="bg-white rounded-lg p-3 document-card-view">
+    <span class="material-icons pointer btn float-right" 
+          (click)="onCloseDocumentCard()">clear</span>
+    <app-document-card class="" *ngIf="getCheckedNode()"
+                      [document]="getCheckedNode().source" >
+    </app-document-card>
+  </div>
+</pw-modal>

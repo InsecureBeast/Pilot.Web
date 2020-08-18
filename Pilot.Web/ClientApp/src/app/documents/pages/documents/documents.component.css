@@ -1,4 +1,8 @@
 
-.h-calc {
-  /*height: calc(100vh - 100px);*/
+.document-card-view {
+  height: 97vh;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
 }

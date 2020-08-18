@@ -56,6 +56,16 @@ html, body {
   opacity: 0.2;
 }
 
+.btn {
+  color: var(--gray);
+  font-size: 20px;
+  padding-right: 0;
+}
+
+.btn:hover {
+  color: var(--dark);
+}
+
 /* fallback */
 @font-face {
   font-family: 'Material Icons';

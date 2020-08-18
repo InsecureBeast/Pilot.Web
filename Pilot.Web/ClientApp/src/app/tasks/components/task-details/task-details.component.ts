@@ -1,16 +1,15 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SafeUrl } from '@angular/platform-browser';
 
-import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-import { IAttribute, AttributeType, IOrganizationUnit, IPerson, OrgUnitKind, IObject, RelationType } from '../../../core/data/data.classes';
-import { Tools } from '../../../core/tools/tools';
+import { AttributeType, IOrganizationUnit, IObject, RelationType } from '../../../core/data/data.classes';
 import { RepositoryService } from '../../../core/repository.service';
 import { SystemTaskAttributes } from '../../../core/data/system.types';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { Guid } from 'guid-typescript';
+import { OrgUnitAttributeItem, DateAttributeItem, StringAttributeItem, AttributeItem } from 'src/app/core/ui/attribute.item';
 
 @Component({
     selector: 'app-task-details',
@@ -137,63 +136,4 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
 
     return result;
   }
-
-
-}
-
-export class AttributeItem {
-
-  protected attribute: IAttribute;
-
-  constructor(attribute: IAttribute) {
-    this.attribute = attribute;
-    this.title = attribute.title;
-    this.type = attribute.type;
-  }
-
-  title: string;
-  type: AttributeType;
-}
-
-export class StringAttributeItem extends AttributeItem {
-
-  constructor(attribute: IAttribute, value: string) {
-    super(attribute);
-    this.value = value;
-  }
-
-  value: string;
-}
-
-export class DateAttributeItem extends AttributeItem {
-
-  constructor(attribute: IAttribute, value: string, currentLang: string) {
-    super(attribute);
-    if (value === "9999-12-31T23:59:59.9999999")
-      return;
-
-    this.value = Tools.toLocalDateTime(value, currentLang);
-  }
-
-  value: string;
-}
-
-export class OrgUnitAttributeItem extends AttributeItem {
-
-  constructor(attribute: IAttribute, orgUnits: IOrganizationUnit[], repository: RepositoryService) {
-    super(attribute);
-
-    this.items = new Map<IPerson, IOrganizationUnit>();
-    for (let orgUnit of orgUnits) {
-      if (orgUnit.kind !== OrgUnitKind.Position) {
-        this.items.set(null, orgUnit);
-        continue;
-      }
-
-      const person = repository.getPerson(orgUnit.person);
-      this.items.set(person, orgUnit);
-    }
-  }
-
-  items: Map<IPerson, IOrganizationUnit>;
 }

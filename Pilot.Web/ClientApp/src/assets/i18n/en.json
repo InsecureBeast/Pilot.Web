@@ -35,5 +35,6 @@
   "pilotServerUnavailable": "Looks like Pilot-Server is unavailable. Please try again later",
   "cancel": "Cancel",
   "tryAgain":  "Try again",
-  "currentTaskState": "Current task state"
+  "currentTaskState": "Current task state",
+  "card":"Card"
 }

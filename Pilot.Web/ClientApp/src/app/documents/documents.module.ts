@@ -15,6 +15,7 @@ import { DocumentVersionsComponent } from "./components/document-versions/docume
 import { DocumentsRoutingModule } from "./documents-routing.module";
 import { DocumentTreeComponent } from "./components/document-tree/document-tree.component";
 import { UserStateModule } from '../ui/user-state/user-state-module';
+import { DocumentCardComponent } from './components/document-card/document-card.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { UserStateModule } from '../ui/user-state/user-state-module';
     DocumentToolbarComponent,
     DocumentVersionsComponent,
     DocumentsToolbarComponent,
-    DocumentTreeComponent
+    DocumentTreeComponent,
+    DocumentCardComponent
   ],
   exports: [
     DocumentsComponent,
