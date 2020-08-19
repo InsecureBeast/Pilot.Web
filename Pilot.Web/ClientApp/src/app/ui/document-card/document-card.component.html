@@ -33,7 +33,7 @@
     <div class="form-group mt-2">
         <label for="{{item.name}}">{{item.title}}</label>
         <textarea class="form-control" 
-                  [readonly]="isReadonly()"
+                  [readonly]="isReadonly"
                   id="{{item.name}}" 
                   rows="{{item.displayHeight}}"
                   value="{{item.value}}">
@@ -45,7 +45,7 @@
     <div class="form-group mt-2">
         <label for="{{item.name}}">{{item.title}}</label>
         <select class="form-control" 
-                [disabled]="isReadonly()"
+                [disabled]="isReadonly"
                 id="{{item.name}}" >
             <option *ngFor="let opt of item.options" 
                     [value]="opt.id" >
@@ -59,7 +59,7 @@
     <div class="form-group mt-2">
         <label for="{{item.name}}">{{item.title}}</label>
         <input  class="form-control" 
-                [readonly]="isReadonly()"
+                [readonly]="isReadonly"
                 id="{{item.name}}" 
                 value="{{item.value}}"
                 style="width: 150px;">

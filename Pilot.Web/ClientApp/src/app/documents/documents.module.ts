@@ -15,7 +15,7 @@ import { DocumentVersionsComponent } from "./components/document-versions/docume
 import { DocumentsRoutingModule } from "./documents-routing.module";
 import { DocumentTreeComponent } from "./components/document-tree/document-tree.component";
 import { UserStateModule } from '../ui/user-state/user-state-module';
-import { DocumentCardComponent } from './components/document-card/document-card.component';
+import { ObjectCardDialogModule } from '../ui/object-card-dialog/object-card-dialog.module';
 
 @NgModule({
   imports: [
@@ -26,7 +26,8 @@ import { DocumentCardComponent } from './components/document-card/document-card.
     SideModalModule,
     ErrorModule,
     DocumentsRoutingModule,
-    UserStateModule
+    UserStateModule,
+    ObjectCardDialogModule
   ],
   declarations: [
     DocumentsComponent,
@@ -36,8 +37,7 @@ import { DocumentCardComponent } from './components/document-card/document-card.
     DocumentToolbarComponent,
     DocumentVersionsComponent,
     DocumentsToolbarComponent,
-    DocumentTreeComponent,
-    DocumentCardComponent
+    DocumentTreeComponent
   ],
   exports: [
     DocumentsComponent,

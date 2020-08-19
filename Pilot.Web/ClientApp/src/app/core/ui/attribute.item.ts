@@ -86,14 +86,17 @@ export class StateAttributeItem extends AttributeItem {
     this.options = new Array<UserState>();
 
     const currentState = repository.getUserState(value);
-    const currentUserState = new UserState(currentState, typeIconService, userStateColorService);
-    this.options.push(currentUserState);
-
+    if (currentState) {
+      const currentUserState = new UserState(currentState, typeIconService, userStateColorService);
+      this.options.push(currentUserState);
+    }
     const currentPerson = repository.getCurrentPerson();
     const attrsMap = IObjectExtensions.objectAttributesToMap(source.attributes);
     const transitions = transitionsManager.getAvailableTransitions(attribute, attrsMap, currentPerson);
     for (const transition of transitions) {
       const state = repository.getUserState(transition.stateTo);
+      if (!state)
+        continue;
       const userState = new UserState(state, typeIconService, userStateColorService);
       this.options.push(userState);
     }

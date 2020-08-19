@@ -1,20 +1,19 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
+import { DocumentCardComponent } from './document-card.component';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { ErrorComponent } from './error/error.component';
 
-@NgModule(
-  {
+@NgModule({
     imports: [
       CommonModule,
       TranslateModule
     ],
     declarations: [
-      ErrorComponent
+      DocumentCardComponent
     ],
     exports: [
-      ErrorComponent
+      DocumentCardComponent
     ],
   })
-export class ErrorModule {
+export class DocumentCardModule {
 }

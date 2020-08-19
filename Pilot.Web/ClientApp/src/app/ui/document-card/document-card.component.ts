@@ -18,19 +18,18 @@ import { AccessCalculator } from 'src/app/core/tools/access.calculator';
 /** document-card component*/
 export class DocumentCardComponent {
 
-  private hasWriteAccess: boolean;
-
   typeIcon: SafeUrl;
   typeTitle: string;
   attributes: AttributeItem[];
 
-  //private _task: IObject;
-
   @Input()
   set document(value: IObject) {
-    //this._task = value;
+    if (!value)
+      return;
     this.loadObject(value);
   }
+
+  @Input() isReadonly: boolean;
   
   /** document-card ctor */
   constructor(
@@ -39,13 +38,8 @@ export class DocumentCardComponent {
       private readonly repository: RepositoryService,
       private readonly transitionManager: TransitionsManager,
       private readonly userStateColorService: UserStateColorService,
-      private readonly typeIconService: TypeIconService,
-      private readonly accessCalculator: AccessCalculator) {
+      private readonly typeIconService: TypeIconService) {
 
-  }
-
-  isReadonly(): boolean {
-    return !this.hasWriteAccess;
   }
 
   private loadObject(source: IObject): void {
@@ -54,9 +48,6 @@ export class DocumentCardComponent {
 
     this.typeIcon = this.iconService.getTypeIcon(source);
     this.typeTitle = source.type.title;
-
-    const accessLevel = this.accessCalculator.calcAccess(source);
-    this.hasWriteAccess = IObjectExtensions.hasAccess(accessLevel, AccessLevel.Edit);
     this.attributes = new Array<AttributeItem>();
     const sortedAttributes = source.type.attributes.sort((a, b) => a.displaySortOrder - b.displaySortOrder);
     for (let typeAttr of sortedAttributes) {
