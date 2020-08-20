@@ -1,5 +1,5 @@
 ﻿import { Component, Input } from '@angular/core';
-import { IObject, AttributeType, IOrganizationUnit, IAttribute, AccessLevel } from 'src/app/core/data/data.classes';
+import { IObject, AttributeType, IOrganizationUnit } from 'src/app/core/data/data.classes';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { SafeUrl } from '@angular/platform-browser';
 import { AttributeItem, DateAttributeItem, OrgUnitAttributeItem, StringAttributeItem, StateAttributeItem } from 'src/app/core/ui/attribute.item';
@@ -7,8 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
 import { UserStateColorService } from 'src/app/core/data/user.state';
-import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
-import { AccessCalculator } from 'src/app/core/tools/access.calculator';
 
 @Component({
     selector: 'app-document-card',
