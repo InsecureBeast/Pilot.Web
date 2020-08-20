@@ -26,7 +26,8 @@
 <app-error *ngIf="error" [response]="error"></app-error>
 
 <pw-modal id="documentCardModal">
-  <app-object-card-dialog [node]="getCheckedNode()"
-                          (onClose)="onCloseDocumentCard($event)">
+  <app-object-card-dialog [node]="checkedNode"
+                          (onClose)="onCloseDocumentCard($event)"
+                          (onSave)="onChangeDocumentCard($event)">
   </app-object-card-dialog>
 </pw-modal>

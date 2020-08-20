@@ -76,7 +76,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   update(node: TaskNode) : void {
     this.repositoryService.getObjectAsync(node.source.id).then(source => {
       node.update(source);
-    })
+    });
   }
 
   addChecked(node: TaskNode): void {
@@ -93,7 +93,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   showSubTasks(task: TaskNode): void {
 
     if (task.loadedChildren.length > 0) {
-      for (var child of task.loadedChildren) {
+      for (let child of task.loadedChildren) {
         child.isVisible = !task.isChildrenShown;
       }
 

@@ -1,4 +1,4 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IObject, AttributeType, IOrganizationUnit } from 'src/app/core/data/data.classes';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { SafeUrl } from '@angular/platform-browser';
@@ -15,10 +15,13 @@ import { UserStateColorService } from 'src/app/core/data/user.state';
 })
 /** document-card component*/
 export class DocumentCardComponent {
+  
+  private sourceAttributes: Map<string, any>;
 
   typeIcon: SafeUrl;
   typeTitle: string;
   attributes: AttributeItem[];
+  changedAttributes: Map<string, any>;
 
   @Input()
   set document(value: IObject) {
@@ -38,6 +41,17 @@ export class DocumentCardComponent {
       private readonly userStateColorService: UserStateColorService,
       private readonly typeIconService: TypeIconService) {
 
+    this.sourceAttributes = new Map<string, any>();
+    this.changedAttributes = new Map<string, any>();
+  }
+
+  onChange(key: string, value: any): void {
+    const v = this.sourceAttributes.get(key);
+    if (v === value) {
+      this.changedAttributes.delete(key);
+      return;
+    }
+    this.changedAttributes.set(key, value);
   }
 
   private loadObject(source: IObject): void {
@@ -50,6 +64,7 @@ export class DocumentCardComponent {
     const sortedAttributes = source.type.attributes.sort((a, b) => a.displaySortOrder - b.displaySortOrder);
     for (let typeAttr of sortedAttributes) {
       const value = source.attributes[typeAttr.name];
+      this.sourceAttributes.set(typeAttr.name, value);
 
       if (typeAttr.isService)
         continue;

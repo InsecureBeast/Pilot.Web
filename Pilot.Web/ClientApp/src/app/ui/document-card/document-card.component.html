@@ -46,7 +46,8 @@
         <label for="{{item.name}}">{{item.title}}</label>
         <select class="form-control" 
                 [disabled]="isReadonly"
-                id="{{item.name}}" >
+                id="{{item.name}}" 
+                (change)="onChange(item.name, $event.target.value)">
             <option *ngFor="let opt of item.options" 
                     [value]="opt.id" >
                 {{opt.title}}

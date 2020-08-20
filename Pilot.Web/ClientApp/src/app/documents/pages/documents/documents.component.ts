@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -15,6 +15,7 @@ import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
+import { DocumentListComponent } from '../../components/document-list/document-list.component';
 
 @Component({
     selector: 'app-documents',
@@ -34,6 +35,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   currentItem: ObjectNode;
   isLoading: boolean;
   error: HttpErrorResponse;
+
+  @ViewChild(DocumentListComponent, { static: false })
+  private documentListComponent: DocumentListComponent;
   
   /** documents ctor */
   constructor(
@@ -133,9 +137,16 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onCloseDocumentCard() : void {
     this.modalService.close(this.documentCardModal);
   }
+  onChangeDocumentCard(nodeId: string): void {
+    this.documentListComponent.updateAsync(this.checkedNode).then(newNode => {
+      this.checked = new Array<INode>();
+      this.checked.push(newNode);
+      this.checkedNode = this.getCheckedNode();
+    });
+    this.modalService.close(this.documentCardModal);
+  }
 
-
-  getCheckedNode() : INode{
+  private getCheckedNode() : INode{
     if (this.checked && this.checked.length > 0)
       return this.checked[0];
 

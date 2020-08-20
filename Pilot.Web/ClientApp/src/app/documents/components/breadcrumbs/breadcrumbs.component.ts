@@ -162,9 +162,14 @@ export class BreadcrumbNode implements INode {
 
   /** BreadcrumbNode ctor */
   constructor(public source: IObject, isActive: boolean) {
+    this.update(source);
+    this.isActive = isActive;
+  }
+
+  update(source: IObject): void {
+    this.source = source;
     this.id = source.id;
     this.title = source.title;
-    this.isActive = isActive;
     this.isDocument = false;
     this.parentId = source.parentId;
     this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);

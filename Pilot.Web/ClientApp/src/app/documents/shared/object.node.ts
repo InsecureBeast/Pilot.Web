@@ -20,34 +20,12 @@ export class ObjectNode implements IObjectNode {
     private cancel: Subject<any>,
     private translate: TranslateService) {
 
-    this.created = Tools.toUtcCsDateTime(source.created).toLocaleString();
-    this.id = source.id;
-    this.parentId = source.parentId;
-    this.title = this.getTitle(source);
-    this.type = source.type;
-    this.children = source.children;
-    this.creator = source.creator;
-    this.isDocument = this.getIsDocument(source.type);
-    this.stateAttributes = source.type.attributes.filter(at => at.type === AttributeType.UserState);
-
-    if (this.isDocument)
-      this.childrenCount = -1;
-    else
-      this.childrenCount = source.children.length;
-
+    this.update(source);
     if (!isSource)
       this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
     else
       this.isSource = true;
-
-    this.context = new Array<string>();
-    if (source.context)
-      this.context = source.context;
-
-    this.loadTypeIcon();
-    this.loadPreview();
   }
-  
 
   id: string;
   parentId: string;
@@ -96,6 +74,30 @@ export class ObjectNode implements IObjectNode {
         err => this.preview = null);
   }
 
+  update(source: IObject): void {
+    this.created = Tools.toUtcCsDateTime(source.created).toLocaleString();
+    this.id = source.id;
+    this.parentId = source.parentId;
+    this.title = this.getTitle(source);
+    this.type = source.type;
+    this.children = source.children;
+    this.creator = source.creator;
+    this.isDocument = this.getIsDocument(source.type);
+    this.stateAttributes = source.type.attributes.filter(at => at.type === AttributeType.UserState);
+
+    if (this.isDocument)
+      this.childrenCount = -1;
+    else
+      this.childrenCount = source.children.length;
+
+    this.context = new Array<string>();
+    if (source.context)
+      this.context = source.context;
+
+    this.loadTypeIcon();
+    this.loadPreview();
+  }
+
   private getTitle(source: IObject): string {
 
     if (source.title === "Source files")
@@ -122,6 +124,10 @@ export class EmptyObjectNode implements IObjectNode {
     this.children = this.source.children;
     this.childrenCount = -1;
     this.stateAttributes = new Array<IAttribute>();
+  }
+  
+  update(source: IObject): void {
+    throw new Error("Method not implemented.");
   }
 
   id: string;

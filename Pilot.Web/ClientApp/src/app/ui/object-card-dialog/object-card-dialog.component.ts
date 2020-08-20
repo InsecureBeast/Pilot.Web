@@ -15,6 +15,7 @@ export class ObjectCardDialogComponent {
 
   @Input() node : INode;
   @Output() onClose = new EventEmitter<any>();
+  @Output() onSave = new EventEmitter<string>();
   
   @ViewChild(DocumentCardComponent, { static: false })
   private cardComponent: DocumentCardComponent;
@@ -43,11 +44,15 @@ export class ObjectCardDialogComponent {
         return;   
 
     const modifier = this.repository.newModifier();
-    var attrs = this.cardComponent.attributes;
+    var changed = this.cardComponent.changedAttributes;
     const builder = modifier.edit(this.node.id);
-    // for (const attr of attrs) {
-    //     builder.setAttribute(attr.name, attr.value);
-    // }
-    // modifier.apply().subscribe(res => {});
+
+    changed.forEach((value: any, key: string) => {
+      builder.setAttribute(key, value);
+    });
+    
+    modifier.apply().subscribe(res => {
+      this.onSave.emit(this.node.id);
+    });
   }
 }

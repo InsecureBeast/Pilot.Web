@@ -24,6 +24,7 @@ import { SystemStates } from 'src/app/core/data/system.states';
 })
 /** documents-list component*/
 export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
+  
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
@@ -168,6 +169,18 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     });
 
     return noneStates.length !== node.stateAttributes.length;
+  }
+
+  updateAsync(node: INode) : Promise<INode> {
+    return new Promise<INode>((resolve, reject) => {
+      this.repository.getObjectAsync(node.id).then(object => {
+        let index = this.nodes.findIndex(n => n.id == node.id);
+        const newNode = new ObjectNode(object, node.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+        newNode.isChecked = node.isChecked;
+        this.nodes[index]= newNode;
+        resolve(newNode);
+      }).catch(err => reject(err));
+    });
   }
 
   private init(item: IObjectNode) {
