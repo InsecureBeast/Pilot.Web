@@ -39,7 +39,7 @@ export class AuthComponent implements OnInit, OnDestroy{
       if (!value)
         return;
 
-      this.repositoryService.initializeAsync().pipe(skipWhile(v => !v)).subscribe(isInit => {
+      this.repositoryService.initialize().pipe(skipWhile(v => !v)).subscribe(isInit => {
         this.isProcessing = false;
 
         this.activatedRoute.queryParams.pipe(first()).subscribe((params: Params) => {
@@ -57,8 +57,8 @@ export class AuthComponent implements OnInit, OnDestroy{
         this.error = this.errorService.handleErrorMessage(e);
 
       });
-
     });
+
     this.errorSubscription = this.authService.error.subscribe(err => {
       this.isProcessing = false;
       if (!err)
@@ -66,6 +66,7 @@ export class AuthComponent implements OnInit, OnDestroy{
 
       this.error = this.errorService.handleErrorMessage(err);
     });
+   
   }
 
   ngOnDestroy(): void {

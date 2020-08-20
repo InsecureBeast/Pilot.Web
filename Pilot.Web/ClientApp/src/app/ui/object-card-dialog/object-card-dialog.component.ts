@@ -1,9 +1,10 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { AccessCalculator } from 'src/app/core/tools/access.calculator';
 import { INode } from 'src/app/documents/shared/node.interface';
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { AccessLevel } from 'src/app/core/data/data.classes';
 import { RepositoryService } from 'src/app/core/repository.service';
+import { DocumentCardComponent } from '../document-card/document-card.component';
 
 @Component({
     selector: 'app-object-card-dialog',
@@ -14,6 +15,9 @@ export class ObjectCardDialogComponent {
 
   @Input() node : INode;
   @Output() onClose = new EventEmitter<any>();
+  
+  @ViewChild(DocumentCardComponent, { static: false })
+  private cardComponent: DocumentCardComponent;
   
   constructor(
     private readonly repository: RepositoryService,
@@ -39,8 +43,11 @@ export class ObjectCardDialogComponent {
         return;   
 
     const modifier = this.repository.newModifier();
-    // modifier.edit(checkedNode.id)
-    // .setAttribute($event.attrName, $event.transition.stateTo);
-    // modifier.apply().subscribe(r => {
+    var attrs = this.cardComponent.attributes;
+    const builder = modifier.edit(this.node.id);
+    // for (const attr of attrs) {
+    //     builder.setAttribute(attr.name, attr.value);
+    // }
+    // modifier.apply().subscribe(res => {});
   }
 }

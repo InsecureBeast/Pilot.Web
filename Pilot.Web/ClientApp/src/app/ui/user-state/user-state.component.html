@@ -1,32 +1,9 @@
-﻿<div class="">
-    <ng-container *ngIf="style === 0">
-        <ng-container *ngTemplateOutlet="listViewTemplate"></ng-container>
-    </ng-container>
+﻿<div class="badge badge-pill mr-1"
+    *ngFor="let userState of userStates"
+    [style.background-color]="userState.color"
+    style="height: 20px;">
 
-    <ng-container *ngIf="style === 1">
-        <ng-container *ngTemplateOutlet="gridViewTemplate"></ng-container>
-    </ng-container>
+    <img [src]="userState.icon" width="16" *ngIf="userState.icon">
+    <span>{{userState.title}}</span>
+    
 </div>
-
-<ng-template #listViewTemplate>
-    <div class="badge badge-pill mr-1"
-        *ngFor="let userState of userStates"
-        [style.background-color]="userState.color"
-        style="height: 20px;">
-        <img [src]="userState.icon" width="16" *ngIf="userState.icon">
-        <span>{{userState.title}}</span>
-    </div>
-</ng-template>
-
-
-<ng-template #gridViewTemplate>
-    <div class="">
-        <div class="badge badge-pill mr-1"
-            *ngFor="let userState of userStates"
-            [style.background-color]="userState.color"
-            style="height: 20px;">
-            <img [src]="userState.icon" width="16" *ngIf="userState.icon">
-            <span>{{userState.title}}</span>
-        </div>
-    </div>
-</ng-template>

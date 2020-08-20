@@ -1,9 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 
-import { AuthService } from '../auth/auth.service';
 import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
 import { RequestType, HeadersProvider } from './headers.provider';
 import { Change } from './modifier/change';
@@ -20,10 +19,6 @@ export class RepositoryService {
   private currentPerson: IPerson;
   private stateMachines: Map<string, MUserStateMachine>;
 
-  private behaviorInitializedSubject = new BehaviorSubject<boolean>(false);
-
-  initialized = this.behaviorInitializedSubject.value;
-
   set requestType(value: RequestType) {
     this.headersProvider.requestType = value;
   }
@@ -34,15 +29,13 @@ export class RepositoryService {
 
   constructor(private http: HttpClient, 
               @Inject('BASE_URL') private baseUrl: string, 
-              private authService: AuthService, 
               private readonly headersProvider: HeadersProvider) {
-    this.types = new Map<number, IType>();
+    
+     this.types = new Map<number, IType>();
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
     this.userStates = new Map<string, IUserState>();
     this.stateMachines = new Map<string, MUserStateMachine>();
-
-    this.initializeAsync();
   }
 
   getType(id: number): IType {
@@ -100,13 +93,12 @@ export class RepositoryService {
     });
   }
 
-  initializeAsync(): Observable<boolean> {
+  initialize(): Observable<boolean> {
     const init = new BehaviorSubject<boolean>(false);
-    if (!this.isAuth())
+    if (this.metadata){
+      init.next(true);
       return init;
-
-    if (this.metadata)
-      return new BehaviorSubject<boolean>(true);
+    }
 
     const metadata$ = this.getMetadata();
     const people$ = this.getPeople();
@@ -147,6 +139,8 @@ export class RepositoryService {
         init.next(true);
         init.complete();
         zip$.unsubscribe();
+      }, err => {
+        init.error(err);
       });
 
     return init;
@@ -221,9 +215,5 @@ export class RepositoryService {
   private getUserStates(): Observable<IUserState[]> {
     const headers = this.headersProvider.getHeaders();
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
-  }
-
-  private isAuth(): boolean {
-    return this.authService.getToken() != null;
   }
 }

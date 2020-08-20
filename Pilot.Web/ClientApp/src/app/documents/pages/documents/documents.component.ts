@@ -15,7 +15,6 @@ import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
-import { ObjectCardDialogComponent } from 'src/app/ui/object-card-dialog/object-card-dialog.component';
 
 @Component({
     selector: 'app-documents',
