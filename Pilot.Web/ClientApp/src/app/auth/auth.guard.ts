@@ -3,7 +3,7 @@ import { CanActivate, Router } from '@angular/router';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
 
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
 import { map, skipWhile } from 'rxjs/operators';
 import { RepositoryService } from '../core/repository.service';
 
@@ -15,14 +15,24 @@ export class AuthGuard implements CanActivate {
   }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.repository.initialize().pipe(skipWhile(v => !v), map((isInit: boolean) => { 
+    const canActivate$ = new ReplaySubject<boolean>();
+    const can = this.repository.initialize().pipe(skipWhile(v => !v), map((isInit: boolean) => { 
         if (!this.authService.getToken()) {
           // not logged in so redirect to login page with the return url
           this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+          canActivate$.next(false);
           return false;
         }
 
-        return isInit;
-      }));
+        return true;
+      })).subscribe(init => {
+        canActivate$.next(init);
+      }, err => {
+        // not logged in so redirect to login page with the return url
+        this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+        canActivate$.next(false);
+      });
+
+      return canActivate$;
   }
 }

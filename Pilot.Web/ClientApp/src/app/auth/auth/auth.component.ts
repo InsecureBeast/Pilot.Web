@@ -55,7 +55,8 @@ export class AuthComponent implements OnInit, OnDestroy{
       }, (e: HttpErrorResponse) => {
         this.isProcessing = false;
         this.error = this.errorService.handleErrorMessage(e);
-
+        if (e.status === 401)
+          this.error = null;
       });
     });
 
