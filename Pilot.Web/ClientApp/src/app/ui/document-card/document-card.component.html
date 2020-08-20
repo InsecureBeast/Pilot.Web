@@ -1,4 +1,4 @@
-﻿<div class="mt-2" style="margin-left: -2px;">
+<div class="mt-2" style="margin-left: -2px;">
     <img [src]="typeIcon" width="24" *ngIf="typeIcon != null">
     <span class="ml-2 align-middle">{{typeTitle}}</span>
 </div>
@@ -36,7 +36,8 @@
                   [readonly]="isReadonly"
                   id="{{item.name}}" 
                   rows="{{item.displayHeight}}"
-                  value="{{item.value}}">
+                  value="{{item.value}}"
+                  (change)="onChange(item.name, $event.target.value)">
         </textarea>
     </div>
 </ng-template>
@@ -63,6 +64,7 @@
                 [readonly]="isReadonly"
                 id="{{item.name}}" 
                 value="{{item.value}}"
+                (change)="onChange(item.name, $event.target.value)"
                 style="width: 150px;">
     </div>
 </ng-template>

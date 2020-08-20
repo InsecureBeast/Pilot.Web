@@ -58,6 +58,7 @@ export class DocumentCardComponent {
     if (!source)
       return;
 
+    this.changedAttributes.clear();
     this.typeIcon = this.iconService.getTypeIcon(source);
     this.typeTitle = source.type.title;
     this.attributes = new Array<AttributeItem>();
