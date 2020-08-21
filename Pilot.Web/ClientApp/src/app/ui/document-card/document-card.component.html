@@ -7,14 +7,29 @@
         <ng-container *ngIf="attr.type === 0">
             <div *ngTemplateOutlet="intAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
+        <ng-container *ngIf="attr.type === 1">
+            <div *ngTemplateOutlet="doubleAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
+        <ng-container *ngIf="attr.type === 2">
+            <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
         <ng-container *ngIf="attr.type === 3">
             <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
-        <ng-container *ngIf="attr.type === 8">
-            <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
+        <ng-container *ngIf="attr.type === 4">
+            <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
+        <ng-container *ngIf="attr.type === 5">
+            <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
+        <ng-container *ngIf="attr.type === 6">
+            <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
         <ng-container *ngIf="attr.type === 7">
             <div *ngTemplateOutlet="stateAttributeTemplate;context:{attr:attr}"></div>
+        </ng-container>
+        <ng-container *ngIf="attr.type === 8">
+            <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
         </ng-container>
     </div>
 </form>
@@ -60,11 +75,37 @@
 <ng-template #intAttributeTemplate let-item="attr">
     <div class="form-group mt-2">
         <label for="{{item.name}}">{{item.title}}</label>
-        <input  class="form-control" 
-                [readonly]="isReadonly"
+        <input class="form-control" 
+                type="text"
+                readonly
                 id="{{item.name}}" 
                 value="{{item.value}}"
                 (change)="onChange(item.name, $event.target.value)"
                 style="width: 150px;">
+    </div>
+</ng-template>
+
+<ng-template #doubleAttributeTemplate let-item="attr">
+    <div class="form-group mt-2">
+        <label for="{{item.name}}">{{item.title}}</label>
+        <input class="form-control" 
+                type="text"
+                readonly
+                id="{{item.name}}" 
+                value="{{item.value}}"
+                (change)="onChange(item.name, $event.target.value)"
+                style="width: 150px;">
+    </div>
+</ng-template>
+
+
+<ng-template #readonlyAttributeTemplate let-item="attr">
+    <div class="form-group mt-2">
+        <label for="{{item.name}}">{{item.title}}</label>
+        <input  class="form-control" 
+                readonly
+                id="{{item.name}}" 
+                value="{{item.value}}"
+                (change)="onChange(item.name, $event.target.value)">
     </div>
 </ng-template>

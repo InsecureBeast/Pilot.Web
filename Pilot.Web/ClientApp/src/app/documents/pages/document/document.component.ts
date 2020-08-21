@@ -18,6 +18,7 @@ import { VersionsSelectorService } from '../../components/document-versions/vers
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
+import { DocumentsService } from '../../shared/documents.service';
 
 @Component({
   selector: 'app-document',
@@ -46,13 +47,14 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   /** document-details ctor */
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private sourceFileService: SourceFileService,
-    private downloadService: DownloadService,
-    private location: Location,
-    private repository: RepositoryService,
-    private router: Router,
-    private versionSelector: VersionsSelectorService,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly sourceFileService: SourceFileService,
+    private readonly downloadService: DownloadService,
+    private readonly location: Location,
+    private readonly repository: RepositoryService,
+    private readonly router: Router,
+    private readonly versionSelector: VersionsSelectorService,
+    private readonly documentsService: DocumentsService,
     private readonly modalService: ModalService) {
 
     this.isActualVersionSelected = true;
@@ -170,6 +172,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.repository.getObjectAsync(nodeId)
     .then(object => {
       this.document = object;
+      this.documentsService.changeDocument(object);
     })
     .catch(err => {
       this.error = err;

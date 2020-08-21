@@ -4,12 +4,10 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
-import { IObject, AttributeType, ITransition } from '../../../core/data/data.classes';
+import { IObject } from '../../../core/data/data.classes';
 import { RepositoryService } from '../../../core/repository.service';
 import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
-import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { TransitionCommand } from '../../shared/transition.command';
-import { ToolbarItem } from '../../shared/toolbar.item';
 import { TaskToolbarComponent, RequestState } from '../../components/task-toolbar/task-toolbar.component';
 import { TaskDetailsComponent } from '../../components/task-details/task-details.component';
 import { HttpErrorResponse } from '@angular/common/http';
