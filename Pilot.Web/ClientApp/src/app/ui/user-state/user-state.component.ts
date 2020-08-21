@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { ObjectNode } from 'src/app/documents/shared/object.node';
 import { UserState, UserStateColorService } from 'src/app/core/data/user.state';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { AttributeType } from 'src/app/core/data/data.classes';
+import { AttributeType, IObject } from 'src/app/core/data/data.classes';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { NodeStyle } from 'src/app/core/node-style.service';
 import { SystemStates } from 'src/app/core/data/system.states';
@@ -15,13 +14,10 @@ import { SystemStates } from 'src/app/core/data/system.states';
 /** user-state component*/
 export class UserStateComponent {
   
-  private _node: ObjectNode;
-
   userStates: UserState[];
 
   @Input()
-  set node(node: ObjectNode) {
-    this._node = node;
+  set object(node: IObject) {
     this.loadUserStates(node);
   }
 
@@ -35,15 +31,16 @@ export class UserStateComponent {
 
   }
 
-  private loadUserStates(node: ObjectNode) : void {
+  private loadUserStates(object: IObject) : void {
     this.userStates = new Array<UserState>();
 
-    if (!node)
+    if (!object)
       return;
     
-    const stateAttrs = node.stateAttributes;
+    
+    const stateAttrs = object.type.attributes.filter(at => at.type === AttributeType.UserState);;
     for (const attr of stateAttrs) {
-      const value = node.source.attributes[attr.name];
+      const value = object.attributes[attr.name];
       if (!value)
         continue;
   

@@ -15,12 +15,19 @@
 
       <div class="text-center" *ngIf="!isActualVersionSelected">
         <div class="alert alert-warning" role="alert">
-          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}.
+          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}
           <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
         </div>
       </div>
 
-      <div class="text-center" *ngIf="images">
+      <div *ngIf="document">
+        <span>{{document.title}}</span>
+        <div>
+          <app-user-state [object]="document"></app-user-state>
+        </div>
+      </div>
+
+      <div class="text-center mt-3" *ngIf="images">
         <div *ngFor="let page of images">
           <img [src]="page" class="doc-page">
         </div>

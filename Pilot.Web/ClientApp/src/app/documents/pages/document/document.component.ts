@@ -167,7 +167,13 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onChangeDocumentCard(nodeId: string): void {
-
+    this.repository.getObjectAsync(nodeId)
+    .then(object => {
+      this.document = object;
+    })
+    .catch(err => {
+      this.error = err;
+    })
     this.onCloseDocumentCard();
   }
 

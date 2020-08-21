@@ -42,10 +42,11 @@
 
         <div class="mr-auto">
           <div class="pointer three-line-text overflow-hidden"
-               (click)="selected(node);$event.stopPropagation();">
-            <div [class.text-primary]="node?.isChecked" *ngIf="node">{{ node.title }}</div>
-            <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
-            <div><app-user-state [node]="node"></app-user-state></div>
+               (click)="selected(node);$event.stopPropagation();"
+               *ngIf="node">
+            <div [class.text-primary]="node?.isChecked">{{ node.title }}</div>
+            <small class="text-muted">{{node.type.title}}</small>
+            <div><app-user-state [object]="node.source"></app-user-state></div>
           </div>
         </div>
 
@@ -79,13 +80,15 @@
 
         <div class="card-children-count text-muted" *ngIf="node.childrenCount >= 0">{{node.childrenCount}}</div>
 
-        <div class="card-body" (click)="selected(node);$event.stopPropagation();">
+        <div class="card-body" 
+             (click)="selected(node);$event.stopPropagation();"
+             *ngIf="node">
           <div class="text-center pointer">
             <div class="card-name"
-                 [class.text-primary]="node.isChecked" *ngIf="node">{{ node.title }}</div>
-            <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
+                 [class.text-primary]="node.isChecked" >{{node.title}}</div>
+            <small class="text-muted" *ngIf="node.type && !isStatesExists(node)">{{node.type.title}}</small>
             <div>
-              <app-user-state [node]="node"></app-user-state>
+              <app-user-state [object]="node.source"></app-user-state>
             </div>
           </div>
         </div>
