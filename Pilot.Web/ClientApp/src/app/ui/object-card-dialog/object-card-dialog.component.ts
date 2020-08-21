@@ -1,8 +1,7 @@
 ﻿import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { AccessCalculator } from 'src/app/core/tools/access.calculator';
-import { INode } from 'src/app/documents/shared/node.interface';
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
-import { AccessLevel } from 'src/app/core/data/data.classes';
+import { AccessLevel, IObject } from 'src/app/core/data/data.classes';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { DocumentCardComponent } from '../document-card/document-card.component';
 
@@ -13,7 +12,7 @@ import { DocumentCardComponent } from '../document-card/document-card.component'
 })
 export class ObjectCardDialogComponent {
 
-  @Input() node : INode;
+  @Input() object: IObject;
   @Output() onClose = new EventEmitter<any>();
   @Output() onSave = new EventEmitter<string>();
   
@@ -31,28 +30,28 @@ export class ObjectCardDialogComponent {
   }
 
   isReadonly(): boolean {
-    if (!this.node)
+    if (!this.object)
         return true;  
         
-    const accessLevel = this.accessCalculator.calcAccess(this.node.source);
+    const accessLevel = this.accessCalculator.calcAccess(this.object);
     const hasWriteAccess = IObjectExtensions.hasAccess(accessLevel, AccessLevel.Edit);
     return !hasWriteAccess;
   }
 
   save(): void {
-    if (!this.node)
+    if (!this.object)
         return;   
 
     const modifier = this.repository.newModifier();
     var changed = this.cardComponent.changedAttributes;
-    const builder = modifier.edit(this.node.id);
+    const builder = modifier.edit(this.object.id);
 
     changed.forEach((value: any, key: string) => {
       builder.setAttribute(key, value);
     });
     
     modifier.apply().subscribe(res => {
-      this.onSave.emit(this.node.id);
+      this.onSave.emit(this.object.id);
     });
   }
 }

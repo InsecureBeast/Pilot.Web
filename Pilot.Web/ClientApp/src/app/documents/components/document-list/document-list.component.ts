@@ -171,12 +171,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     return noneStates.length !== node.stateAttributes.length;
   }
 
-  updateAsync(node: INode) : Promise<INode> {
+  updateAsync(object: IObject) : Promise<INode> {
     return new Promise<INode>((resolve, reject) => {
-      this.repository.getObjectAsync(node.id).then(object => {
-        let index = this.nodes.findIndex(n => n.id == node.id);
-        const newNode = new ObjectNode(object, node.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-        newNode.isChecked = node.isChecked;
+      this.repository.getObjectAsync(object.id).then(object => {
+        let index = this.nodes.findIndex(n => n.id === object.id);
+        const oldNode = this.nodes.find(n => n.id === object.id)
+        const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+        newNode.isChecked = oldNode.isChecked;
         this.nodes[index]= newNode;
         resolve(newNode);
       }).catch(err => reject(err));

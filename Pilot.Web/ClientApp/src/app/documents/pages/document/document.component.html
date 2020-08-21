@@ -3,7 +3,8 @@
                       (onDownload)="download($event)"
                       (onPreviousDocument)="previousDocument($event)"
                       (onNextDocument)="nextDocument($event)"
-                      (onShowVersions)="showDocumentVersions($event)">
+                      (onShowVersions)="showDocumentVersions($event)"
+                      (onShowDocumentCard)="onShowDocumentCard($event)">
 </app-document-toolbar>
 
 <div class="pt-6" *ngIf="!error">
@@ -52,3 +53,10 @@
 </div>
 
 <app-error *ngIf="error" [response]="error"></app-error>
+
+<pw-modal id="documentCardModal">
+  <app-object-card-dialog [object]="document"
+                          (onClose)="onCloseDocumentCard($event)"
+                          (onSave)="onChangeDocumentCard($event)">
+  </app-object-card-dialog>
+</pw-modal>

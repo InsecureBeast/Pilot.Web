@@ -16,6 +16,7 @@ import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentListComponent } from '../../components/document-list/document-list.component';
+import { IObject } from 'src/app/core/data/data.classes';
 
 @Component({
     selector: 'app-documents',
@@ -31,7 +32,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private documentCardModal = "documentCardModal";
 
   checked = new Array<INode>();
-  checkedNode: INode;
+  checkedNode: IObject;
   currentItem: ObjectNode;
   isLoading: boolean;
   error: HttpErrorResponse;
@@ -137,18 +138,19 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onCloseDocumentCard() : void {
     this.modalService.close(this.documentCardModal);
   }
+  
   onChangeDocumentCard(nodeId: string): void {
     this.documentListComponent.updateAsync(this.checkedNode).then(newNode => {
       this.checked = new Array<INode>();
       this.checked.push(newNode);
       this.checkedNode = this.getCheckedNode();
     });
-    this.modalService.close(this.documentCardModal);
+    this.onCloseDocumentCard();
   }
 
-  private getCheckedNode() : INode{
+  private getCheckedNode() : IObject{
     if (this.checked && this.checked.length > 0)
-      return this.checked[0];
+      return this.checked[0].source;
 
     return undefined;  
   }

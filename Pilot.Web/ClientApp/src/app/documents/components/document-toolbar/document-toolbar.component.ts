@@ -29,6 +29,7 @@ export class DocumentToolbarComponent implements OnDestroy {
   @Output() onPreviousDocument = new EventEmitter<any>();
   @Output() onNextDocument = new EventEmitter<any>();
   @Output() onShowVersions = new EventEmitter<any>();
+  @Output() onShowDocumentCard = new EventEmitter<any>();
 
   /** document-toolbar ctor */
   constructor() {
@@ -59,6 +60,10 @@ export class DocumentToolbarComponent implements OnDestroy {
   showVersions($event): void {
     this.isVersionsChecked = !this.isVersionsChecked;
     this.onShowVersions.emit(this.document);
+  }
+
+  openDocumentCard() : void {
+    this.onShowDocumentCard.emit();
   }
 
   private documentChanged(document: IObject): void {

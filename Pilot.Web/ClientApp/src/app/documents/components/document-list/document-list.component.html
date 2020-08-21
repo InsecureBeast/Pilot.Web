@@ -83,8 +83,10 @@
           <div class="text-center pointer">
             <div class="card-name"
                  [class.text-primary]="node.isChecked" *ngIf="node">{{ node.title }}</div>
-            <small class="text-muted" *ngIf="node.type && !isStatesExists(node)">{{node.type.title}}</small>
-            <app-user-state [node]="node"></app-user-state>
+            <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
+            <div>
+              <app-user-state [node]="node"></app-user-state>
+            </div>
           </div>
         </div>
       </div>

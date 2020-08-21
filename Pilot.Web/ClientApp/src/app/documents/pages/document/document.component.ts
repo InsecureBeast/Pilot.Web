@@ -17,6 +17,7 @@ import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
+import { ModalService } from 'src/app/ui/modal/modal.service';
 
 @Component({
   selector: 'app-document',
@@ -29,8 +30,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
-
   private documents = new Array<string>();
+  private documentCardModal = "documentCardModal";
 
   document: IObject;
   images: SafeUrl[];
@@ -51,7 +52,8 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private location: Location,
     private repository: RepositoryService,
     private router: Router,
-    private versionSelector: VersionsSelectorService) {
+    private versionSelector: VersionsSelectorService,
+    private readonly modalService: ModalService) {
 
     this.isActualVersionSelected = true;
     this.images = new Array();
@@ -154,6 +156,19 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     const nextId = this.documents[indexOf + 1];
     this.loadDocument(nextId);
     this.updateLocation(nextId);
+  }
+
+  onShowDocumentCard() : void {
+    this.modalService.open(this.documentCardModal);
+  }
+
+  onCloseDocumentCard() : void {
+    this.modalService.close(this.documentCardModal);
+  }
+
+  onChangeDocumentCard(nodeId: string): void {
+
+    this.onCloseDocumentCard();
   }
 
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
