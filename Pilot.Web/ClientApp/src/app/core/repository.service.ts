@@ -81,6 +81,19 @@ export class RepositoryService {
     });
   }
 
+  getObjectWithRequestTypeAsync(id: string, requestType: RequestType): Promise<IObject> {
+    const currentRequestType = this.requestType;
+    this.requestType = requestType;
+    const headers = this.headersProvider.getHeaders();
+    this.requestType = currentRequestType;
+    return new Promise((resolve, reject) => {
+      this.http
+        .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers })
+        .pipe(first())
+        .subscribe((objects) => resolve(objects), e => reject(e));
+    });
+  }
+
   getObjectsAsync(ids: string[]): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
       const body = JSON.stringify(ids);

@@ -19,6 +19,7 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
+import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
   selector: 'app-document',
@@ -30,6 +31,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
+  private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private documents = new Array<string>();
   private documentCardModal = "documentCardModal";
@@ -54,7 +56,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private readonly repository: RepositoryService,
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
-    private readonly documentsService: DocumentsService,
+    private readonly objectCardDialogService: ObjectCardDialogService,
     private readonly modalService: ModalService) {
 
     this.isActualVersionSelected = true;
@@ -96,6 +98,16 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
     });
+
+    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
+      this.onCloseDocumentCard();
+      if (!id)
+        return;
+        
+      this.repository.getObjectWithRequestTypeAsync(id, RequestType.New).then(object => {
+        this.document = object;
+      });
+    });
   }
 
   ngOnDestroy(): void {
@@ -109,6 +121,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
     if (this.navigationSubscription)
       this.navigationSubscription.unsubscribe();
+
+    if (this.objectCardChangeSubscription)
+      this.objectCardChangeSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -168,17 +183,17 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.modalService.close(this.documentCardModal);
   }
 
-  onChangeDocumentCard(nodeId: string): void {
-    this.repository.getObjectAsync(nodeId)
-    .then(object => {
-      this.document = object;
-      this.documentsService.changeDocumentForCard(object);
-    })
-    .catch(err => {
-      this.error = err;
-    })
-    this.onCloseDocumentCard();
-  }
+  // onChangeDocumentCard(nodeId: string): void {
+  //   this.repository.getObjectAsync(nodeId)
+  //   .then(object => {
+  //     this.document = object;
+  //     this.documentsService.changeDocumentForCard(object);
+  //   })
+  //   .catch(err => {
+  //     this.error = err;
+  //   })
+  //   this.onCloseDocumentCard();
+  // }
 
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
     this.error = null;

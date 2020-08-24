@@ -11,6 +11,7 @@ import { INode } from '../../shared/node.interface';
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { SystemIds } from '../../../core/data/system.ids';
 import { RequestType } from 'src/app/core/headers.provider';
+import { DocumentsService } from '../../shared/documents.service';
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -47,7 +48,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
-  private readonly nodeStyleService: NodeStyleService) {
+    private readonly nodeStyleService: NodeStyleService,
+    private readonly documentsService: DocumentsService) {
 
   }
 
@@ -81,6 +83,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   onSelect(bc: BreadcrumbNode): void {
     this.repository.requestType = RequestType.New;
+    this.documentsService.changeClearChecked(true);
     this.onSelected.emit(bc);
   }
 

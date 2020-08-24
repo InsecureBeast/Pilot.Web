@@ -17,6 +17,7 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
+import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
     selector: 'app-document-list',
@@ -29,6 +30,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
+  private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
 
   @Input() parent: ObjectNode;
@@ -52,6 +54,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
+    private readonly objectCardDialogService: ObjectCardDialogService,
     private router: Router) {
 
   }
@@ -94,6 +97,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         }
       }
     });
+
+    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
+      if (!id)
+        return;
+      this.update(id);
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -113,6 +122,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (this.checkedNodesSubscription)
       this.checkedNodesSubscription.unsubscribe();
 
+    if (this.objectCardChangeSubscription)
+      this.objectCardChangeSubscription.unsubscribe();
+
     this.cancelAllRequests(true);
   }
 
@@ -123,7 +135,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.repository.requestType = RequestType.New;
     this.clearChecked();
     this.nodes = null;
-    this.documentsService.changeDocumentForCard(null);
+    this.objectCardDialogService.changeDocumentForCard(null);
     this.onSelected.emit(item);
   }
 
@@ -173,16 +185,16 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     return noneStates.length !== node.stateAttributes.length;
   }
 
-  updateAsync(object: IObject) : Promise<INode> {
-    return new Promise<INode>((resolve, reject) => {
-      this.repository.getObjectAsync(object.id).then(object => {
-        let index = this.nodes.findIndex(n => n.id === object.id);
-        const oldNode = this.nodes.find(n => n.id === object.id)
-        const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-        newNode.isChecked = oldNode.isChecked;
-        this.nodes[index]= newNode;
-        resolve(newNode);
-      }).catch(err => reject(err));
+  private update(objectId: string): void {
+    if (!this.nodes)
+      return;
+
+    this.repository.getObjectWithRequestTypeAsync(objectId, RequestType.New).then(object => {
+      let index = this.nodes.findIndex(n => n.id === objectId);
+      const oldNode = this.nodes.find(n => n.id === objectId)
+      const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+      newNode.isChecked = oldNode.isChecked;
+      this.nodes[index]= newNode;
     });
   }
 
@@ -207,10 +219,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.addNodes(nodes, isSource);
         this.onChecked.emit(null);
 
-        this.documentsService.documentForCard$.pipe(first()).subscribe(object => {
-          if (!object)
+        this.objectCardDialogService.documentForCard$.pipe(first()).subscribe(id => {
+          if (!id)
             return;
-          this.updateAsync(object);
+          this.update(id);
         });
       })
       .catch(e => {

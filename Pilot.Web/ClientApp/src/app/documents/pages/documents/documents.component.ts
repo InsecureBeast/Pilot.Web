@@ -17,6 +17,7 @@ import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentListComponent } from '../../components/document-list/document-list.component';
 import { IObject } from 'src/app/core/data/data.classes';
+import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
     selector: 'app-documents',
@@ -29,6 +30,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
+  private objectCardChangeSubscription: Subscription;
   private documentCardModal = "documentCardModal";
 
   checked = new Array<INode>();
@@ -50,7 +52,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService) {
+    private readonly modalService: ModalService,
+    private readonly objectCardDialogService: ObjectCardDialogService) {
 
   }
 
@@ -88,11 +91,23 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
+      this.onCloseDocumentCard();
+
+      if (!id)
+        return;
+      
+      this.repository.getObjectWithRequestTypeAsync(id, RequestType.New).then(object => {
+        this.checkedNode = object;
+      });
+    });
   }
 
   ngOnDestroy(): void {
     this.navigationSubscription.unsubscribe();
     this.routerSubscription.unsubscribe();
+    this.objectCardChangeSubscription.unsubscribe();
 
     // cancel
     this.ngUnsubscribe.next();
@@ -139,14 +154,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.modalService.close(this.documentCardModal);
   }
   
-  onChangeDocumentCard(nodeId: string): void {
-    this.documentListComponent.updateAsync(this.checkedNode).then(newNode => {
-      this.checked = new Array<INode>();
-      this.checked.push(newNode);
-      this.checkedNode = this.getCheckedNode();
-    });
-    this.onCloseDocumentCard();
-  }
+  // onChangeDocumentCard(nodeId: string): void {
+  //   this.documentListComponent.updateAsync(this.checkedNode).then(newNode => {
+  //     this.checked = new Array<INode>();
+  //     this.checked.push(newNode);
+  //     this.checkedNode = this.getCheckedNode();
+  //   });
+  //   this.onCloseDocumentCard();
+  // }
 
   private getCheckedNode() : IObject{
     if (this.checked && this.checked.length > 0)
