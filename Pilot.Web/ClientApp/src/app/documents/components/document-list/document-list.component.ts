@@ -16,6 +16,7 @@ import { DownloadService } from '../../../core/download.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
+import { first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-document-list',
@@ -122,6 +123,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.repository.requestType = RequestType.New;
     this.clearChecked();
     this.nodes = null;
+    this.documentsService.changeDocumentForCard(null);
     this.onSelected.emit(item);
   }
 
@@ -204,6 +206,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.isLoading = false;
         this.addNodes(nodes, isSource);
         this.onChecked.emit(null);
+
+        this.documentsService.documentForCard$.pipe(first()).subscribe(object => {
+          if (!object)
+            return;
+          this.updateAsync(object);
+        });
       })
       .catch(e => {
         this.onError.emit(e);
@@ -216,7 +224,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     for (let doc of documents) {
       if (doc.type.name === "Root_object_type") // todo: filter not available items
         continue;
-
+        
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }

@@ -6,17 +6,17 @@ import { IObject } from 'src/app/core/data/data.classes';
 @Injectable({ providedIn: 'root'})
 export class DocumentsService {
 
-  private documentSubject = new BehaviorSubject<IObject>(null);
+  private documentForCardSubject = new BehaviorSubject<IObject>(null);
   private clearCheckedSubject = new BehaviorSubject<boolean>(false);
 
-  document$ = this.documentSubject.asObservable();
+  documentForCard$ = this.documentForCardSubject.asObservable();
   clearChecked = this.clearCheckedSubject.asObservable();
 
   constructor() {
   }
 
-  changeDocument(document: IObject): void {
-    this.documentSubject.next(document);
+  changeDocumentForCard(document: IObject): void {
+    this.documentForCardSubject.next(document);
   }
 
   changeClearChecked(value: boolean): void {
