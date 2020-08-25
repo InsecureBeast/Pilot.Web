@@ -3,8 +3,9 @@ import { AuthService } from "../auth/auth.service";
 import { HttpHeaders } from "@angular/common/http";
 
 export enum RequestType {
-    New = 0,
-    FromCache = 1
+    None =0,
+    New = 1,
+    FromCache = 2
   }
 
 @Injectable({ providedIn: 'root' })

@@ -4,7 +4,7 @@
     <app-documents-toolbar class="col-12 p-0"
                            *ngIf="checked != null && checked.length > 0"
                            [checkedNodes]="checked"
-                           (onShowDocumentCard)="onShowDocumentCard($event)">
+                           (onShowDocumentCard)="onShowObjectCard($event)">
     </app-documents-toolbar>
 
 
@@ -25,8 +25,9 @@
 
 <app-error *ngIf="error" [response]="error"></app-error>
 
-<pw-modal id="documentCardModal">
+<pw-modal id="objectCardModal">
   <app-object-card-dialog [object]="checkedNode"
-                          (onClose)="onCloseDocumentCard($event)">
+                          (onClose)="onCloseObjectCard($event)"
+                          (onSave)="onSaveObjectCard($event)">
   </app-object-card-dialog>
 </pw-modal>

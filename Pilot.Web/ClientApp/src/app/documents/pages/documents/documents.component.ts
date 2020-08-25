@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -15,9 +15,7 @@ import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
-import { DocumentListComponent } from '../../components/document-list/document-list.component';
 import { IObject } from 'src/app/core/data/data.classes';
-import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
     selector: 'app-documents',
@@ -31,7 +29,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
-  private documentCardModal = "documentCardModal";
+  private documentCardModal = "objectCardModal";
 
   checked = new Array<INode>();
   checkedNode: IObject;
@@ -39,9 +37,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   error: HttpErrorResponse;
 
-  @ViewChild(DocumentListComponent, { static: false })
-  private documentListComponent: DocumentListComponent;
-  
   /** documents ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -52,8 +47,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService,
-    private readonly objectCardDialogService: ObjectCardDialogService) {
+    private readonly modalService: ModalService) {
 
   }
 
@@ -92,13 +86,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
-      this.onCloseDocumentCard();
-
+    this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
       if (!id)
         return;
       
-      this.repository.getObjectWithRequestTypeAsync(id, RequestType.New).then(object => {
+      this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.checkedNode = object;
       });
     });
@@ -145,23 +137,19 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.error = error;
   }
 
-  onShowDocumentCard() : void {
+  onShowObjectCard() : void {
     this.checkedNode = this.getCheckedNode();
     this.modalService.open(this.documentCardModal);
   }
 
-  onCloseDocumentCard() : void {
+  onCloseObjectCard() : void {
     this.modalService.close(this.documentCardModal);
   }
   
-  // onChangeDocumentCard(nodeId: string): void {
-  //   this.documentListComponent.updateAsync(this.checkedNode).then(newNode => {
-  //     this.checked = new Array<INode>();
-  //     this.checked.push(newNode);
-  //     this.checkedNode = this.getCheckedNode();
-  //   });
-  //   this.onCloseDocumentCard();
-  // }
+  onSaveObjectCard(id: string): void {
+    this.documentsService.changeObjectForCard(id);
+    this.onCloseObjectCard();
+  }
 
   private getCheckedNode() : IObject{
     if (this.checked && this.checked.length > 0)

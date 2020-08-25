@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, NavigationStart, Scroll } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,7 +17,6 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
-import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
     selector: 'app-document-list',
@@ -54,7 +53,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
-    private readonly objectCardDialogService: ObjectCardDialogService,
     private router: Router) {
 
   }
@@ -98,7 +96,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       }
     });
 
-    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
+    this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
       if (!id)
         return;
       this.update(id);
@@ -135,7 +133,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.repository.requestType = RequestType.New;
     this.clearChecked();
     this.nodes = null;
-    this.objectCardDialogService.changeDocumentForCard(null);
+    this.documentsService.changeObjectForCard(null);
     this.onSelected.emit(item);
   }
 
@@ -189,7 +187,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (!this.nodes)
       return;
 
-    this.repository.getObjectWithRequestTypeAsync(objectId, RequestType.New).then(object => {
+    this.repository.getObjectAsync(objectId, RequestType.New).then(object => {
       let index = this.nodes.findIndex(n => n.id === objectId);
       const oldNode = this.nodes.find(n => n.id === objectId)
       const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
@@ -219,7 +217,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.addNodes(nodes, isSource);
         this.onChecked.emit(null);
 
-        this.objectCardDialogService.documentForCard$.pipe(first()).subscribe(id => {
+        this.documentsService.objectForCard$.pipe(first()).subscribe(id => {
           if (!id)
             return;
           this.update(id);

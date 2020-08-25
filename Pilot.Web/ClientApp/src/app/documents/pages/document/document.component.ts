@@ -19,7 +19,6 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
-import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
   selector: 'app-document',
@@ -46,7 +45,6 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   selectedVersionCreated: string;
   selectedVersionCreator: string;
   
-
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -56,7 +54,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private readonly repository: RepositoryService,
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
-    private readonly objectCardDialogService: ObjectCardDialogService,
+    private readonly documentService: DocumentsService,
     private readonly modalService: ModalService) {
 
     this.isActualVersionSelected = true;
@@ -99,12 +97,11 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       }
     });
 
-    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
-      this.onCloseDocumentCard();
+    this.objectCardChangeSubscription = this.documentService.objectForCard$.subscribe(id => {
       if (!id)
         return;
         
-      this.repository.getObjectWithRequestTypeAsync(id, RequestType.New).then(object => {
+      this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.document = object;
       });
     });
@@ -183,17 +180,10 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.modalService.close(this.documentCardModal);
   }
 
-  // onChangeDocumentCard(nodeId: string): void {
-  //   this.repository.getObjectAsync(nodeId)
-  //   .then(object => {
-  //     this.document = object;
-  //     this.documentsService.changeDocumentForCard(object);
-  //   })
-  //   .catch(err => {
-  //     this.error = err;
-  //   })
-  //   this.onCloseDocumentCard();
-  // }
+  onChangeDocumentCard(id: string): void {
+    this.documentService.changeObjectForCard(id);
+    this.onCloseDocumentCard();
+  }
 
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
     this.error = null;
