@@ -1,4 +1,5 @@
 ﻿import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AccessCalculator } from 'src/app/core/tools/access.calculator';
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { AccessLevel, IObject } from 'src/app/core/data/data.classes';
@@ -15,6 +16,7 @@ export class ObjectCardDialogComponent {
   @Input() object: IObject;
   @Output() onClose = new EventEmitter<any>();
   @Output() onSave = new EventEmitter<string>();
+  @Output() onError = new EventEmitter<HttpErrorResponse>();
   
   @ViewChild(DocumentCardComponent, { static: false })
   private cardComponent: DocumentCardComponent;
@@ -52,6 +54,6 @@ export class ObjectCardDialogComponent {
     
     modifier.apply().subscribe(res => {
       this.onSave.emit(this.object.id);
-    });
+    }, err => this.onError.emit(err));
   }
 }

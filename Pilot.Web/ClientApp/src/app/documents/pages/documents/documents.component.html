@@ -28,6 +28,7 @@
 <pw-modal id="objectCardModal">
   <app-object-card-dialog [object]="checkedNode"
                           (onClose)="onCloseObjectCard($event)"
-                          (onSave)="onSaveObjectCard($event)">
+                          (onSave)="onSaveObjectCard($event)"
+                          (onError)="onError($event)">
   </app-object-card-dialog>
 </pw-modal>

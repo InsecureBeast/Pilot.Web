@@ -64,6 +64,7 @@
 <pw-modal id="documentCardModal">
   <app-object-card-dialog [object]="document"
                           (onClose)="onCloseDocumentCard($event)"
-                          (onSave)="onChangeDocumentCard($event)">
+                          (onSave)="onChangeDocumentCard($event)"
+                          (onError)="onErrorDocumentCard($event)">
   </app-object-card-dialog>
 </pw-modal>

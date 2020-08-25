@@ -185,6 +185,10 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.onCloseDocumentCard();
   }
 
+  onErrorDocumentCard(error: HttpErrorResponse): void {
+    this.error = error;
+  }
+
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
     this.error = null;
     this.repository.getObjectAsync(id)

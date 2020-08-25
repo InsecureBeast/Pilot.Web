@@ -133,7 +133,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.checked = nodes;
   }
 
-  onError(error): void {
+  onError(error: HttpErrorResponse): void {
     this.error = error;
   }
 
