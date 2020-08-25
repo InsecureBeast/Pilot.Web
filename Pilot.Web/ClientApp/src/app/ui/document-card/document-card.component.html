@@ -1,9 +1,9 @@
-<div class="mt-2" style="margin-left: -2px;">
+<div class="mt-2 mb-4">
     <img [src]="typeIcon" width="24" *ngIf="typeIcon != null">
     <span class="ml-2 align-middle">{{typeTitle}}</span>
 </div>
 <form>
-    <div class="" *ngFor="let attr of attributes">
+    <div class="mt-2" *ngFor="let attr of attributes">
         <ng-container *ngIf="attr.type === 0">
             <div *ngTemplateOutlet="intAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>

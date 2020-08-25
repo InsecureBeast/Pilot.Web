@@ -4,13 +4,17 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: 2rem;
-  /*margin-bottom: auto; */
 }
 
 @media screen and (max-width: 600px) {
-  .document-card-view{
-    min-height: 100vh;
-    margin-top: 0px;
+  .document-card-view {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
     border-radius: 0px!important;
+    margin-top: 0px;
+    overflow: auto;
   }
 }
