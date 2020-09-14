@@ -40,11 +40,11 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   isLoading: boolean;
   isInfoShown: boolean;
   error: HttpErrorResponse;
-  
+
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
   selectedVersionCreator: string;
-  
+
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -83,7 +83,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       if (!this.isActualVersionSelected)
         version = s.created;
 
-      this.updateLocation(this.document.id, version);
+      this.updateLocation(this.document.parentId, this.document.id, version);
       this.loadSnapshot(s);
     });
 
@@ -100,7 +100,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.objectCardChangeSubscription = this.documentService.objectForCard$.subscribe(id => {
       if (!id)
         return;
-        
+
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.document = object;
       });
@@ -158,7 +158,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
     const prevId = this.documents[indexOf - 1];
     this.loadDocument(prevId);
-    this.updateLocation(prevId);
+    this.updateLocation(this.document.parentId, prevId);
   }
 
   nextDocument(node: INode) {
@@ -169,7 +169,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
     const nextId = this.documents[indexOf + 1];
     this.loadDocument(nextId);
-    this.updateLocation(nextId);
+    this.updateLocation(this.document.parentId, nextId);
   }
 
   onShowDocumentCard() : void {
@@ -232,11 +232,11 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       });
   }
 
-  private updateLocation(id: string, version?: string): void {
+  private updateLocation(folderId: string, id: string, version?: string): void {
     if (!version) {
-      this.location.replaceState("document/" + id);
+      this.location.replaceState(`/documents/${folderId}/doc/${id}`);
     } else {
-      this.location.replaceState("document/" + id + "/" + version);
+      this.location.replaceState(`/documents/${folderId}/doc/${id}/${version}`);
     }
   }
 

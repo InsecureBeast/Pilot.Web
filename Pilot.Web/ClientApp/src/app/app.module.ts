@@ -11,16 +11,12 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { AuthGuard } from './auth/auth.guard';
 import { ErrorModule } from './ui/error/error.module';
-import { AuthComponent } from './auth/auth/auth.component';
-import { AuthModule } from './auth/auth.module';
-import { DocumentsModule } from './documents/documents.module';
-import { DocumentsComponent } from './documents/pages/documents/documents.component';
 import { ModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
-import { TasksModule } from './tasks/tasks.module';
 import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ImagesCacheInterceptor } from './core/interceptors/images-cache.interceptor';
 import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
+import {AppRoutingModule} from "./app-routing.module";
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -38,24 +34,15 @@ export function createTranslateLoader(http: HttpClient) {
     HttpClientModule,
     FormsModule,
     ErrorModule,
-    AuthModule,
     ModalModule,
-    RouterModule.forRoot([
-      { path: '', component: DocumentsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'login', component: AuthComponent },
-
-      // otherwise redirect to home
-      { path: '*', redirectTo: 'login' }
-    ], { scrollPositionRestoration: 'disabled' }),
+    AppRoutingModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader, // экспортированная factory функция, необходимая для компиляции в режиме AoT
         deps: [HttpClient]
       }
-    }),
-    DocumentsModule,
-    TasksModule
+    })
   ],
   providers: [
     AuthGuard,

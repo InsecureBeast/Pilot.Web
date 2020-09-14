@@ -9,23 +9,17 @@ export class DocumentsNavigationService {
   constructor(private router: Router) {
   }
 
-  navigateToDocument(document: string | IObject): void {
-    if (typeof document === 'string') {
-      //Logic for overload 1
-      this.router.navigateByUrl('/document/' + document);
-    } else {
-      //Logic for overload 2
-      this.router.navigateByUrl('/document/' + document.id);
-    }
+  navigateToDocument(folderId: string, document: string | IObject): void {
+    this.navigateToFile(folderId, document);
   }
 
-  navigateToFile(file: string | IObject): void {
+  navigateToFile(folderId: string, file: string | IObject): void {
     if (typeof file === 'string') {
       //Logic for overload 1
-      this.router.navigateByUrl('/file/' + file);
+      this.router.navigateByUrl(`/documents/${folderId}/doc/${file}`);
     } else {
       //Logic for overload 2
-      this.router.navigateByUrl('/file/' + file.id);
+      this.router.navigateByUrl(`/documents/${folderId}/doc/${file.id}`);
     }
   }
 
@@ -34,6 +28,6 @@ export class DocumentsNavigationService {
   }
 
   navigateToFilesFolder(folderId: string): void {
-    this.router.navigateByUrl('/files/' + folderId);
+    this.router.navigateByUrl('/documents/' + folderId);
   }
 }
