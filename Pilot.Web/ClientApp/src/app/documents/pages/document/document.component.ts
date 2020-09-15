@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
+import {ActivatedRoute, ParamMap, NavigationStart, Router, RoutesRecognized} from '@angular/router';
 import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
@@ -19,6 +19,9 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
+import {ObjectNode} from "../../shared/object.node";
+import {TypeIconService} from "../../../core/type-icon.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-document',
@@ -36,10 +39,12 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private documentCardModal = "documentCardModal";
 
   document: IObject;
+  node: ObjectNode;
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
   error: HttpErrorResponse;
+  showFilesMode: boolean;
 
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
@@ -55,7 +60,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
     private readonly documentService: DocumentsService,
-    private readonly modalService: ModalService) {
+    private readonly modalService: ModalService,
+    private readonly typeIconService: TypeIconService,
+    private readonly translate: TranslateService) {
 
     this.isActualVersionSelected = true;
     this.images = new Array();
@@ -150,6 +157,10 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     return false;
   }
 
+  showFiles(event: boolean): void {
+    this.showFilesMode = event;
+  }
+
   previousDocument(node: INode) {
     this.cancelAllRequests(false);
     const indexOf = this.documents.findIndex(doc => doc === this.document.id);
@@ -193,6 +204,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
           return;
 
         this.document = source;
+        if (source.type.isMountable) {
+          this.node = new ObjectNode(source, true, this.typeIconService, this.ngUnsubscribe, this.translate)
+        }
         let snapshot = source.actualFileSnapshot;
         this.isActualVersionSelected = !version;
         if (!this.isActualVersionSelected)

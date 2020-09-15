@@ -4,10 +4,11 @@
                       (onPreviousDocument)="previousDocument($event)"
                       (onNextDocument)="nextDocument($event)"
                       (onShowVersions)="showDocumentVersions($event)"
-                      (onShowDocumentCard)="onShowDocumentCard($event)">
+                      (onShowDocumentCard)="onShowDocumentCard($event)"
+                      (onShowFiles)="showFiles($event)">
 </app-document-toolbar>
 
-<div class="pt-6" *ngIf="!error">
+<div class="pt-6" *ngIf="!error && !showFilesMode">
   <div class="row m-0">
     <div class="col-12 p-0 pb-5"
          [class.col-md-8]="isInfoShown"
@@ -56,7 +57,11 @@
                              (onClose)="closeDocumentVersions($event)"></app-document-versions>
     </div>
   </div>
+</div>
 
+<div class="pt-6" *ngIf="showFilesMode && node">
+  <app-document-list [parent]="node">
+  </app-document-list>
 </div>
 
 <app-error *ngIf="error" [response]="error"></app-error>
