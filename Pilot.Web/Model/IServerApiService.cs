@@ -85,13 +85,14 @@ namespace Pilot.Web.Model
                 throw new Exception("Object not found");
             
             var childIds = GetChildrenByType(parent, type);
-            if (!childIds.Any())
-                return new List<PObject>();
-
-            var children = _serverApi.GetObjects(childIds);
-
-            var res = children.Select(o => new PObject(o, _metadata, _people)).ToList();
-            res.Sort(new ObjectComparer());
+            
+            var res = new List<PObject>();
+            if (childIds.Any())
+            {
+                var children = _serverApi.GetObjects(childIds);
+                res = children.Select(o => new PObject(o, _metadata, _people)).ToList();
+                res.Sort(new ObjectComparer());
+            }
 
             var parentType = GetType(parent.TypeId);
             if (parentType.IsMountable && type != ChildrenType.Storage)
