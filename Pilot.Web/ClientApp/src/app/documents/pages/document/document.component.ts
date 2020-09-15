@@ -141,7 +141,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.isInfoShown = !this.isInfoShown;
   }
 
-  closeDocumentVersions(): void {
+  closeDocumentVersions($event): void {
     this.isInfoShown = false;
   }
 
@@ -172,17 +172,17 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.updateLocation(this.document.parentId, nextId);
   }
 
-  onShowDocumentCard() : void {
+  onShowDocumentCard($event) : void {
     this.modalService.open(this.documentCardModal);
   }
 
-  onCloseDocumentCard() : void {
+  onCloseDocumentCard($event) : void {
     this.modalService.close(this.documentCardModal);
   }
 
   onChangeDocumentCard(id: string): void {
     this.documentService.changeObjectForCard(id);
-    this.onCloseDocumentCard();
+    this.onCloseDocumentCard(null);
   }
 
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
