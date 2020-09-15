@@ -59,8 +59,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         id = SystemIds.rootId;
 
       let isSource = false;
-      if (this.activatedRoute.snapshot.url.length !== 0) {
-        const urlSegment = this.activatedRoute.snapshot.url[0].path;
+      if (this.activatedRoute.snapshot.url.length > 1) {
+        const urlSegment = this.activatedRoute.snapshot.url[1].path;
         if (urlSegment === 'files')
           isSource = true;
       }

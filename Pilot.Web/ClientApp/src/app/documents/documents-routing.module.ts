@@ -7,10 +7,11 @@ import { AuthGuard } from '../auth/auth.guard';
 const routes: Routes = [
   { path: '', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
   { path: ':id', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
-  { path: 'doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
-  { path: 'doc/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] },
+  { path: ':id/files', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
   { path: ':fid/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
-  { path: ':fid/doc/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] }
+  { path: ':fid/doc/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] },
+  { path: ':fid/files/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
+  { path: ':fid/files/doc/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
