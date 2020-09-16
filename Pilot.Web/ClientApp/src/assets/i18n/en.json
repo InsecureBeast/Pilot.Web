@@ -38,5 +38,6 @@
   "currentTaskState": "Current task state",
   "card":"Card",
   "close": "Close",
-  "save": "Save"
+  "save": "Save",
+  "dropInfo": "Drop file there for uploading"
 }

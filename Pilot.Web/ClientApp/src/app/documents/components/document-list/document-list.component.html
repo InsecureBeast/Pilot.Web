@@ -4,19 +4,45 @@
   </div>
 </div>
 
-<div class="pb-2" #contentDiv>
-  <ng-container *ngIf="nodeStyle === 0">
-    <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
-  </ng-container>
+<div class="pb-2 drop-container" #contentDiv
+  appFileDrop
+  [isFileDropDisabled]="!canUploadFile"
+  (filesDropped)="onFilesDropped($event)"
+  (filesHovered)="dropZoneState($event)"
+  [class.drop-container-active]="dropZoneActivity">
 
-  <ng-container *ngIf="nodeStyle === 1">
-    <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
-  </ng-container>
-</div>
+  <div class="drop-area">
+    <div>
+      <ng-container *ngIf="nodeStyle === 0">
+        <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="nodeStyle === 1">
+        <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
+      </ng-container>
+      <div class="upload-info-area" *ngIf="canUploadFile">
+        <ul class="navbar-nav noselect">
+          <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center" (click)="onUploadButtonClick()">
+            <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px;" translate="dropInfo"></span>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-<div class="content-center" *ngIf="nodes && nodes.length === 0">
-  <img src="/assets/images/empty-folder.svg" class="error-image" />
-  <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+    <div class="content-center" *ngIf="nodes && nodes.length === 0">
+      <img src="/assets/images/empty-folder.svg" class="error-image" />
+      <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+    </div>
+  </div>
+
+  <div class="drop-popup" *ngIf="canUploadFile">
+    <div class="drop-popup-help">
+      <div class="mr-2">
+        <img src="/assets/images/cloud-upload.svg" alt="type icon">
+      </div>
+      <div class="font-xl drop-popup-help-text">Для добавления документа перетащите его сюда</div>
+    </div>
+  </div>
+
 </div>
 
 <ng-template #listViewNodeTemplate>
@@ -80,7 +106,7 @@
 
         <div class="card-children-count text-muted" *ngIf="node.childrenCount >= 0">{{node.childrenCount}}</div>
 
-        <div class="card-body" 
+        <div class="card-body"
              (click)="selected(node);$event.stopPropagation();"
              *ngIf="node">
           <div class="text-center pointer">

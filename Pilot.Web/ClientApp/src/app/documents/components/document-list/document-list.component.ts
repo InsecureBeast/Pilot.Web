@@ -25,7 +25,7 @@ import { first } from 'rxjs/operators';
 })
 /** documents-list component*/
 export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
-  
+
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
@@ -33,6 +33,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private ngUnsubscribe = new Subject<void>();
 
   @Input() parent: ObjectNode;
+  @Input() canCheck: boolean = true;
 
   @Output() onChecked = new EventEmitter<IObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
@@ -44,6 +45,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   isLoading: boolean;
   isAnyItemChecked: boolean;
   isLoaded: boolean;
+  canUploadFile: boolean;
+  dropZoneActivity = false;
 
   /** documents-list ctor */
   constructor(
@@ -130,14 +133,20 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (!item.id)
       return;
 
-    this.repository.requestType = RequestType.New;
-    this.clearChecked();
-    this.nodes = null;
-    this.documentsService.changeObjectForCard(null);
+    if (this.canCheck) {
+      this.repository.requestType = RequestType.New;
+      this.clearChecked();
+      this.nodes = null;
+      this.documentsService.changeObjectForCard(null);
+    }
+
     this.onSelected.emit(item);
   }
 
   checked(node: IObjectNode, event: MouseEvent): void {
+    if (!this.canCheck)
+      return;
+
     if (!node.id)
       return;
 
@@ -153,6 +162,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   addChecked(node: IObjectNode): void {
+    if (!this.canCheck)
+      return;
+
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
 
@@ -183,6 +195,38 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     return noneStates.length !== node.stateAttributes.length;
   }
 
+  dropZoneState($event: boolean) {
+    this.dropZoneActivity = $event;
+  }
+
+  onFilesDropped(fileList: FileList) {
+    this.uploadHandler(fileList);
+  }
+
+  onUploadButtonClick() {
+    const input = window.document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.onchange = (e: any) => this.uploadHandler(e.target.files);
+    input.click();
+  }
+
+  private uploadHandler(fileList: FileList) {
+    console.log('fileList', fileList);
+    this.uploadFiles(fileList);
+  }
+
+  uploadFiles(fileList: FileList) {
+    for (let i = 0; i < fileList.length; i += 1) {
+      const file = fileList.item(i);
+      this.uploadFile(file);
+    }
+  }
+
+  uploadFile(file: File, succes: Function = () => {}) {
+    //this.isLoading = true;
+  }
+
   private update(objectId: string): void {
     if (!this.nodes)
       return;
@@ -204,6 +248,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
     this.isLoaded = true;
     this.loadChildren(item.id, item.isSource);
+    this.canUploadFile = item.isSource;
   }
 
   private loadChildren(id: string, isSource: boolean) {
@@ -234,7 +279,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     for (let doc of documents) {
       if (doc.type.name === "Root_object_type") // todo: filter not available items
         continue;
-        
+
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }

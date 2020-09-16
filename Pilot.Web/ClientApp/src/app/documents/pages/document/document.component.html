@@ -60,11 +60,13 @@
 </div>
 
 <div class="pt-6" *ngIf="showFilesMode && node">
-  <app-document-list [parent]="node">
+  <app-document-list [parent]="node"
+                     [canCheck]="false"
+                     (onSelected)="downloadDocument($event)">
   </app-document-list>
 </div>
 
-<app-error *ngIf="error" [response]="error"></app-error>
+<app-error *ngIf="error && !showFilesMode" [response]="error"></app-error>
 
 <pw-modal id="documentCardModal">
   <app-object-card-dialog [object]="document"

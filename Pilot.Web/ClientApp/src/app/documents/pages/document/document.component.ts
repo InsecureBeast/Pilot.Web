@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
-import { INode } from '../../shared/node.interface';
+import {INode, IObjectNode} from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
@@ -142,6 +142,11 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   download($event): void{
     this.downloadService.downloadFile(this.document);
+  }
+
+
+  downloadDocument($event: IObjectNode) {
+    this.downloadService.downloadFile($event.source);
   }
 
   showDocumentVersions($event): void {

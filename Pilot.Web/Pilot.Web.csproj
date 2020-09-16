@@ -52,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\documents\file-drop.directive.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\tasks\shared\tasks.service.ts" />
   </ItemGroup>
 
