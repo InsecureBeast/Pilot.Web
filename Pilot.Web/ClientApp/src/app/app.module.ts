@@ -17,6 +17,7 @@ import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ImagesCacheInterceptor } from './core/interceptors/images-cache.interceptor';
 import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
 import {AppRoutingModule} from "./app-routing.module";
+import {BootstrapUiModule} from "./bootstrap-ui.module";
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -36,6 +37,7 @@ export function createTranslateLoader(http: HttpClient) {
     ErrorModule,
     ModalModule,
     AppRoutingModule,
+    BootstrapUiModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
