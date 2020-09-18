@@ -1,7 +1,11 @@
 <div class="d-flex content-center" *ngIf="isLoading">
   <div class="spinner-border text-secondary" role="status">
-    <span class="sr-only" translate="loading"></span>
+    <span class="sr-only" translate="loading"></span><br/>
   </div>
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="isUploading">
+
 </div>
 
 <div class="pb-2 drop-container" #contentDiv
@@ -12,6 +16,10 @@
   [class.drop-container-active]="dropZoneActivity">
 
   <div class="drop-area">
+    <div class="content-center" style="z-index: 100" *ngIf="nodes && nodes.length === 0">
+      <img src="/assets/images/empty-folder.svg" class="error-image" />
+      <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+    </div>
     <div>
       <ng-container *ngIf="nodeStyle === 0">
         <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
@@ -19,31 +27,36 @@
       <ng-container *ngIf="nodeStyle === 1">
         <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
       </ng-container>
-      <div class="upload-info-area" *ngIf="canUploadFile">
+      <div class="upload-info-area" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
         <ul class="navbar-nav noselect">
-          <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center" (click)="onUploadButtonClick()">
+          <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
             <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px;" translate="dropInfo"></span>
           </li>
         </ul>
       </div>
     </div>
-
-    <div class="content-center" *ngIf="nodes && nodes.length === 0">
-      <img src="/assets/images/empty-folder.svg" class="error-image" />
-      <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
-    </div>
   </div>
 
-  <div class="drop-popup" *ngIf="canUploadFile">
+  <div class="drop-popup" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
     <div class="drop-popup-help">
-      <div class="mr-2">
-        <img src="/assets/images/cloud-upload.svg" alt="type icon">
-      </div>
-      <div class="font-xl drop-popup-help-text">Для добавления документа перетащите его сюда</div>
+      <ul class="navbar-nav noselect">
+        <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
+          <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px;" translate="dropInfo"></span>
+        </li>
+      </ul>
     </div>
   </div>
-
 </div>
+
+<ng-template #modalTemplate>
+  <div class="modal-body">
+    <progressbar  class="progress-bar progress-bar-striped progress-bar-animated justify-content-between"
+                  [value]="uploadProgressPercent"
+                  [max]="100"
+                  type="success"
+                  style="width: 100%">{{uploadProgressPercent}} %</progressbar>
+  </div>
+</ng-template>
 
 <ng-template #listViewNodeTemplate>
   <ul class="list-group mr-3 ml-3 shadow-sm" *ngIf="!isLoading && nodes">

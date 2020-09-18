@@ -1,4 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+  AfterViewChecked,
+  HostListener,
+  ViewChild, TemplateRef
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart } from '@angular/router';
 
@@ -17,6 +29,8 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
+import {FilesRepositoryService} from "../../../core/files-repository.service";
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
     selector: 'app-document-list',
@@ -32,6 +46,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
 
+  @ViewChild('modalTemplate')
+  private modalTemplate: TemplateRef<any>;
+
   @Input() parent: ObjectNode;
   @Input() canCheck: boolean = true;
 
@@ -40,6 +57,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   @Output() onError = new EventEmitter<HttpErrorResponse>();
   @Output() onLoaded = new EventEmitter<INode>();
 
+  modalRef: BsModalRef;
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
   isLoading: boolean;
@@ -47,6 +65,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   isLoaded: boolean;
   canUploadFile: boolean;
   dropZoneActivity = false;
+  uploadProgressPercent: number
 
   /** documents-list ctor */
   constructor(
@@ -56,7 +75,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
-    private router: Router) {
+    private filesRepositoryService: FilesRepositoryService,
+    private router: Router,
+    private modalService: BsModalService) {
 
   }
 
@@ -175,8 +196,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       this.isAnyItemChecked = false;
   }
 
-  downloadDocument(node: IObjectNode) {
-    this.downloadService.downloadFile(node.source);
+  async downloadDocument(node: IObjectNode) {
+    await this.downloadService.downloadFile(node.source);
   }
 
   isEmptyNode(node: IObjectNode): boolean {
@@ -199,8 +220,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.dropZoneActivity = $event;
   }
 
-  onFilesDropped(fileList: FileList) {
-    this.uploadHandler(fileList);
+  async onFilesDropped(fileList: FileList) {
+    await this.uploadHandler(fileList);
   }
 
   onUploadButtonClick() {
@@ -211,20 +232,35 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     input.click();
   }
 
-  private uploadHandler(fileList: FileList) {
+  openModal() {
+    this.modalRef = this.modalService.show(this.modalTemplate, {
+      backdrop: 'static',
+      ariaDescribedby: 'my-modal-description',
+      ariaLabelledBy: 'my-modal-title'
+    });
+  }
+
+  closeModal() {
+    this.modalRef.hide()
+  }
+
+  private async uploadHandler(fileList: FileList) {
     console.log('fileList', fileList);
-    this.uploadFiles(fileList);
+    await this.uploadFiles(fileList);
   }
 
-  uploadFiles(fileList: FileList) {
-    for (let i = 0; i < fileList.length; i += 1) {
-      const file = fileList.item(i);
-      this.uploadFile(file);
+  private async uploadFiles(fileList: FileList): Promise<void> {
+    try {
+      this.openModal();
+      await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
+        this.uploadProgressPercent = p
+      })
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.loadChildren(this.parent.id, this.parent.isSource);
+      this.closeModal();
     }
-  }
-
-  uploadFile(file: File, succes: Function = () => {}) {
-    //this.isLoading = true;
   }
 
   private update(objectId: string): void {
