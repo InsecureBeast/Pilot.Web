@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { HeadersProvider } from './headers.provider';
@@ -52,5 +52,35 @@ export class FilesRepositoryService {
         .pipe(first())
         .subscribe(archive => resolve(archive), err => reject(err));
     });
+  }
+
+  uploadFiles(parentId: string, files: FileList, progressFunc: (progress: number) => void): Promise<string[]> {
+    let formData = new FormData();
+    for (let j = 0; j < files.length; j++) {
+      let file = files.item(j);
+      if (file.size > 134217728) {
+        throw new Error("Размер одного файла не должен превышать 128 MB.");
+      }
+      formData.append(file.name, file);
+    }
+
+    const headers = this.headersProvider.getAuthHeader();
+    const uploadReq = new HttpRequest('POST', `${this.baseUrl}api/Files/UploadFiles/${parentId}`, formData, {
+      reportProgress: true,
+      headers
+    });
+
+    return new Promise<string[]>((resolve, reject) => this.http.request<string[]>(uploadReq).subscribe(
+      event => {
+        if (event.type === HttpEventType.UploadProgress) {
+          progressFunc(Math.round(100 * event.loaded / event.total));
+        }
+        else if (event.type === HttpEventType.Response) {
+          let fileIds = event.body as string[];
+          resolve(fileIds);
+        }
+      },
+      error => reject(error)
+    ));
   }
 }
