@@ -187,10 +187,9 @@ namespace Pilot.Web.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-            
         }
 
-        private void AddObjectsToArchive(IServerApiService apiService, IFileLoader fileLoader, IEnumerable<PObject> objects, ZipArchive archive, string currentPath)
+        private static void AddObjectsToArchive(IServerApiService apiService, IFileLoader fileLoader, IEnumerable<PObject> objects, ZipArchive archive, string currentPath)
         {
             var stack = new Stack<PObject>();
             foreach (var child in objects)
@@ -263,7 +262,7 @@ namespace Pilot.Web.Controllers
         /// </summary>
         /// <param name="fileCollection">список загружаемых файлов</param>
         /// <returns></returns>
-        private bool IsBadFileExtensions(IFormFileCollection fileCollection)
+        private static bool IsBadFileExtensions(IFormFileCollection fileCollection)
         {
             var badExtensions = new List<string>()
             {
