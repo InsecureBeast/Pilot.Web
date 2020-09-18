@@ -1,3 +1,4 @@
+using Ascon.Pilot.DataModifier;
 using DocumentRender;
 using DocumentRender.DocumentConverter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using Pilot.Web.Model;
 using Pilot.Web.Model.Auth;
 using Pilot.Web.Model.FileStorage;
 using Pilot.Web.Model.Middleware;
+using Pilot.Web.Model.ModifyData;
 
 namespace Pilot.Web
 {
@@ -78,6 +80,8 @@ namespace Pilot.Web
             services.AddScoped<IFileSaver, FileSaver>();
             services.AddScoped<IFilesStorage, FilesStorage>();
             services.AddScoped<IFileStorageDirectoryProvider, FileStorageDirectoryProvider>();
+            
+            services.AddScoped((s) => (IFileStorageProvider)new FileStorageProvider(DirectoryProvider.GetTempPath()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
