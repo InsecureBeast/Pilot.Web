@@ -57,7 +57,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   @Output() onError = new EventEmitter<HttpErrorResponse>();
   @Output() onLoaded = new EventEmitter<INode>();
 
-  modalRef: BsModalRef;
+  modalRef: BsModalRef = null;
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
   isLoading: boolean;
@@ -233,6 +233,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   openModal() {
+    if (this.modalRef != null) {
+      return
+    }
+
     this.modalRef = this.modalService.show(this.modalTemplate, {
       backdrop: 'static',
       ariaDescribedby: 'my-modal-description',
@@ -242,11 +246,16 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   closeModal() {
     this.modalRef.hide()
+    this.modalRef = null;
   }
 
   private async uploadHandler(fileList: FileList) {
-    console.log('fileList', fileList);
-    await this.uploadFiles(fileList);
+    try{
+      console.log('fileList', fileList);
+      await this.uploadFiles(fileList);
+    } catch (e) {
+      this.onError.emit(e);
+    }
   }
 
   private async uploadFiles(fileList: FileList): Promise<void> {
@@ -255,10 +264,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
         this.uploadProgressPercent = p
       })
+      this.loadChildren(this.parent.id, this.parent.isSource);
     } catch (e) {
       console.log(e);
+      this.closeModal();
+      throw e;
     } finally {
-      this.loadChildren(this.parent.id, this.parent.isSource);
       this.closeModal();
     }
   }

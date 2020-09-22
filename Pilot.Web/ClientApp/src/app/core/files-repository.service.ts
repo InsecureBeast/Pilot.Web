@@ -3,6 +3,9 @@ import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from '@angular/comm
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { HeadersProvider } from './headers.provider';
+import {environment} from "../../environments/environment";
+import {TranslateService} from "@ngx-translate/core";
+import {Tools} from "./tools/tools";
 
 @Injectable({ providedIn: 'root' })
 export class FilesRepositoryService {
@@ -11,7 +14,8 @@ export class FilesRepositoryService {
     private http: HttpClient,
     @Inject('BASE_URL')
     private baseUrl: string,
-    private readonly headersProvider: HeadersProvider) {
+    private readonly headersProvider: HeadersProvider,
+    private translate: TranslateService) {
 
   }
 
@@ -58,8 +62,8 @@ export class FilesRepositoryService {
     let formData = new FormData();
     for (let j = 0; j < files.length; j++) {
       let file = files.item(j);
-      if (file.size > 134217728) {
-        throw new Error("Размер одного файла не должен превышать 128 MB.");
+      if (file.size > environment.uploadingFileMaxSizeBytes) {
+        throw new Error(`${this.translate.instant("maxFileSizeInfo")} ${environment.uploadingFileMaxSizeMegaBytes} MB.`);
       }
       formData.append(file.name, file);
     }

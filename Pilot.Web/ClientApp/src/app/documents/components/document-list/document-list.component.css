@@ -121,10 +121,6 @@
   display: table;
 }
 
-.upload-info-area {
-  visibility: visible;
-}
-
 .drop-popup {
   position: absolute;
   width: 100%;
@@ -150,11 +146,12 @@ img {
 }
 
 .upload-info-area {
+  visibility: visible;
   background: #FFFFFF;
   border: 1px dashed #BDBDBD;
   box-sizing: border-box;
   border-radius: 8px;
-  margin-top: 20px;
+  margin: 20px 10px;
 }
 
 button {
