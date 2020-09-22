@@ -232,21 +232,25 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     input.click();
   }
 
-  openModal() {
+  async openModal(): Promise<void> {
     if (this.modalRef != null) {
       return
     }
 
     this.modalRef = this.modalService.show(this.modalTemplate, {
-      backdrop: 'static',
-      ariaDescribedby: 'my-modal-description',
-      ariaLabelledBy: 'my-modal-title'
+      backdrop: 'static'
     });
+
+    await this.sleep(2000);
   }
 
   closeModal() {
-    this.modalRef.hide()
+    this.modalRef?.hide()
     this.modalRef = null;
+  }
+
+  private async sleep(ms): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private async uploadHandler(fileList: FileList) {
@@ -255,12 +259,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       await this.uploadFiles(fileList);
     } catch (e) {
       this.onError.emit(e);
+      throw e;
     }
   }
 
   private async uploadFiles(fileList: FileList): Promise<void> {
     try {
-      this.openModal();
+      await this.openModal();
       await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
         this.uploadProgressPercent = p
       })

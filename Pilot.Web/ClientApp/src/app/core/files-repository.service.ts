@@ -5,7 +5,6 @@ import { first } from 'rxjs/operators';
 import { HeadersProvider } from './headers.provider';
 import {environment} from "../../environments/environment";
 import {TranslateService} from "@ngx-translate/core";
-import {Tools} from "./tools/tools";
 
 @Injectable({ providedIn: 'root' })
 export class FilesRepositoryService {
