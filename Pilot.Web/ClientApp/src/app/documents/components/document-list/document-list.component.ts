@@ -1,4 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+  AfterViewChecked,
+  HostListener,
+  ViewChild, TemplateRef
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart } from '@angular/router';
 
@@ -17,6 +29,8 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
+import {FilesRepositoryService} from "../../../core/files-repository.service";
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
     selector: 'app-document-list',
@@ -25,25 +39,33 @@ import { first } from 'rxjs/operators';
 })
 /** documents-list component*/
 export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
-  
+
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
 
+  @ViewChild('modalTemplate')
+  private modalTemplate: TemplateRef<any>;
+
   @Input() parent: ObjectNode;
+  @Input() canCheck: boolean = true;
 
   @Output() onChecked = new EventEmitter<IObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
   @Output() onError = new EventEmitter<HttpErrorResponse>();
   @Output() onLoaded = new EventEmitter<INode>();
 
+  modalRef: BsModalRef = null;
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
   isLoading: boolean;
   isAnyItemChecked: boolean;
   isLoaded: boolean;
+  canUploadFile: boolean;
+  dropZoneActivity = false;
+  uploadProgressPercent: number
 
   /** documents-list ctor */
   constructor(
@@ -53,7 +75,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
-    private router: Router) {
+    private filesRepositoryService: FilesRepositoryService,
+    private router: Router,
+    private modalService: BsModalService) {
 
   }
 
@@ -130,14 +154,20 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     if (!item.id)
       return;
 
-    this.repository.requestType = RequestType.New;
-    this.clearChecked();
-    this.nodes = null;
-    this.documentsService.changeObjectForCard(null);
+    if (this.canCheck) {
+      this.repository.requestType = RequestType.New;
+      this.clearChecked();
+      this.nodes = null;
+      this.documentsService.changeObjectForCard(null);
+    }
+
     this.onSelected.emit(item);
   }
 
   checked(node: IObjectNode, event: MouseEvent): void {
+    if (!this.canCheck)
+      return;
+
     if (!node.id)
       return;
 
@@ -153,6 +183,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   addChecked(node: IObjectNode): void {
+    if (!this.canCheck)
+      return;
+
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
 
@@ -163,8 +196,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       this.isAnyItemChecked = false;
   }
 
-  downloadDocument(node: IObjectNode) {
-    this.downloadService.downloadFile(node.source);
+  async downloadDocument(node: IObjectNode) {
+    await this.downloadService.downloadFile(node.source);
   }
 
   isEmptyNode(node: IObjectNode): boolean {
@@ -181,6 +214,69 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     });
 
     return noneStates.length !== node.stateAttributes.length;
+  }
+
+  dropZoneState($event: boolean) {
+    this.dropZoneActivity = $event;
+  }
+
+  async onFilesDropped(fileList: FileList) {
+    await this.uploadHandler(fileList);
+  }
+
+  onUploadButtonClick() {
+    const input = window.document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.onchange = (e: any) => this.uploadHandler(e.target.files);
+    input.click();
+  }
+
+  async openModal(): Promise<void> {
+    if (this.modalRef != null) {
+      return
+    }
+
+    this.modalRef = this.modalService.show(this.modalTemplate, {
+      backdrop: 'static'
+    });
+
+    await this.sleep(2000);
+  }
+
+  closeModal() {
+    this.modalRef?.hide()
+    this.modalRef = null;
+  }
+
+  private async sleep(ms): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async uploadHandler(fileList: FileList) {
+    try{
+      console.log('fileList', fileList);
+      await this.uploadFiles(fileList);
+    } catch (e) {
+      this.onError.emit(e);
+      throw e;
+    }
+  }
+
+  private async uploadFiles(fileList: FileList): Promise<void> {
+    try {
+      await this.openModal();
+      await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
+        this.uploadProgressPercent = p
+      })
+      this.loadChildren(this.parent.id, this.parent.isSource);
+    } catch (e) {
+      console.log(e);
+      this.closeModal();
+      throw e;
+    } finally {
+      this.closeModal();
+    }
   }
 
   private update(objectId: string): void {
@@ -204,6 +300,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
     this.isLoaded = true;
     this.loadChildren(item.id, item.isSource);
+    this.canUploadFile = item.isSource;
   }
 
   private loadChildren(id: string, isSource: boolean) {
@@ -234,7 +331,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     for (let doc of documents) {
       if (doc.type.name === "Root_object_type") // todo: filter not available items
         continue;
-        
+
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }

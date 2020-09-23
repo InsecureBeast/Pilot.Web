@@ -5,12 +5,15 @@ using System.IO.Compression;
 using System.Linq;
 using Ascon.Pilot.Common;
 using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.DataModifier;
 using DocumentRender;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pilot.Web.Model;
 using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Model.FileStorage;
+using Pilot.Web.Model.ModifyData;
 using Pilot.Web.Tools;
 
 namespace Pilot.Web.Controllers
@@ -21,14 +24,16 @@ namespace Pilot.Web.Controllers
     {
         private readonly IContextService _contextService;
         private readonly IDocumentRender _documentRender;
+        private readonly IFileStorageProvider _fileStorageProvider;
         private readonly IFilesStorage _filesStorage;
         private readonly IFileSaver _fileSaver;
 
         public FilesController(IContextService contextService, IDocumentRender documentRender, 
-            IFilesStorage filesStorage, IFileSaver fileSaver)
+            IFilesStorage filesStorage, IFileSaver fileSaver, IFileStorageProvider fileStorageProvider)
         {
             _contextService = contextService;
             _documentRender = documentRender;
+            _fileStorageProvider = fileStorageProvider;
             _filesStorage = filesStorage;
             _fileSaver = fileSaver;
         }
@@ -120,7 +125,71 @@ namespace Pilot.Web.Controllers
             }
         }
 
-        private void AddObjectsToArchive(IServerApiService apiService, IFileLoader fileLoader, IEnumerable<PObject> objects, ZipArchive archive, string currentPath)
+        /// <summary>
+        /// Загрузка файлов на сервер
+        /// </summary>
+        /// <param name="parentId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("[action]/{parentId}")]
+        [DisableRequestSizeLimit]
+        public ActionResult<Guid[]> UploadFiles(Guid parentId)
+        {
+            try
+            {
+                if (Request.Form.Files.Count == 0)
+                {
+                    return BadRequest("There are not files");
+                }
+                
+                if (IsBadFileExtensions(Request.Form.Files))
+                {
+                    return BadRequest("Bad file extension");
+                }
+            
+                var actor = HttpContext.GetTokenActor();
+                var api = _contextService.GetServerApi(actor);
+            
+                var parent = api.GetObjects(new []{parentId})?.FirstOrDefault();
+                if (parent == null)
+                {
+                    throw new Exception("Parent is not found");
+                }
+
+                if (!parent.Type.IsMountable)
+                {
+                    throw new Exception("Parent is not mountable");
+                }
+
+                var fileType = api.GetMetadata().Types.FirstOrDefault(t => t.Name == "File");
+                if (fileType == null)
+                {
+                    throw new Exception("File type is not found");
+                }
+
+                var result = new Guid[Request.Form.Files.Count];
+                var modifier = api.NewModifier();
+                var i = 0;
+                foreach (var formFile in Request.Form.Files)
+                {
+                    var newObjectId = Guid.NewGuid();
+                    var builder = modifier.CreateObject(newObjectId, parentId, fileType);
+                    builder.SetAttribute("Title 4C281306-E329-423A-AF45-7B39EC30273F", formFile.Name);
+                    builder.AddFile(
+                        new DocumentInfo(formFile.Name, formFile.OpenReadStream, DateTime.Now, DateTime.Now,
+                            DateTime.Now), _fileStorageProvider);
+                    result[i++] = modifier.Apply();
+                }
+                    
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        private static void AddObjectsToArchive(IServerApiService apiService, IFileLoader fileLoader, IEnumerable<PObject> objects, ZipArchive archive, string currentPath)
         {
             var stack = new Stack<PObject>();
             foreach (var child in objects)
@@ -186,6 +255,35 @@ namespace Pilot.Web.Controllers
                 //    entry?.Archive?.CreateEntry(directoryPath);
                 //}
             }
+        }
+        
+        /// <summary>
+        /// Проверка расширения документа на допустимое к загрузке и скачиванию
+        /// </summary>
+        /// <param name="fileCollection">список загружаемых файлов</param>
+        /// <returns></returns>
+        private static bool IsBadFileExtensions(IFormFileCollection fileCollection)
+        {
+            var badExtensions = new List<string>()
+            {
+                ".exe",
+                ".cmd",
+                ".com",
+                ".vbs",
+                ".dll"
+            };
+            
+            foreach (var file in fileCollection)
+            {
+                if (!badExtensions.Any(file.FileName.Contains))
+                {
+                    continue;
+                }
+                
+                return true;
+            }
+
+            return false;
         }
     }
 }

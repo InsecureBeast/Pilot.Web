@@ -4,10 +4,11 @@
                       (onPreviousDocument)="previousDocument($event)"
                       (onNextDocument)="nextDocument($event)"
                       (onShowVersions)="showDocumentVersions($event)"
-                      (onShowDocumentCard)="onShowDocumentCard($event)">
+                      (onShowDocumentCard)="onShowDocumentCard($event)"
+                      (onShowFiles)="showFiles($event)">
 </app-document-toolbar>
 
-<div class="pt-6" *ngIf="!error">
+<div class="pt-6" *ngIf="!error && !showFilesMode">
   <div class="row m-0">
     <div class="col-12 p-0 pb-5"
          [class.col-md-8]="isInfoShown"
@@ -37,7 +38,7 @@
         <img src="/assets/images/doc_empty.svg" class="error-image"/>
         <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
         <p class="mt-3" translate="cantPreviewDocument"></p>
-        <button type="submit" class="btn btn-primary" (click)="download()" *ngIf="!isDownloading" translate="download"></button>
+        <button type="submit" class="btn btn-primary" (click)="download($event)" *ngIf="!isDownloading" translate="download"></button>
         <button class="btn btn-primary" type="button" disabled *ngIf="isDownloading">
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           <span class="ml-1" translate="downloading"></span>
@@ -56,10 +57,16 @@
                              (onClose)="closeDocumentVersions($event)"></app-document-versions>
     </div>
   </div>
-
 </div>
 
-<app-error *ngIf="error" [response]="error"></app-error>
+<div class="pt-6" *ngIf="showFilesMode && node">
+  <app-document-list [parent]="node"
+                     [canCheck]="false"
+                     (onSelected)="downloadDocument($event)">
+  </app-document-list>
+</div>
+
+<app-error *ngIf="error && !showFilesMode" [response]="error"></app-error>
 
 <pw-modal id="documentCardModal">
   <app-object-card-dialog [object]="document"
