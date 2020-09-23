@@ -12,10 +12,6 @@
   [class.drop-container-active]="dropZoneActivity">
 
   <div class="drop-area">
-    <div class="content-center" style="z-index: 100" *ngIf="nodes && nodes.length === 0">
-      <img src="/assets/images/empty-folder.svg" class="error-image" />
-      <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
-    </div>
     <div>
       <ng-container *ngIf="nodeStyle === 0">
         <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
@@ -30,6 +26,11 @@
             <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px 10px 10px 0; cursor: pointer; color: blue" translate="upload"></span>
           </li>
         </ul>
+      </div>
+
+      <div class="content-center" style="z-index: -1" *ngIf="nodes && nodes.length === 0">
+        <img src="/assets/images/empty-folder.svg" class="error-image" />
+        <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
       </div>
     </div>
   </div>

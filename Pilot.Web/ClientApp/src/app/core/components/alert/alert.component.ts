@@ -46,6 +46,7 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   onClosed(msg: any): void {
     this.messages = this.messages.filter(m => m !== msg);
+    this.ref.detectChanges();
   }
 
 }
