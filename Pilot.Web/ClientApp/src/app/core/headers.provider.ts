@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
-import {AuthService} from "../auth/auth.service";
-import {HttpHeaders} from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { AuthService } from "../auth/auth.service";
+import { HttpHeaders } from "@angular/common/http";
 
 export enum RequestType {
     None =0,
@@ -11,7 +11,7 @@ export enum RequestType {
 @Injectable({ providedIn: 'root' })
 export class HeadersProvider {
   private _requestType: RequestType = RequestType.New;
-
+  
   constructor(private authService: AuthService) {
   }
 
@@ -27,17 +27,10 @@ export class HeadersProvider {
       return this.getHeadersWithType('application/json', requestHeader);
   }
 
-  getAuthHeader(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Authorization': "Bearer " + token
-    });
-  }
-
   getStreamHeaders(): HttpHeaders {
     return this.getHeadersWithType('application/octet-stream', '');
   }
-
+  
   private getRequestTypeHeader() : string {
     if (this.requestType === RequestType.New)
       return "new";

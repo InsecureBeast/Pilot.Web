@@ -38,8 +38,5 @@
   "currentTaskState": "Current task state",
   "card":"Card",
   "close": "Close",
-  "save": "Save",
-  "dropInfo": "Move files there or press",
-  "upload": "Upload",
-  "maxFileSizeInfo": "File size must not exceed"
+  "save": "Save"
 }

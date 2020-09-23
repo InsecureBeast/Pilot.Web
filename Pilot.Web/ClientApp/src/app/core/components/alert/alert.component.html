@@ -1,3 +1,0 @@
-<div style="position: sticky; top: 56px; z-index: 1000; margin: 10px" *ngFor="let alert of messages">
-  <alert [type]="alert.type" dismissible="dismissible"  (onClosed)="onClosed(alert)">{{ alert.message }}</alert>
-</div>

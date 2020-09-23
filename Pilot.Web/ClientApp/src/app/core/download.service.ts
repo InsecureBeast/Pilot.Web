@@ -19,7 +19,7 @@ export class DownloadService {
         .pipe(first())
         .subscribe(data => {
           const fileExt = file.name.split('.').pop();
-          const name = object.title; // + '.' + fileExt;
+          const name = object.title + '.' + fileExt;
           this.runLoadFile(data, name, "application/octet-stream");
           resolve(true);
         }, err => reject(err));
@@ -34,7 +34,7 @@ export class DownloadService {
 
   private runLoadFile(data: ArrayBuffer, name: string, dataType: string): void {
     const blob = new Blob([data], { type: dataType });
-
+    
     //detect whether the browser is IE/Edge or another browser
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
       //To IE or Edge browser, using msSaveorOpenBlob method to download file.

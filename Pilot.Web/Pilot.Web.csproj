@@ -52,9 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\core\global-error-handler.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\core\notification.service.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\documents\file-drop.directive.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\tasks\shared\tasks.service.ts" />
   </ItemGroup>
 

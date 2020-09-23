@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 import { IObject } from 'src/app/core/data/data.classes';
 
@@ -9,31 +9,31 @@ export class DocumentsNavigationService {
   constructor(private router: Router) {
   }
 
-  navigateToDocument(folderId: string, document: string | IObject): void {
+  navigateToDocument(document: string | IObject): void {
     if (typeof document === 'string') {
       //Logic for overload 1
-      this.router.navigateByUrl(`/documents/${folderId}/doc/${document}`);
+      this.router.navigateByUrl('/document/' + document);
     } else {
       //Logic for overload 2
-      this.router.navigateByUrl(`/documents/${folderId}/doc/${document.id}`);
+      this.router.navigateByUrl('/document/' + document.id);
     }
   }
 
-  navigateToFile(folderId: string, document: string | IObject): void {
-    if (typeof document === 'string') {
+  navigateToFile(file: string | IObject): void {
+    if (typeof file === 'string') {
       //Logic for overload 1
-      this.router.navigateByUrl(`/documents/${folderId}/files/doc/${document}`);
+      this.router.navigateByUrl('/file/' + file);
     } else {
       //Logic for overload 2
-      this.router.navigateByUrl(`/documents/${folderId}/files/doc/${document.id}`);
+      this.router.navigateByUrl('/file/' + file.id);
     }
   }
 
   navigateToDocumentsFolder(folderId: string): void {
-    this.router.navigateByUrl(`/documents/${folderId}`);
+    this.router.navigateByUrl('/documents/' + folderId);
   }
 
   navigateToFilesFolder(folderId: string): void {
-    this.router.navigateByUrl(`/documents/${folderId}/files`);
+    this.router.navigateByUrl('/files/' + folderId);
   }
 }

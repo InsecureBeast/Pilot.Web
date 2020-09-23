@@ -3,9 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  uploadingFileMaxSizeBytes: 134217728,
-  uploadingFileMaxSizeMegaBytes: 128,
+  production: false
 };
 
 /*

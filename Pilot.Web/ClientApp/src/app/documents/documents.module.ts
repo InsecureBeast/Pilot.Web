@@ -16,8 +16,6 @@ import { DocumentsRoutingModule } from "./documents-routing.module";
 import { DocumentTreeComponent } from "./components/document-tree/document-tree.component";
 import { UserStateModule } from '../ui/user-state/user-state-module';
 import { ObjectCardDialogModule } from '../ui/object-card-dialog/object-card-dialog.module';
-import { FileDropDirective } from './file-drop.directive';
-import {BootstrapUiModule} from "../bootstrap-ui.module";
 
 @NgModule({
   imports: [
@@ -29,8 +27,7 @@ import {BootstrapUiModule} from "../bootstrap-ui.module";
     ErrorModule,
     DocumentsRoutingModule,
     UserStateModule,
-    ObjectCardDialogModule,
-    BootstrapUiModule
+    ObjectCardDialogModule
   ],
   declarations: [
     DocumentsComponent,
@@ -40,13 +37,11 @@ import {BootstrapUiModule} from "../bootstrap-ui.module";
     DocumentToolbarComponent,
     DocumentVersionsComponent,
     DocumentsToolbarComponent,
-    DocumentTreeComponent,
-    FileDropDirective
+    DocumentTreeComponent
   ],
   exports: [
     DocumentsComponent,
-    DocumentComponent,
-    FileDropDirective
+    DocumentComponent
   ],
 })
 export class DocumentsModule {}

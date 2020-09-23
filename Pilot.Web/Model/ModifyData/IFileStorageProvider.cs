@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using Ascon.Pilot.Common.Utils;
@@ -16,7 +15,7 @@ namespace Pilot.Web.Model.ModifyData
     public class FileStorageProvider : IFileStorage
     {
         private readonly string _fileArchiveFolder;
-        private static readonly ConcurrentDictionary<Guid, string> Files = new ConcurrentDictionary<Guid, string>();
+        private readonly Dictionary<Guid, string> _files = new Dictionary<Guid, string>();
 
         public FileStorageProvider(string fileArchiveFolder)
         {
@@ -28,13 +27,13 @@ namespace Pilot.Web.Model.ModifyData
         public Stream Create(Guid fileId)
         {
             var filePath = Path.Combine(_fileArchiveFolder, fileId + ".dat");
-            Files[fileId] = filePath;
+            _files[fileId] = filePath;
             return new FileStream(filePath, FileMode.OpenOrCreate);
         }
 
         public Stream Open(Guid id)
         {
-            if (Files.TryGetValue(id, out var path))
+            if (_files.TryGetValue(id, out var path))
                 return File.Open(path, FileMode.OpenOrCreate);
 
             throw new FileNotFoundException("File not found", id.ToString());
@@ -48,17 +47,17 @@ namespace Pilot.Web.Model.ModifyData
         public string CreateFile(Guid fileId)
         {
             var filePath = Path.Combine(_fileArchiveFolder, fileId.ToString());
-            Files[fileId] = filePath;
+            _files[fileId] = filePath;
             return filePath;
         }
 
         public void DeleteFile(Guid fileId)
         {
-            if (!Files.TryGetValue(fileId, out var path))
+            if (!_files.TryGetValue(fileId, out var path))
                 return;
 
             FileHelper.DeleteFile(path);
-            Files.Remove(fileId, out _);
+            _files.Remove(fileId);
         }
     }
 }

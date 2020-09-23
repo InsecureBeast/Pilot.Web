@@ -12,7 +12,7 @@ export class TasksNavigationService {
   }
 
   navigateToTask(taskId: string): void {
-    this.router.navigateByUrl('/tasks/task/' + taskId);
+    this.router.navigateByUrl('/task/' + taskId);
   }
 
   navigateToDocumentsFolder(folderId: string): void {
@@ -20,6 +20,6 @@ export class TasksNavigationService {
   }
 
   navigateToFilesFolder(folderId: string): void {
-    this.router.navigateByUrl('/documents/' + folderId);
+    this.router.navigateByUrl('/files/' + folderId);
   }
 }

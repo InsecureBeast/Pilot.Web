@@ -6,15 +6,16 @@ import { AuthGuard } from '../auth/auth.guard';
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { TaskComponent } from './pages/task/task.component';
 
+
 const routes: Routes = [
   {
-    path: '',
+    path: 'tasks',
     component: TasksComponent,
     canActivate: [AuthGuard],
     data: { reuse: true }
   },
   {
-    path: ':filterId',
+    path: 'tasks/:filterId',
     component: TasksComponent,
     canActivate: [AuthGuard],
     data: { reuse: true }
@@ -29,7 +30,8 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forChild(routes)
+    CommonModule,
+    RouterModule.forRoot(routes)
   ],
   exports: [RouterModule],
   declarations: []

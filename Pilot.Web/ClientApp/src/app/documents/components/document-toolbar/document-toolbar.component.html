@@ -9,15 +9,10 @@
       <span class="navbar-text toolbar-text material-icons nav-icon">query_builder</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="versions"></span>
     </li>
-    <li click-stop-propagation click-prevent-default
+    <li click-stop-propagation click-prevent-default 
         class="nav-item nav-item-button" (click)="openDocumentCard()">
       <span class="navbar-text toolbar-text nav-icon material-icons">insert_drive_file</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="card"></span>
-    </li>
-    <li click-stop-propagation click-prevent-default
-        class="nav-item nav-item-button" (click)="showFiles()" [class.checked]="showFilesMode" *ngIf="canShowFiles">
-      <span class="navbar-text toolbar-text nav-icon material-icons">folder</span>
-      <span class="navbar-text toolbar-text hidden-phone noselect" translate="sourceFiles"></span>
     </li>
   </ul>
 

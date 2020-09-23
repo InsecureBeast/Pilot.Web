@@ -1,4 +1,3 @@
-using Ascon.Pilot.DataModifier;
 using DocumentRender;
 using DocumentRender.DocumentConverter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +13,6 @@ using Pilot.Web.Model;
 using Pilot.Web.Model.Auth;
 using Pilot.Web.Model.FileStorage;
 using Pilot.Web.Model.Middleware;
-using Pilot.Web.Model.ModifyData;
 
 namespace Pilot.Web
 {
@@ -39,19 +37,19 @@ namespace Pilot.Web
 #endif
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            // СѓРєР·С‹РІР°РµС‚, Р±СѓРґРµС‚ Р»Рё РІР°Р»РёРґРёСЂРѕРІР°С‚СЊСЃСЏ РёР·РґР°С‚РµР»СЊ РїСЂРё РІР°Р»РёРґР°С†РёРё С‚РѕРєРµРЅР°
+                            // укзывает, будет ли валидироваться издатель при валидации токена
                             ValidateIssuer = true,
-                            // СЃС‚СЂРѕРєР°, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰Р°СЏ РёР·РґР°С‚РµР»СЏ
+                            // строка, представляющая издателя
                             ValidIssuer = authSettings.Issuer,
-                            // Р±СѓРґРµС‚ Р»Рё РІР°Р»РёРґРёСЂРѕРІР°С‚СЊСЃСЏ РїРѕС‚СЂРµР±РёС‚РµР»СЊ С‚РѕРєРµРЅР°
+                            // будет ли валидироваться потребитель токена
                             ValidateAudience = false,
-                            // СѓСЃС‚Р°РЅРѕРІРєР° РїРѕС‚СЂРµР±РёС‚РµР»СЏ С‚РѕРєРµРЅР°
+                            // установка потребителя токена
                             ValidAudience = authSettings.GetAudience(),
-                            // Р±СѓРґРµС‚ Р»Рё РІР°Р»РёРґРёСЂРѕРІР°С‚СЊСЃСЏ РІСЂРµРјСЏ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ
+                            // будет ли валидироваться время существования
                             ValidateLifetime = true,
-                            // СѓСЃС‚Р°РЅРѕРІРєР° РєР»СЋС‡Р° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+                            // установка ключа безопасности
                             IssuerSigningKey = authSettings.GetSymmetricSecurityKey(),
-                            // РІР°Р»РёРґР°С†РёСЏ РєР»СЋС‡Р° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+                            // валидация ключа безопасности
                             ValidateIssuerSigningKey = true,
                             // 
                             ClockSkew = authSettings.GetClockCrew()
@@ -80,8 +78,6 @@ namespace Pilot.Web
             services.AddScoped<IFileSaver, FileSaver>();
             services.AddScoped<IFilesStorage, FilesStorage>();
             services.AddScoped<IFileStorageDirectoryProvider, FileStorageDirectoryProvider>();
-            
-            services.AddSingleton<IFileStorageProvider>(new FileStorageProvider(DirectoryProvider.GetTempPath()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
