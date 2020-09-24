@@ -25,7 +25,6 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var settings = new AuthSettings
             {
                 SecretKey = "fwj'oeijf[aeofhuewhfe",
@@ -33,7 +32,7 @@ namespace Pilot.Web.Tests
             };
             var options = new Mock<IOptions<AuthSettings>>();
             options.Setup(o => o.Value).Returns(settings);
-            var controller = new AuthController(contextService.Object, httpContextService.Object, options.Object);
+            var controller = new AuthController(contextService.Object, options.Object);
             
             // when
             var user = new User
@@ -55,7 +54,6 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var settings = new AuthSettings
             {
                 SecretKey = "fwj'oeijf[aeofhuewhfe",
@@ -63,7 +61,7 @@ namespace Pilot.Web.Tests
             };
             var options = new Mock<IOptions<AuthSettings>>();
             options.Setup(o => o.Value).Returns(settings);
-            var controller = new AuthController(contextService.Object, httpContextService.Object, options.Object);
+            var controller = new AuthController(contextService.Object, options.Object);
 
             // when
             contextService.Setup(cs => cs.CreateContext(It.IsAny<Credentials>()))
@@ -86,12 +84,11 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var options = new Mock<IOptions<AuthSettings>>();
-            var controller = new AuthController(contextService.Object, httpContextService.Object, options.Object);
+            var controller = new AuthController(contextService.Object, options.Object);
 
             // when
-            httpContextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
+            contextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
             var result = controller.SignOut() as OkResult;
 
             // then
@@ -105,9 +102,8 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var options = new Mock<IOptions<AuthSettings>>();
-            var controller = new AuthController(contextService.Object, httpContextService.Object, options.Object);
+            var controller = new AuthController(contextService.Object, options.Object);
 
             // when
             var result = controller.SignOut() as OkResult;
@@ -123,12 +119,11 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var options = new Mock<IOptions<AuthSettings>>();
-            var controller = new AuthController(contextService.Object, httpContextService.Object, options.Object);
+            var controller = new AuthController(contextService.Object, options.Object);
 
             // when
-            httpContextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
+            contextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
             contextService.Setup(cs => cs.RemoveContext("sedov")).Throws<Exception>();
             var result = controller.SignOut() as BadRequestObjectResult;
 

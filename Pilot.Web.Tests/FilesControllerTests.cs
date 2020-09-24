@@ -24,14 +24,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object, 
@@ -51,7 +49,6 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
@@ -59,7 +56,6 @@ namespace Pilot.Web.Tests
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -72,7 +68,7 @@ namespace Pilot.Web.Tests
             var page = new byte[] {1, 2, 3, 4, 5, 6, 7};
             var pages = new List<byte[]> { page };
 
-            httpContextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
+            contextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
             fileLoader.Setup(fl => fl.Download(fileId, fileSize)).Returns(file);
             contextService.Setup(cs => cs.GetFileLoader("sedov")).Returns(fileLoader.Object);
             documentRender.Setup(dr => dr.RenderPages(file, 1)).Returns(pages);
@@ -89,14 +85,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -117,14 +111,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -143,14 +135,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -161,7 +151,7 @@ namespace Pilot.Web.Tests
             var fileSize = 10;
             var file = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-            httpContextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
+            contextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
             var fileLoader = new Mock<IFileLoader>();
             fileLoader.Setup(fl => fl.Download(fileId, fileSize)).Returns(file);
             contextService.Setup(cs => cs.GetFileLoader("sedov")).Returns(fileLoader.Object);
@@ -177,14 +167,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -207,14 +195,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -227,7 +213,7 @@ namespace Pilot.Web.Tests
             var thumbnail = new byte[] { 1, 2, 3, 4, 5 };
 
             fileStorage.Setup(fs => fs.GetThumbnail(fileId)).Returns((byte[]) null);
-            httpContextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
+            contextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
             var fileLoader = new Mock<IFileLoader>();
             fileLoader.Setup(fl => fl.Download(fileId, fileSize)).Returns(thumbnailFile);
             contextService.Setup(cs => cs.GetFileLoader("sedov")).Returns(fileLoader.Object);
@@ -245,14 +231,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -267,10 +251,10 @@ namespace Pilot.Web.Tests
             };
 
             var objectGuids = objectIds.Select(Guid.Parse).ToArray();
-            var objects = objectGuids.Select(NewPObject);
+            var objects = objectGuids.Select(TestTools.RandomPObject);
             var zip = new byte[] { 1,2,3,4,5,6,7,8,9 };
             
-            httpContextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
+            contextService.Setup(hs => hs.GetTokenActor(It.IsAny<HttpContext>())).Returns("sedov");
             var api = new Mock<IServerApiService>();
             api.Setup(a => a.GetObjects(objectGuids)).Returns(objects);
             contextService.Setup(cs => cs.GetServerApi("sedov")).Returns(api.Object);
@@ -287,14 +271,12 @@ namespace Pilot.Web.Tests
         {
             // given
             var contextService = new Mock<IContextService>();
-            var httpContextService = new Mock<IHttpContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
-                httpContextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
                 fileSaver.Object,
@@ -302,13 +284,6 @@ namespace Pilot.Web.Tests
 
             // then
             Assert.Throws<Exception>(() => controller.GetFileArchive(new string[0]));
-        }
-
-        private PObject NewPObject(Guid id)
-        {
-            var metadata = new Mock<INMetadata>();
-            var people = new ReadOnlyDictionary<int, INPerson>(new Dictionary<int, INPerson>());
-            return new PObject(new DObject(), metadata.Object, people);
         }
     }
 }

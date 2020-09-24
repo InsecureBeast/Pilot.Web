@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Pilot.Web.Model.Auth;
+using Pilot.Web.Tools;
 
 namespace Pilot.Web.Model
 {
@@ -12,6 +14,8 @@ namespace Pilot.Web.Model
 
         void CreateContext(Credentials credentials);
         void RemoveContext(string actor);
+
+        string GetTokenActor(HttpContext httpContext);
     }
 
     class ContextService : IContextService
@@ -57,6 +61,11 @@ namespace Pilot.Web.Model
                 if (_services.Remove(actor, out var remoteService))
                     remoteService.Dispose();
             }
+        }
+
+        public string GetTokenActor(HttpContext httpContext)
+        {
+            return httpContext.GetTokenActor();
         }
 
         private IRemoteService GetRemoteService(string actor)

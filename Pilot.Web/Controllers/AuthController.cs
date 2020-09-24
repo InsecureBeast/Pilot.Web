@@ -22,13 +22,11 @@ namespace Pilot.Web.Controllers
     {
         private readonly ILog _logger = LogManager.GetLogger(typeof(AuthController));
         private readonly IContextService _contextService;
-        private readonly IHttpContextService _httpContextService;
         private readonly AuthSettings _authSettings;
 
-        public AuthController(IContextService contextService, IHttpContextService httpContextService, IOptions<AuthSettings> authSettings)
+        public AuthController(IContextService contextService, IOptions<AuthSettings> authSettings)
         {
             _contextService = contextService;
-            _httpContextService = httpContextService;
             _authSettings = authSettings.Value;
         }
 
@@ -57,7 +55,7 @@ namespace Pilot.Web.Controllers
         {
             try
             {
-                var actor = _httpContextService.GetTokenActor(HttpContext);
+                var actor = _contextService.GetTokenActor(HttpContext);
                 if (actor == null)
                     return Ok();
 

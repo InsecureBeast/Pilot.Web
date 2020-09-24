@@ -73,7 +73,6 @@ namespace Pilot.Web
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IConnectionService, ConnectionService>();
             services.AddSingleton<IContextService, ContextService>();
-            services.AddScoped<IHttpContextService, HttpContextService>();
             services.AddScoped<IDocumentConverterFactory, DocumentConverterFactory>();
             services.AddScoped<IDocumentRender, DocumentRender.DocumentRender>();
             services.AddScoped<IFileSaver, FileSaver>();
