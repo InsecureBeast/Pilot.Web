@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --verbosity minimal --configuration Release
+      run: dotnet test --no-restore --verbosity normal --configuration Release
     - name: Setup Angular
       run: echo Build Angular client app
     - name: Cache node modules
