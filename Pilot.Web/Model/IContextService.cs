@@ -61,16 +61,20 @@ namespace Pilot.Web.Model
 
         private IRemoteService GetRemoteService(string actor)
         {
-            _services.TryGetValue(actor, out var apiService);
-            if (apiService == null)
-                throw new UnauthorizedAccessException();
-
-            if (!apiService.IsActive)
+            lock (_services)
             {
-                throw new UnauthorizedAccessException();
-            }
+                _services.TryGetValue(actor, out var apiService);
 
-            return apiService;
+                if (apiService == null)
+                    throw new UnauthorizedAccessException();
+
+                if (!apiService.IsActive)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+
+                return apiService;
+            }
         }
     }
 }

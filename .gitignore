@@ -2,3 +2,5 @@
 /documentRender/bin/*
 /documentRender/obj/*
 /Serializer/obj/*
+/Pilot.Web.Tests/bin/*
+/Pilot.Web.Tests/obj/*

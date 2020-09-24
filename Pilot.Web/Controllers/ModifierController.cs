@@ -39,7 +39,6 @@ namespace Pilot.Web.Controllers
                 var builder = modifier.EditObject(id);
                 foreach (var changeAttribute in change.Attributes.Changed)
                 {
-                    
                     builder.SetAttribute(changeAttribute.Name, changeAttribute.Value.ToDValue());
                 }
                 foreach (var attributeChange in change.Attributes.Removed)
