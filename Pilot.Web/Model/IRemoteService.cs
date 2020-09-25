@@ -18,7 +18,6 @@ namespace Pilot.Web.Model
         private readonly HttpPilotClient _client;
         private readonly IServerApiService _serverApi;
         private readonly IFileArchiveApi _fileArchiveApi;
-        private bool _isActive = false;
         private readonly ServerCallback _serverCallback;
 
         public RemoteService(HttpPilotClient client)
@@ -39,10 +38,10 @@ namespace Pilot.Web.Model
 
             _serverApi = new ServerApiService(serverApi, dbInfo, searchFactory, backend);
             _serverCallback.RegisterCallbackListener((IRemoteServiceListener) _serverApi);
-            _isActive = true;
+            IsActive = true;
         }
 
-        public bool IsActive => _isActive;
+        public bool IsActive { get; private set; }
 
         public IServerApiService GetServerApi()
         {
@@ -62,7 +61,7 @@ namespace Pilot.Web.Model
 
         public void ConnectionLost(Exception ex = null)
         {
-            _isActive = false;
+            IsActive = false;
         }
     }
 }
