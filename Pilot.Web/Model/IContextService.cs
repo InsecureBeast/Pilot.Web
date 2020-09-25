@@ -21,11 +21,13 @@ namespace Pilot.Web.Model
     class ContextService : IContextService
     {
         private readonly IConnectionService _connectionService;
+        private readonly IRemoteServiceFactory _remoteServiceFactory;
         private readonly ConcurrentDictionary<string, IRemoteService> _services = new ConcurrentDictionary<string, IRemoteService>();
         
-        public ContextService(IConnectionService connectionService)
+        public ContextService(IConnectionService connectionService, IRemoteServiceFactory remoteServiceFactory)
         {
             _connectionService = connectionService;
+            _remoteServiceFactory = remoteServiceFactory;
         }
 
         public IServerApiService GetServerApi(string actor)
@@ -49,7 +51,7 @@ namespace Pilot.Web.Model
                     return;
 
                 var httpClient = _connectionService.Connect(credentials);
-                var apiService = new RemoteService(httpClient);
+                var apiService = _remoteServiceFactory.CreateRemoteService(httpClient);
                 _services[credentials.Username] = apiService;
             }
         }
