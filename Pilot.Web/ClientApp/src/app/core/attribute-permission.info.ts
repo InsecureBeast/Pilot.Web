@@ -39,11 +39,6 @@ export class AttributePermissionInfo {
   extractAllOrgUnitsByAttributes(attributes: Map<string, IValue>) : number[] {
       
     let result = new Array<number>();
-    //this.OrgUnits.forEach(orgUnit => {
-    //    return orgUnit;    
-    //});
-    
-
     if (!this.orgUnitAttributes || !attributes  )
       return result;
 
