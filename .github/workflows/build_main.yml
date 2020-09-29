@@ -41,5 +41,5 @@ jobs:
         npm run build
       working-directory: ./Pilot.Web/ClientApp  
     - name: Test client side
-      run: npm test --no-watch --browsers=ChromeHeadless
+      run: npm test --no-watch --browsers=ChromeHeadless --no-sandbox
       working-directory: ./Pilot.Web/ClientApp  
