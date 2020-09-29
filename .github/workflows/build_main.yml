@@ -41,5 +41,7 @@ jobs:
         npm run build
       working-directory: ./Pilot.Web/ClientApp  
     - name: Test client side
-      run: npm test --no-watch --browsers=ChromeHeadless --no-sandbox
-      working-directory: ./Pilot.Web/ClientApp  
+      uses: GabrielBB/xvfb-action@v1
+      with:
+          working-directory: ./Pilot.Web/ClientApp
+          run: npm test --no-watch --browsers=ChromeHeadless --no-sandbox
