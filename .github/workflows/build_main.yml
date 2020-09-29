@@ -43,7 +43,7 @@ jobs:
     - name: Install xvfb
       run: sudo apt-get install xvfb
     - name: Test client side
-      run: ng test --watch=false --browsers=ChromeHeadless
+      run: npm test -- --watch=false --browsers=ChromeHeadless
       env:
         CI: true
       working-directory: ./Pilot.Web/ClientApp
