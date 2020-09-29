@@ -28,10 +28,11 @@ export class RepositoryService {
   }
 
   constructor(private http: HttpClient, 
-              @Inject('BASE_URL') private baseUrl: string, 
+              @Inject('BASE_URL') 
+              private baseUrl: string, 
               private readonly headersProvider: HeadersProvider) {
     
-     this.types = new Map<number, IType>();
+    this.types = new Map<number, IType>();
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
     this.userStates = new Map<string, IUserState>();
@@ -101,7 +102,7 @@ export class RepositoryService {
   }
 
   initialize(): Observable<boolean> {
-    const init = new BehaviorSubject<boolean>(false);
+    const init = new Subject<boolean>();
     if (this.metadata){
       init.next(true);
       return init;
@@ -170,9 +171,13 @@ export class RepositoryService {
     let person: IPerson;
     if (orgUnit.person !== -1) {
       person = this.getPerson(orgUnit.person);
-      if (person != null)
-        return person;
     }
+
+    if (person)
+      return person;
+
+    if (!orgUnit.vicePersons)
+      return null;
 
     for (let vicePerson of orgUnit.vicePersons) {
       person = this.getPerson(vicePerson);

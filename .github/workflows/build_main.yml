@@ -20,7 +20,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Test
+    - name: Test server side
       run: dotnet test --no-restore --verbosity normal --configuration Release
     - name: Setup Angular
       run: echo Build Angular client app
@@ -40,3 +40,5 @@ jobs:
         npm install
         npm run build
       working-directory: ./Pilot.Web/ClientApp  
+    - name: Test client side
+      run: npm test --no-watch --browsers=ChromeHeadless
