@@ -46,5 +46,6 @@ jobs:
       run: xvfb-run --auto-servernum npm test
       env:
         CI: true
+      working-directory: ./Pilot.Web/ClientApp
     - name: Cleanup xvfb pidx
       uses: bcomnes/cleanup-xvfb@v1
