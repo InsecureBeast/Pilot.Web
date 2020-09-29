@@ -43,7 +43,9 @@ jobs:
     - name: Install xvfb
       run: sudo apt-get install xvfb
     - name: Test client side
-      run: npm test --browsers=ChromeHeadless --watch=false --code-coverage
+      run: |
+        npm i
+        xvfb-run --auto-servernum npm test
       env:
         CI: true
       working-directory: ./Pilot.Web/ClientApp
