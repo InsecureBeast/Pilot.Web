@@ -40,8 +40,11 @@ jobs:
         npm install
         npm run build
       working-directory: ./Pilot.Web/ClientApp  
+    - name: Install xvfb
+      run: sudo apt-get install xvfb
     - name: Test client side
-      uses: GabrielBB/xvfb-action@v1
-      with:
-          working-directory: ./Pilot.Web/ClientApp
-          run: npm test
+      run: xvfb-run --auto-servernum npm test
+      env:
+        CI: true
+    - name: Cleanup xvfb pidx
+      uses: bcomnes/cleanup-xvfb@v1
