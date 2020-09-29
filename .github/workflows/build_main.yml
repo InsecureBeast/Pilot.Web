@@ -44,4 +44,4 @@ jobs:
       uses: GabrielBB/xvfb-action@v1
       with:
           working-directory: ./Pilot.Web/ClientApp
-          run: npm test --no-watch --browsers=ChromeHeadless --no-sandbox
+          run: ng test
