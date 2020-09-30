@@ -4,6 +4,7 @@ import { RepositoryService } from './repository.service';
 import { HeadersProvider } from './headers.provider';
 import { IMetadata, IOrganizationUnit, IPerson, ITransition, IType, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
 import { Change } from './modifier/change';
+import { skipWhile } from 'rxjs/operators';
 
 describe('RepositoryService', () => {
   let service: RepositoryService;
@@ -65,7 +66,7 @@ describe('RepositoryService', () => {
 
   it('should initialize', () => {
 
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       expect(isInit).toBeTrue();
     });
 
@@ -86,7 +87,7 @@ describe('RepositoryService', () => {
 
   it('should get type', () => {
     //when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getType(2);
       // then
       expect(actual.id).toBe(2);
@@ -98,7 +99,7 @@ describe('RepositoryService', () => {
 
   it('should return undefined if type not exists', () => {
     //when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getType(10);
       // then
       expect(actual).toBeUndefined();
@@ -115,7 +116,7 @@ describe('RepositoryService', () => {
     people = [person1, person2, person3]
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getPerson(2);
 
       // then
@@ -128,7 +129,7 @@ describe('RepositoryService', () => {
 
   it('should get undefined if person not exists', () => {
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getPerson(20);
 
       // then
@@ -143,7 +144,7 @@ describe('RepositoryService', () => {
     currentPerson = <IPerson> { id: 1, displayName: 'Person1'};
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getCurrentPerson();
 
       // then
@@ -162,7 +163,7 @@ describe('RepositoryService', () => {
     organizationUnits = [orgUnit1, orgUnit2, orgUnit3];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getOrganizationUnit(3);
 
       // then
@@ -175,7 +176,7 @@ describe('RepositoryService', () => {
 
   it('should get undefined organization unit if not exists', () => {
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getOrganizationUnit(30);
 
       // then
@@ -194,7 +195,7 @@ describe('RepositoryService', () => {
     organizationUnits = [orgUnit];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getPersonOnOrganizationUnit(1);
 
       // then
@@ -214,7 +215,7 @@ describe('RepositoryService', () => {
     organizationUnits = [orgUnit];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getPersonOnOrganizationUnit(1);
 
       // then
@@ -233,7 +234,7 @@ describe('RepositoryService', () => {
     organizationUnits = [orgUnit];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getPersonOnOrganizationUnit(1);
 
       // then
@@ -253,7 +254,7 @@ describe('RepositoryService', () => {
     organizationUnits = [orgUnit];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getPersonOnOrganizationUnit(1);
 
       // then
@@ -271,7 +272,7 @@ describe('RepositoryService', () => {
     states = [ userState1, userState2, userState3];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getUserState('guid2');
 
       // then
@@ -283,7 +284,7 @@ describe('RepositoryService', () => {
 
   it('should get undefined user state if not exists', () => {
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getUserState('guid20');
 
       // then
@@ -301,7 +302,7 @@ describe('RepositoryService', () => {
     metadata.stateMachines = [ stateMachine1, stateMachine2, stateMachine3];
 
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getStateMachine('guid2');
 
       // then
@@ -314,7 +315,7 @@ describe('RepositoryService', () => {
 
   it('should get empty state machine', () => {
     // when
-    service.initialize().subscribe(isInit => {
+    service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
       let actual = service.getStateMachine('guid2');
 
       // then

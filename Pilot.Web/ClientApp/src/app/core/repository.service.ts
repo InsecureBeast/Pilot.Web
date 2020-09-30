@@ -102,7 +102,7 @@ export class RepositoryService {
   }
 
   initialize(): Observable<boolean> {
-    const init = new Subject<boolean>();
+    const init = new BehaviorSubject<boolean>(false);
     if (this.metadata){
       init.next(true);
       return init;
