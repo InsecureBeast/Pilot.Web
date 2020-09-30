@@ -34,8 +34,9 @@
     "jquery": "^3.5.1",
     "popper.js": "^1.14.3",
     "rxjs": "^6.5.5",
-    "ts-node": "~5.0.1",
-    "tslint": "~5.9.1",
+    "ts-mocks": "^3.0.1",
+    "ts-node": "~8.3.0",
+    "tslint": "~6.1.0",
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
@@ -62,8 +63,8 @@
   "optionalDependencies": {
     "node-sass": "^4.14.0",
     "protractor": "^7.0.0",
-    "ts-node": "~5.0.1",
-    "tslint": "~5.9.1"
+    "ts-node": "~8.3.0",
+    "tslint": "~6.1.0"
   },
   "description": "This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.",
   "main": "index.js",
