@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 
-@Injectable()
 export class Tools {
 
   static arrayBufferToBase64(buffer: ArrayBuffer): string {

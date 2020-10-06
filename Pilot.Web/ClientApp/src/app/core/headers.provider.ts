@@ -3,7 +3,7 @@ import { AuthService } from "../auth/auth.service";
 import { HttpHeaders } from "@angular/common/http";
 
 export enum RequestType {
-    None =0,
+    None = 0,
     New = 1,
     FromCache = 2
   }
