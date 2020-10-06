@@ -1,5 +1,5 @@
 import { SystemStates } from "../data/system.states"
-import { IValue, AccessLevel, IObject} from "../data/data.classes"
+import { IValue, AccessLevel } from "../data/data.classes"
 
 export class IObjectExtensions {
     

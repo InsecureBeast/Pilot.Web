@@ -38,11 +38,11 @@ export class FilesSelector {
   }
 
   static isXpsFile(file: IFile): boolean {
-    return file.name.endsWith(FileNames.XPS_FILE_NAME_POSTFIX);
+    return file.name.toLowerCase().endsWith(FileNames.XPS_FILE_NAME_POSTFIX);
   }
 
   static isPdfFile(file: IFile): boolean {
-    return file.name.endsWith(FileNames.PDF_FILE_NAME_POSTFIX);
+    return file.name.toLowerCase().endsWith(FileNames.PDF_FILE_NAME_POSTFIX);
   }
 
   static isThumbnailFile(file: IFile): boolean {
