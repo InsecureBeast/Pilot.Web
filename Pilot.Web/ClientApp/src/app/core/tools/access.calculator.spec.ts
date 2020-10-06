@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { instance, mock, when } from 'ts-mockito';
 import { AccessLevel, IObject, IPerson, ObjectState, StateInfo } from '../data/data.classes';
 import { RepositoryService } from '../repository.service';
-import { AccessCalculator, ObjectSecurityService } from './access.calculator';
+import { AccessCalculator } from './access.calculator';
+import { ObjectSecurityService } from './object-security.service';
 
 describe('FilesRepositoryService', () => {
   let service: AccessCalculator;
