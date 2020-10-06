@@ -6,27 +6,26 @@ import { Subject } from 'rxjs';
 import { takeUntil, first } from 'rxjs/operators';
 import { FilesRepositoryService } from './files-repository.service';
 import { Tools } from './tools/tools';
-import { IndexedStorageService } from './indexed-storage.service';
 
 @Injectable({ providedIn: 'root'})
 export class SourceFileService {
   constructor(
     private readonly fileStorageService: FilesRepositoryService,
-    private readonly sanitizer: DomSanitizer,
-    private readonly indexedStorageService: IndexedStorageService ) {
-
+    private readonly sanitizer: DomSanitizer ) {
   }
 
-  showXpsDocumentAsync(file: IFile, scale: number, cancel: Subject<any>, images: Array<SafeUrl>): Promise<void> {
+  fillXpsDocumentPagesAsync(file: IFile, scale: number, cancel: Subject<any>, images: Array<SafeUrl>): Promise<void> {
+    let that = this;
+    let id = file.body.id;
     return new Promise((resolve, reject) => {
-      this.fileStorageService.getDocumentPagesCount(file.body.id, file.body.size, scale)
+      that.fileStorageService.getDocumentPagesCount(id, file.body.size, scale)
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe(async count => {
             for (let i = 0; i < count; i++) {
-              const page = await this.getPageAsync(file.body.id, i, cancel);
+              const page = await that.getPageAsync(id, i, cancel);
               images.push(page);
-              resolve();
+              //resolve();
             }
 
             resolve();
@@ -36,11 +35,9 @@ export class SourceFileService {
   }
 
   async getImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
-    
     return new Promise((resolve, reject) => {
       var imageType = this.getImageDataType(file.name);
       if (imageType) {
-
         this.fileStorageService.getFile(file.body.id, file.body.size)
           .pipe(takeUntil(cancel))
           .subscribe(bytes => {
@@ -48,7 +45,11 @@ export class SourceFileService {
             var url = Tools.getImage(base64, imageType, this.sanitizer);
             resolve(url);
           }, err => reject(err));
+        
+        return;
       }
+
+      resolve(null);
     });
   }
 
@@ -136,13 +137,14 @@ export class SourceFileService {
   }
 
   private async getPageAsync(fileId: string, page: number, cancel: Subject<any>): Promise<SafeUrl> {
+    let that = this;
     return new Promise((resolve, reject) => {
-      this.fileStorageService.getDocumentPageContent(fileId, page)
+      that.fileStorageService.getDocumentPageContent(fileId, page)
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe(page => {
           var base64 = Tools.arrayBufferToBase64(page);
-          var image = Tools.getImage(base64, ".png", this.sanitizer);
+          var image = Tools.getImage(base64, ".png", that.sanitizer);
             resolve(image);
           },
           e => reject(e));

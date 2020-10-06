@@ -246,7 +246,7 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
     if (this.sourceFileService.isXpsFile(snapshot)) {
       const file = FilesSelector.getSourceFile(snapshot.files);
-      this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
+      this.sourceFileService.fillXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
         .then(_ => this.isLoading = false)
         .catch(e => {
           this.isLoading = false;
