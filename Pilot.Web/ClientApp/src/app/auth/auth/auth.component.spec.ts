@@ -1,4 +1,4 @@
-import { TestBed, async, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserModule, By } from "@angular/platform-browser";
 import { TranslateModule } from "@ngx-translate/core";
 import { FormsModule } from '@angular/forms';
@@ -31,7 +31,7 @@ describe('login component', () => {
     let error$: Subject<any>;
     let queryParams = new Array<Params>();
 
-    beforeEach(async(() => {
+    beforeEach(() => {
         repositoryMock = mock(RepositoryService);
         repository = instance(repositoryMock);
         authServiceMock = mock(AuthService);
@@ -67,7 +67,7 @@ describe('login component', () => {
         fixture = TestBed.createComponent(AuthComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-    }));
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();

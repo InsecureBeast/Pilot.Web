@@ -92,7 +92,6 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
-          this.repository.requestType = RequestType.FromCache;
         }
       }
     });
