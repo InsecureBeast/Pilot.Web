@@ -156,7 +156,7 @@ namespace Pilot.Web.Controllers
                     throw new Exception("Parent is not found");
                 }
 
-                if (!parent.Type.IsMountable)
+                if (!parent.Type.IsMountable && parent.Type.Name != "Project_folder")
                 {
                     throw new Exception("Parent is not mountable");
                 }
