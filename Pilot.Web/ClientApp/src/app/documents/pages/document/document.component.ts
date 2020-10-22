@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -26,25 +26,26 @@ import { DocumentsService } from '../../shared/documents.service';
   styleUrls: ['./document.component.css']
 })
 /** document component*/
-export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
+export class DocumentComponent implements OnInit, OnDestroy {
+
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private documents = new Array<string>();
-  private documentCardModal = "documentCardModal";
+  private documentCardModal = 'documentCardModal';
 
   document: IObject;
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
   error: HttpErrorResponse;
-  
+
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
   selectedVersionCreator: string;
-  
+
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -64,24 +65,28 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit(): void {
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const id = params.get('id');
-      if (!id)
+      if (!id) {
         return;
+      }
 
-      const version = params.get("v");
+      const version = params.get('v');
       this.loadDocument(id, version, true);
     });
 
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
-      if (!s)
+      if (!s) {
         return;
+      }
 
-      if (!this.document)
+      if (!this.document) {
         return;
+      }
 
       this.isActualVersionSelected = this.document.actualFileSnapshot.created === s.created;
-      let version = "";
-      if (!this.isActualVersionSelected)
+      let version = '';
+      if (!this.isActualVersionSelected) {
         version = s.created;
+      }
 
       this.updateLocation(this.document.id, version);
       this.loadSnapshot(s);
@@ -97,9 +102,10 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     });
 
     this.objectCardChangeSubscription = this.documentService.objectForCard$.subscribe(id => {
-      if (!id)
+      if (!id) {
         return;
-        
+      }
+
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.document = object;
       });
@@ -109,34 +115,34 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
 
-    if (this.versionSubscription)
+    if (this.versionSubscription) {
       this.versionSubscription.unsubscribe();
+    }
 
-    if (this.routerSubscription)
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
+    }
 
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
+    }
 
-    if (this.objectCardChangeSubscription)
+    if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-
+    }
   }
 
   close($event): void {
     this.cancelAllRequests(false);
-    this.repository.requestType = RequestType.FromCache;
+    this.repository.setRequestType(RequestType.FromCache);
     this.location.back();
   }
 
-  download($event): void{
+  download($event): void {
     this.downloadService.downloadFile(this.document);
   }
 
-  showDocumentVersions($event): void {
+  toggleDocumentVersions($event): void {
     this.isInfoShown = !this.isInfoShown;
   }
 
@@ -152,8 +158,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   previousDocument(node: INode) {
     this.cancelAllRequests(false);
     const indexOf = this.documents.findIndex(doc => doc === this.document.id);
-    if (!this.canPreviousDocument(indexOf))
+    if (!this.canPreviousDocument(indexOf)) {
       return;
+    }
 
     const prevId = this.documents[indexOf - 1];
     this.loadDocument(prevId);
@@ -163,19 +170,20 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   nextDocument(node: INode) {
     this.cancelAllRequests(false);
     const indexOf = this.documents.findIndex(doc => doc === this.document.id);
-    if (!this.canNextDocument(indexOf))
+    if (!this.canNextDocument(indexOf)) {
       return;
+    }
 
     const nextId = this.documents[indexOf + 1];
     this.loadDocument(nextId);
     this.updateLocation(nextId);
   }
 
-  onShowDocumentCard() : void {
+  onShowDocumentCard(): void {
     this.modalService.open(this.documentCardModal);
   }
 
-  onCloseDocumentCard() : void {
+  onCloseDocumentCard(): void {
     this.modalService.close(this.documentCardModal);
   }
 
@@ -188,21 +196,24 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
     this.error = null;
     this.repository.getObjectAsync(id)
       .then(source => {
-        if (!source)
+        if (!source) {
           return;
+        }
 
         this.document = source;
         let snapshot = source.actualFileSnapshot;
         this.isActualVersionSelected = !version;
-        if (!this.isActualVersionSelected)
+        if (!this.isActualVersionSelected) {
           snapshot = source.previousFileSnapshots.find(f => f.created === version);
+        }
 
         if (snapshot) {
           this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
-          this.selectedVersionCreator = "";
+          this.selectedVersionCreator = '';
           const creator = this.repository.getPerson(snapshot.creatorId);
-          if (creator)
+          if (creator) {
             this.selectedVersionCreator = creator.displayName;
+          }
         }
 
         this.loadSnapshot(snapshot);
@@ -222,8 +233,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
       .then(parent => {
         for (const child of parent.children) {
           const type = this.repository.getType(child.typeId);
-          if (TypeExtensions.isDocument(type))
+          if (TypeExtensions.isDocument(type)) {
             this.documents.push(child.objectId);
+          }
         }
       }).catch(e => {
         this.isLoading = false;
@@ -233,9 +245,9 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
 
   private updateLocation(id: string, version?: string): void {
     if (!version) {
-      this.location.replaceState("document/" + id);
+      this.location.replaceState('document/' + id);
     } else {
-      this.location.replaceState("document/" + id + "/" + version);
+      this.location.replaceState('document/' + id + '/' + version);
     }
   }
 
@@ -295,27 +307,32 @@ export class DocumentComponent implements OnInit, OnDestroy, OnChanges {
   private cancelAllRequests(isComplete: boolean): void {
     if (this.ngUnsubscribe) {
       this.ngUnsubscribe.next();
-      if (isComplete)
+      if (isComplete) {
         this.ngUnsubscribe.complete();
+      }
     }
   }
 
   private canNextDocument(indexOf: number): boolean {
-    if (indexOf === -1)
+    if (indexOf === -1) {
       return false;
+    }
 
-    if (indexOf === this.documents.length - 1)
+    if (indexOf === this.documents.length - 1) {
       return false;
+    }
 
     return true;
   }
 
   private canPreviousDocument(indexOf: number): boolean {
-    if (indexOf === -1)
+    if (indexOf === -1) {
       return false;
+    }
 
-    if (indexOf === 0)
+    if (indexOf === 0) {
       return false;
+    }
 
     return true;
   }

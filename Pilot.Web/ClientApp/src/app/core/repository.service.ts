@@ -18,25 +18,26 @@ export class RepositoryService {
   private userStates: Map<string, IUserState>;
   private currentPerson: IPerson;
   private stateMachines: Map<string, MUserStateMachine>;
+  private requestType: RequestType; // TODO remove from here
 
-  set requestType(value: RequestType) {
-    this.headersProvider.requestType = value;
-  }
-
-  get requestType(): RequestType {
-    return this.headersProvider.requestType;
-  }
-
-  constructor(private http: HttpClient, 
-              @Inject('BASE_URL') 
-              private baseUrl: string, 
+  constructor(private http: HttpClient,
+              @Inject('BASE_URL')
+              private baseUrl: string,
               private readonly headersProvider: HeadersProvider) {
-    
+
     this.types = new Map<number, IType>();
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
     this.userStates = new Map<string, IUserState>();
     this.stateMachines = new Map<string, MUserStateMachine>();
+  }
+
+  setRequestType(value: RequestType) {
+    this.headersProvider.requestType = value;
+  }
+
+  getRequestType(): RequestType {
+    return this.headersProvider.requestType;
   }
 
   getType(id: number): IType {
@@ -50,8 +51,8 @@ export class RepositoryService {
 
   getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
     return new Promise((resolve, reject) => {
-      let headers = this.headersProvider.getHeaders();
-      let url = 'api/Documents/GetDocumentChildren?id=' + objectId + "&childrenType=" + childrenType;
+      const headers = this.headersProvider.getHeaders();
+      const url = 'api/Documents/GetDocumentChildren?id=' + objectId + '&childrenType=' + childrenType;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
         .pipe(first())
@@ -75,7 +76,7 @@ export class RepositoryService {
   getObjectAsync(id: string, requestType: RequestType = RequestType.None): Promise<IObject> {
     let headers = this.headersProvider.getHeaders();
 
-    if (requestType !== RequestType.None){
+    if (requestType !== RequestType.None) {
       const currentRequestType = this.requestType;
       this.requestType = requestType;
       headers = this.headersProvider.getHeaders();
@@ -103,7 +104,7 @@ export class RepositoryService {
 
   initialize(): Observable<boolean> {
     const init = new BehaviorSubject<boolean>(false);
-    if (this.metadata){
+    if (this.metadata) {
       init.next(true);
       return init;
     }
@@ -118,29 +119,29 @@ export class RepositoryService {
       ([metadata, people, organizationUnits, currentPerson, states]) => {
         this.metadata = metadata;
         this.types = new Map<number, IType>();
-        for (let attr of this.metadata.types) {
+        for (const attr of this.metadata.types) {
           this.types.set(attr.id, attr);
         }
 
         this.people = new Map<number, IPerson>();
-        for (let person of people) {
+        for (const person of people) {
           this.people.set(person.id, person);
         }
 
         this.organizationUnits = new Map<number, IOrganizationUnit>();
-        for (let unit of organizationUnits) {
+        for (const unit of organizationUnits) {
           this.organizationUnits.set(unit.id, unit);
         }
 
         this.currentPerson = currentPerson;
 
         this.userStates = new Map<string, IUserState>();
-        for (let state of states) {
+        for (const state of states) {
           this.userStates.set(state.id, state);
         }
 
         this.stateMachines = new Map<string, MUserStateMachine>();
-        for (let stateMachine of metadata.stateMachines) {
+        for (const stateMachine of metadata.stateMachines) {
           this.stateMachines.set(stateMachine.id, new MUserStateMachine(stateMachine));
         }
 
@@ -173,16 +174,19 @@ export class RepositoryService {
       person = this.getPerson(orgUnit.person);
     }
 
-    if (person)
+    if (person) {
       return person;
+    }
 
-    if (!orgUnit.vicePersons)
+    if (!orgUnit.vicePersons) {
       return null;
+    }
 
-    for (let vicePerson of orgUnit.vicePersons) {
+    for (const vicePerson of orgUnit.vicePersons) {
       person = this.getPerson(vicePerson);
-      if (person != null && !person.isInactive)
+      if (person != null && !person.isInactive) {
         return person;
+      }
     }
 
     return null;
@@ -192,10 +196,10 @@ export class RepositoryService {
     return this.userStates.get(id);
   }
 
-  getStateMachine(id: string) : IUserStateMachine {
-    if (!this.stateMachines.has(id))
+  getStateMachine(id: string): IUserStateMachine {
+    if (!this.stateMachines.has(id)) {
       return MUserStateMachine.Null;
-      
+    }
     return this.stateMachines.get(id);
   }
 
@@ -205,7 +209,7 @@ export class RepositoryService {
     return this.http.post<any>(this.baseUrl + 'api/Modifier/Change', body, { headers: headers }).pipe(first());
   }
 
-  newModifier() : Modifier {
+  newModifier(): Modifier {
     return new Modifier(this);
   }
 
