@@ -1,11 +1,11 @@
-import { TestBed, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
-import { BrowserModule, By } from "@angular/platform-browser";
-import { TranslateModule, TranslateService } from "@ngx-translate/core";
+import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testing';
+import { BrowserModule } from '@angular/platform-browser';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router, ParamMap, Event } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { anyString, instance, mock, verify, when, deepEqual } from 'ts-mockito';
-import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { DocumentsComponent } from './documents.component';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
@@ -19,7 +19,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 describe('documents component', () => {
     let component: DocumentsComponent;
     let fixture: ComponentFixture<DocumentsComponent>;
-    let typeIconServiceMock: TypeIconService
+    let typeIconServiceMock: TypeIconService;
     let typeIconService: TypeIconService;
     let translate: TranslateService;
     let navigationServiceMock: DocumentsNavigationService;
@@ -30,7 +30,7 @@ describe('documents component', () => {
     let scrollPositionService: ScrollPositionService;
     let modalServiceMock: ModalService;
     let modalService: ModalService;
-    let repositoryMock:RepositoryService;
+    let repositoryMock: RepositoryService;
     let repository: RepositoryService;
     let routerMock: Router;
     let router: Router;
@@ -38,22 +38,22 @@ describe('documents component', () => {
     let activatedRoute: ActivatedRoute;
     let paramMapMock: ParamMap;
 
-    const getIObjectStub = function(id: string) : IObject {
+    const getIObjectStub = function(id: string): IObject {
         const type = <IType> {
             id: 2,
             children: [],
             attributes: []
         };
-        let object = <IObject> { 
+        const object = <IObject> {
             id: id,
             type: type,
             children: [],
             created: '',
         };
         return object;
-    }
+    };
 
-    beforeEach(() => {
+    beforeEach(async () => {
         repositoryMock = mock(RepositoryService);
         repository = instance(repositoryMock);
         routerMock = mock(Router);
@@ -73,15 +73,14 @@ describe('documents component', () => {
 
         // setup mocks
         paramMapMock = mock<ParamMap>();
-        const paramMap = instance(paramMapMock); 
+        const paramMap = instance(paramMapMock);
         const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
         when(paramMapMock.get('id')).thenReturn(objectId);
         when(activatedRouteMock.paramMap).thenReturn(new BehaviorSubject<ParamMap>(paramMap));
         when(routerMock.events).thenReturn(new Subject<Event>());
-        when(documentsServiceMock.objectForCard$).thenReturn(of(""));
+        when(documentsServiceMock.objectForCard$).thenReturn(of(''));
         const object = getIObjectStub(objectId);
         when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
-        
 
         TestBed.configureTestingModule({
             declarations: [ DocumentsComponent ],
@@ -97,7 +96,7 @@ describe('documents component', () => {
                 { provide: ModalService, useValue: modalService }
             ]
         });
-        
+
         fixture = TestBed.createComponent(DocumentsComponent);
         translate = TestBed.inject(TranslateService);
         component = fixture.componentInstance;
@@ -114,11 +113,11 @@ describe('documents component', () => {
 
     it('should restore scroll position on list loaded', fakeAsync(() => {
         // given
-        //const objectId = '5E85B744-193C-4469-AAFE-1B90F9301451';
-        //when(paramMapMock.get('id')).thenReturn(objectId);
-        
-        //const object = getIObjectStub(objectId);
-        //when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+        // const objectId = '5E85B744-193C-4469-AAFE-1B90F9301451';
+        // when(paramMapMock.get('id')).thenReturn(objectId);
+
+        // const object = getIObjectStub(objectId);
+        // when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
 
         fixture.detectChanges();
         flush();
@@ -129,6 +128,7 @@ describe('documents component', () => {
 
         // then
         verify(scrollPositionServiceMock.restoreScrollPosition(anyString())).once();
+        expect().nothing();
     }));
 
     it('should save scroll position on item selected', fakeAsync(() => {
@@ -142,6 +142,7 @@ describe('documents component', () => {
 
         // then
         verify(scrollPositionServiceMock.saveScrollPosition(anyString())).once();
+        expect().nothing();
     }));
 
     it('should navigate to document', fakeAsync(() => {
@@ -164,6 +165,7 @@ describe('documents component', () => {
         verify(navigationServiceMock.navigateToDocument(nodeId)).once();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
+        expect().nothing();
     }));
 
     it('should navigate to file', fakeAsync(() => {
@@ -186,6 +188,7 @@ describe('documents component', () => {
         verify(navigationServiceMock.navigateToDocument(nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
+        expect().nothing();
     }));
 
     it('should navigate to documents folder', fakeAsync(() => {
@@ -208,6 +211,7 @@ describe('documents component', () => {
         verify(navigationServiceMock.navigateToDocument(nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).once();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
+        expect().nothing();
     }));
 
     it('should navigate to files folder', fakeAsync(() => {
@@ -230,6 +234,7 @@ describe('documents component', () => {
         verify(navigationServiceMock.navigateToDocument(nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).once();
+        expect().nothing();
     }));
 
     it('should change checked items', fakeAsync(() => {
@@ -281,6 +286,7 @@ describe('documents component', () => {
 
         // then
         verify(modalServiceMock.open('objectCardModal')).once();
+        expect().nothing();
     }));
 
     it('should close object card', fakeAsync(() => {
@@ -294,6 +300,7 @@ describe('documents component', () => {
 
         // then
         verify(modalServiceMock.close('objectCardModal')).once();
+        expect().nothing();
     }));
 
     it('should close object card on save', fakeAsync(() => {
@@ -308,5 +315,6 @@ describe('documents component', () => {
         // then
         verify(modalServiceMock.close('objectCardModal')).once();
         verify(documentsServiceMock.changeObjectForCard('8FA40F61-1D5E-428A-B2AD-5DB1CC60950F')).once();
+        expect().nothing();
     }));
 });

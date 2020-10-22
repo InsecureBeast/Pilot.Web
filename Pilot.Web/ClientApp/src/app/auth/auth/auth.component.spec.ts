@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { BrowserModule, By } from "@angular/platform-browser";
-import { TranslateModule } from "@ngx-translate/core";
+import { BrowserModule, By } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, Params } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
@@ -12,11 +12,11 @@ import { of, Subject, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SystemIds } from 'src/app/core/data/system.ids';
 
-describe('login component', () => {
+describe('auth component', () => {
     let component: AuthComponent;
     let fixture: ComponentFixture<AuthComponent>;
 
-    let repositoryMock:RepositoryService;
+    let repositoryMock: RepositoryService;
     let repository: RepositoryService;
     let authServiceMock: AuthService;
     let authService: AuthService;
@@ -29,7 +29,7 @@ describe('login component', () => {
     let snapshotMock: ActivatedRouteSnapshot;
     let snapshot: ActivatedRouteSnapshot;
     let error$: Subject<any>;
-    let queryParams = new Array<Params>();
+    const queryParams = new Array<Params>();
 
     beforeEach(() => {
         repositoryMock = mock(RepositoryService);
@@ -69,6 +69,10 @@ describe('login component', () => {
         fixture.detectChanges();
     });
 
+    afterEach(() => {
+        fixture.destroy();
+    });
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });
@@ -78,7 +82,7 @@ describe('login component', () => {
         component.username = 'name';
         component.password = 'pwd';
         component.login();
-        
+
         // then
         expect(component.error).toBeNull();
         expect(component.isProcessing).toBeFalse();
@@ -90,7 +94,7 @@ describe('login component', () => {
         component.username = 'name';
         component.password = 'pwd';
         component.onEnter();
-        
+
         // then
         expect(component.error).toBeNull();
         expect(component.isProcessing).toBeFalse();
@@ -105,9 +109,10 @@ describe('login component', () => {
         component.username = 'name';
         component.password = 'pwd';
         component.login();
-        
+
         // then
         verify(routerMock.navigate(deepEqual(['/documents/' + SystemIds.rootId]))).once();
+        expect().nothing();
     });
 
     it('should navigate to returnUrl on login', () => {
@@ -118,9 +123,10 @@ describe('login component', () => {
         component.username = 'name';
         component.password = 'pwd';
         component.login();
-        
+
         // then
         verify(routerMock.navigate(deepEqual(['/document/ad25cb46-d9a6-4b15-b03f-768433ed9879']))).once();
+        expect().nothing();
     });
 
     it('should not login on enter', () => {
@@ -128,7 +134,7 @@ describe('login component', () => {
         component.username = null;
         component.password = 'pwd';
         component.onEnter();
-        
+
         // then
         verify(authServiceMock.login(anyString(), anyString())).never();
 
@@ -136,7 +142,7 @@ describe('login component', () => {
         component.username = 'name';
         component.password = null;
         component.onEnter();
-        
+
         // then
         verify(authServiceMock.login(anyString(), anyString())).never();
 
@@ -144,49 +150,54 @@ describe('login component', () => {
         component.username = null;
         component.password = null;
         component.onEnter();
-        
+
         // then
         verify(authServiceMock.login(anyString(), anyString())).never();
+        expect().nothing();
     });
 
     it('should show error', () => {
-        // given 
+        // given
         const error = new HttpErrorResponse({error: 'Access denied'});
         when(repositoryMock.initialize()).thenReturn(throwError(error));
         when(errorServiceMock.handleErrorMessage(error)).thenReturn('Access denied');
+
         // when
         try {
             component.username = 'name';
             component.password = 'pwd';
-            component.login();    
+            component.login();
         } catch (error) {
             // then
             expect(component.error).not.toBeNull();
             expect(component.error).toEqual('Access denied');
             verify(authServiceMock.login(anyString(), anyString())).never();
         }
+        expect().nothing();
     });
 
     it('should not show error if 401', () => {
-        // given 
+        // given
         const error = new HttpErrorResponse({error: 'Unauthorized', status: 401});
         when(repositoryMock.initialize()).thenReturn(throwError(error));
         when(errorServiceMock.handleErrorMessage(error)).thenReturn('Access denied');
+
         // when
         try {
             component.username = 'name';
             component.password = 'pwd';
-            component.login();    
+            component.login();
         } catch (error) {
             // then
             expect(component.error).toBeNull();
             verify(authServiceMock.login(anyString(), anyString())).never();
         }
+        expect().nothing();
     });
 
     it('should clear error on init component', fakeAsync(() => {
         // given
-        component.error = "Old error";
+        component.error = 'Old error';
 
         // when
         error$.next(null);
