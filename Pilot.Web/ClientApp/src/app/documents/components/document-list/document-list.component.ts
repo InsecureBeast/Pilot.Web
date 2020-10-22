@@ -25,7 +25,7 @@ import { first } from 'rxjs/operators';
 })
 /** documents-list component*/
 export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
-  
+
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
@@ -36,8 +36,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   @Output() onChecked = new EventEmitter<IObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
-  @Output() onError = new EventEmitter<HttpErrorResponse>();
-  @Output() onLoaded = new EventEmitter<INode>();
+  @Output() error = new EventEmitter<HttpErrorResponse>();
+  @Output() loaded = new EventEmitter<INode>();
 
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
@@ -59,8 +59,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   ngOnChanges(changes: SimpleChanges): void {
 
-    if (!this.parent)
+    if (!this.parent) {
       return;
+    }
 
     this.isLoaded = false;
 
@@ -71,17 +72,19 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   ngOnInit(): void {
     this.checkedNodesSubscription = this.documentsService.clearChecked.subscribe(v => {
-      if (v)
+      if (v) {
         this.clearChecked();
+      }
     });
 
     this.nodeStyleServiceSubscription = this.nodeStyleService.getNodeStyle().subscribe(value => {
       this.nodeStyle = value;
 
-      if (!this.nodes)
+      if (!this.nodes) {
         return;
+      }
 
-      for (let node of this.nodes) {
+      for (const node of this.nodes) {
         node.loadPreview();
       }
     });
@@ -91,46 +94,52 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
-          this.repository.requestType = RequestType.FromCache;
+          this.repository.setRequestType(RequestType.FromCache);
         }
       }
     });
 
     this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
-      if (!id)
+      if (!id) {
         return;
+      }
       this.update(id);
     });
   }
 
   ngAfterViewChecked(): void {
     if (this.isLoaded) {
-      this.onLoaded.emit(this.parent);
+      this.loaded.emit(this.parent);
       this.isLoaded = false;
     }
   }
 
   ngOnDestroy(): void {
-    if (this.nodeStyleServiceSubscription)
+    if (this.nodeStyleServiceSubscription) {
       this.nodeStyleServiceSubscription.unsubscribe();
+    }
 
-    if (this.routerSubscription)
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
+    }
 
-    if (this.checkedNodesSubscription)
+    if (this.checkedNodesSubscription) {
       this.checkedNodesSubscription.unsubscribe();
+    }
 
-    if (this.objectCardChangeSubscription)
+    if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
+    }
 
     this.cancelAllRequests(true);
   }
 
   selected(item: IObjectNode): void {
-    if (!item.id)
+    if (!item.id) {
       return;
+    }
 
-    this.repository.requestType = RequestType.New;
+    this.repository.setRequestType(RequestType.New);
     this.clearChecked();
     this.nodes = null;
     this.documentsService.changeObjectForCard(null);
@@ -138,8 +147,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   checked(node: IObjectNode, event: MouseEvent): void {
-    if (!node.id)
+    if (!node.id) {
       return;
+    }
 
     if (!event.ctrlKey) {
       this.clearChecked();
@@ -159,8 +169,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     const checked = this.nodes.filter(n => n.isChecked);
     this.onChecked.emit(checked);
 
-    if (checked.length === 0)
+    if (checked.length === 0) {
       this.isAnyItemChecked = false;
+    }
   }
 
   downloadDocument(node: IObjectNode) {
@@ -174,8 +185,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   isStatesExists(node: IObjectNode): boolean {
     const noneStates = node.stateAttributes.filter(a => {
       const value = node.source.attributes[a.name];
-      if (!value)
+      if (!value) {
         return true;
+      }
 
       return value === SystemStates.NONE_STATE_ID;
     });
@@ -184,15 +196,16 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   }
 
   private update(objectId: string): void {
-    if (!this.nodes)
+    if (!this.nodes) {
       return;
+    }
 
     this.repository.getObjectAsync(objectId, RequestType.New).then(object => {
-      let index = this.nodes.findIndex(n => n.id === objectId);
-      const oldNode = this.nodes.find(n => n.id === objectId)
+      const index = this.nodes.findIndex(n => n.id === objectId);
+      const oldNode = this.nodes.find(n => n.id === objectId);
       const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       newNode.isChecked = oldNode.isChecked;
-      this.nodes[index]= newNode;
+      this.nodes[index] = newNode;
     });
   }
 
@@ -208,8 +221,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   private loadChildren(id: string, isSource: boolean) {
     let type = ChildrenType.ListView;
-    if (isSource)
+    if (isSource) {
       type = ChildrenType.Storage;
+    }
 
     this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
       .then(nodes => {
@@ -217,24 +231,26 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.addNodes(nodes, isSource);
         this.onChecked.emit(null);
 
-        this.documentsService.objectForCard$.pipe(first()).subscribe(id => {
-          if (!id)
+        this.documentsService.objectForCard$.pipe(first()).subscribe(objectForCardId => {
+          if (!objectForCardId) {
             return;
-          this.update(id);
+          }
+          this.update(objectForCardId);
         });
       })
       .catch(e => {
-        this.onError.emit(e);
+        this.error.emit(e);
         this.isLoading = false;
       });
   }
 
   private addNodes(documents: IObject[], isSource: boolean): void {
     this.nodes = new Array<ObjectNode>();
-    for (let doc of documents) {
-      if (doc.type.name === "Root_object_type") // todo: filter not available items
+    for (const doc of documents) {
+      if (doc.type.name === 'Root_object_type') { // todo: filter not available items
         continue;
-        
+      }
+
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }
@@ -242,7 +258,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   private clearChecked(): void {
     if (this.nodes) {
-      for (let node of this.nodes) {
+      for (const node of this.nodes) {
         node.isChecked = false;
       }
     }
@@ -256,8 +272,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       // This aborts all HTTP requests.
       this.ngUnsubscribe.next();
       // This completes the subject properly.
-      if (isCompleted)
+      if (isCompleted) {
         this.ngUnsubscribe.complete();
+      }
     }
   }
 }
