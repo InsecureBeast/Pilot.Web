@@ -36,8 +36,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   @Output() onChecked = new EventEmitter<IObjectNode[]>();
   @Output() onSelected = new EventEmitter<INode>();
-  @Output() error = new EventEmitter<HttpErrorResponse>();
-  @Output() loaded = new EventEmitter<INode>();
+  @Output() onError = new EventEmitter<HttpErrorResponse>();
+  @Output() onLoaded = new EventEmitter<INode>();
 
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
@@ -109,7 +109,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   ngAfterViewChecked(): void {
     if (this.isLoaded) {
-      this.loaded.emit(this.parent);
+      this.onLoaded.emit(this.parent);
       this.isLoaded = false;
     }
   }
@@ -239,7 +239,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         });
       })
       .catch(e => {
-        this.error.emit(e);
+        this.onError.emit(e);
         this.isLoading = false;
       });
   }
