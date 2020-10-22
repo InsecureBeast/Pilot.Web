@@ -20,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode, EmptyObjectNode } from "../../shared/object.node";
 import { ChildrenType } from '../../../core/data/children.types';
-import { IObject } from '../../../core/data/data.classes';
+import { AccessLevel, IObject } from '../../../core/data/data.classes';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode, IObjectNode } from '../../shared/node.interface';
@@ -29,8 +29,10 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
-import {FilesRepositoryService} from "../../../core/files-repository.service";
+import { FilesRepositoryService } from "../../../core/files-repository.service";
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { AccessCalculator } from "../../../core/tools/access.calculator";
+import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
 
 @Component({
     selector: 'app-document-list',
@@ -77,7 +79,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private documentsService: DocumentsService,
     private filesRepositoryService: FilesRepositoryService,
     private router: Router,
-    private modalService: BsModalService) {
+    private modalService: BsModalService,
+    private accessCalculator: AccessCalculator) {
 
   }
 
@@ -300,7 +303,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
     this.isLoaded = true;
     this.loadChildren(item.id, item.isSource);
-    this.canUploadFile = item.isSource;
+
+    const canCreateChild = IObjectExtensions.hasAccess(this.accessCalculator.calcAccess(item.source), AccessLevel.Create);
+    this.canUploadFile = item.isSource && canCreateChild;
   }
 
   private loadChildren(id: string, isSource: boolean) {
