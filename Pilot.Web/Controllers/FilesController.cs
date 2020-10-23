@@ -135,6 +135,8 @@ namespace Pilot.Web.Controllers
         [DisableRequestSizeLimit]
         public ActionResult<Guid[]> UploadFiles(Guid parentId)
         {
+            const string fileTitleAttribute = "Title 4C281306-E329-423A-AF45-7B39EC30273F";
+            
             try
             {
                 if (Request.Form.Files.Count == 0)
@@ -167,14 +169,28 @@ namespace Pilot.Web.Controllers
                     throw new Exception("File type is not found");
                 }
 
+                var existingFileObjectIds = parent.Children
+                    .Where(c => c.TypeId == fileType.Id)
+                    .Select(c => c.ObjectId)
+                    .ToArray();
+
+                var existingFileNames = new HashSet<string>(
+                    api.GetObjects(existingFileObjectIds)
+                        .Select(o => o.Attributes.TryGetValue(fileTitleAttribute, out var title) ? title as string : null)
+                        .Where(t => !string.IsNullOrEmpty(t)));
+
                 var result = new Guid[Request.Form.Files.Count];
                 var modifier = api.NewModifier();
                 var i = 0;
                 foreach (var formFile in Request.Form.Files)
                 {
+                    var fileName = existingFileNames.Contains(formFile.Name) 
+                        ? $"{Path.GetFileNameWithoutExtension(formFile.Name)} [{DateTime.Now:yyyy-MM-dd HH-mm-ss}]{Path.GetExtension(formFile.Name)}"
+                        : formFile.Name;
+                    
                     var newObjectId = Guid.NewGuid();
                     var builder = modifier.CreateObject(newObjectId, parentId, fileType);
-                    builder.SetAttribute("Title 4C281306-E329-423A-AF45-7B39EC30273F", formFile.Name);
+                    builder.SetAttribute(fileTitleAttribute, fileName);
                     builder.AddFile(
                         new DocumentInfo(formFile.Name, formFile.OpenReadStream, DateTime.Now, DateTime.Now,
                             DateTime.Now), _fileStorageProvider);
