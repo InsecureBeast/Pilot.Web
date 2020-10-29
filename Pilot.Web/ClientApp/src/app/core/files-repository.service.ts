@@ -16,7 +16,7 @@ export class FilesRepositoryService {
   }
 
   getDocumentPagesCount(id: string, size: number, scale: number): Observable<number> {
-    let headers = this.headersProvider.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     const url = 'api/Files/GetDocumentPagesCount?fileId=' + id + '&size=' + size + '&scale=' + scale;
     return this.http.get<number>(this.baseUrl + url, { headers: headers }).pipe(first());
   }
@@ -25,6 +25,12 @@ export class FilesRepositoryService {
     const headers = this.headersProvider.getStreamHeaders();
     const path = this.baseUrl + 'api/Files/GetDocumentPageContent?fileId=' + id + '&page=' + page;
     return this.http.get(path, { headers: headers, responseType: 'arraybuffer' }).pipe(first());
+  }
+
+  getDocumentFile(documentId: string): Observable<ArrayBuffer> {
+    const headers = this.headersProvider.getStreamHeaders();
+    const path = this.baseUrl + 'api/Files/GetDocumentFile?documentId=' + documentId;
+    return this.http.get(path, { responseType: 'arraybuffer', headers: headers }).pipe(first());
   }
 
   getFile(id: string, size: number): Observable<ArrayBuffer> {
@@ -41,7 +47,7 @@ export class FilesRepositoryService {
 
   getFileArchive(ids: string[]): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
-      let body = JSON.stringify(ids);
+      const body = JSON.stringify(ids);
       const headers = this.headersProvider.getHeaders();
       const path = this.baseUrl + 'api/Files/GetFileArchive';
       this.http.post(path, body, { responseType: 'arraybuffer', headers: headers })

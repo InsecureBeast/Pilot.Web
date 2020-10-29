@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.DataModifier;
 using Ascon.Pilot.Server.Api.Contracts;
+using Ascon.Pilot.Transport;
 using Pilot.Web.Model.CommonSettings;
 using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Tools;
@@ -36,6 +37,9 @@ namespace Pilot.Web.Model
         IReadOnlyDictionary<int, INOrganisationUnit> GetOrganizationUnits();
 
         IModifier NewModifier();
+        
+        Task<ServerCommandRequestResult> InvokeServerCommand(string commandName, byte[] data);
+        T GetServerCommandProxy<T>(string commandProcessorName) where T : class;
     }
 
     public class ServerApiService : IServerApiService, IRemoteServiceListener
@@ -50,6 +54,7 @@ namespace Pilot.Web.Model
         private readonly Dictionary<string, INUserState> _states = new Dictionary<string, INUserState>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<Guid, INUserState> _statesById = new Dictionary<Guid, INUserState>();
         private readonly Dictionary<Guid, INUserStateMachine> _stateMachines = new Dictionary<Guid, INUserStateMachine>();
+        private readonly Dictionary<Guid, TaskCompletionSource<ServerCommandRequestResult>> _serverCommands = new Dictionary<Guid, TaskCompletionSource<ServerCommandRequestResult>>();
         private readonly INPerson _currentPerson;
         private readonly IBackend _backend;
         
@@ -326,6 +331,45 @@ namespace Pilot.Web.Model
         public void Notify(PersonChangeset changeset)
         {
             LoadPeople();
+        }
+
+        public T GetServerCommandProxy<T>(string commandProcessorName) where T : class
+        {
+            var callService = new ServerCommandCallService<T>(this, commandProcessorName);
+            return new Marshaller(callService).Get<T>();
+        }
+
+        public void UpdateCommandResult(Guid requestId, byte[] data, ServerCommandResult result)
+        {
+            if (_serverCommands.TryGetValue(requestId, out var tcs))
+                tcs.SetResult(new ServerCommandRequestResult(data, (ServerCommandResult)(int)result));
+        }
+
+        public Task<ServerCommandRequestResult> InvokeServerCommand(string commandName, byte[] data)
+        {
+            var requestId = Guid.NewGuid();
+            var tcs = new TaskCompletionSource<ServerCommandRequestResult>();
+            _serverCommands[requestId] = tcs;
+            InvokeServerCommand(commandName, requestId, data);
+            return tcs.Task;
+        }
+
+        private void InvokeServerCommand(string commandName, Guid requestId, byte[] data)
+        {
+            try
+            {
+                _serverApi.InvokeCommand(commandName, requestId, data);
+            }
+            catch (Exception e)
+            {
+                UpdateCommandError(requestId, e);
+            }
+        }
+
+        private void UpdateCommandError(Guid requestId, Exception exception)
+        {
+            if (_serverCommands.TryGetValue(requestId, out var tcs))
+                tcs.SetException(exception);
         }
     }
 }

@@ -49,6 +49,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\documentRender\DocumentRender.csproj" />
+    <ProjectReference Include="..\Pilot.Xps.Entities\Pilot.Xps.Entities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

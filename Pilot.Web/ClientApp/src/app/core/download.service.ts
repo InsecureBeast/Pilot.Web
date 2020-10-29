@@ -14,13 +14,13 @@ export class DownloadService {
 
   downloadFile(object: IObject): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      var file = FilesSelector.getSourceFile(object.actualFileSnapshot.files);
-      this.filesRepository.getFile(file.body.id, file.body.size)
+      this.filesRepository.getDocumentFile(object.id)
         .pipe(first())
         .subscribe(data => {
+          const file = FilesSelector.getSourceFile(object.actualFileSnapshot.files);
           const fileExt = file.name.split('.').pop();
           const name = object.title + '.' + fileExt;
-          this.runLoadFile(data, name, "application/octet-stream");
+          this.runLoadFile(data, name, 'application/octet-stream');
           resolve(true);
         }, err => reject(err));
     });
@@ -28,19 +28,19 @@ export class DownloadService {
 
   downloadFileArchive(ids: string[]): void {
     this.filesRepository.getFileArchive(ids).then(data => {
-      this.runLoadFile(data, "Archive.zip", "application/zip");
+      this.runLoadFile(data, 'Archive.zip', 'application/zip');
     });
   }
 
   private runLoadFile(data: ArrayBuffer, name: string, dataType: string): void {
     const blob = new Blob([data], { type: dataType });
-    
-    //detect whether the browser is IE/Edge or another browser
+
+    // detect whether the browser is IE/Edge or another browser
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      //To IE or Edge browser, using msSaveorOpenBlob method to download file.
+      // To IE or Edge browser, using msSaveorOpenBlob method to download file.
       window.navigator.msSaveOrOpenBlob(blob, name);
     } else {
-      //To another browser, create a tag to download file.
+      // To another browser, create a tag to download file.
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.target = '_blank';

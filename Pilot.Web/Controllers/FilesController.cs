@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Ascon.Pilot.Common;
 using DocumentRender;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,16 @@ namespace Pilot.Web.Controllers
             var actor = _contextService.GetTokenActor(HttpContext);
             var fileLoader = _contextService.GetFileLoader(actor);
             var bytes = fileLoader.Download(guid, size);
+            return File(bytes, "application/octet-stream");
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public ActionResult GetDocumentFile(string documentId)
+        {
+            var guid = Guid.Parse(documentId);
+            var actor = _contextService.GetTokenActor(HttpContext);
+            var bytes = _filesOperationService.DownloadFile(guid, actor);
             return File(bytes, "application/octet-stream");
         }
 
