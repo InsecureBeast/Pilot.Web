@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using log4net;
 using Pilot.Xps.Entities;
 
 namespace Pilot.Web.Model
 {
-    public interface IXpsFileDownloadService
+    public interface IFileDownloadService
     {
         byte[] Download(Guid documentId, string actor);
     }
-    class XpsFileDownloadService : IXpsFileDownloadService
+
+    class FileDownloadService : IFileDownloadService
     {
         private readonly IContextService _contextService;
+        private readonly ILog _logger = LogManager.GetLogger(typeof(FileDownloadService));
 
-        public XpsFileDownloadService(IContextService contextService)
+        public FileDownloadService(IContextService contextService)
         {
             _contextService = contextService;
         }
@@ -30,6 +33,7 @@ namespace Pilot.Web.Model
             }
             catch (Exception e)
             {
+                _logger.Info(e.Message);
                 return null;
             }
         }

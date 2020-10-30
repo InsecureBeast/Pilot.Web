@@ -18,12 +18,12 @@ namespace Pilot.Web.Model
     class FilesOperationService : IFilesOperationService
     {
         private readonly IContextService _contextService;
-        private readonly IXpsFileDownloadService _xpsFileDownloadService;
+        private readonly IFileDownloadService _fileDownloadService;
 
-        public FilesOperationService(IContextService contextService, IXpsFileDownloadService xpsFileDownloadService)
+        public FilesOperationService(IContextService contextService, IFileDownloadService fileDownloadService)
         {
             _contextService = contextService;
-            _xpsFileDownloadService = xpsFileDownloadService;
+            _fileDownloadService = fileDownloadService;
         }
 
         public byte[] CompressObjectsToArchive(IEnumerable<PObject> objects, string actor)
@@ -57,7 +57,7 @@ namespace Pilot.Web.Model
             byte[] bytes;
             if (FileExtensionHelper.IsXpsAlike(file.Name))
             {
-                bytes = _xpsFileDownloadService.Download(document.Id, actor);
+                bytes = _fileDownloadService.Download(document.Id, actor);
                 if (bytes != null)
                     return bytes;
             }
