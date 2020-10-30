@@ -6,6 +6,7 @@ import { RouterModule, RouteReuseStrategy } from '@angular/router';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -15,7 +16,7 @@ import { AuthComponent } from './auth/auth/auth.component';
 import { AuthModule } from './auth/auth.module';
 import { DocumentsModule } from './documents/documents.module';
 import { DocumentsComponent } from './documents/pages/documents/documents.component';
-import { ModalModule } from './ui/modal/modal.module';
+import { CustomModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
 import { TasksModule } from './tasks/tasks.module';
 import { CacheInterceptor } from './core/interceptors/cache.interceptor';
@@ -39,7 +40,8 @@ export function createTranslateLoader(http: HttpClient) {
     FormsModule,
     ErrorModule,
     AuthModule,
-    ModalModule,
+    ModalModule.forRoot(),
+    CustomModalModule,
     RouterModule.forRoot([
       { path: '', component: DocumentsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'login', component: AuthComponent },

@@ -4,7 +4,9 @@
     <app-documents-toolbar class="col-12 p-0"
                            *ngIf="checked != null && checked.length > 0"
                            [checkedNodes]="checked"
-                           (onShowDocumentCard)="onShowObjectCard($event)">
+                           (onShowDocumentCard)="onShowObjectCard($event)"
+                           (downloadStarted)="onDownloadStarted(downloadTemplate)"
+                           (downloadFinished)="onDownloadFinished($event)">
     </app-documents-toolbar>
 
 
@@ -31,3 +33,12 @@
                           (onSave)="onSaveObjectCard($event)">
   </app-object-card-dialog>
 </pw-modal>
+
+<ng-template #downloadTemplate>
+  <div class="modal-body">
+    <div class="spinner-grow text-primary align-middle" role="status">
+      <span class="sr-only"></span>
+    </div>
+    <span class="align-middle ml-2">Prepare to download ...</span>
+  </div>
+</ng-template>

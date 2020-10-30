@@ -4,7 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { anyString, instance, mock, verify, when, deepEqual } from 'ts-mockito';
+import { anyString, instance, mock, verify, when } from 'ts-mockito';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { DocumentsComponent } from './documents.component';
 import { TypeIconService } from 'src/app/core/type-icon.service';
@@ -15,6 +15,7 @@ import { ModalService } from 'src/app/ui/modal/modal.service';
 import { INode } from '../../shared/node.interface';
 import { IObject, IType } from 'src/app/core/data/data.classes';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 describe('documents component', () => {
     let component: DocumentsComponent;
@@ -30,6 +31,8 @@ describe('documents component', () => {
     let scrollPositionService: ScrollPositionService;
     let modalServiceMock: ModalService;
     let modalService: ModalService;
+    let bsModalServiceMock: BsModalService;
+    let bsModalService: BsModalService;
     let repositoryMock: RepositoryService;
     let repository: RepositoryService;
     let routerMock: Router;
@@ -70,6 +73,8 @@ describe('documents component', () => {
         scrollPositionService = instance(scrollPositionServiceMock);
         modalServiceMock = mock(ModalService);
         modalService = instance(modalServiceMock);
+        bsModalServiceMock = mock(BsModalService);
+        bsModalService = instance(bsModalServiceMock);
 
         // setup mocks
         paramMapMock = mock<ParamMap>();
@@ -93,7 +98,8 @@ describe('documents component', () => {
                 { provide: DocumentsNavigationService, useValue: navigationService },
                 { provide: DocumentsService, useValue: documentsService },
                 { provide: ScrollPositionService, useValue: scrollPositionService },
-                { provide: ModalService, useValue: modalService }
+                { provide: ModalService, useValue: modalService },
+                { provide: BsModalService, useValue: bsModalService }
             ]
         });
 

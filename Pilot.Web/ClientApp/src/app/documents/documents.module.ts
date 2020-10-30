@@ -8,7 +8,7 @@ import { DocumentListComponent } from './components/document-list/document-list.
 import { BreadcrumbsComponent } from "./components/breadcrumbs/breadcrumbs.component";
 import { DocumentToolbarComponent } from "./components/document-toolbar/document-toolbar.component";
 import { DocumentsToolbarComponent } from "./components/documents-toolbar/documents-toolbar.component";
-import { ModalModule } from "../ui/modal/modal.module";
+import { CustomModalModule } from "../ui/modal/modal.module";
 import { SideModalModule } from '../ui/side-modal/side-modal.module';
 import { ErrorModule } from "../ui/error/error.module";
 import { DocumentVersionsComponent } from "./components/document-versions/document-versions.component";
@@ -22,7 +22,7 @@ import { ObjectCardDialogModule } from '../ui/object-card-dialog/object-card-dia
     CommonModule,
     TranslateModule,
     RouterModule,
-    ModalModule,
+    CustomModalModule,
     SideModalModule,
     ErrorModule,
     DocumentsRoutingModule,

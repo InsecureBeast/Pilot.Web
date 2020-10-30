@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { SystemIds } from '../../../core/data/system.ids';
 import { RepositoryService } from '../../../core/repository.service';
@@ -29,8 +30,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
-  private documentCardModal = "objectCardModal";
+  private documentCardModal = 'objectCardModal';
 
+  modalRef: BsModalRef;
   checked = new Array<INode>();
   checkedNode: IObject;
   currentItem: ObjectNode;
@@ -47,7 +49,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService) {
+    private readonly modalService: ModalService,
+    private readonly bsModalService: BsModalService) {
 
   }
 
@@ -133,6 +136,20 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   onItemsChecked(nodes: INode[]): void {
     this.checked = nodes;
+  }
+
+  onDownloadStarted(template: TemplateRef<any>): void {
+    const config = new ModalOptions();
+    config.backdrop = true;
+    config.ignoreBackdropClick = true;
+    config.animated = false;
+    config.class = 'modal-dialog-centered';
+
+    this.modalRef = this.bsModalService.show(template, config);
+  }
+
+  onDownloadFinished(any): void {
+    this.bsModalService.hide();
   }
 
   onError(error: HttpErrorResponse): void {
