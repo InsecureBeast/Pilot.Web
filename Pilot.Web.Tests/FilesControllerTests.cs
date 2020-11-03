@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using Ascon.Pilot.DataClasses;
 using Castle.Core.Internal;
 using DocumentRender;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +9,6 @@ using Moq;
 using NUnit.Framework;
 using Pilot.Web.Controllers;
 using Pilot.Web.Model;
-using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Model.FileStorage;
 
 namespace Pilot.Web.Tests
@@ -26,13 +22,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object, 
                 filesOperationService.Object);
             // when
             var fileId = Guid.NewGuid();
@@ -51,14 +45,12 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var fileLoader = new Mock<IFileLoader>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -77,7 +69,7 @@ namespace Pilot.Web.Tests
 
             // then
             Assert.AreEqual(1, result);
-            fileSaver.Verify(fs => fs.PutFilesAsync(fileId, pages), Times.Once);
+            fileStorage.Verify(fs => fs.PutFilesAsync(fileId, pages), Times.Once);
         }
 
         [Test]
@@ -87,13 +79,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -113,13 +103,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -137,13 +125,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -169,13 +155,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -197,13 +181,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -223,7 +205,7 @@ namespace Pilot.Web.Tests
 
             // then
             Assert.AreEqual(thumbnail, result.FileContents);
-            fileSaver.Verify(fs => fs.PutThumbnailAsync(fileId, thumbnail));
+            fileStorage.Verify(fs => fs.PutThumbnailAsync(fileId, thumbnail));
         }
 
         [Test]
@@ -233,13 +215,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // when
@@ -273,13 +253,11 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
-            var fileSaver = new Mock<IFileSaver>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                fileSaver.Object,
                 filesOperationService.Object);
 
             // then
