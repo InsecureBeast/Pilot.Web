@@ -1,4 +1,4 @@
-import { IType, IAttribute, IObject, IChild, IPerson, IFileSnapshot, IRelation, IFile } from './data.classes';
+import { IType, IAttribute, IObject, IChild, IPerson, IFileSnapshot, IRelation, IFile, StateInfo, AccessRecord } from './data.classes';
 
 export class EmptyType implements IType {
 
@@ -42,6 +42,8 @@ export class EmptyObject implements IObject {
     this.previousFileSnapshots = new Array();
     this.context = new Array();
     this.relations = new Array();
+    this.access = new Array();
+    this.stateInfo = new StateInfo();
   }
 
   id: string;
@@ -56,6 +58,8 @@ export class EmptyObject implements IObject {
   previousFileSnapshots: IFileSnapshot[];
   context: string[];
   relations: IRelation[];
+  access: AccessRecord[];
+  stateInfo: StateInfo;
 }
 
 export class EmptyPerson implements IPerson {

@@ -6,7 +6,6 @@ using Ascon.Pilot.DataClasses;
 using log4net;
 using Pilot.Web.Model.Search;
 using Pilot.Web.Model.Search.NextTasksSearchExpression;
-using Pilot.Web.Model.Search.NextTasksSearchExpression.Tokens;
 
 namespace Pilot.Web.Model
 {
@@ -18,6 +17,7 @@ namespace Pilot.Web.Model
     public interface ISearchService
     {
         Task<DSearchResult> Search(string filter);
+        Task<DSearchResult> SearchObjectWithFilter(string filter, Guid id);
     }
 
     class SearchServiceFactory : ISearchServiceFactory
@@ -50,15 +50,45 @@ namespace Pilot.Web.Model
             _person = person;
             _types = types;
         }
+
         public Task<DSearchResult> Search(string filter)
+        {
+            var request = Request(filter);
+            var searchDefinition = CreateSearchDefinition(request);
+            _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            _apiService.AddSearch(searchDefinition);
+            return _searchCompletionSource.Task;
+        }
+
+        public Task<DSearchResult> SearchObjectWithFilter(string filter, Guid id)
+        {
+            var request = Request(filter);
+            request += $@"+DObject\.Id:{id}";
+            var searchDefinition = CreateSearchDefinition(request);
+            _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            _apiService.AddSearch(searchDefinition);
+            return _searchCompletionSource.Task;
+        }
+
+        public void Notify(DSearchResult result)
+        {
+            _searchCompletionSource?.TrySetResult(result);
+        }
+
+        private string Request(string filter)
         {
             var typesService = new TaskTypesService(_types);
             var searchContext = new NextTaskSearchExpressionContext(_apiService, typesService);
             var searchExpressionFactory = new NextTasksSearchExpressionFactory();
 
-            var localizedSearchExpression = searchContext.ToLocalizedExpression(filter.Trim(new[] { '"' }), searchExpressionFactory);
+            var localizedSearchExpression =
+                searchContext.ToLocalizedExpression(filter.Trim(new[] { '"' }), searchExpressionFactory);
             var request = searchContext.GetSearchRequest(localizedSearchExpression, false); //TODO personal filter
+            return request;
+        }
 
+        private DSearchDefinition CreateSearchDefinition(string request)
+        {
             var searchDefinition = new DSearchDefinition
             {
                 Id = Guid.NewGuid(),
@@ -67,7 +97,8 @@ namespace Pilot.Web.Model
                     SearchKind = SearchKind.Custom,
                     SearchString = request,
                     MaxResults = 100,
-                    SortDefinitions = {
+                    SortDefinitions =
+                    {
                         new DSortDefinition
                         {
                             FieldName = FieldNames.LEVEL,
@@ -77,14 +108,7 @@ namespace Pilot.Web.Model
                 }
             };
 
-            _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
-            _apiService.AddSearch(searchDefinition);
-            return _searchCompletionSource.Task;
-        }
-
-        public void Notify(DSearchResult result)
-        {
-            _searchCompletionSource?.TrySetResult(result);
+            return searchDefinition;
         }
     }
 }

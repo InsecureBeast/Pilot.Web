@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 
 namespace Pilot.Web.Model
 {
     public class DirectoryProvider
     {
+        private const string VENDOR_FOLDER = "Pilot.Web";
+
         public static string CurrentDirectory => AppDomain.CurrentDomain.BaseDirectory;
 
         public static string GetTempDirectory()
@@ -26,6 +29,22 @@ namespace Pilot.Web.Model
 
             var result = Path.Combine(dir, fileId.ToString());
             return result;
+        }
+
+        public static string GetTempPath()
+        {
+            var tempPath = Path.Combine(GetVendorTempDirectory(), "Temp");
+            if (!Directory.Exists(tempPath))
+                Directory.CreateDirectory(tempPath);
+            return tempPath;
+        }
+
+        public static string GetVendorTempDirectory()
+        {
+            var tempPath = Path.Combine(Path.GetTempPath(), VENDOR_FOLDER);
+            if (!Directory.Exists(tempPath))
+                Directory.CreateDirectory(tempPath);
+            return tempPath;
         }
     }
 }

@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router, NavigationStart, Scroll  } from '@angular/router';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router, NavigationStart, Scroll, Event  } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -7,8 +7,9 @@ import { first } from 'rxjs/operators';
 import { TaskFilter } from '../../components/task-filters/task-filters.component';
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
 import { TaskNode } from '../../shared/task.node';
-import { TasksService } from '../../shared/tasks.service';
+import { TasksSyncService as TasksService } from '../../shared/tasks.service';
 import { ModalService } from 'src/app/ui/modal/modal.service';
+import { TaskListComponent } from '../../components/task-list/task-list.component';
 
 
 @Component({
@@ -29,6 +30,9 @@ export class TasksComponent implements OnInit, OnDestroy {
   selectedFilter: TaskFilter;
   checked: TaskNode[];
   error: HttpErrorResponse;
+
+  @ViewChild(TaskListComponent, { static: false })
+  private taskListComponent: TaskListComponent;
 
   /** tasks ctor */
   constructor(
@@ -58,11 +62,8 @@ export class TasksComponent implements OnInit, OnDestroy {
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof Scroll) {
-        if (event.position) {
-          window.scrollTo(0, event.position["1"]);
-        }
-      }
+      this.processScrollEvent(event);
+      this.processBackEvent(event);
     });
   }
 
@@ -84,7 +85,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       return;
     }
 
-    selected = personalFilters.find(f => f.id === this.filterId)
+    selected = personalFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;
@@ -95,11 +96,13 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.modalService.close(this.filtersModalId);
     this.selectedFilter = filter;
     this.clearChecked();
+    this.tasksService.changeSelectedNode(undefined);
     localStorage.setItem(this.storageFilterName, filter.id.toString());
     this.tasksNavigationService.navigateToFilter(filter.id);
   }
 
   onTaskSelected(item: TaskNode): void {
+    this.tasksService.changeSelectedNode(item);
     this.tasksNavigationService.navigateToTask(item.id);
   }
 
@@ -122,5 +125,24 @@ export class TasksComponent implements OnInit, OnDestroy {
   clearChecked(): void {
     this.checked = new Array();
     this.tasksService.changeClearChecked(true);
+  }
+
+  private processBackEvent(event: Event): void {
+    if (event instanceof NavigationStart) {
+      const startEvent = <NavigationStart>event;
+      if (startEvent.navigationTrigger === 'popstate') {
+        const node = this.tasksService.getSelectedNode();
+        this.taskListComponent.affectChange(this.selectedFilter, node);
+        this.taskListComponent.update(node);
+      }
+    }
+  }
+
+  private processScrollEvent(event: Event) : void {
+    if (event instanceof Scroll) {
+      if (event.position) {
+        window.scrollTo(0, event.position["1"]);
+      }
+    }
   }
 }

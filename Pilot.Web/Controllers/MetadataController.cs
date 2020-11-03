@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Ascon.Pilot.DataClasses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pilot.Web.Model;
 using Pilot.Web.Model.CommonSettings;
+using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Tools;
 
 namespace Pilot.Web.Controllers
@@ -39,20 +41,20 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<INPerson> GetPeople()
+        public IList<INPerson> GetPeople()
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
-            return api.GetPeople().Values;
+            return api.GetPeople().Values.ToList();
         }
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<INOrganisationUnit> GetOrganizationUnits()
+        public IList<INOrganisationUnit> GetOrganizationUnits()
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
-            return api.GetOrganizationUnits().Values;
+            return api.GetOrganizationUnits().Values.ToList();
         }
 
         [Authorize]
@@ -66,11 +68,11 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<INUserState> GetUserStates()
+        public IList<PUserState> GetUserStates()
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
-            return api.GetUserStates();
+            return api.GetUserStates().Select(s => new PUserState(s)).ToList();
         }
     }
 }

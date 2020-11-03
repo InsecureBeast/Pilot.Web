@@ -15,6 +15,7 @@ import { TasksComponent } from './pages/tasks/tasks.component';
 import { TaskComponent } from './pages/task/task.component';
 import { ModalModule } from '../ui/modal/modal.module';
 import { TasksRoutingModule } from './tasks-routing.module';
+import { TaskToolbarComponent } from './components/task-toolbar/task-toolbar.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -35,7 +36,8 @@ export function createTranslateLoader(http: HttpClient) {
     TaskDetailsComponent,
     TaskAttachmentsComponent,
     TasksComponent,
-    TaskComponent
+    TaskComponent,
+    TaskToolbarComponent
   ],
   exports: [
     TasksComponent

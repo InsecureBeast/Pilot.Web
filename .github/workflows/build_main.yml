@@ -1,0 +1,51 @@
+name: Build project
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test server side
+      run: dotnet test --no-restore --verbosity normal --configuration Release
+    - name: Setup Angular
+      run: echo Build Angular client app
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install, Build
+      run: |
+        npm install
+        npm run build
+      working-directory: ./Pilot.Web/ClientApp  
+    - name: Install xvfb
+      run: sudo apt-get install xvfb
+    - name: Test client side
+      run: npm test -- --watch=false --browsers=ChromeHeadless
+      env:
+        CI: true
+      working-directory: ./Pilot.Web/ClientApp
+    - name: Cleanup xvfb pidx
+      uses: bcomnes/cleanup-xvfb@v1

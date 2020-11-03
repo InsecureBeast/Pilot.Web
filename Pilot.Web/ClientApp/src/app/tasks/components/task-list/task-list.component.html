@@ -32,12 +32,12 @@
 
     <div class="d-flex align-items-start flex-column mr-2">
       <div class=""
-           [class.checker-img]="isAnyItemChecked">
+           [class.opacity-02]="isAnyItemChecked">
         <img [src]="task.icon" width="16" *ngIf="task.icon != null" alt="type icon">
       </div>
 
       <div class="mt-2"
-           [class.checker-img]="isAnyItemChecked">
+           [class.opacity-02]="isAnyItemChecked">
         <img src="/assets/images/attachment.svg"
              width="16"
              *ngIf="task.attachments.length > 0">
@@ -46,7 +46,7 @@
 
     <div class="mr-2"
          [class.ml-3]="!task.userState || !task.userState.icon"
-         [class.checker-img]="isAnyItemChecked">
+         [class.opacity-02]="isAnyItemChecked">
       <img id="state_image"
            [src]="task.userState.icon"
            title="{{task.userState.title}}"

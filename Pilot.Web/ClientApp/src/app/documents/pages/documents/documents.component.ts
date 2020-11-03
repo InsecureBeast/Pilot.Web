@@ -6,7 +6,7 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SystemIds } from '../../../core/data/system.ids';
-import { RepositoryService, RequestType } from '../../../core/repository.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
@@ -14,11 +14,14 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { BimTypeNames } from '../../../bim/shared/bim-type.names';
+import { RequestType } from 'src/app/core/headers.provider';
+import { ModalService } from 'src/app/ui/modal/modal.service';
+import { IObject } from 'src/app/core/data/data.classes';
 
 @Component({
     selector: 'app-documents',
     templateUrl: './documents.component.html',
-    styleUrls: ['./documents.component.css']
+    styleUrls: ['./documents.component.css', '../../../ui/toolbar.css']
 })
 /** documents component*/
 export class DocumentsComponent implements OnInit, OnDestroy {
@@ -26,12 +29,15 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
+  private objectCardChangeSubscription: Subscription;
+  private documentCardModal = "objectCardModal";
 
   checked = new Array<INode>();
+  checkedNode: IObject;
   currentItem: ObjectNode;
   isLoading: boolean;
   error: HttpErrorResponse;
-  
+
   /** documents ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -41,7 +47,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
-    private readonly scrollPositionService: ScrollPositionService) {
+    private readonly scrollPositionService: ScrollPositionService,
+    private readonly modalService: ModalService) {
 
   }
 
@@ -53,14 +60,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         id = SystemIds.rootId;
 
       let isSource = false;
-      if (this.activatedRoute.snapshot.url.length !== 0) {
-        const urlSegment = this.activatedRoute.snapshot.url[0].path;
+      if (this.activatedRoute.snapshot?.url.length !== 0) {
+        const urlSegment = this.activatedRoute.snapshot?.url[0].path;
         if (urlSegment === 'files')
           isSource = true;
       }
 
-      this.repository.getObjectAsync(id)
-        .then(source => {
+      const promise = this.repository.getObjectAsync(id);
+        promise.then(source => {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
           this.isLoading = false;
         })
@@ -75,15 +82,27 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.documentsService.changeClearChecked(true);
-          this.repository.requestType = RequestType.FromCache;
         }
       }
+    });
+
+    this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
+      if (!id)
+        return;
+      
+      this.repository.getObjectAsync(id, RequestType.New).then(object => {
+        this.checkedNode = object;
+      });
     });
   }
 
   ngOnDestroy(): void {
-    this.navigationSubscription.unsubscribe();
-    this.routerSubscription.unsubscribe();
+    if (this.navigationSubscription)
+      this.navigationSubscription.unsubscribe();
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
+    if (this.objectCardChangeSubscription)  
+      this.objectCardChangeSubscription.unsubscribe();
 
     // cancel
     this.ngUnsubscribe.next();
@@ -123,9 +142,28 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.checked = nodes;
   }
 
-  onError(error): void {
+  onError(error: HttpErrorResponse): void {
     this.error = error;
   }
 
+  onShowObjectCard() : void {
+    this.checkedNode = this.getCheckedNode();
+    this.modalService.open(this.documentCardModal);
+  }
+
+  onCloseObjectCard() : void {
+    this.modalService.close(this.documentCardModal);
+  }
   
+  onSaveObjectCard(id: string): void {
+    this.documentsService.changeObjectForCard(id);
+    this.onCloseObjectCard();
+  }
+
+  private getCheckedNode() : IObject{
+    if (this.checked && this.checked.length > 0)
+      return this.checked[0].source;
+
+    return undefined;  
+  }
 }

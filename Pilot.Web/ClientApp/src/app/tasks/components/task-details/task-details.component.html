@@ -1,9 +1,15 @@
   <div class="mt-2" style="margin-left: -2px;">
     <img [src]="taskTypeIcon" width="24" *ngIf="taskTypeIcon != null">
-    <span class="ml-2">{{taskTypeTitle}}</span>
+    <span class="ml-2 align-middle">{{taskTypeTitle}}</span>
   </div>
 
-  <div class="mt-4" *ngIf="initiator">
+  <div class="mt-4" *ngIf="stateIcon">
+    <div class="text-second" translate="currentTaskState"></div>
+    <img [src]="stateIcon" width="24" *ngIf="stateIcon != null">
+    <span class="ml-2 align-middle">{{stateTitle}}</span>
+  </div>
+
+  <div class="mt-2" *ngIf="initiator">
     <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:initiator}"></div>
   </div>
 
@@ -13,10 +19,14 @@
 
   <div class="" *ngFor="let attr of attributes">
     <ng-container *ngIf="attr.type === 8">
-      <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
+      <ng-container *ngIf="attr.value">
+        <div *ngTemplateOutlet="orgUnitAttributeTemplate;context:{item:attr}"></div>
+      </ng-container>
     </ng-container>
     <ng-container *ngIf="attr.type !== 8">
-      <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
+      <ng-container *ngIf="attr.value">
+        <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
+      </ng-container>
     </ng-container>
   </div>
 
@@ -27,7 +37,7 @@
   </div>
 
 <ng-template #orgUnitAttributeTemplate let-item="item">
-  <div class="f-md text-muted mt-2">{{item.title}}</div>
+  <div class="f-md text-second mt-2">{{item.title}}</div>
   <div *ngFor="let orgUnit of item.items| keyvalue">
     <div class="f-lg">
       <span *ngIf="orgUnit.key" class="mr-1">{{orgUnit.key.displayName}}</span>

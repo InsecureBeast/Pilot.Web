@@ -57,6 +57,24 @@ html, body {
   top: 0;
 }
 
+.pt-2h {
+  padding-top: .4rem;
+}
+
+.opacity-02 {
+  opacity: 0.2;
+}
+
+.tb-btn {
+  color: var(--gray);
+  font-size: 20px;
+  padding-right: 0;
+}
+
+.tb-btn:hover {
+  color: var(--dark);
+}
+
 /* fallback */
 @font-face {
   font-family: 'Material Icons';

@@ -1,6 +1,7 @@
 ﻿using System;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
+using Pilot.Web.Model.ModifyData;
 
 namespace Pilot.Web.Model
 {
@@ -17,7 +18,6 @@ namespace Pilot.Web.Model
         private readonly HttpPilotClient _client;
         private readonly IServerApiService _serverApi;
         private readonly IFileArchiveApi _fileArchiveApi;
-        private bool _isActive = false;
         private readonly ServerCallback _serverCallback;
 
         public RemoteService(HttpPilotClient client)
@@ -25,18 +25,23 @@ namespace Pilot.Web.Model
             _client = client;
             _client.SetConnectionLostListener(this);
             _serverCallback = new ServerCallback();
-
-            var serverApi = client.GetServerApi(_serverCallback);
-            var dbInfo = serverApi.OpenDatabase();
-            var searchFactory = new SearchServiceFactory(_serverCallback);
-            _serverApi = new ServerApiService(serverApi, dbInfo, searchFactory);
-            _serverCallback.RegisterCallbackListener((IRemoteServiceListener) _serverApi);
             _fileArchiveApi = client.GetFileArchiveApi();
 
-            _isActive = true;
+            var searchFactory = new SearchServiceFactory(_serverCallback);
+            var localArchiveRootFolder = DirectoryProvider.GetTempPath();
+            var fileStorageProvider = new FileStorageProvider(localArchiveRootFolder);
+            var changsetUploader = new ChangesetUploader(_fileArchiveApi, fileStorageProvider, null);
+            var messageApi = client.GetMessagesApi(new NullableMessagesCallback());
+            var serverApi = client.GetServerApi(_serverCallback);
+            var dbInfo = serverApi.OpenDatabase();
+            var backend = new Backend(serverApi, dbInfo, messageApi, changsetUploader);
+
+            _serverApi = new ServerApiService(serverApi, dbInfo, searchFactory, backend);
+            _serverCallback.RegisterCallbackListener((IRemoteServiceListener) _serverApi);
+            IsActive = true;
         }
 
-        public bool IsActive => _isActive;
+        public bool IsActive { get; private set; }
 
         public IServerApiService GetServerApi()
         {
@@ -56,7 +61,7 @@ namespace Pilot.Web.Model
 
         public void ConnectionLost(Exception ex = null)
         {
-            _isActive = false;
+            IsActive = false;
         }
     }
 }

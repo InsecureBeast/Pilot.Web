@@ -2,7 +2,7 @@ import { SafeUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { IObject, IType, IChild, IPerson } from '../../core/data/data.classes';
+import { IObject, IType, IChild, IPerson, IUserState, IValue, AttributeType, IAttribute } from '../../core/data/data.classes';
 import { EmptyObject } from '../../core/data/empty-data.classes';
 import { TypeExtensions } from '../../core/tools/type.extensions';
 import { TypeIconService } from '../../core/type-icon.service';
@@ -20,31 +20,11 @@ export class ObjectNode implements IObjectNode {
     private cancel: Subject<any>,
     private translate: TranslateService) {
 
-    this.created = Tools.toUtcCsDateTime(source.created).toLocaleString();
-    this.id = source.id;
-    this.parentId = source.parentId;
-    this.title = this.getTitle(source);
-    this.type = source.type;
-    this.children = source.children;
-    this.creator = source.creator;
-    this.isDocument = this.getIsDocument(source.type);
-
-    if (this.isDocument)
-      this.childrenCount = -1;
-    else
-      this.childrenCount = source.children.length;
-
+    this.update(source);
     if (!isSource)
       this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
     else
       this.isSource = true;
-
-    this.context = new Array<string>();
-    if (source.context)
-      this.context = source.context;
-
-    this.loadTypeIcon();
-    this.loadPreview();
   }
 
   id: string;
@@ -61,6 +41,7 @@ export class ObjectNode implements IObjectNode {
   url: string;
   context: string[];
   childrenCount: number;
+  stateAttributes: IAttribute[];
 
   isSelected: boolean;
   isChecked: boolean;
@@ -93,6 +74,30 @@ export class ObjectNode implements IObjectNode {
         err => this.preview = null);
   }
 
+  update(source: IObject): void {
+    this.created = Tools.toUtcCsDateTime(source.created).toLocaleString();
+    this.id = source.id;
+    this.parentId = source.parentId;
+    this.title = this.getTitle(source);
+    this.type = source.type;
+    this.children = source.children;
+    this.creator = source.creator;
+    this.isDocument = this.getIsDocument(source.type);
+    this.stateAttributes = source.type.attributes.filter(at => at.type === AttributeType.UserState);
+
+    if (this.isDocument)
+      this.childrenCount = -1;
+    else
+      this.childrenCount = source.children.length;
+
+    this.context = new Array<string>();
+    if (source.context)
+      this.context = source.context;
+
+    this.loadTypeIcon();
+    this.loadPreview();
+  }
+
   private getTitle(source: IObject): string {
 
     if (source.title === "Source files")
@@ -118,6 +123,11 @@ export class EmptyObjectNode implements IObjectNode {
     this.source = new EmptyObject();
     this.children = this.source.children;
     this.childrenCount = -1;
+    this.stateAttributes = new Array<IAttribute>();
+  }
+  
+  update(source: IObject): void {
+    throw new Error("Method not implemented.");
   }
 
   id: string;
@@ -129,6 +139,7 @@ export class EmptyObjectNode implements IObjectNode {
   title: string;
   icon: SafeUrl;
   childrenCount: number;
+  stateAttributes: IAttribute[];
 
   loadPreview(): void {
     // do nothing

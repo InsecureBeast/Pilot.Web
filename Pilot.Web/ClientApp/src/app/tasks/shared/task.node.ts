@@ -1,4 +1,4 @@
-import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SafeUrl } from "@angular/platform-browser";
 import { TranslateService } from "@ngx-translate/core";
 
 import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors } from "../../core/data/data.classes";
@@ -7,6 +7,8 @@ import { SystemTaskAttributes } from "../../core/data/system.types";
 import { Tools } from "../../core/tools/tools";
 import { TypeExtensions } from "../../core/tools/type.extensions";
 import { TaskNodeFactory } from "./task-node.factory";
+import { UserState, UserStateColorService } from "src/app/core/data/user.state";
+import { TypeIconService } from "src/app/core/type-icon.service";
 
 export class TaskNode {
 
@@ -14,22 +16,13 @@ export class TaskNode {
 
   constructor(
     public source: IObject,
-    private sanitizer: DomSanitizer,
+    private typeIconService: TypeIconService,
     protected repository: RepositoryService,
-    private translate: TranslateService) {
+    private translate: TranslateService,
+    private userStateColorService: UserStateColorService) {
 
-    this.title = this.getTitle(source);
-    this.description = this.getDescription(source);
-    this.type = source.type;
-    this.icon = Tools.getSvgImage(source.type.icon, sanitizer);
-    this.setTaskData(source);
-    this.id = source.id;
-    this.parentId = source.parentId;
-    this.hasChildren = source.children.length > 0;
-    this.loadedChildren = new Array();
-    this._isVisible = true;
-    if (source.context)
-      this.intent = source.context.length;
+    this.update(source);
+    this.isInWorkflow = false;
   }
 
   id: string;
@@ -76,6 +69,9 @@ export class TaskNode {
           if (!node)
             continue;
 
+          if (TypeExtensions.isStage(this.type))
+            node.isInWorkflow = true;
+
           index++;
           list.splice(index, 0, node);
           this.loadedChildren.push(node);
@@ -84,6 +80,25 @@ export class TaskNode {
         resolve();
       });
     });
+  }
+
+  update (source: IObject) : void {
+    this.source = source;
+    this.title = this.getTitle(source);
+    this.description = this.getDescription(source);
+    this.type = source.type;
+    this.icon = this.typeIconService.getSvgIcon(source.type.icon);
+    this.setTaskData(source);
+    this.id = source.id;
+    this.parentId = source.parentId;
+    this.hasChildren = source.children.length > 0;
+    this.loadedChildren = new Array();
+    this._isVisible = true;
+  }
+
+  setIntent():void {
+    if (this.source.context)
+      this.intent = this.source.context.length;
   }
 
   private getOrgUnit(source: IObject, attrName: string): IOrganizationUnit {
@@ -149,17 +164,17 @@ export class TaskNode {
     this.isTask = TypeExtensions.isTask(source.type);
     const state = this.getState(source, this.repository);
     if (state)
-      this.userState = new UserState(state, this.sanitizer);
+      this.userState = new UserState(state, this.typeIconService, this.userStateColorService);
 
-    this.isInWorkflow = !this.isTask || source.context.length > 1;
+    //this.isInWorkflow = !this.isTask || source.context.length > 1;
     this.attachments = source.relations.filter(r => r.type === RelationType.TaskAttachments);
     this.attributes = new Map(Object.entries(source.attributes));
 
     const deadlineAttrString = this.getDateString(source, SystemTaskAttributes.DEADLINE_DATE);
     if (deadlineAttrString) {
       this.deadline = Tools.toLocalDateTime(deadlineAttrString, this.translate.currentLang);
-      const deadlineDate = Tools.toUtcCsDateTime(dateAttrString);
-      this.isOutdated = deadlineDate.valueOf() - Date.now() < 0;
+      const deadlineDate = Tools.toUtcCsDateTime(deadlineAttrString);
+      this.isOutdated = deadlineDate.valueOf() - new Date().valueOf() < 0;
     }
     
   }
@@ -186,20 +201,22 @@ export class TaskNode {
 export class TaskWorkflowNode extends TaskNode {
 
   constructor(source: IObject,
-    sanitizer: DomSanitizer,
+    typeIconService: TypeIconService,
     repository: RepositoryService,
-    translate: TranslateService) {
-    super(source, sanitizer, repository, translate);
+    translate: TranslateService,
+    userStateColorService: UserStateColorService) {
+    super(source, typeIconService, repository, translate, userStateColorService);
   }
 }
 
 export class TaskStageNode extends TaskNode {
 
   constructor(source: IObject,
-    sanitizer: DomSanitizer,
+    typeIconService: TypeIconService,
     repository: RepositoryService,
-    translate: TranslateService) {
-    super(source, sanitizer, repository, translate);
+    translate: TranslateService,
+    userStateColorService: UserStateColorService) {
+    super(source, typeIconService, repository, translate, userStateColorService);
     this.title = this.getStageTitle(source);
   }
 
@@ -207,31 +224,4 @@ export class TaskStageNode extends TaskNode {
     const order = object.attributes[SystemTaskAttributes.STAGE_ORDER];
     return order;
   }
-}
-
-
-
-export class UserState {
-
-  constructor(state: IUserState, sanitizer: DomSanitizer) {
-    this.id = state.id;
-    this.name = state.name;
-    this.title = state.title;
-    this.color = state.color;
-    this.isDeleted = state.isDeleted;
-    this.isCompletionState = state.isCompletionState;
-    this.isSystemState = state.isSystemState;
-
-    if (state.icon !== null)
-      this.icon = Tools.getSvgImage(state.icon, sanitizer);
-  }
-
-  id: string;
-  name: string;
-  title: string;
-  icon: SafeUrl;
-  color: UserStateColors;
-  isDeleted: boolean;
-  isCompletionState: boolean;
-  isSystemState: boolean;
 }

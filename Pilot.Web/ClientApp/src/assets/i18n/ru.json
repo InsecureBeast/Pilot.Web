@@ -34,5 +34,9 @@
   "itemsSelected": "Выбрано элементов:",
   "pilotServerUnavailable": "Похоже, Pilot-Server на данный момент недоступен. Попробуте повторить запрос позже",
   "cancel": "Отмена",
-  "tryAgain": "Повторить"
+  "tryAgain": "Повторить",
+  "currentTaskState": "Текущее состояние задания",
+  "card":"Карточка",
+  "close": "Закрыть",
+  "save": "Сохранить"
 }

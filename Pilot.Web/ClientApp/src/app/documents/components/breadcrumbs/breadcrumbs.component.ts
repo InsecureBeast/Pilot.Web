@@ -6,10 +6,12 @@ import { first } from 'rxjs/operators';
 import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
-import { RepositoryService, RequestType } from '../../../core/repository.service';
+import { RepositoryService } from '../../../core/repository.service';
 import { INode } from '../../shared/node.interface';
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { SystemIds } from '../../../core/data/system.ids';
+import { RequestType } from 'src/app/core/headers.provider';
+import { DocumentsService } from '../../shared/documents.service';
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -18,7 +20,7 @@ import { SystemIds } from '../../../core/data/system.ids';
 })
 /** breadcrumbs component*/
 export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
-  
+
   private ol: ElementRef;
   private breadcrumbsCountSource = new BehaviorSubject<number>(2);
   private nodeStyleSubscription: Subscription;
@@ -26,10 +28,11 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   private ngUnsubscribe = new Subject<void>();
   private allBreadcrumbNodes: BreadcrumbNode[];
 
-  @ViewChild("olRef", { static: true })
+  @ViewChild('olRef', { static: true })
   set setOl(v: ElementRef) {
-    if (!v)
+    if (!v) {
       return;
+    }
 
     this.ol = v;
     const width = v.nativeElement.offsetWidth;
@@ -46,7 +49,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
-  private readonly nodeStyleService: NodeStyleService) {
+    private readonly nodeStyleService: NodeStyleService,
+    private readonly documentsService: DocumentsService) {
 
   }
 
@@ -63,36 +67,42 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.parent)
+    if (!this.parent) {
       return;
+    }
 
     this.init(this.parent);
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    if (!this.ol)
+    if (!this.ol) {
       return;
+    }
 
     const width = this.ol.nativeElement.offsetWidth;
     this.setCountFromWidth(width);
   }
 
   onSelect(bc: BreadcrumbNode): void {
-    this.repository.requestType = RequestType.New;
+    this.repository.setRequestType(RequestType.New);
+    this.documentsService.changeClearChecked(true);
     this.onSelected.emit(bc);
   }
 
   changeStyle(style: number): void {
-    if (style === 0)
+    if (style === 0) {
       this.nodeStyleService.setNodeStyle(NodeStyle.ListView);
-    if (style === 1)
+    }
+    if (style === 1) {
       this.nodeStyleService.setNodeStyle(NodeStyle.GridView);
+    }
   }
 
   private init(item: ObjectNode) {
-    if (!item)
+    if (!item) {
       return;
+    }
 
     this.loadBreadcrumbs(item);
   }
@@ -101,11 +111,12 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.repository.getObjectParentsAsync(node.id, this.ngUnsubscribe)
       .then(parents => {
         this.allBreadcrumbNodes = new Array<BreadcrumbNode>();
-        for (let parent of parents) {
-          if (parent.title === "Source files")
+        for (const parent of parents) {
+          if (parent.title === 'Source files') {
             continue;
+          }
 
-          let isActive = node.id === parent.id && (node.isSource === TypeExtensions.isProjectFileOrFolder(parent.type));
+          const isActive = node.id === parent.id && (node.isSource === TypeExtensions.isProjectFileOrFolder(parent.type));
           this.allBreadcrumbNodes.push(new BreadcrumbNode(parent, isActive));
         }
 
@@ -123,8 +134,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
       const breadcrumbNode = loadedBreadcrumbs[i];
       if (i < loadedBreadcrumbs.length - count) {
         hiddenList.push(breadcrumbNode);
-      }
-      else {
+      } else {
         list.push(breadcrumbNode);
       }
     }
@@ -135,41 +145,28 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   private setCountFromWidth(width: number): void {
     if (width <= 350) {
-      //this.itemWidth = 120;
+      // this.itemWidth = 120;
       this.breadcrumbsCountSource.next(2);
       return;
     }
 
     if (width <= 500) {
-      //this.itemWidth = 150;
+      // this.itemWidth = 150;
       this.breadcrumbsCountSource.next(2);
       return;
     }
 
     if (width < 765) {
       this.breadcrumbsCountSource.next(2);
-      //this.itemWidth = 250;
-    }
-    else {
+      // this.itemWidth = 250;
+    } else {
       this.breadcrumbsCountSource.next(3);
-      //this.itemWidth = 250;
+      // this.itemWidth = 250;
     }
   }
 }
 
 export class BreadcrumbNode implements INode {
-
-  /** BreadcrumbNode ctor */
-  constructor(public source: IObject, isActive: boolean) {
-    this.id = source.id;
-    this.title = source.title;
-    this.isActive = isActive;
-    this.isDocument = false;
-    this.parentId = source.parentId;
-    this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
-    this.source = source;
-    this.isRoot = source.id === SystemIds.rootId;
-  }
 
   id: string;
   parentId: string;
@@ -179,4 +176,21 @@ export class BreadcrumbNode implements INode {
   isDocument: boolean;
   isChecked: boolean;
   isRoot: boolean;
+
+  /** BreadcrumbNode ctor */
+  constructor(public source: IObject, isActive: boolean) {
+    this.update(source);
+    this.isActive = isActive;
+  }
+
+  update(source: IObject): void {
+    this.source = source;
+    this.id = source.id;
+    this.title = source.title;
+    this.isDocument = false;
+    this.parentId = source.parentId;
+    this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
+    this.source = source;
+    this.isRoot = source.id === SystemIds.rootId;
+  }
 }

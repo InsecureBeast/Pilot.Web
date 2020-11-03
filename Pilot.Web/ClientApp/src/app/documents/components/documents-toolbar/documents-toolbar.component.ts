@@ -1,8 +1,5 @@
-import { Component, OnInit, OnDestroy, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 
-import { Subscription, Subject } from 'rxjs';
-
-import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { DownloadService } from '../../../core/download.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { INode } from '../../shared/node.interface';
@@ -14,13 +11,13 @@ import { INode } from '../../shared/node.interface';
 })
 
 /** documents-toolbar component*/
-export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
+export class DocumentsToolbarComponent implements OnInit, OnDestroy {
 
-  //private ngUnsubscribe = new Subject<void>();
-  @Input() checkedNodes: Array<INode>;
+  @Input() checkedNodes: INode[];
+  @Output() onShowDocumentCard = new EventEmitter<any>();
 
   /** documents-toolbar ctor */
-  constructor(private readonly nodeStyleService: NodeStyleService,
+  constructor(
     private readonly downloadService: DownloadService,
     private readonly documentsService: DocumentsService) {
 
@@ -33,21 +30,6 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy(): void {
     
   }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    //for (const propName in changes) {
-    //  if (changes.hasOwnProperty(propName)) {
-    //    switch (propName) {
-    //      case 'checkedNodes': {
-    //        //this.checkedNodes(changes.currentValue)
-
-    //    }
-    //    }
-    //  }
-    //}
-  }
-
-  
 
   download(): void {
     if (!this.checkedNodes)
@@ -81,5 +63,9 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy, OnChanges {
   clearChecked(): void {
     this.documentsService.changeClearChecked(true);
     this.checkedNodes = new Array();
+  }
+
+  openDocumentCard() : void {
+    this.onShowDocumentCard.emit();
   }
 }

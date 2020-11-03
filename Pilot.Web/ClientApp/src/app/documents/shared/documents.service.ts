@@ -1,22 +1,20 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { INode } from './node.interface';
-
 @Injectable({ providedIn: 'root'})
 export class DocumentsService {
 
-  private documentSubject = new BehaviorSubject<INode>(null);
+  private objectForCardSubject = new BehaviorSubject<string>(null);
   private clearCheckedSubject = new BehaviorSubject<boolean>(false);
 
-  document$ = this.documentSubject.asObservable();
+  objectForCard$ = this.objectForCardSubject.asObservable();
   clearChecked = this.clearCheckedSubject.asObservable();
 
   constructor() {
   }
 
-  changeDocument(document: INode): void {
-    this.documentSubject.next(document);
+  changeObjectForCard(objectId: string): void {
+    this.objectForCardSubject.next(objectId);
   }
 
   changeClearChecked(value: boolean): void {

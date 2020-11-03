@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using log4net;
 
 namespace DocumentRender.DocumentConverter
 {
@@ -16,7 +14,7 @@ namespace DocumentRender.DocumentConverter
         private readonly List<ToolProperties> _tools = new List<ToolProperties>();
         private readonly ToolProperties _defaultTool;
 
-        public DrawToolProvider(ILog logger)
+        public DrawToolProvider()
         {
             // 0 - drawResultPath
             // 1 - filename

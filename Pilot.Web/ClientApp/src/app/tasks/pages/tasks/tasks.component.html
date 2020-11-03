@@ -19,15 +19,6 @@
 
 <div class="pt-6 row h-100" *ngIf="!error">
 
-  <div class="col-12 d-sm-none noselect" *ngIf="selectedFilter">
-    <a id="filters-button"
-       [routerLink]=""
-       (click)="showFilters();$event.stopPropagation()">
-      <span class="">{{ selectedFilter.name }}</span>
-      <span class="material-icons">arrow_drop_down</span>
-    </a>
-  </div>
-
   <div class="d-none d-sm-block col-sm-3 col-md-3 col-xl-2">
     <app-task-filters class="fixed"
                       [selectedFilter]="selectedFilter"
@@ -37,9 +28,9 @@
 
     </app-task-filters>
   </div>
-  <div class="col-12 col-sm-9 col-md-9 col-xl-10 task-list">
+  <div class="col-12 col-sm-9 col-md-9 col-xl-10 task-list pb-2">
     <div class="h-100 bg-white rounded shadow-sm mr-n2 ml-n2">
-      <app-task-list class="p-0"
+      <app-task-list class="p-0 mb-3"
                      [filter]="selectedFilter"
                      (onSelected)="onTaskSelected($event)"
                      (onChecked)="onTaskChecked($event)"
@@ -48,6 +39,18 @@
       </app-task-list>
     </div>
   </div>
+
+  <div class="fixed-bottom col-12 d-sm-none noselect bg-white border-top text-center shadow" 
+      *ngIf="selectedFilter" >
+    <div class="bt-button pointer p-2" 
+        (click)="showFilters();$event.stopPropagation()">
+      <a [routerLink]="" >
+        <span class="material-icons">filter_list</span>
+        <span class="align-top ml-2">{{ selectedFilter.name }}</span>
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <pw-modal id="filtersModal">
@@ -55,7 +58,8 @@
     <div class="bg-white rounded-lg p-3">
       <app-task-filters class=""
                         [selectedFilter]="selectedFilter"
-                        (onSelected)="onFilterSelected($event)">
+                        (onSelected)="onFilterSelected($event)"
+                        (onError)="onError($event)">
       </app-task-filters>
     </div>
 

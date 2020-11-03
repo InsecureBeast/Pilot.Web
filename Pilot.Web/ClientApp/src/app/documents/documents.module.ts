@@ -14,6 +14,8 @@ import { ErrorModule } from "../ui/error/error.module";
 import { DocumentVersionsComponent } from "./components/document-versions/document-versions.component";
 import { DocumentsRoutingModule } from "./documents-routing.module";
 import { DocumentTreeComponent } from "./components/document-tree/document-tree.component";
+import { UserStateModule } from '../ui/user-state/user-state-module';
+import { ObjectCardDialogModule } from '../ui/object-card-dialog/object-card-dialog.module';
 
 @NgModule({
   imports: [
@@ -23,7 +25,9 @@ import { DocumentTreeComponent } from "./components/document-tree/document-tree.
     ModalModule,
     SideModalModule,
     ErrorModule,
-    DocumentsRoutingModule
+    DocumentsRoutingModule,
+    UserStateModule,
+    ObjectCardDialogModule
   ],
   declarations: [
     DocumentsComponent,

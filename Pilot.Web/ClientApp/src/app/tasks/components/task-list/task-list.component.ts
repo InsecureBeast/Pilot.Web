@@ -1,14 +1,15 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { first } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 import { TaskFilter } from '../task-filters/task-filters.component';
 import { TasksRepositoryService } from '../../shared/tasks-repository.service';
 import { TaskNode, TaskWorkflowNode, TaskStageNode } from "../../shared/task.node";
 import { TaskNodeFactory } from "../../shared/task-node.factory";
-import { TasksService } from "../../shared/tasks.service";
+import { TasksSyncService as TasksService } from "../../shared/tasks.service";
 import { RepositoryService } from 'src/app/core/repository.service';
+import { TypeExtensions } from 'src/app/core/tools/type.extensions';
 
 @Component({
     selector: 'app-task-list',
@@ -72,6 +73,12 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     this.onChecked.emit(checked);
   }
 
+  update(node: TaskNode) : void {
+    this.repositoryService.getObjectAsync(node.source.id).then(source => {
+      node.update(source);
+    });
+  }
+
   addChecked(node: TaskNode): void {
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
@@ -86,7 +93,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   showSubTasks(task: TaskNode): void {
 
     if (task.loadedChildren.length > 0) {
-      for (var child of task.loadedChildren) {
+      for (let child of task.loadedChildren) {
         child.isVisible = !task.isChildrenShown;
       }
 
@@ -105,7 +112,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
   }
 
   isInWorkflow(task: TaskNode): boolean {
-    return task.intent > 0 || task instanceof TaskWorkflowNode;
+    return task.isInWorkflow || task instanceof TaskWorkflowNode;
   }
 
   isWorkflow(task: TaskNode): boolean {
@@ -122,6 +129,8 @@ export class TaskListComponent implements  OnInit, OnDestroy{
           const node = this.taskNodeFactory.createNode(source);
           if (!node)
             continue;
+          
+          node.setIntent();
 
           index++;
           this.tasks.splice(index, 0, node);
@@ -130,7 +139,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
         }
 
         for (var s of stages) {
-           await s.loadChildren(this.tasks, this.taskNodeFactory)
+           await s.loadChildren(this.tasks, this.taskNodeFactory);
         }
        
       })
@@ -152,7 +161,7 @@ export class TaskListComponent implements  OnInit, OnDestroy{
         const task = this.taskNodeFactory.createNode(source);
         // is not a task. is Workflow?
         if (task == null)
-          continue;;
+          continue;
 
         this.tasks.push(task);
       }
@@ -160,6 +169,35 @@ export class TaskListComponent implements  OnInit, OnDestroy{
       this.onError.emit(error);
       this.isLoading = false;
     });
+  }
+
+  affectChange(filter: TaskFilter, task: TaskNode): void {
+    if (!task)
+      return;
+
+    if (TypeExtensions.isTask(task.type)){
+      const parent = this.findWorkflowParent(task);
+      if (parent)
+        return;
+    }
+
+    this.tasksRepositoryService.getTasksWithFilter(filter.searchValue, task.id).pipe(first()).subscribe(objects => {
+      if (!objects || objects.length === 0) {
+        const index = this.tasks.findIndex(t => t.id === task.id);
+        if (index > -1) {
+          if (TypeExtensions.isWorkflow(task.type)) {
+            this.removeWorkflowChildren(task);
+          }
+          if (TypeExtensions.isStage(task.type)) {
+            this.removeWorkflowChildren(task);
+          }  
+          this.tasks.splice(index, 1);
+        }
+      }
+    }, error => {
+      this.onError.emit(error);
+      this.isLoading = false;}
+    );
   }
 
   private clearChecked(): void {
@@ -171,5 +209,32 @@ export class TaskListComponent implements  OnInit, OnDestroy{
 
     this.isAnyItemChecked = false;
     this.onChecked.emit(null);
+  }
+
+  private removeWorkflowChildren(task: TaskNode): void {
+    if (!task)
+      return;
+    
+    task.source.children.forEach(c => {
+      const childIndex = this.tasks.findIndex(tc => tc.id === c.objectId);
+      if (childIndex < 0)
+        return;
+
+      const child = this.tasks.find(t => t.id === c.objectId);
+      this.tasks.splice(childIndex, 1);
+      this.removeWorkflowChildren(child);
+    });
+  }
+
+  private findWorkflowParent(task: TaskNode): TaskNode {
+    let parent = this.tasks.find(p => p.id === task.source.parentId);
+    if (!parent)
+      return undefined;
+    
+    if (TypeExtensions.isWorkflow(parent.type))  {
+      return parent;
+    }
+
+    return this.findWorkflowParent(parent);
   }
 }

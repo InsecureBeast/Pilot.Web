@@ -20,7 +20,7 @@ import { RouteReuseService } from './core/route-reuse.service';
 import { TasksModule } from './tasks/tasks.module';
 import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ImagesCacheInterceptor } from './core/interceptors/images-cache.interceptor';
-import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
+import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/directives/stop-propagation.directive';
 import { BimDocumentModule } from './bim/bim-document.module';
 
 export function createTranslateLoader(http: HttpClient) {

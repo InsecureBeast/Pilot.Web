@@ -1,0 +1,9 @@
+﻿<div class="badge mr-1"
+    *ngFor="let userState of userStates"
+    [style.background-color]="userState.color"
+    style="height: 20px;">
+
+    <img [src]="userState.icon" width="16" *ngIf="userState.icon">
+    <span>{{userState.title}}</span>
+    
+</div>

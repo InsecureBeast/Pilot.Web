@@ -18,20 +18,21 @@
 }
 
 .card-img {
-  min-height: 8rem;
+  min-height: 8.1rem;
 }
 
 .card-icon-center {
   height: 6rem;
   width: 6rem;
-  margin-top: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .card-name {
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: 2.8em;
-  line-height: 1.3;
+  /* line-height: 1.3rem; */
 }
 
 .card {
@@ -41,7 +42,7 @@
 }
 
 .card-body {
-  padding: 0.5rem;
+  padding: 0.2rem;
 }
 
 .card-children-count {
@@ -77,8 +78,11 @@
   line-height: 1.2rem;
 }
 
-.checker-img {
-  opacity: 0.2;
+.three-line-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 3.8rem;
+  line-height: 1.2rem;
 }
 
 .checker {

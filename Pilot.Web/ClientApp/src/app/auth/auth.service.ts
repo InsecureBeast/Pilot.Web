@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
@@ -42,11 +41,13 @@ export class AuthService {
     const observable = this.http.get<any>(this.baseUrl + 'api/Auth/SignOut', { headers: headers });
     observable.pipe(first()).subscribe(result => {
         this.clearToken();
+        this.error$.next(null);
         this.isLoggedIn$.next(false);
       },
       e => {
         //this.error$.next(e);
         this.clearToken();
+        this.error$.next(null);
         this.isLoggedIn$.next(false);
     });
   }

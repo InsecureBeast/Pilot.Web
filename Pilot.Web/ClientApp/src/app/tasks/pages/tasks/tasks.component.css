@@ -19,7 +19,7 @@ a {
   }
 
   a:hover {
-    color: #343951;
+    color: var(--dark);
     text-decoration: none;
   }
 
@@ -29,9 +29,9 @@ a {
   /*margin-right: .75rem;*/
 }
 
-#filters-button {
-  display: flex;
-  margin-bottom: .45rem;
+.bt-button:hover a {
+  color: var(--dark);
+  text-decoration: none;
 }
 
 .mob-filters-view {
