@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewChecked } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart } from '@angular/router';
 
@@ -6,7 +6,7 @@ import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RepositoryService } from '../../../core/repository.service';
-import { ObjectNode, EmptyObjectNode } from "../../shared/object.node";
+import { ObjectNode, EmptyObjectNode } from '../../shared/object.node';
 import { ChildrenType } from '../../../core/data/children.types';
 import { IObject } from '../../../core/data/data.classes';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
@@ -24,20 +24,37 @@ import { first } from 'rxjs/operators';
     styleUrls: ['./document-list.component.css']
 })
 /** documents-list component*/
-export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
+export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
+  private _parent: IObjectNode;
 
-  @Input() parent: ObjectNode;
+  @Input()
+  get parent(): IObjectNode {
+    return this._parent;
+  }
+  set parent(node: IObjectNode) {
+    this._parent = node;
 
-  @Output() onChecked = new EventEmitter<IObjectNode[]>();
-  @Output() onSelected = new EventEmitter<INode>();
-  @Output() onError = new EventEmitter<HttpErrorResponse>();
-  @Output() onLoaded = new EventEmitter<INode>();
+    if (!this._parent) {
+      return;
+    }
+
+    this.isLoaded = false;
+
+    // or get item from changes
+    this.cancelAllRequests(false);
+    this.init(this.parent);
+  }
+
+  @Output() checked = new EventEmitter<IObjectNode[]>();
+  @Output() selected = new EventEmitter<INode>();
+  @Output() error = new EventEmitter<HttpErrorResponse>();
+  @Output() loaded = new EventEmitter<INode>();
 
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
@@ -55,19 +72,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private documentsService: DocumentsService,
     private router: Router) {
 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-
-    if (!this.parent) {
-      return;
-    }
-
-    this.isLoaded = false;
-
-    // or get item from changes
-    this.cancelAllRequests(false);
-    this.init(this.parent);
   }
 
   ngOnInit(): void {
@@ -109,7 +113,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   ngAfterViewChecked(): void {
     if (this.isLoaded) {
-      this.onLoaded.emit(this.parent);
+      this.loaded.emit(this.parent);
       this.isLoaded = false;
     }
   }
@@ -134,7 +138,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.cancelAllRequests(true);
   }
 
-  selected(item: IObjectNode): void {
+  select(item: IObjectNode): void {
     if (!item.id) {
       return;
     }
@@ -143,10 +147,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.clearChecked();
     this.nodes = null;
     this.documentsService.changeObjectForCard(null);
-    this.onSelected.emit(item);
+    this.selected.emit(item);
   }
 
-  checked(node: IObjectNode, event: MouseEvent): void {
+  check(node: IObjectNode, event: MouseEvent): void {
     if (!node.id) {
       return;
     }
@@ -159,7 +163,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.isAnyItemChecked = true;
 
     const checked = this.nodes.filter(n => n.isChecked);
-    this.onChecked.emit(checked);
+    this.checked.emit(checked);
   }
 
   addChecked(node: IObjectNode): void {
@@ -167,7 +171,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.isAnyItemChecked = true;
 
     const checked = this.nodes.filter(n => n.isChecked);
-    this.onChecked.emit(checked);
+    this.checked.emit(checked);
 
     if (checked.length === 0) {
       this.isAnyItemChecked = false;
@@ -229,7 +233,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
-        this.onChecked.emit(null);
+        this.checked.emit(null);
 
         this.documentsService.objectForCard$.pipe(first()).subscribe(objectForCardId => {
           if (!objectForCardId) {
@@ -239,7 +243,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         });
       })
       .catch(e => {
-        this.onError.emit(e);
+        this.error.emit(e);
         this.isLoading = false;
       });
   }
@@ -264,7 +268,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
 
     this.isAnyItemChecked = false;
-    this.onChecked.emit(null);
+    this.checked.emit(null);
   }
 
   private cancelAllRequests(isCompleted: boolean): void {

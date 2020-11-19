@@ -23,7 +23,7 @@
   <ul class="list-group mr-3 ml-3 shadow-sm" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
-        (click)="checked(node, $event)"
+        (click)="check(node, $event)"
         *ngFor="let node of nodes">
 
       <div class="d-flex">
@@ -42,7 +42,7 @@
 
         <div class="mr-auto">
           <div class="pointer three-line-text overflow-hidden"
-               (click)="selected(node);$event.stopPropagation();"
+               (click)="select(node);$event.stopPropagation();"
                *ngIf="node">
             <div [class.text-primary]="node?.isChecked">{{ node.title }}</div>
             <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
@@ -63,7 +63,7 @@
 
       <div class="card text-center shadow-sm"
            [class.list-group-item-primary]="node.isChecked"
-           (click)="checked(node, $event);$event.stopPropagation();"
+           (click)="check(node, $event);$event.stopPropagation();"
            *ngIf="!isEmptyNode(node) else gridViewEmptyNodeTemplate">
         <div class="overflow-hidden bg-white card-img" *ngIf="!node.preview">
           <img [src]="node.icon" class="card-icon-center" alt="type icon image" *ngIf="node.icon">
@@ -81,7 +81,7 @@
         <div class="card-children-count text-muted" *ngIf="node.childrenCount >= 0">{{node.childrenCount}}</div>
 
         <div class="card-body" 
-             (click)="selected(node);$event.stopPropagation();"
+             (click)="select(node);$event.stopPropagation();"
              *ngIf="node">
           <div class="text-center pointer">
             <div class="card-name"
