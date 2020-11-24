@@ -41,24 +41,28 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.isProcessing = false;
       if (!err) {
         this.error = err;
+        this.authService.clearToken();
         return;
       }
 
       this.error = this.errorService.handleErrorMessage(err);
     });
-   
+
   }
 
   ngOnDestroy(): void {
-    if (this.loginSubscription)
+    if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
-    if (this.errorSubscription)
+    }
+    if (this.errorSubscription) {
       this.errorSubscription.unsubscribe();
+    }
   }
 
   onEnter() {
-    if (this.username && this.password)
+    if (this.username && this.password) {
       this.login();
+    }
   }
 
   login(): void {
@@ -68,10 +72,11 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.authService.login(this.username, this.password);
   }
 
-  private initialize() : void {
+  private initialize(): void {
     this.loginSubscription = this.authService.isLoggedIn.subscribe(value => {
-      if (!value)
+      if (!value) {
         return;
+      }
 
       this.repositoryService.initialize()
         .pipe(skipWhile(v => !v))
@@ -87,8 +92,10 @@ export class AuthComponent implements OnInit, OnDestroy {
         }, (e: HttpErrorResponse) => {
           this.isProcessing = false;
           this.error = this.errorService.handleErrorMessage(e);
-          if (e.status === 401)
+          if (e.status === 401) {
             this.error = null;
+            this.authService.logout();
+          }
         });
     });
   }

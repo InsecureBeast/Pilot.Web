@@ -12,20 +12,20 @@ img.doc-page {
 }
 
 .doc-info {
-  background: white;
-  border-left: 1px solid rgb(222, 226, 230);
+  background: var(--bg-content);
+  /* border-left: 1px solid rgb(222, 226, 230); */
 }
 
 .versions-view {
   position: fixed;
   right: 0;
-  top: 3rem;
+  top: 3.5rem;
   bottom: 0;
 }
 
 @media (max-width: 767px) {
   .doc-info {
-    /*height: 30vh;*/
+    height: 30vh;
     border-top: 1px solid rgb(222, 226, 230);
   }
 

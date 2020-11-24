@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
 @Component({
   selector: 'app-document',
@@ -46,6 +47,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
   selectedVersionCreated: string;
   selectedVersionCreator: string;
 
+  @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;
+
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -63,6 +66,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const id = params.get('id');
       if (!id) {
@@ -190,6 +194,10 @@ export class DocumentComponent implements OnInit, OnDestroy {
   onChangeDocumentCard(id: string): void {
     this.documentService.changeObjectForCard(id);
     this.onCloseDocumentCard();
+  }
+
+  selectTab(tabId: number) {
+    this.staticTabs.tabs[tabId].active = true;
   }
 
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {

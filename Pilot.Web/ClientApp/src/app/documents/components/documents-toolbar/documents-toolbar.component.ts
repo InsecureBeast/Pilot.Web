@@ -26,16 +26,17 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    
+
   }
 
   ngOnDestroy(): void {
-    
+
   }
 
   async download(): Promise<void> {
-    if (!this.checkedNodes)
+    if (!this.checkedNodes) {
       return;
+    }
 
     this.downloadStarted.emit();
     const selected = this.checkedNodes[0];
@@ -44,8 +45,9 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
   }
 
   downloadArchive(): void {
-    if (!this.checkedNodes)
+    if (!this.checkedNodes) {
       return;
+    }
 
     this.downloadStarted.emit();
     const selected = this.checkedNodes.map(n => n.id);
@@ -58,10 +60,12 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
   }
 
   isDocumentChecked(): boolean {
-    if (!this.checkedNodes)
+    if (!this.checkedNodes) {
       return false;
-    if (this.checkedNodes.length !== 1)
+    }
+    if (this.checkedNodes.length !== 1) {
       return false;
+    }
 
     return this.checkedNodes[0].isDocument;
   }
@@ -71,7 +75,7 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
     this.checkedNodes = new Array();
   }
 
-  openDocumentCard() : void {
+  openDocumentCard(): void {
     this.onShowDocumentCard.emit();
   }
 }

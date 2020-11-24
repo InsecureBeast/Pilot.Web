@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './../auth/auth.service';
 import { SystemIds } from '../core/data/system.ids';
@@ -16,7 +16,6 @@ export class NavMenuComponent implements OnInit {
   documentRootId = SystemIds.rootId;
 
   constructor(private authService: AuthService, private router: Router) {
-
   }
 
   ngOnInit(): void {
@@ -27,7 +26,7 @@ export class NavMenuComponent implements OnInit {
     this.isExpanded = false;
   }
 
-  toggle(): void{
+  toggle(): void {
     this.isExpanded = !this.isExpanded;
   }
 
@@ -38,7 +37,7 @@ export class NavMenuComponent implements OnInit {
   onLogout(event: Event): boolean {
     this.collapse();
     this.authService.logout();
-    this.router.navigate(["/login"]);
+    this.router.navigate(['/login']);
     return false;
   }
 }

@@ -7,6 +7,7 @@ import { RouterModule, RouteReuseStrategy } from '@angular/router';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -41,6 +42,7 @@ export function createTranslateLoader(http: HttpClient) {
     ErrorModule,
     AuthModule,
     ModalModule.forRoot(),
+    TabsModule.forRoot(),
     CustomModalModule,
     RouterModule.forRoot([
       { path: '', component: DocumentsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
