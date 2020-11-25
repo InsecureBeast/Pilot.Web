@@ -14,6 +14,7 @@ class DigitalSignature {
   id: string;
   isValid = false;
   signDate: string;
+  role: string;
 
   constructor(signature: ISignature, person: IPerson, position: IOrganizationUnit) {
     this.id = signature.id;
@@ -61,6 +62,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
                 sc.person = sig.signer;
                 sc.isValid = sig.isValid;
                 sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
+                sc.role = sig.role;
             }
         }
     })

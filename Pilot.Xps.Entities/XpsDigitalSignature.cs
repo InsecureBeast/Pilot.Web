@@ -15,6 +15,9 @@ namespace Pilot.Xps.Entities
         public bool IsCertificateValid { get; set; }
         public bool IsSigned { get; set; }
         public bool IsValid { get; set; }
+        public string Role { get; set; }
+        public bool CanUserSign { get; set; }
+        public bool IsAdditional { get; set; }
     }
 
     public static class XpsDigitalSignatureSerializer

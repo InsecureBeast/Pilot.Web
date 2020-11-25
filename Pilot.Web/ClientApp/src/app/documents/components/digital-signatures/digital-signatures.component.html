@@ -6,9 +6,11 @@
                 <span *ngIf="!signature.isValid" class="material-icons m-2" style="color:gray">edit</span>
                 <div style="min-width: 0">
                     <div class="text-truncate">{{signature.person}}</div>
-                        <span *ngIf="!signature.signDate" class="font-small text-secondary" translate="noSignature"></span>
-                        <div *ngIf="signature.signDate">
-                        <span class="font-small text-secondary" translate="signed"></span>
+                    <span *ngIf="!signature.signDate" class="font-small text-secondary" translate="noSignature"></span>
+                    <span *ngIf="!signature.signDate" class="font-small text-secondary ml-1">"{{signature.role}}"</span>
+                    <div *ngIf="signature.signDate">
+                        <span *ngIf="!signature.role" class="font-small text-secondary" translate="signed"></span>
+                        <span *ngIf="signature.role" class="font-small text-secondary">{{signature.role}}</span>
                         <span class="font-small text-secondary ml-1">{{signature.signDate}}</span>
                     </div>
                 </div>

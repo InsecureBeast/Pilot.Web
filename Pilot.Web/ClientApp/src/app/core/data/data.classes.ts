@@ -316,4 +316,7 @@ export interface IXpsDigitalSignature {
   isCertificateValid: boolean;
   isSigned: boolean;
   isValid: boolean;
+  isAdditional: boolean;
+  role: string;
+  canUserSign: boolean;s
 }
