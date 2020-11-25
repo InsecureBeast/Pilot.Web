@@ -41,5 +41,7 @@
   "save": "Save",
   "signed": "Signed",
   "noSignature": "No signature",
-  "signatures": "Signatures"
+  "signatures": "Signatures",
+  "sign": "Sign",
+  "info": "Info"
 }

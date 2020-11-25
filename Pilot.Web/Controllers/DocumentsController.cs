@@ -87,5 +87,19 @@ namespace Pilot.Web.Controllers
             var signatureBuffer = xpsServiceApi.GetSignatures(guid);
             return XpsDigitalSignatureSerializer.Deserialize(signatureBuffer);
         }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public bool SignDocument(string documentId)
+        {
+            var actor = HttpContext.GetTokenActor();
+            var api = _contextService.GetServerApi(actor);
+            
+            var guid = Guid.Parse(documentId);
+            var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
+            var currentPerson = api.GetCurrentPerson();
+            var result = xpsServiceApi.SignDocument(guid, currentPerson.Id);
+            return result == SignResult.SignedSuccessfully;
+        }
     }
 }

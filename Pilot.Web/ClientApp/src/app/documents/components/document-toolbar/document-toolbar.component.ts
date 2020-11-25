@@ -70,8 +70,9 @@ export class DocumentToolbarComponent implements OnDestroy {
     this.title = null;
     this.icon = null;
 
-    if (!document)
+    if (!document) {
       return;
+    }
 
     this.title = document.title;
     this.icon = document.type.icon;

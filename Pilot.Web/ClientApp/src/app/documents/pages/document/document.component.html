@@ -52,13 +52,13 @@
     </div>
 
     <div class="versions-view col-12 col-md-4 doc-info overflow-auto p-0" *ngIf="isInfoShown">
-      <div class="">
+      <div class="h-100">
         <tabset #staticTabs>
           <tab heading="Signatures">
             <app-digital-signatures [document]="document"></app-digital-signatures>
           </tab>
           <tab heading="Versions">
-            <div class="mt-2">
+            <div class="">
               <app-document-versions
                 [document]="document"
                 (onClose)="closeDocumentVersions($event)">

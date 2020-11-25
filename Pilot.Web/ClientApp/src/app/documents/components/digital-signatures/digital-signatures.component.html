@@ -1,20 +1,30 @@
 ﻿<ul class="list-group list-group-flush mb-5">
     <li class="list-group-item list-group-item-action pointer p-2" *ngFor="let signature of signatures" >
-        <div (click)="selected(signature);">
-            <div class="d-flex flex-row">
-                <span *ngIf="signature.isValid" class="material-icons m-2" style="color:green">check_circle</span>
-                <span *ngIf="!signature.isValid" class="material-icons m-2" style="color:gray">edit</span>
-                <div style="min-width: 0">
-                    <div class="text-truncate">{{signature.person}}</div>
-                    <span *ngIf="!signature.signDate" class="font-small text-secondary" translate="noSignature"></span>
-                    <span *ngIf="!signature.signDate" class="font-small text-secondary ml-1">"{{signature.role}}"</span>
-                    <div *ngIf="signature.signDate">
-                        <span *ngIf="!signature.role" class="font-small text-secondary" translate="signed"></span>
-                        <span *ngIf="signature.role" class="font-small text-secondary">{{signature.role}}</span>
-                        <span class="font-small text-secondary ml-1">{{signature.signDate}}</span>
-                    </div>
+        <div class="d-flex flex-row">
+            <span *ngIf="signature.isValid" class="material-icons m-2" style="color:green">check_circle</span>
+            <span *ngIf="!signature.isValid" class="material-icons m-2" style="color:gray">edit</span>
+            <div style="min-width: 0">
+                <div class="text-truncate">{{signature.person}}</div>
+                <div *ngIf="!signature.signDate">
+                    <span class="font-small text-secondary" translate="noSignature"></span>
+                    <span *ngIf="signature.role" class="font-small text-secondary ml-1">"{{signature.role}}"</span>
+                </div>
+                <div *ngIf="signature.signDate">
+                    <span *ngIf="!signature.role" class="font-small text-secondary" translate="signed"></span>
+                    <span *ngIf="signature.role" class="font-small text-secondary">{{signature.role}}</span>
+                    <span class="font-small text-secondary ml-1">{{signature.signDate}}</span>
                 </div>
             </div>
         </div>
     </li>
 </ul>
+<div class="d-flex justify-content-center" *ngIf="showSignButton">
+    <button class="btn btn-primary btn-block m-4" 
+            [disabled] = "isProcessing"
+            style="width: 10rem;" 
+            type="button" 
+            (click)="sign()">
+        <span *ngIf="isProcessing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
+        <span class="ml-1" translate="sign"> </span>
+    </button>
+</div>

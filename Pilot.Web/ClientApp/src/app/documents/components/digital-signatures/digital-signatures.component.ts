@@ -5,7 +5,7 @@ import { IObject, IOrganizationUnit, IPerson, ISignature } from 'src/app/core/da
 import { RepositoryService } from 'src/app/core/repository.service';
 import { DateTools } from 'src/app/core/tools/date.tools';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
-import { Tools } from 'src/app/core/tools/tools';
+import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
 
 class DigitalSignature {
 
@@ -43,33 +43,40 @@ export class DigitalSignaturesComponent implements OnDestroy {
   }
 
   signatures: Array<DigitalSignature>;
+  isProcessing: boolean;
+  showSignButton: boolean;
 
   /** digital-signatures ctor */
-  constructor(private repository: RepositoryService, private translate: TranslateService) {
+  constructor(
+    private readonly repository: RepositoryService,
+    private readonly translate: TranslateService,
+    private readonly errorService: ErrorHandlerService) {
+
     this.signatures = new Array<DigitalSignature>();
+    this.isProcessing = false;
+    this.showSignButton = false;
   }
 
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
   }
 
-  private loadSignatures(document: IObject) {
-    this.repository.getDocumentSignaturesAsync(document.id, this.ngUnsubscribe)
-    .then(signatures => {
-        for (const sig of signatures) {
-            const sc = this.signatures.find(s => s.id === sig.id);
-            if (sc) {
-                sc.person = sig.signer;
-                sc.isValid = sig.isValid;
-                sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
-                sc.role = sig.role;
-            }
-        }
+  sign(): void {
+    this.isProcessing = true;
+    this.repository.signDocumentAsync(this._document.id, this.ngUnsubscribe)
+    .then(r => {
+      if (r) {
+        this.updateSignatures(this._document);
+      }
+
+      this.isProcessing = false;
     })
     .catch(e => {
-
+      this.isProcessing = false;
     });
+  }
 
+  private loadSignatures(document: IObject) {
     const xpsFile = FilesSelector.getXpsFile(document.actualFileSnapshot.files);
     if (!xpsFile) {
       return;
@@ -81,12 +88,30 @@ export class DigitalSignaturesComponent implements OnDestroy {
       const digitalSignature = new DigitalSignature(signature, person, position);
       this.signatures.push(digitalSignature);
     }
+
+    this.updateSignatures(document);
   }
 
-  ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint8Array(buf));
-  }
+  private updateSignatures(document: IObject): void {
+    this.repository.getDocumentSignaturesAsync(document.id, this.ngUnsubscribe)
+    .then(signatures => {
+        for (const sig of signatures) {
+            const sc = this.signatures.find(s => s.id === sig.id);
+            if (sc) {
+                sc.person = sig.signer;
+                sc.isValid = sig.isValid;
+                sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
+                sc.role = sig.role;
+            }
+        }
 
+        this.showSignButton = true;
+    })
+    .catch(e => {
+      this.errorService.handleErrorMessage(e);
+      this.showSignButton = false;
+    });
+  }
   private cancelAllRequests(isCompleted: boolean): void {
     if (this.ngUnsubscribe) {
       // This aborts all HTTP requests.

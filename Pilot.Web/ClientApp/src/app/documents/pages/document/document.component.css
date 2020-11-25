@@ -1,5 +1,5 @@
 img.doc-page {
-  border: 1px solid lightgray;
+  border: 1px solid var(--border);
   margin-bottom: 8px;
   margin-top: 8px;
   max-width: 90%;
@@ -12,6 +12,7 @@ img.doc-page {
 }
 
 .doc-info {
+  /* background-color: white; */
   background: var(--bg-content);
   /* border-left: 1px solid rgb(222, 226, 230); */
 }
@@ -25,12 +26,22 @@ img.doc-page {
 
 @media (max-width: 767px) {
   .doc-info {
-    height: 30vh;
-    border-top: 1px solid rgb(222, 226, 230);
+    height: 60vh;
+    border-top: 1px solid var(--border);
   }
 
   .versions-view {
     top: unset;
     left: 0;
   }
+
+  :host ::ng-deep div.tab-content {
+    height: 100%;
+  }
+}
+
+:host ::ng-deep div.tab-content {
+  height: calc(100% - 2.6rem);
+  background-color: var(--bg);
+  border-left: 1px solid var(--border);
 }

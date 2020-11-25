@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 
-import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine, IXpsDigitalSignature } from './data/data.classes';
+import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState,
+  IUserStateMachine, MUserStateMachine, IXpsDigitalSignature } from './data/data.classes';
 import { RequestType, HeadersProvider } from './headers.provider';
 import { Change } from './modifier/change';
 import { Modifier } from './modifier/modifier';
@@ -223,6 +224,18 @@ export class RepositoryService {
 
   newModifier(): Modifier {
     return new Modifier(this);
+  }
+
+  signDocumentAsync(id: string, cancel: Subject<any>) {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = 'api/Documents/SignDocument?documentId=' + id;
+      this.http
+        .get<boolean>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((result) => resolve(result), e => reject(e));
+    });
   }
 
   private getPeople(): Observable<IPerson[]> {
