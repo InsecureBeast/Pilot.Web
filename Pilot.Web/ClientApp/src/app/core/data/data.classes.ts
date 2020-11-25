@@ -312,7 +312,7 @@ export class StateInfo {
 export interface IXpsDigitalSignature {
   id: string;
   signer: string;
-  signDate: Date;
+  signDate: string;
   isCertificateValid: boolean;
   isSigned: boolean;
   isValid: boolean;

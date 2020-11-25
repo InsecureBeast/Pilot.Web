@@ -1,9 +1,11 @@
 import { Component, Input, OnDestroy } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IObject, IOrganizationUnit, IPerson, ISignature } from 'src/app/core/data/data.classes';
-import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RepositoryService } from 'src/app/core/repository.service';
+import { DateTools } from 'src/app/core/tools/date.tools';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
+import { Tools } from 'src/app/core/tools/tools';
 
 class DigitalSignature {
 
@@ -11,6 +13,7 @@ class DigitalSignature {
   position: string;
   id: string;
   isValid = false;
+  signDate: string;
 
   constructor(signature: ISignature, person: IPerson, position: IOrganizationUnit) {
     this.id = signature.id;
@@ -41,7 +44,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
   signatures: Array<DigitalSignature>;
 
   /** digital-signatures ctor */
-  constructor(private repository: RepositoryService) {
+  constructor(private repository: RepositoryService, private translate: TranslateService) {
     this.signatures = new Array<DigitalSignature>();
   }
 
@@ -57,6 +60,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
             if (sc) {
                 sc.person = sig.signer;
                 sc.isValid = sig.isValid;
+                sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
             }
         }
     })

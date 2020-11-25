@@ -30,20 +30,26 @@ export class Tools {
   }
 
   static getSvgImage(base64: string, sanitizer: DomSanitizer): SafeUrl {
-    return this.getImage(base64, "svg+xml;charset=utf-8", sanitizer);
+    return this.getImage(base64, 'svg+xml;charset=utf-8', sanitizer);
   }
 
   static toUtcCsDateTime(scDateTime: string): Date {
-    const utcTime = new Date(Date.parse(scDateTime + "Z"));
+    const utcTime = new Date(Date.parse(scDateTime + 'Z'));
     return utcTime;
   }
 
-  static toLocalDateTime(scDateTime: string, currentLang: string, format: string = "short"): string {
-    if (scDateTime === "9999-12-31T23:59:59.9999999")
+  static toLocalDateTime(scDateTime: string, currentLang: string, format: string = 'short'): string {
+    if (scDateTime === '9999-12-31T23:59:59.9999999') {
       return undefined;
+    }
 
-    if (scDateTime === "9999-12-31T20:59:59.9999999")
+    if (scDateTime === '9999-12-31T20:59:59.9999999') {
       return undefined;
+    }
+
+    if (scDateTime === '0001-01-01T00:00:00') {
+      return undefined;
+    }
 
     const utcDate = Tools.toUtcCsDateTime(scDateTime);
     const datePipe = new DatePipe(currentLang);

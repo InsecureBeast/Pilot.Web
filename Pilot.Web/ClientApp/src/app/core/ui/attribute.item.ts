@@ -1,11 +1,11 @@
-import { IAttribute, AttributeType, IOrganizationUnit, IPerson, OrgUnitKind, IUserState, IObject, ITransition } from "../data/data.classes";
-import { Tools } from "../tools/tools";
-import { RepositoryService } from "../repository.service";
-import { UserState, UserStateColorService } from "../data/user.state";
-import { TransitionsManager } from "../transitions/transitions.manager";
-import { IObjectExtensions } from "../tools/iobject.extensions";
-import { TypeIconService } from "../type-icon.service";
-import { SafeUrl } from "@angular/platform-browser";
+import { IAttribute, AttributeType, IOrganizationUnit, IPerson, OrgUnitKind, IObject } from '../data/data.classes';
+import { Tools } from '../tools/tools';
+import { RepositoryService } from '../repository.service';
+import { UserState, UserStateColorService } from '../data/user.state';
+import { TransitionsManager } from '../transitions/transitions.manager';
+import { IObjectExtensions } from '../tools/iobject.extensions';
+import { TypeIconService } from '../type-icon.service';
+import { SafeUrl } from '@angular/platform-browser';
 
 export class AttributeItem {
 
@@ -39,11 +39,13 @@ export class DateAttributeItem extends AttributeItem {
 
   constructor(attribute: IAttribute, value: string, currentLang: string) {
     super(attribute);
-    if (value === "9999-12-31T23:59:59.9999999")
+    if (value === '9999-12-31T23:59:59.9999999') {
       return;
+    }
 
-    if (value === "9999-12-31T20:59:59.9999999")
+    if (value === '9999-12-31T20:59:59.9999999') {
       return;
+    }
 
     this.value = Tools.toLocalDateTime(value, currentLang);
   }
@@ -57,7 +59,7 @@ export class OrgUnitAttributeItem extends AttributeItem {
     super(attribute);
 
     this.items = new Map<IPerson, IOrganizationUnit>();
-    for (let orgUnit of orgUnits) {
+    for (const orgUnit of orgUnits) {
       if (orgUnit.kind !== OrgUnitKind.Position) {
         this.items.set(null, orgUnit);
         continue;
@@ -75,14 +77,14 @@ export class StateAttributeItem extends AttributeItem {
 
   constructor(
     source: IObject,
-    attribute: IAttribute, 
+    attribute: IAttribute,
     value: string,
-    repository: RepositoryService, 
-    transitionsManager: TransitionsManager, 
+    repository: RepositoryService,
+    transitionsManager: TransitionsManager,
     typeIconService: TypeIconService,
     userStateColorService: UserStateColorService) {
     super(attribute);
-    
+
     this.options = new Array<UserState>();
 
     const currentState = repository.getUserState(value);
@@ -95,13 +97,14 @@ export class StateAttributeItem extends AttributeItem {
     const transitions = transitionsManager.getAvailableTransitions(attribute, attrsMap, currentPerson);
     for (const transition of transitions) {
       const state = repository.getUserState(transition.stateTo);
-      if (!state)
+      if (!state) {
         continue;
+      }
       const userState = new UserState(state, typeIconService, userStateColorService);
       this.options.push(userState);
     }
   }
-  
+
   value: UserState;
   options: UserState[];
 }
