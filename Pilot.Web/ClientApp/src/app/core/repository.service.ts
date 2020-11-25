@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 
-import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
+import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine, IXpsDigitalSignature } from './data/data.classes';
 import { RequestType, HeadersProvider } from './headers.provider';
 import { Change } from './modifier/change';
 import { Modifier } from './modifier/modifier';
@@ -99,6 +99,18 @@ export class RepositoryService {
         .post<IObject[]>(path, body, { headers: headers })
         .pipe(first())
         .subscribe(objects => resolve(objects), err => reject(err));
+    });
+  }
+
+  getDocumentSignaturesAsync(id: string, cancel: Subject<any>): Promise<IXpsDigitalSignature[]> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = 'api/Documents/GetDocumentSignatures?documentId=' + id;
+      this.http
+        .get<IXpsDigitalSignature[]>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((objects) => resolve(objects), e => reject(e));
     });
   }
 

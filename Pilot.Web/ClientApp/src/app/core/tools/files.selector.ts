@@ -1,40 +1,55 @@
-import { IFile } from "../data/data.classes";
-import { FileNames } from "../data/file.names";
+import { IFile } from '../data/data.classes';
+import { FileNames } from '../data/file.names';
 
 export class FilesSelector {
 
   static getSourceFile(files: IFile[]): IFile {
-    if (!files)
+    if (!files) {
       return null;
-    for (let file of files) {
-      if (!this.isThumbnailFile(file))
+    }
+    for (const file of files) {
+      if (!this.isThumbnailFile(file)) {
         return file;
+      }
     }
     return null;
   }
 
   static getSourceThumbnailFile(files: IFile[]): IFile {
-    for (let file of files) {
-      if (this.isThumbnailFile(file))
+    for (const file of files) {
+      if (this.isThumbnailFile(file)) {
         return file;
+      }
     }
     return null;
   }
 
   static getXpsFile(files: IFile[]): IFile {
-    for (let file of files) {
-      if (this.isXpsFile(file))
+    for (const file of files) {
+      if (this.isXpsFile(file)) {
         return file;
+      }
     }
     return null;
   }
 
   static getPdfFile(files: IFile[]): IFile {
-    for (let file of files) {
-      if (this.isPdfFile(file))
+    for (const file of files) {
+      if (this.isPdfFile(file)) {
         return file;
+      }
     }
     return null;
+  }
+
+  static getSignatureFiles(files: IFile[]): IFile[] {
+    const signatures = new Array<IFile>();
+    for (const file of files) {
+      if (this.isSignatureFile(file)) {
+        signatures.push(file);
+      }
+    }
+    return signatures;
   }
 
   static isXpsFile(file: IFile): boolean {
@@ -47,5 +62,9 @@ export class FilesSelector {
 
   static isThumbnailFile(file: IFile): boolean {
     return file.name.endsWith(FileNames.THUMBNAIL_FILE_NAME_POSTFIX);
+  }
+
+  static isSignatureFile(file: IFile): boolean {
+    return file.name === FileNames.SIGNATURE_FILE_NAME;
   }
 }

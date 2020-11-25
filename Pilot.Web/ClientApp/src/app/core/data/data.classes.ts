@@ -1,12 +1,11 @@
-import { OnInit } from "@angular/core";
-import { IObjectExtensions } from "../tools/iobject.extensions";
+import { IObjectExtensions } from '../tools/iobject.extensions';
 
 export class DatabaseInfo {
 
   metadataVersion: number;
   lastChangeset;
   person;
-  databaseId
+  databaseId;
   databaseVersion: number;
   people;
   organizationUnits;
@@ -120,17 +119,27 @@ export interface IOrganizationUnit {
   groupPersons: number[];
 }
 
-export enum OrgUnitKind
-{
-    Department = 0,
-    Position = 1,
-    Group = 2
+export enum OrgUnitKind {
+  Department = 0,
+  Position = 1,
+  Group = 2
+}
+
+export interface ISignature {
+  id: string;
+  databaseId: string;
+  positionId: number;
+  role: string;
+  sign: string;
+  requestedSigner: string;
+  isAdditional: boolean;
+  objectId: string;
 }
 
 export interface IFile {
   body: IFileBody;
   name: string;
-  signatures: any;
+  signatures: ISignature[];
 }
 
 export interface IFileSnapshot {
@@ -207,13 +216,13 @@ export interface ITransition {
 export interface IUserStateMachine {
   id: string;
   title: string;
-  stateTransitions: Map<string, ITransition[]>
+  stateTransitions: Map<string, ITransition[]>;
 }
 
 export class MUserStateMachine {
-  static readonly Null : IUserStateMachine = { 
-    id : "",
-    title:"",
+  static readonly Null: IUserStateMachine = {
+    id : '',
+    title: '',
     stateTransitions: new Map<string, ITransition[]>()
   };
 
@@ -251,10 +260,12 @@ export class AccessRecord {
   recordOwnerPosition: number;
   inheritanceSource: string;
 
-  equals(other:AccessRecord) : boolean
-  {
-    if (this.orgUnitId === other.orgUnitId && (this.access.Equals(other.access) && this.recordOwnerPosition === other.recordOwnerPosition))
+  equals(other: AccessRecord): boolean {
+    if (this.orgUnitId === other.orgUnitId &&
+      (this.access.Equals(other.access) &&
+      this.recordOwnerPosition === other.recordOwnerPosition)) {
       return this.inheritanceSource === other.inheritanceSource;
+    }
     return false;
   }
 
@@ -263,7 +274,7 @@ export class AccessRecord {
   //   if (this.orgUnitId === other.orgUnitId && this.recordOwnerPosition === other.recordOwnerPosition)
   //     return object.Equals((object) this.Access, (object) other.Access);
   //   return false;
-  // }  
+  // }
 }
 
 export class Access {
@@ -271,8 +282,7 @@ export class Access {
   validThrough: Date;
   isInheritable: boolean;
 
-  Equals(other: Access )
-  {
+  Equals(other: Access ) {
     return this.accessLevel === other.accessLevel &&
           this.isInheritable === other.isInheritable &&
           this.validThrough === other.validThrough;
@@ -291,11 +301,19 @@ export enum ObjectState {
 export class StateInfo {
   constructor() {
     this.state = ObjectState.Alive;
-    
-  }  
+  }
 
   state: ObjectState;
   date: Date;
   personId: number;
   positionId: number;
+}
+
+export interface IXpsDigitalSignature {
+  id: string;
+  signer: string;
+  signDate: Date;
+  isCertificateValid: boolean;
+  isSigned: boolean;
+  isValid: boolean;
 }

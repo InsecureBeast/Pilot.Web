@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pilot.Web.Model;
 using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Tools;
+using Pilot.Xps.Entities;
 
 namespace Pilot.Web.Controllers
 {
@@ -22,31 +24,31 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<PObject> GetDocuments(Guid[] ids)
+        public IList<PObject> GetDocuments(Guid[] ids)
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
-            return api.GetObjects(ids);
+            return api.GetObjects(ids).ToList();
         }
 
         [Authorize]
         [HttpPost("[action]")]
-        public IEnumerable<PObject> GetObjects([FromBody] string[] ids)
+        public IList<PObject> GetObjects([FromBody] string[] ids)
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
             var guids = ids.Select(Guid.Parse);
-            return api.GetObjects(guids.ToArray());
+            return api.GetObjects(guids.ToArray()).ToList();
         }
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<PObject> GetDocumentChildren(string id, int childrenType)
+        public IList<PObject> GetDocumentChildren(string id, int childrenType)
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
             var guid = Guid.Parse(id);
-            return api.GetObjectChildren(guid, (ChildrenType)childrenType);
+            return api.GetObjectChildren(guid, (ChildrenType)childrenType).ToList();
         }
 
         [Authorize]
@@ -64,14 +66,26 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<PObject> GetDocumentParents(string id)
+        public IList<PObject> GetDocumentParents(string id)
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
             var guid = Guid.Parse(id);
 
             var parents = api.GetObjectParents(guid);
-            return parents;
+            return parents.ToList();
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public IList<XpsDigitalSignature> GetDocumentSignatures(string documentId)
+        {
+            var actor = HttpContext.GetTokenActor();
+            var api = _contextService.GetServerApi(actor);
+            var guid = Guid.Parse(documentId);
+            var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
+            var signatureBuffer = xpsServiceApi.GetSignatures(guid);
+            return XpsDigitalSignatureSerializer.Deserialize(signatureBuffer);
         }
     }
 }

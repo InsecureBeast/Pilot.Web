@@ -73,5 +73,6 @@ export class AuthService {
 
   clearToken(): void {
     localStorage.removeItem(TOKEN);
+    this.isLoggedIn$.next(false);
   }
 }

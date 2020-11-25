@@ -8,3 +8,11 @@
   --primary-light: #EED485;
   --gray-light: #eaebef;
 }
+
+.font-small {
+  font-size: small;
+}
+
+.font-large {
+  font-size: x-large;
+}

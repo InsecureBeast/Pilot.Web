@@ -1,1 +1,10 @@
-﻿<div style="border: 1px solid red">digital-signatures Component</div>
+﻿<ul class="list-group list-group-flush mb-5">
+    <li class="list-group-item list-group-item-action pointer p-2" *ngFor="let signature of signatures" >
+      <div (click)="selected(signature);">
+        <div class="text-truncate">{{signature.person}}</div>
+        <span class="font-small ng-content">No signature</span>
+        <span *ngIf="signature.isValid" class="font-small ng-content">Valid</span>
+      </div>
+  
+    </li>
+  </ul>

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using Ascon.Pilot.DataClasses;
 using Castle.Core.Internal;
 using DocumentRender;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +9,6 @@ using Moq;
 using NUnit.Framework;
 using Pilot.Web.Controllers;
 using Pilot.Web.Model;
-using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Model.FileStorage;
 
 namespace Pilot.Web.Tests

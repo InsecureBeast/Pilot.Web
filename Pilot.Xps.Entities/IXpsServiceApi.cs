@@ -7,6 +7,9 @@ namespace Pilot.Xps.Entities
 {
     public interface IXpsServiceApi
     {
+        bool CheckConnected();
         byte[] MergeXpsDocument(Guid documentId);
+        SignResult SignDocument(Guid documentId, int personId);
+        byte[] GetSignatures(Guid documentId);
     }
 }

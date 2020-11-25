@@ -29,7 +29,7 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
 
   @Output() onClose = new EventEmitter<any>();
 
-  versions : Array<IDocumentVersion>;
+  versions: Array<IDocumentVersion>;
 
   /** document-versions ctor */
   constructor(private repository: RepositoryService,
@@ -39,11 +39,13 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
-      if (s === null)
+      if (s === null) {
         return;
+      }
 
-      if (!this.document)
+      if (!this.document) {
           return;
+      }
 
       this.selectVersion(s);
     });
@@ -74,11 +76,11 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
 
   private loadVersions(document: IObject): void {
     this.versions = new Array();
-    for (let snapshot of document.previousFileSnapshots) {
+    for (const snapshot of document.previousFileSnapshots) {
       let version: IDocumentVersion;
-      if (!TypeExtensions.isProjectFileOrFolder(document.type))
+      if (!TypeExtensions.isProjectFileOrFolder(document.type)) {
         version = new DocumentVersion(snapshot, this.repository);
-      else {
+      } else {
         version = new FileVersion(snapshot, this.repository);
       }
       version.isSelected = false;
