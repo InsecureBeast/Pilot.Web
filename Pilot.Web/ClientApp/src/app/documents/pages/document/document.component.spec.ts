@@ -13,7 +13,6 @@ import { DocumentComponent } from './document.component';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { DownloadService } from 'src/app/core/download.service';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
-import { once } from 'process';
 import { RequestType } from 'src/app/core/headers.provider';
 
 describe('document component', () => {
