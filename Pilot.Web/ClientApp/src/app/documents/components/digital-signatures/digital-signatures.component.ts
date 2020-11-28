@@ -98,13 +98,17 @@ export class DigitalSignaturesComponent implements OnDestroy {
     this.repository.getDocumentSignaturesAsync(document.id, this.ngUnsubscribe)
     .then(signatures => {
         for (const sig of signatures) {
-            const sc = this.signatures.find(s => s.id === sig.id);
-            if (sc) {
-                sc.person = sig.signer;
-                sc.isValid = sig.isValid;
-                sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
-                sc.role = sig.role;
-            }
+          if (sig.isAdditional && !sig.isSigned) {
+            continue;
+          }
+
+          const sc = this.signatures.find(s => s.id === sig.id);
+          if (sc) {
+              sc.person = sig.signer;
+              sc.isValid = sig.isValid;
+              sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
+              sc.role = sig.role;
+          }
         }
 
         this.showSignButton = true;
