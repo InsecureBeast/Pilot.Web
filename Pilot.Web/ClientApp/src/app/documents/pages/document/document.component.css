@@ -12,9 +12,7 @@ img.doc-page {
 }
 
 .doc-info {
-  /* background-color: white; */
   background: var(--bg-content);
-  /* border-left: 1px solid rgb(222, 226, 230); */
 }
 
 .versions-view {
@@ -24,7 +22,7 @@ img.doc-page {
   bottom: 0;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 991px) {
   .doc-info {
     height: 60vh;
     border-top: 1px solid var(--border);
@@ -41,7 +39,7 @@ img.doc-page {
 }
 
 :host ::ng-deep div.tab-content {
-  height: calc(100% - 2.6rem);
+  height: calc(100% - 2.7rem);
   background-color: var(--bg);
   border-left: 1px solid var(--border);
 }

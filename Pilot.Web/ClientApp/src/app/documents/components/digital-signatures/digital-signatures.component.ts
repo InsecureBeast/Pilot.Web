@@ -39,7 +39,9 @@ export class DigitalSignaturesComponent implements OnDestroy {
   }
   set document(newValue: IObject) {
     this._document = newValue;
-    this.loadSignatures(newValue);
+    if (newValue) {
+      this.loadSignatures(newValue);
+    }
   }
 
   signatures: Array<DigitalSignature>;

@@ -24,7 +24,9 @@ export class DocumentVersionsComponent implements OnChanges, OnInit, OnDestroy {
   }
   set document(newValue: IObject) {
     this._document = newValue;
-    this.loadVersions(newValue);
+    if (newValue) {
+      this.loadVersions(newValue);
+    }
   }
 
   @Output() onClose = new EventEmitter<any>();

@@ -1,4 +1,5 @@
-﻿<ul class="list-group list-group-flush mb-5">
+﻿<div class="d-flex flex-column h-100">
+  <ul class="list-group list-group-flush mb-auto">
     <li class="list-group-item list-group-item-action pointer p-2" *ngFor="let signature of signatures" >
         <div class="d-flex flex-row">
             <span *ngIf="signature.isValid" class="material-icons m-2" style="color:green">check_circle</span>
@@ -17,14 +18,15 @@
             </div>
         </div>
     </li>
-</ul>
-<div class="d-flex justify-content-center" *ngIf="showSignButton">
-    <button class="btn btn-primary btn-block m-4" 
-            [disabled] = "isProcessing"
-            style="width: 10rem;" 
-            type="button" 
-            (click)="sign()">
-        <span *ngIf="isProcessing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
-        <span class="ml-1" translate="sign"> </span>
-    </button>
+  </ul>
+    <div class="d-flex justify-content-center" *ngIf="showSignButton">
+        <button class="btn btn-primary btn-block m-4" 
+                [disabled] = "isProcessing"
+                style="width: 10rem;" 
+                type="button" 
+                (click)="sign()">
+            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
+            <span class="ml-1" translate="sign"> </span>
+        </button>
+    </div>
 </div>

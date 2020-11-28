@@ -9,9 +9,7 @@
 
 <div class="pt-6" *ngIf="!error">
   <div class="row m-0">
-    <div class="col-12 p-0 pb-5"
-         [class.col-md-8]="isInfoShown"
-         [class.info-open]="isInfoShown">
+    <div class="col-12 col-lg-8 p-0 pb-5">
 
       <div class="text-center" *ngIf="!isActualVersionSelected">
         <div class="alert alert-warning" role="alert">
@@ -51,10 +49,11 @@
       </div>
     </div>
 
-    <div class="versions-view col-12 col-md-4 doc-info overflow-auto p-0" *ngIf="isInfoShown">
-      <div class="h-100">
+    <div class="versions-view col-12 col-lg-4 doc-info overflow-auto p-0 d-none d-lg-block"
+        [class.d-block]="isInfoShown">
+      <div class="h-100 pt-1">
         <tabset #staticTabs>
-          <tab heading="Signatures">
+          <tab heading="Signatures" customClass="h-100">
             <app-digital-signatures [document]="document"></app-digital-signatures>
           </tab>
           <tab heading="Versions">
