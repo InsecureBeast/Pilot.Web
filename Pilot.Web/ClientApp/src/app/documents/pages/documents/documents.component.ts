@@ -65,8 +65,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
           isSource = true;
       }
 
-      this.repository.getObjectAsync(id)
-        .then(source => {
+      const promise = this.repository.getObjectAsync(id);
+        promise.then(source => {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
           this.isLoading = false;
         })
@@ -81,7 +81,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.documentsService.changeClearChecked(true);
-          this.repository.requestType = RequestType.FromCache;
         }
       }
     });
@@ -97,9 +96,12 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.navigationSubscription.unsubscribe();
-    this.routerSubscription.unsubscribe();
-    this.objectCardChangeSubscription.unsubscribe();
+    if (this.navigationSubscription)
+      this.navigationSubscription.unsubscribe();
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
+    if (this.objectCardChangeSubscription)  
+      this.objectCardChangeSubscription.unsubscribe();
 
     // cancel
     this.ngUnsubscribe.next();
@@ -133,7 +135,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.checked = nodes;
   }
 
-  onError(error): void {
+  onError(error: HttpErrorResponse): void {
     this.error = error;
   }
 

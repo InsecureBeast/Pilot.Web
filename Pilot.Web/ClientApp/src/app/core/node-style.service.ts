@@ -14,17 +14,17 @@ export class NodeStyleService {
     this.setNodeStyle(nodeStyle);
   }
 
-  public get currentNodeStyle(): NodeStyle {
+  get currentNodeStyle(): NodeStyle {
     return this.current;
   }
 
-  public setNodeStyle(style: NodeStyle): void {
+  setNodeStyle(style: NodeStyle): void {
     localStorage.setItem("nodeStyle", style.toString());
     this.current = style;
     this.nodeStyleSource.next(style);
   }
 
-  public getNodeStyle(): Observable<NodeStyle> {
+  getNodeStyle(): Observable<NodeStyle> {
     return this.nodeStyleSource.asObservable();
   }
 

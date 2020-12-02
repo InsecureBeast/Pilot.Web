@@ -27,15 +27,22 @@ namespace Pilot.Web.Controllers
         private readonly IFileStorageProvider _fileStorageProvider;
         private readonly IFilesStorage _filesStorage;
         private readonly IFileSaver _fileSaver;
+        private readonly IFilesOperationService _filesOperationService;
 
-        public FilesController(IContextService contextService, IDocumentRender documentRender, 
-            IFilesStorage filesStorage, IFileSaver fileSaver, IFileStorageProvider fileStorageProvider)
+        public FilesController(
+            IContextService contextService, 
+            IDocumentRender documentRender, 
+            IFilesStorage filesStorage, 
+            IFileSaver fileSaver, 
+            IFilesOperationService filesOperationService, 
+            IFileStorageProvider fileStorageProvider)
         {
             _contextService = contextService;
             _documentRender = documentRender;
             _fileStorageProvider = fileStorageProvider;
             _filesStorage = filesStorage;
             _fileSaver = fileSaver;
+            _filesOperationService = filesOperationService;
         }
 
         [Authorize]
@@ -47,7 +54,7 @@ namespace Pilot.Web.Controllers
             if (pages.Any())
                 return pages.Count;
 
-            var actor = HttpContext.GetTokenActor();
+            var actor = _contextService.GetTokenActor(HttpContext);
             var fileLoader = _contextService.GetFileLoader(actor);
             var file = fileLoader.Download(guid, size);
 
@@ -74,7 +81,7 @@ namespace Pilot.Web.Controllers
         public ActionResult GetFile(string fileId, long size)
         {
             var guid = Guid.Parse(fileId);
-            var actor = HttpContext.GetTokenActor();
+            var actor = _contextService.GetTokenActor(HttpContext);
             var fileLoader = _contextService.GetFileLoader(actor);
             var bytes = fileLoader.Download(guid, size);
             return File(bytes, "application/octet-stream");
@@ -89,7 +96,7 @@ namespace Pilot.Web.Controllers
             if (thumbnail != null)
                 return File(thumbnail, "image/png");
 
-            var actor = HttpContext.GetTokenActor();
+            var actor = _contextService.GetTokenActor(HttpContext);
             var fileLoader = _contextService.GetFileLoader(actor);
             var fileContent = fileLoader.Download(guid, size);
             thumbnail = _documentRender.RenderPage(fileContent, 1, 0.2);
@@ -106,23 +113,14 @@ namespace Pilot.Web.Controllers
             if (ids.Length == 0)
                 throw new Exception("ids are empty");
 
-            var actor = HttpContext.GetTokenActor();
+            var actor = _contextService.GetTokenActor(HttpContext);
             var api = _contextService.GetServerApi(actor);
-            var loader = _contextService.GetFileLoader(actor);
-
+            
             var list = ids.Select(Guid.Parse).ToArray();
             var objects = api.GetObjects(list);
 
-            using (var compressedFileStream = new MemoryStream())
-            {
-                using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Update, true))
-                {
-                    AddObjectsToArchive(api, loader, objects, zipArchive, "");
-                }
-
-                var data = compressedFileStream.ToArray();
-                return File(data, "application/octet-stream");
-            }
+            var data = _filesOperationService.CompressObjectsToArchive(objects, actor);
+            return File(data, "application/octet-stream");
         }
 
         /// <summary>

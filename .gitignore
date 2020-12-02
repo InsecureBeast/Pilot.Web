@@ -8,3 +8,5 @@
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+/Pilot.Web.Tests/bin/*
+/Pilot.Web.Tests/obj/*

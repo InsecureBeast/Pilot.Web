@@ -15,7 +15,7 @@ import { ModalModule } from './ui/modal/modal.module';
 import { RouteReuseService } from './core/route-reuse.service';
 import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ImagesCacheInterceptor } from './core/interceptors/images-cache.interceptor';
-import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/stop-propagation.directive';
+import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/directives/stop-propagation.directive';
 import {AppRoutingModule} from "./app-routing.module";
 import {BootstrapUiModule} from "./bootstrap-ui.module";
 import {AlertComponent} from "./core/components/alert/alert.component";

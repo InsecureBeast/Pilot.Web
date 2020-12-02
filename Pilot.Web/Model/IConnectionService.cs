@@ -4,7 +4,7 @@ using Pilot.Web.Model.Auth;
 
 namespace Pilot.Web.Model
 {
-    interface IConnectionService
+    internal interface IConnectionService
     {
         HttpPilotClient Connect(Credentials credentials);
     }

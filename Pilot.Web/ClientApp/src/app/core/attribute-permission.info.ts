@@ -3,6 +3,7 @@ import { IObjectExtensions } from "./tools/iobject.extensions";
 
 export class AttributePermissionInfo {
   private ATTRIBUTE_NAME_MARKER = '&';
+  
   constructor(editableForPositionsSource: string[]) {
     this.orgUnits = new Array<number>();
     this.orgUnitAttributes = new Array<string>();
@@ -25,25 +26,13 @@ export class AttributePermissionInfo {
   orgUnits: number[];
   orgUnitAttributes: string[];
 
-  // PackToStringArray() : string[] {
-  //     return this.OrgUnitAttributes.map(x => "{ATTRIBUTE_NAME_MARKER}" + x)
-  //     .reduce((oua, ou) =>)
-  //     //Union(OrgUnits.Select(x => x.ToString())).ToArray();
-  // }
-
   extractAllOrgUnits(obj: IObject): number[] {
     const attrMap = IObjectExtensions.objectToMap<IValue>(obj.attributes);
     return this.extractAllOrgUnitsByAttributes(attrMap);
   }
 
   extractAllOrgUnitsByAttributes(attributes: Map<string, IValue>) : number[] {
-      
     let result = new Array<number>();
-    //this.OrgUnits.forEach(orgUnit => {
-    //    return orgUnit;    
-    //});
-    
-
     if (!this.orgUnitAttributes || !attributes  )
       return result;
 

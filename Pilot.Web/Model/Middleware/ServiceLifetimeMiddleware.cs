@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Pilot.Web.Model.Auth;
 using Pilot.Web.Tools;
 
 namespace Pilot.Web.Model.Middleware
@@ -18,14 +16,14 @@ namespace Pilot.Web.Model.Middleware
         private readonly Timer _timer;
         private readonly TimeSpan _renewalTime;
         private readonly Dictionary<string, long> _contextTable = new Dictionary<string, long>();
-        private readonly int _timerDueTime = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-        public ServiceLifetimeMiddleware(RequestDelegate next, IContextService contextService, IOptions<AuthSettings> authSettings)
+        public ServiceLifetimeMiddleware(RequestDelegate next, IContextService contextService, IIdleSessionTimeoutProvider sessionTimeoutProvider)
         {
             _next = next;
             _contextService = contextService;
-            _timer = new Timer(TimerTick, null, _timerDueTime, _timerDueTime);
-            _renewalTime = TimeSpan.FromMinutes(authSettings.Value.IdleSessionTimeout);
+            var timerDueTime = sessionTimeoutProvider.GetTimerTicks();
+            _timer = new Timer(TimerTick, null, timerDueTime, timerDueTime);
+            _renewalTime = sessionTimeoutProvider.GetIdleTimeout();
         }
 
         public Task Invoke(HttpContext context)
@@ -35,7 +33,7 @@ namespace Pilot.Web.Model.Middleware
 
             lock (_contextTable)
             {
-                var actor = context.GetTokenActor();
+                var actor = _contextService.GetTokenActor(context);
                 if (!string.IsNullOrEmpty(actor))
                     _contextTable[actor] = DateTime.UtcNow.Ticks;
             }

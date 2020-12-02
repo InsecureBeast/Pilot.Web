@@ -59,6 +59,8 @@ namespace Pilot.Web.Model.FileStorage
             {
                 return fileStream.ToByteArray();
             }
+
+            
         }
     }
 }

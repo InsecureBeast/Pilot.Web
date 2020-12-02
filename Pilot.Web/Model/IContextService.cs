@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Pilot.Web.Model.Auth;
+using Pilot.Web.Tools;
 
 namespace Pilot.Web.Model
 {
@@ -12,16 +14,20 @@ namespace Pilot.Web.Model
 
         void CreateContext(Credentials credentials);
         void RemoveContext(string actor);
+
+        string GetTokenActor(HttpContext httpContext);
     }
 
     class ContextService : IContextService
     {
         private readonly IConnectionService _connectionService;
+        private readonly IRemoteServiceFactory _remoteServiceFactory;
         private readonly ConcurrentDictionary<string, IRemoteService> _services = new ConcurrentDictionary<string, IRemoteService>();
         
-        public ContextService(IConnectionService connectionService)
+        public ContextService(IConnectionService connectionService, IRemoteServiceFactory remoteServiceFactory)
         {
             _connectionService = connectionService;
+            _remoteServiceFactory = remoteServiceFactory;
         }
 
         public IServerApiService GetServerApi(string actor)
@@ -45,7 +51,7 @@ namespace Pilot.Web.Model
                     return;
 
                 var httpClient = _connectionService.Connect(credentials);
-                var apiService = new RemoteService(httpClient);
+                var apiService = _remoteServiceFactory.CreateRemoteService(httpClient);
                 _services[credentials.Username] = apiService;
             }
         }
@@ -59,18 +65,27 @@ namespace Pilot.Web.Model
             }
         }
 
+        public string GetTokenActor(HttpContext httpContext)
+        {
+            return httpContext.GetTokenActor();
+        }
+
         private IRemoteService GetRemoteService(string actor)
         {
-            _services.TryGetValue(actor, out var apiService);
-            if (apiService == null)
-                throw new UnauthorizedAccessException();
-
-            if (!apiService.IsActive)
+            lock (_services)
             {
-                throw new UnauthorizedAccessException();
-            }
+                _services.TryGetValue(actor, out var apiService);
 
-            return apiService;
+                if (apiService == null)
+                    throw new UnauthorizedAccessException();
+
+                if (!apiService.IsActive)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+
+                return apiService;
+            }
         }
     }
 }

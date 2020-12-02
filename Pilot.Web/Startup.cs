@@ -74,11 +74,14 @@ namespace Pilot.Web
             services.Configure<ServerSettings>(Configuration.GetSection("PilotServer"));
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IConnectionService, ConnectionService>();
+            services.AddSingleton<IRemoteServiceFactory, RemoteServiceFactory>();
             services.AddSingleton<IContextService, ContextService>();
+            services.AddSingleton<IIdleSessionTimeoutProvider, IdleSessionTimeoutProvider>();
             services.AddScoped<IDocumentConverterFactory, DocumentConverterFactory>();
             services.AddScoped<IDocumentRender, DocumentRender.DocumentRender>();
             services.AddScoped<IFileSaver, FileSaver>();
             services.AddScoped<IFilesStorage, FilesStorage>();
+            services.AddScoped<IFilesOperationService, FilesOperationService>();
             services.AddScoped<IFileStorageDirectoryProvider, FileStorageDirectoryProvider>();
             
             services.AddSingleton<IFileStorageProvider>(new FileStorageProvider(DirectoryProvider.GetTempPath()));

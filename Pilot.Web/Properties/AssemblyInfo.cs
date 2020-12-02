@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -19,6 +20,8 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("0102990A-C96D-4925-8952-F1CF83A1ED78")]
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "logger.config", Watch = true)]
+[assembly: InternalsVisibleTo("Pilot.Web.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 // Version information for an assembly consists of the following four values:
 //
