@@ -58,14 +58,16 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       let id = params.get('id');
-      if (!id)
+      if (!id) {
         id = SystemIds.rootId;
+      }
 
       let isSource = false;
-      if (this.activatedRoute.snapshot?.url.length !== 0) {
-        const urlSegment = this.activatedRoute.snapshot?.url[0].path;
-        if (urlSegment === 'files')
+      if (this.activatedRoute.snapshot.url.length > 1) {
+        const urlSegment = this.activatedRoute.snapshot.url[1].path;
+        if (urlSegment === 'files') {
           isSource = true;
+        }
       }
 
       const promise = this.repository.getObjectAsync(id);
@@ -89,9 +91,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     });
 
     this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
-      if (!id)
+      if (!id) {
         return;
-      
+      }
+
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.checkedNode = object;
       });
@@ -99,12 +102,15 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
-    if (this.routerSubscription)
+    }
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
-    if (this.objectCardChangeSubscription)  
+    }
+    if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
+    }
 
     // cancel
     this.ngUnsubscribe.next();
@@ -120,18 +126,19 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.navigationService.navigateToFile(node.id);
+        this.navigationService.navigateToFile(this.currentItem.id, node.id);
       } else {
-        this.navigationService.navigateToDocument(node.id);
+        this.navigationService.navigateToDocument(this.currentItem.id, node.id);
       }
-      
+
       return;
     }
 
-    if (node.isSource)
+    if (node.isSource) {
       this.navigationService.navigateToFilesFolder(node.id);
-    else
+    } else {
       this.navigationService.navigateToDocumentsFolder(node.id);
+    }
   }
 
   onItemsChecked(nodes: INode[]): void {
@@ -156,24 +163,25 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.error = error;
   }
 
-  onShowObjectCard() : void {
+  onShowObjectCard(): void {
     this.checkedNode = this.getCheckedNode();
     this.modalService.open(this.documentCardModal);
   }
 
-  onCloseObjectCard() : void {
+  onCloseObjectCard(): void {
     this.modalService.close(this.documentCardModal);
   }
-  
+
   onSaveObjectCard(id: string): void {
     this.documentsService.changeObjectForCard(id);
     this.onCloseObjectCard();
   }
 
-  private getCheckedNode() : IObject{
-    if (this.checked && this.checked.length > 0)
+  private getCheckedNode(): IObject {
+    if (this.checked && this.checked.length > 0) {
       return this.checked[0].source;
+    }
 
-    return undefined;  
+    return undefined;
   }
 }

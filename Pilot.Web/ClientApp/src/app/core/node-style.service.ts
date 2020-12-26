@@ -9,7 +9,7 @@ export class NodeStyleService {
 
   constructor() {
 
-    var nodeStyle = this.loadNodeStyle();
+    const nodeStyle = this.loadNodeStyle();
     this.current = nodeStyle;
     this.setNodeStyle(nodeStyle);
   }
@@ -19,7 +19,7 @@ export class NodeStyleService {
   }
 
   setNodeStyle(style: NodeStyle): void {
-    localStorage.setItem("nodeStyle", style.toString());
+    localStorage.setItem('nodeStyle', style.toString());
     this.current = style;
     this.nodeStyleSource.next(style);
   }
@@ -29,13 +29,13 @@ export class NodeStyleService {
   }
 
   private loadNodeStyle(): NodeStyle {
-    var nodeStyle = localStorage.getItem("nodeStyle");
+    const nodeStyle = localStorage.getItem('nodeStyle');
 
-    if (nodeStyle === "0") {
+    if (nodeStyle === '0') {
       return NodeStyle.ListView;
     }
 
-    if (nodeStyle === "1") {
+    if (nodeStyle === '1') {
       return NodeStyle.GridView;
     }
 

@@ -19,7 +19,7 @@ export class DownloadService {
         .subscribe(data => {
           const file = FilesSelector.getSourceFile(object.actualFileSnapshot.files);
           const fileExt = file.name.split('.').pop();
-          const name = object.title + '.' + fileExt;
+          const name = object.title;
           this.runLoadFile(data, name, 'application/octet-stream');
           resolve(true);
         }, err => reject(err));

@@ -1,29 +1,67 @@
 <div class="d-flex content-center" *ngIf="isLoading">
   <div class="spinner-border text-secondary" role="status">
-    <span class="sr-only" translate="loading"></span>
+    <span class="sr-only" translate="loading"></span><br/>
   </div>
 </div>
 
-<div class="pb-2" #contentDiv>
-  <ng-container *ngIf="nodeStyle === 0">
-    <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
-  </ng-container>
+<div class="drop-container pr-2 pl-2" #contentDiv
+  appFileDrop
+  [isFileDropDisabled]="!canUploadFile"
+  (filesDropped)="onFilesDropped($event)"
+  (filesHovered)="dropZoneState($event)"
+  [class.drop-container-active]="dropZoneActivity">
 
-  <ng-container *ngIf="nodeStyle === 1">
-    <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
-  </ng-container>
+  <div class="drop-area">
+    <div>
+      <ng-container *ngIf="nodeStyle === 0">
+        <ng-container *ngTemplateOutlet="listViewNodeTemplate"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="nodeStyle === 1">
+        <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
+      </ng-container>
+      <div class="upload-info-area m-2 mt-3" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+        <ul class="navbar-nav noselect">
+          <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
+            <span class="navbar-text toolbar-text noselect align-self-center" style="margin: 10px 4px 10px 10px" translate="dropInfo"></span>
+            <span class="navbar-text toolbar-text noselect align-self-center drop-popup-button" translate="upload"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="content-center" style="z-index: -1" *ngIf="nodes && nodes.length === 0">
+        <img src="/assets/images/empty-folder.svg" class="error-image" />
+        <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="drop-popup" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+    <div class="drop-popup-help">
+      <ul class="navbar-nav noselect">
+        <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
+          <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px 4px 10px 10px" translate="dropInfo"></span>
+          <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px 10px 10px 0; cursor: pointer; color: blue" translate="upload"></span>
+        </li>
+      </ul>
+    </div>
+  </div> -->
 </div>
 
-<div class="content-center" *ngIf="nodes && nodes.length === 0">
-  <img src="/assets/images/empty-folder.svg" class="error-image" />
-  <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
-</div>
+<ng-template #modalTemplate>
+  <div class="modal-body">
+    <progressbar  class="progress-bar progress-bar-striped progress-bar-animated justify-content-between"
+                  [value]="uploadProgressPercent"
+                  [max]="100"
+                  type="success"
+                  style="width: 100%">{{uploadProgressPercent}} %</progressbar>
+  </div>
+</ng-template>
 
 <ng-template #listViewNodeTemplate>
-  <ul class="list-group mr-3 ml-3 shadow-sm" *ngIf="!isLoading && nodes">
+  <ul class="list-group shadow-sm mr-2 ml-2" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
-        (click)="checked(node, $event)"
+        (click)="check(node, $event)"
         *ngFor="let node of nodes">
 
       <div class="d-flex">
@@ -42,7 +80,7 @@
 
         <div class="mr-auto">
           <div class="pointer three-line-text overflow-hidden"
-               (click)="selected(node);$event.stopPropagation();"
+               (click)="select(node);$event.stopPropagation();"
                *ngIf="node">
             <div [class.text-primary]="node?.isChecked">{{ node.title }}</div>
             <small class="text-muted" *ngIf="node.type">{{node.type.title}}</small>
@@ -63,7 +101,7 @@
 
       <div class="card text-center shadow-sm"
            [class.list-group-item-primary]="node.isChecked"
-           (click)="checked(node, $event);$event.stopPropagation();"
+           (click)="check(node, $event);$event.stopPropagation();"
            *ngIf="!isEmptyNode(node) else gridViewEmptyNodeTemplate">
         <div class="overflow-hidden bg-white card-img" *ngIf="!node.preview">
           <img [src]="node.icon" class="card-icon-center" alt="type icon image" *ngIf="node.icon">
@@ -80,8 +118,8 @@
 
         <div class="card-children-count text-muted" *ngIf="node.childrenCount >= 0">{{node.childrenCount}}</div>
 
-        <div class="card-body" 
-             (click)="selected(node);$event.stopPropagation();"
+        <div class="card-body"
+             (click)="select(node);$event.stopPropagation();"
              *ngIf="node">
           <div class="text-center pointer">
             <div class="card-name"

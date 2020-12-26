@@ -13,6 +13,8 @@ import { DocumentComponent } from './document.component';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { DownloadService } from 'src/app/core/download.service';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
+import { TypeIconService } from 'src/app/core/type-icon.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequestType } from 'src/app/core/headers.provider';
 
 describe('document component', () => {
@@ -36,6 +38,9 @@ describe('document component', () => {
     let location: Location;
     let versionSelectorMock: VersionsSelectorService;
     let versionSelector: VersionsSelectorService;
+    let typeIconServiceMock: TypeIconService;
+    let typeIconService: TypeIconService;
+    let translate: TranslateService;
     let paramMapMock: ParamMap;
 
     const getIObjectStub = function(id: string): IObject {
@@ -72,6 +77,8 @@ describe('document component', () => {
         location = instance(locationMock);
         versionSelectorMock = mock(VersionsSelectorService);
         versionSelector = instance(versionSelectorMock);
+        typeIconServiceMock = mock(TypeIconService);
+        typeIconService = mock(typeIconServiceMock);
 
         // setup mocks
         paramMapMock = mock<ParamMap>();
@@ -92,7 +99,7 @@ describe('document component', () => {
 
         TestBed.configureTestingModule({
             declarations: [ DocumentComponent ],
-            imports: [ BrowserModule, /*TranslateModule.forRoot(),*/ FormsModule ],
+            imports: [ BrowserModule, TranslateModule.forRoot(), FormsModule ],
             providers: [
                 { provide: ActivatedRoute, useValue: activatedRoute },
                 { provide: SourceFileService, useValue: sourceFileService },
@@ -102,11 +109,13 @@ describe('document component', () => {
                 { provide: Router, useValue: router },
                 { provide: VersionsSelectorService, useValue: versionSelector },
                 { provide: DocumentsService, useValue: documentsService },
-                { provide: ModalService, useValue: modalService }
+                { provide: ModalService, useValue: modalService },
+                { provide: TypeIconService, useValue: typeIconService }
             ]
         });
 
         fixture = TestBed.createComponent(DocumentComponent);
+        translate = TestBed.inject(TranslateService);
         component = fixture.componentInstance;
     });
 
@@ -183,7 +192,7 @@ describe('document component', () => {
         flush();
 
         // when
-        component.closeDocumentVersions();
+        component.closeDocumentVersions(null);
 
         // then
         expect(component.isInfoShown).toBeFalse();
@@ -195,7 +204,7 @@ describe('document component', () => {
         flush();
 
         // when
-        component.onShowDocumentCard();
+        component.onShowDocumentCard(null);
 
         // then
         verify(modalServiceMock.open('documentCardModal')).once();
@@ -208,7 +217,7 @@ describe('document component', () => {
         flush();
 
         // when
-        component.onCloseDocumentCard();
+        component.onCloseDocumentCard(null);
 
         // then
         verify(modalServiceMock.close('documentCardModal')).once();

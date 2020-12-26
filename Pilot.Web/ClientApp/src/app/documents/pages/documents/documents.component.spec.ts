@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testi
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap, Event, ActivatedRouteSnapshot, UrlHandlingStrategy, UrlSegment } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { anyString, instance, mock, verify, when } from 'ts-mockito';
 import { BehaviorSubject, of, Subject } from 'rxjs';
@@ -40,6 +40,8 @@ describe('documents component', () => {
     let activatedRouteMock: ActivatedRoute;
     let activatedRoute: ActivatedRoute;
     let paramMapMock: ParamMap;
+
+    const currentObjectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
 
     const getIObjectStub = function(id: string): IObject {
         const type = <IType> {
@@ -79,13 +81,15 @@ describe('documents component', () => {
         // setup mocks
         paramMapMock = mock<ParamMap>();
         const paramMap = instance(paramMapMock);
-        const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
-        when(paramMapMock.get('id')).thenReturn(objectId);
+        const snapshot = new ActivatedRouteSnapshot();
+        snapshot.url = new Array<UrlSegment>();
+        when(paramMapMock.get('id')).thenReturn(currentObjectId);
         when(activatedRouteMock.paramMap).thenReturn(new BehaviorSubject<ParamMap>(paramMap));
+        when(activatedRouteMock.snapshot).thenReturn(snapshot);
         when(routerMock.events).thenReturn(new Subject<Event>());
         when(documentsServiceMock.objectForCard$).thenReturn(of(''));
-        const object = getIObjectStub(objectId);
-        when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+        const object = getIObjectStub(currentObjectId);
+        when(repositoryMock.getObjectAsync(currentObjectId)).thenResolve(object);
 
         TestBed.configureTestingModule({
             declarations: [ DocumentsComponent ],
@@ -167,8 +171,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(nodeId)).never();
-        verify(navigationServiceMock.navigateToDocument(nodeId)).once();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).never();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).once();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
         expect().nothing();
@@ -190,8 +194,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(nodeId)).once();
-        verify(navigationServiceMock.navigateToDocument(nodeId)).never();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).once();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
         expect().nothing();
@@ -213,8 +217,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(nodeId)).never();
-        verify(navigationServiceMock.navigateToDocument(nodeId)).never();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).never();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).once();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
         expect().nothing();
@@ -236,8 +240,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(nodeId)).never();
-        verify(navigationServiceMock.navigateToDocument(nodeId)).never();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).never();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).once();
         expect().nothing();

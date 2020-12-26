@@ -15,10 +15,10 @@
                        (onSelected)="onItemSelected($event)">
       </app-breadcrumbs>
       <app-document-list [parent]="currentItem"
-                         (onSelected)="onItemSelected($event)"
-                         (onChecked)="onItemsChecked($event)"
-                         (onLoaded)="onListLoaded($event)"
-                         (onError)="onError($event)">
+                         (selected)="onItemSelected($event)"
+                         (checked)="onItemsChecked($event)"
+                         (loaded)="onListLoaded($event)"
+                         (error)="onError($event)">
       </app-document-list>
     </div>
 

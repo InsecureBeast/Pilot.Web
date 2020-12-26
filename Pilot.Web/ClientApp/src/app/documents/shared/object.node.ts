@@ -21,10 +21,11 @@ export class ObjectNode implements IObjectNode {
     private translate: TranslateService) {
 
     this.update(source);
-    if (!isSource)
+    if (!isSource) {
       this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
-    else
+    } else {
       this.isSource = true;
+    }
   }
 
   id: string;
@@ -56,15 +57,17 @@ export class ObjectNode implements IObjectNode {
 
   loadTypeIcon(): void {
     const icon = this.typeIconService.getTypeIcon(this.source);
-    if (icon === null)
+    if (icon === null) {
       this.icon = ImagesService.emptyDocumentIcon;
-    else 
-      this.icon = icon;  
+    } else {
+      this.icon = icon;
+    }
   }
 
   loadPreview(): void {
-    if (!TypeExtensions.isDocument(this.source.type))
+    if (!TypeExtensions.isDocument(this.source.type)) {
       return;
+    }
 
     this.typeIconService.getPreview(this.source, this.cancel)
       .pipe(first())
@@ -85,14 +88,16 @@ export class ObjectNode implements IObjectNode {
     this.isDocument = this.getIsDocument(source.type);
     this.stateAttributes = source.type.attributes.filter(at => at.type === AttributeType.UserState);
 
-    if (this.isDocument)
+    if (this.isDocument) {
       this.childrenCount = -1;
-    else
+    } else {
       this.childrenCount = source.children.length;
+    }
 
     this.context = new Array<string>();
-    if (source.context)
+    if (source.context) {
       this.context = source.context;
+    }
 
     this.loadTypeIcon();
     this.loadPreview();
@@ -100,35 +105,27 @@ export class ObjectNode implements IObjectNode {
 
   private getTitle(source: IObject): string {
 
-    if (source.title === "Source files")
-      return this.translate.instant("sourceFiles");
+    if (source.title === 'Source files') {
+      return this.translate.instant('sourceFiles');
+    }
 
     return source.title;
   }
 
   private getIsDocument(type: IType): boolean {
-    if (TypeExtensions.isProjectFile(type.name))
+    if (TypeExtensions.isProjectFile(type.name)) {
       return true;
+    }
 
-    if (TypeExtensions.isProjectFolder(type.name))
+    if (TypeExtensions.isProjectFolder(type.name)) {
       return false;
+    }
 
     return type.hasFiles;
   }
 }
 
 export class EmptyObjectNode implements IObjectNode {
-
-  constructor() {
-    this.source = new EmptyObject();
-    this.children = this.source.children;
-    this.childrenCount = -1;
-    this.stateAttributes = new Array<IAttribute>();
-  }
-  
-  update(source: IObject): void {
-    throw new Error("Method not implemented.");
-  }
 
   id: string;
   isDocument: boolean;
@@ -140,6 +137,17 @@ export class EmptyObjectNode implements IObjectNode {
   icon: SafeUrl;
   childrenCount: number;
   stateAttributes: IAttribute[];
+
+  constructor() {
+    this.source = new EmptyObject();
+    this.children = this.source.children;
+    this.childrenCount = -1;
+    this.stateAttributes = new Array<IAttribute>();
+  }
+
+  update(source: IObject): void {
+    throw new Error('Method not implemented.');
+  }
 
   loadPreview(): void {
     // do nothing

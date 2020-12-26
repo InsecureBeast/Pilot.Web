@@ -17,7 +17,9 @@ export class DocumentToolbarComponent implements OnDestroy {
 
   title: string;
   icon: SafeUrl;
+  canShowFiles: boolean;
   isVersionsChecked: boolean;
+  showFilesMode = false;
 
   @Input()
   set document(value: IObject) {
@@ -30,6 +32,7 @@ export class DocumentToolbarComponent implements OnDestroy {
   @Output() onNextDocument = new EventEmitter<any>();
   @Output() onShowVersions = new EventEmitter<any>();
   @Output() onShowDocumentCard = new EventEmitter<any>();
+  @Output() onShowFiles = new EventEmitter<boolean>();
 
   /** document-toolbar ctor */
   constructor() {
@@ -66,6 +69,11 @@ export class DocumentToolbarComponent implements OnDestroy {
     this.onShowDocumentCard.emit();
   }
 
+  showFiles(): void {
+    this.showFilesMode = !this.showFilesMode;
+    this.onShowFiles.emit(this.showFilesMode);
+  }
+
   private documentChanged(document: IObject): void {
     this.title = null;
     this.icon = null;
@@ -76,5 +84,6 @@ export class DocumentToolbarComponent implements OnDestroy {
 
     this.title = document.title;
     this.icon = document.type.icon;
+    this.canShowFiles = document.type.isMountable;
   }
 }
