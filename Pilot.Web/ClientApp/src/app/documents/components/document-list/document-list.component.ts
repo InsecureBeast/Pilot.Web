@@ -1,4 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewChecked } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+  AfterViewChecked,
+  HostListener,
+  ViewChild, TemplateRef
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart } from '@angular/router';
 
@@ -8,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode, EmptyObjectNode } from '../../shared/object.node';
 import { ChildrenType } from '../../../core/data/children.types';
-import { IObject } from '../../../core/data/data.classes';
+import { AccessLevel, IObject } from '../../../core/data/data.classes';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode, IObjectNode } from '../../shared/node.interface';
@@ -17,6 +29,10 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
+import { FilesRepositoryService } from "../../../core/files-repository.service";
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { AccessCalculator } from "../../../core/tools/access.calculator";
+import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
 
 @Component({
     selector: 'app-document-list',
@@ -33,12 +49,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   private ngUnsubscribe = new Subject<void>();
   private _parent: IObjectNode;
 
-  @Input()
-  get parent(): IObjectNode {
-    return this._parent;
-  }
-  set parent(node: IObjectNode) {
-    this._parent = node;
+  @Input() parent: ObjectNode;
+  @Input() canCheck: boolean = true;
 
     if (!this._parent) {
       return;
@@ -56,11 +68,15 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   @Output() error = new EventEmitter<HttpErrorResponse>();
   @Output() loaded = new EventEmitter<INode>();
 
+  modalRef: BsModalRef = null;
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
   isLoading: boolean;
   isAnyItemChecked: boolean;
   isLoaded: boolean;
+  canUploadFile: boolean;
+  dropZoneActivity = false;
+  uploadProgressPercent: number
 
   /** documents-list ctor */
   constructor(
@@ -70,7 +86,10 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
-    private router: Router) {
+    private filesRepositoryService: FilesRepositoryService,
+    private router: Router,
+    private modalService: BsModalService,
+    private accessCalculator: AccessCalculator) {
 
   }
 
@@ -143,17 +162,22 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
       return;
     }
 
-    this.repository.setRequestType(RequestType.New);
-    this.clearChecked();
-    this.nodes = null;
-    this.documentsService.changeObjectForCard(null);
+    if (this.canCheck) {
+      this.repository.setRequestType(RequestType.New);
+      this.clearChecked();
+      this.nodes = null;
+      this.documentsService.changeObjectForCard(null);
+    }
+
     this.selected.emit(item);
   }
 
   check(node: IObjectNode, event: MouseEvent): void {
-    if (!node.id) {
+    if (!this.canCheck)
       return;
-    }
+
+    if (!node.id)
+      return;
 
     if (!event.ctrlKey) {
       this.clearChecked();
@@ -167,6 +191,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   addChecked(node: IObjectNode): void {
+    if (!this.canCheck)
+      return;
+
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
 
@@ -178,8 +205,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  downloadDocument(node: IObjectNode) {
-    this.downloadService.downloadFile(node.source);
+  async downloadDocument(node: IObjectNode) {
+    await this.downloadService.downloadFile(node.source);
   }
 
   isEmptyNode(node: IObjectNode): boolean {
@@ -197,6 +224,69 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     });
 
     return noneStates.length !== node.stateAttributes.length;
+  }
+
+  dropZoneState($event: boolean) {
+    this.dropZoneActivity = $event;
+  }
+
+  async onFilesDropped(fileList: FileList) {
+    await this.uploadHandler(fileList);
+  }
+
+  onUploadButtonClick() {
+    const input = window.document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.onchange = (e: any) => this.uploadHandler(e.target.files);
+    input.click();
+  }
+
+  async openModal(): Promise<void> {
+    if (this.modalRef != null) {
+      return
+    }
+
+    this.modalRef = this.modalService.show(this.modalTemplate, {
+      backdrop: 'static'
+    });
+
+    await this.sleep(2000);
+  }
+
+  closeModal() {
+    this.modalRef?.hide()
+    this.modalRef = null;
+  }
+
+  private async sleep(ms): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async uploadHandler(fileList: FileList) {
+    try{
+      console.log('fileList', fileList);
+      await this.uploadFiles(fileList);
+    } catch (e) {
+      this.onError.emit(e);
+      throw e;
+    }
+  }
+
+  private async uploadFiles(fileList: FileList): Promise<void> {
+    try {
+      await this.openModal();
+      await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
+        this.uploadProgressPercent = p
+      })
+      this.loadChildren(this.parent.id, this.parent.isSource);
+    } catch (e) {
+      console.log(e);
+      this.closeModal();
+      throw e;
+    } finally {
+      this.closeModal();
+    }
   }
 
   private update(objectId: string): void {
@@ -221,6 +311,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     }
     this.isLoaded = true;
     this.loadChildren(item.id, item.isSource);
+
+    const canCreateChild = IObjectExtensions.hasAccess(this.accessCalculator.calcAccess(item.source), AccessLevel.Create);
+    this.canUploadFile = item.isSource && canCreateChild;
   }
 
   private loadChildren(id: string, isSource: boolean) {
@@ -246,7 +339,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
         this.error.emit(e);
         this.isLoading = false;
       });
-  }
+    }
 
   private addNodes(documents: IObject[], isSource: boolean): void {
     this.nodes = new Array<ObjectNode>();

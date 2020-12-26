@@ -59,8 +59,8 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         id = SystemIds.rootId;
 
       let isSource = false;
-      if (this.activatedRoute.snapshot?.url.length !== 0) {
-        const urlSegment = this.activatedRoute.snapshot?.url[0].path;
+      if (this.activatedRoute.snapshot.url.length > 1) {
+        const urlSegment = this.activatedRoute.snapshot.url[1].path;
         if (urlSegment === 'files')
           isSource = true;
       }
@@ -88,7 +88,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
       if (!id)
         return;
-      
+
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.checkedNode = object;
       });
@@ -117,11 +117,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.navigationService.navigateToFile(node.id);
+        this.navigationService.navigateToFile(this.currentItem.id, node.id);
       } else {
-        this.navigationService.navigateToDocument(node.id);
+        this.navigationService.navigateToDocument(this.currentItem.id, node.id);
       }
-      
+
       return;
     }
 
@@ -147,7 +147,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onCloseObjectCard() : void {
     this.modalService.close(this.documentCardModal);
   }
-  
+
   onSaveObjectCard(id: string): void {
     this.documentsService.changeObjectForCard(id);
     this.onCloseObjectCard();
@@ -157,6 +157,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     if (this.checked && this.checked.length > 0)
       return this.checked[0].source;
 
-    return undefined;  
+    return undefined;
   }
 }
