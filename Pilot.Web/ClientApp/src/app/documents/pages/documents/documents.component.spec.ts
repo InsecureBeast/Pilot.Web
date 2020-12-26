@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testi
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap, Event, ActivatedRouteSnapshot, UrlHandlingStrategy, UrlSegment } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { anyString, instance, mock, verify, when, deepEqual } from 'ts-mockito';
 import { BehaviorSubject, of, Subject } from 'rxjs';
@@ -37,6 +37,8 @@ describe('documents component', () => {
     let activatedRouteMock: ActivatedRoute;
     let activatedRoute: ActivatedRoute;
     let paramMapMock: ParamMap;
+
+    const currentObjectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
 
     const getIObjectStub = function(id: string): IObject {
         const type = <IType> {
@@ -74,13 +76,15 @@ describe('documents component', () => {
         // setup mocks
         paramMapMock = mock<ParamMap>();
         const paramMap = instance(paramMapMock);
-        const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
-        when(paramMapMock.get('id')).thenReturn(objectId);
+        const snapshot = new ActivatedRouteSnapshot();
+        snapshot.url = new Array<UrlSegment>();
+        when(paramMapMock.get('id')).thenReturn(currentObjectId);
         when(activatedRouteMock.paramMap).thenReturn(new BehaviorSubject<ParamMap>(paramMap));
+        when(activatedRouteMock.snapshot).thenReturn(snapshot);
         when(routerMock.events).thenReturn(new Subject<Event>());
         when(documentsServiceMock.objectForCard$).thenReturn(of(''));
-        const object = getIObjectStub(objectId);
-        when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+        const object = getIObjectStub(currentObjectId);
+        when(repositoryMock.getObjectAsync(currentObjectId)).thenResolve(object);
 
         TestBed.configureTestingModule({
             declarations: [ DocumentsComponent ],
@@ -148,7 +152,6 @@ describe('documents component', () => {
     it('should navigate to document', fakeAsync(() => {
         // given
         const nodeId = 'CA3DDF8E-5B39-4CAB-8D69-B2A32B00D717';
-        const folderId = '71DB8342-D2E3-4EDE-A41A-A6A2A17716CA';
         const node = <INode> {
             id: nodeId,
             isDocument: true,
@@ -162,8 +165,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(folderId, nodeId)).never();
-        verify(navigationServiceMock.navigateToDocument(folderId, nodeId)).once();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).never();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).once();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
         expect().nothing();
@@ -172,7 +175,6 @@ describe('documents component', () => {
     it('should navigate to file', fakeAsync(() => {
         // given
         const nodeId = 'CA3DDF8E-5B39-4CAB-8D69-B2A32B00D717';
-        const folderId = '71DB8342-D2E3-4EDE-A41A-A6A2A17716CA';
         const node = <INode> {
             id: nodeId,
             isDocument: true,
@@ -186,8 +188,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(folderId, nodeId)).once();
-        verify(navigationServiceMock.navigateToDocument(folderId, nodeId)).never();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).once();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
         expect().nothing();
@@ -196,7 +198,6 @@ describe('documents component', () => {
     it('should navigate to documents folder', fakeAsync(() => {
         // given
         const nodeId = 'CA3DDF8E-5B39-4CAB-8D69-B2A32B00D717';
-        const folderId = '71DB8342-D2E3-4EDE-A41A-A6A2A17716CA';
         const node = <INode> {
             id: nodeId,
             isDocument: false,
@@ -210,8 +211,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(folderId, nodeId)).never();
-        verify(navigationServiceMock.navigateToDocument(folderId, nodeId)).never();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).never();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).once();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).never();
         expect().nothing();
@@ -220,7 +221,6 @@ describe('documents component', () => {
     it('should navigate to files folder', fakeAsync(() => {
         // given
         const nodeId = 'CA3DDF8E-5B39-4CAB-8D69-B2A32B00D717';
-        const folderId = '71DB8342-D2E3-4EDE-A41A-A6A2A17716CA';
         const node = <INode> {
             id: nodeId,
             isDocument: false,
@@ -234,8 +234,8 @@ describe('documents component', () => {
         component.onItemSelected(node);
 
         // then
-        verify(navigationServiceMock.navigateToFile(folderId, nodeId)).never();
-        verify(navigationServiceMock.navigateToDocument(folderId, nodeId)).never();
+        verify(navigationServiceMock.navigateToFile(currentObjectId, nodeId)).never();
+        verify(navigationServiceMock.navigateToDocument(currentObjectId, nodeId)).never();
         verify(navigationServiceMock.navigateToDocumentsFolder(nodeId)).never();
         verify(navigationServiceMock.navigateToFilesFolder(nodeId)).once();
         expect().nothing();

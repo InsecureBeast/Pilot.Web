@@ -29,7 +29,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
-  private documentCardModal = "objectCardModal";
+  private documentCardModal = 'objectCardModal';
 
   checked = new Array<INode>();
   checkedNode: IObject;
@@ -55,14 +55,16 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       let id = params.get('id');
-      if (!id)
+      if (!id) {
         id = SystemIds.rootId;
+      }
 
       let isSource = false;
       if (this.activatedRoute.snapshot.url.length > 1) {
         const urlSegment = this.activatedRoute.snapshot.url[1].path;
-        if (urlSegment === 'files')
+        if (urlSegment === 'files') {
           isSource = true;
+        }
       }
 
       const promise = this.repository.getObjectAsync(id);
@@ -86,8 +88,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     });
 
     this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
-      if (!id)
+      if (!id) {
         return;
+      }
 
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.checkedNode = object;
@@ -96,12 +99,15 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
-    if (this.routerSubscription)
+    }
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
-    if (this.objectCardChangeSubscription)  
+    }
+    if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
+    }
 
     // cancel
     this.ngUnsubscribe.next();
@@ -125,10 +131,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (node.isSource)
+    if (node.isSource) {
       this.navigationService.navigateToFilesFolder(node.id);
-    else
+    } else {
       this.navigationService.navigateToDocumentsFolder(node.id);
+    }
   }
 
   onItemsChecked(nodes: INode[]): void {
@@ -139,12 +146,12 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.error = error;
   }
 
-  onShowObjectCard() : void {
+  onShowObjectCard(): void {
     this.checkedNode = this.getCheckedNode();
     this.modalService.open(this.documentCardModal);
   }
 
-  onCloseObjectCard() : void {
+  onCloseObjectCard(): void {
     this.modalService.close(this.documentCardModal);
   }
 
@@ -153,9 +160,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.onCloseObjectCard();
   }
 
-  private getCheckedNode() : IObject{
-    if (this.checked && this.checked.length > 0)
+  private getCheckedNode(): IObject {
+    if (this.checked && this.checked.length > 0) {
       return this.checked[0].source;
+    }
 
     return undefined;
   }

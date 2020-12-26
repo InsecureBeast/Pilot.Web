@@ -54,11 +54,11 @@ export class FilesRepositoryService {
   }
 
   uploadFiles(parentId: string, files: FileList, progressFunc: (progress: number) => void): Promise<string[]> {
-    let formData = new FormData();
+    const formData = new FormData();
     for (let j = 0; j < files.length; j++) {
-      let file = files.item(j);
+      const file = files.item(j);
       if (file.size > environment.uploadingFileMaxSizeBytes) {
-        throw new Error(`${this.translate.instant("maxFileSizeInfo")} ${environment.uploadingFileMaxSizeMegaBytes} MB.`);
+        throw new Error(`${this.translate.instant('maxFileSizeInfo')} ${environment.uploadingFileMaxSizeMegaBytes} MB.`);
       }
       formData.append(file.name, file);
     }
@@ -73,9 +73,8 @@ export class FilesRepositoryService {
       event => {
         if (event.type === HttpEventType.UploadProgress) {
           progressFunc(Math.round(100 * event.loaded / event.total));
-        }
-        else if (event.type === HttpEventType.Response) {
-          let fileIds = event.body as string[];
+        } else if (event.type === HttpEventType.Response) {
+          const fileIds = event.body as string[];
           resolve(fileIds);
         }
       },
