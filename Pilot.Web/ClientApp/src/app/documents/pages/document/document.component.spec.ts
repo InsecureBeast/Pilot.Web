@@ -184,7 +184,7 @@ describe('document component', () => {
         flush();
 
         // when
-        component.closeDocumentVersions();
+        component.closeDocumentVersions(null);
 
         // then
         expect(component.isInfoShown).toBeFalse();
@@ -196,7 +196,7 @@ describe('document component', () => {
         flush();
 
         // when
-        component.onShowDocumentCard();
+        component.onShowDocumentCard(null);
 
         // then
         verify(modalServiceMock.open('documentCardModal')).once();
@@ -209,7 +209,7 @@ describe('document component', () => {
         flush();
 
         // when
-        component.onCloseDocumentCard();
+        component.onCloseDocumentCard(null);
 
         // then
         verify(modalServiceMock.close('documentCardModal')).once();

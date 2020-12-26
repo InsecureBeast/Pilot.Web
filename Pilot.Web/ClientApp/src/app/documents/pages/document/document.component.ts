@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
-import {INode, IObjectNode} from '../../shared/node.interface';
+import { INode, IObjectNode} from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
@@ -19,9 +19,9 @@ import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
 import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
-import {ObjectNode} from "../../shared/object.node";
-import {TypeIconService} from "../../../core/type-icon.service";
-import {TranslateService} from "@ngx-translate/core";
+import { ObjectNode } from '../../shared/object.node';
+import { TypeIconService } from '../../../core/type-icon.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-document',
@@ -109,8 +109,9 @@ export class DocumentComponent implements OnInit, OnDestroy {
     });
 
     this.objectCardChangeSubscription = this.documentService.objectForCard$.subscribe(id => {
-      if (!id)
+      if (!id) {
         return;
+      }
 
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.document = object;
@@ -192,11 +193,11 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.updateLocation(this.document.parentId, nextId);
   }
 
-  onShowDocumentCard($event) : void {
+  onShowDocumentCard($event): void {
     this.modalService.open(this.documentCardModal);
   }
 
-  onCloseDocumentCard($event) : void {
+  onCloseDocumentCard($event): void {
     this.modalService.close(this.documentCardModal);
   }
 
@@ -215,7 +216,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
         this.document = source;
         if (source.type.isMountable) {
-          this.node = new ObjectNode(source, true, this.typeIconService, this.ngUnsubscribe, this.translate)
+          this.node = new ObjectNode(source, true, this.typeIconService, this.ngUnsubscribe, this.translate);
         }
         let snapshot = source.actualFileSnapshot;
         this.isActualVersionSelected = !version;

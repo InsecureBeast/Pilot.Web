@@ -29,9 +29,9 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
-import { FilesRepositoryService } from "../../../core/files-repository.service";
+import { FilesRepositoryService } from '../../../core/files-repository.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { AccessCalculator } from "../../../core/tools/access.calculator";
+import { AccessCalculator } from '../../../core/tools/access.calculator';
 import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
 
 @Component({
@@ -49,9 +49,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   private ngUnsubscribe = new Subject<void>();
   private _parent: IObjectNode;
 
-  @Input() parent: ObjectNode;
-  @Input() canCheck: boolean = true;
-
+  @Input() canCheck = true;
+  @Input()
+  get parent(): IObjectNode {
+    return this._parent;
+  }
+  set parent(node: IObjectNode) {
+    this._parent = node;
     if (!this._parent) {
       return;
     }
@@ -68,6 +72,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   @Output() error = new EventEmitter<HttpErrorResponse>();
   @Output() loaded = new EventEmitter<INode>();
 
+  @ViewChild('modalTemplate')
+  private modalTemplate: TemplateRef<any>;
+
   modalRef: BsModalRef = null;
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
@@ -76,7 +83,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   isLoaded: boolean;
   canUploadFile: boolean;
   dropZoneActivity = false;
-  uploadProgressPercent: number
+  uploadProgressPercent: number;
 
   /** documents-list ctor */
   constructor(
@@ -173,11 +180,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   check(node: IObjectNode, event: MouseEvent): void {
-    if (!this.canCheck)
+    if (!this.canCheck) {
       return;
+    }
 
-    if (!node.id)
+    if (!node.id) {
       return;
+    }
 
     if (!event.ctrlKey) {
       this.clearChecked();
@@ -191,8 +200,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   addChecked(node: IObjectNode): void {
-    if (!this.canCheck)
+    if (!this.canCheck) {
       return;
+    }
 
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
@@ -244,18 +254,19 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
 
   async openModal(): Promise<void> {
     if (this.modalRef != null) {
-      return
+      return;
     }
 
-    this.modalRef = this.modalService.show(this.modalTemplate, {
-      backdrop: 'static'
-    });
+    this.modalRef = this.modalService.show(this.modalTemplate,
+      {
+        backdrop: 'static'
+      });
 
     await this.sleep(2000);
   }
 
   closeModal() {
-    this.modalRef?.hide()
+    this.modalRef?.hide();
     this.modalRef = null;
   }
 
@@ -264,11 +275,11 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   private async uploadHandler(fileList: FileList) {
-    try{
+    try {
       console.log('fileList', fileList);
       await this.uploadFiles(fileList);
     } catch (e) {
-      this.onError.emit(e);
+      this.error.emit(e);
       throw e;
     }
   }
@@ -277,8 +288,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     try {
       await this.openModal();
       await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
-        this.uploadProgressPercent = p
-      })
+          this.uploadProgressPercent = p;
+        });
       this.loadChildren(this.parent.id, this.parent.isSource);
     } catch (e) {
       console.log(e);

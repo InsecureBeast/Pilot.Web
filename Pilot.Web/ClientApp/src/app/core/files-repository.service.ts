@@ -3,8 +3,8 @@ import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from '@angular/comm
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { HeadersProvider } from './headers.provider';
-import {environment} from "../../environments/environment";
-import {TranslateService} from "@ngx-translate/core";
+import {environment} from '../../environments/environment';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class FilesRepositoryService {
@@ -19,7 +19,7 @@ export class FilesRepositoryService {
   }
 
   getDocumentPagesCount(id: string, size: number, scale: number): Observable<number> {
-    let headers = this.headersProvider.getHeaders();
+    const headers = this.headersProvider.getHeaders();
     const url = 'api/Files/GetDocumentPagesCount?fileId=' + id + '&size=' + size + '&scale=' + scale;
     return this.http.get<number>(this.baseUrl + url, { headers: headers }).pipe(first());
   }
@@ -44,7 +44,7 @@ export class FilesRepositoryService {
 
   getFileArchive(ids: string[]): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
-      let body = JSON.stringify(ids);
+      const body = JSON.stringify(ids);
       const headers = this.headersProvider.getHeaders();
       const path = this.baseUrl + 'api/Files/GetFileArchive';
       this.http.post(path, body, { responseType: 'arraybuffer', headers: headers })

@@ -4,7 +4,7 @@
   </div>
 </div>
 
-<div class="pb-2 drop-container" #contentDiv
+<div class="drop-container pr-2 pl-2" #contentDiv
   appFileDrop
   [isFileDropDisabled]="!canUploadFile"
   (filesDropped)="onFilesDropped($event)"
@@ -19,11 +19,11 @@
       <ng-container *ngIf="nodeStyle === 1">
         <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
       </ng-container>
-      <div class="upload-info-area" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+      <div class="upload-info-area m-2 mt-3" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
         <ul class="navbar-nav noselect">
           <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
-            <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px 4px 10px 10px" translate="dropInfo"></span>
-            <span class="navbar-text toolbar-text hidden-phone noselect align-self-center" style="margin: 10px 10px 10px 0; cursor: pointer; color: blue" translate="upload"></span>
+            <span class="navbar-text toolbar-text noselect align-self-center" style="margin: 10px 4px 10px 10px" translate="dropInfo"></span>
+            <span class="navbar-text toolbar-text noselect align-self-center drop-popup-button" translate="upload"></span>
           </li>
         </ul>
       </div>
@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <div class="drop-popup" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+  <!-- <div class="drop-popup" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
     <div class="drop-popup-help">
       <ul class="navbar-nav noselect">
         <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
@@ -44,7 +44,7 @@
         </li>
       </ul>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <ng-template #modalTemplate>
@@ -58,7 +58,7 @@
 </ng-template>
 
 <ng-template #listViewNodeTemplate>
-  <ul class="list-group mr-3 ml-3 shadow-sm" *ngIf="!isLoading && nodes">
+  <ul class="list-group shadow-sm mr-2 ml-2" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
         (click)="check(node, $event)"

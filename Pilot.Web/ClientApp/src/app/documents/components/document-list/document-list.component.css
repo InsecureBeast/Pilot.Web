@@ -96,17 +96,17 @@
   padding: 0.93rem;
 }
 
+/* ------------------------------Drop area -------------------------------------------------*/
 .drop-container {
   width: 100%;
   display: block;
   float: left;
   overflow: hidden;
   position: relative;
-  border-radius: 8px;
+  border-radius: .25rem;
   border: 1px solid transparent;
   z-index: 1000;
 }
-
 
 .drop-area {
   width: 100%;
@@ -115,7 +115,7 @@
 }
 
 .drop-container-active {
-  border: 1px dashed #828282;
+  border: 1px dashed var(--second);
 }
 
 .drop-popup {
@@ -138,6 +138,16 @@
 
 }
 
+.drop-popup-button {
+  cursor: pointer; 
+  color: var(--primary)
+}
+
+  .drop-popup-button:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+
 img {
   margin-bottom: 28px;
 }
@@ -148,20 +158,7 @@ img {
 
 .upload-info-area {
   visibility: visible;
-  background: #FFFFFF;
-  border: 1px dashed #BDBDBD;
+  border: 1px dashed var(--second);
   box-sizing: border-box;
-  border-radius: 8px;
-  margin: 20px 10px;
-}
-
-button {
-  width: 83px;
-  height: 116px;
-  margin: 12px;
-}
-
-span {
-  margin-left: 86px;
-  color: #BDBDBD;
+  border-radius: .25rem;
 }
