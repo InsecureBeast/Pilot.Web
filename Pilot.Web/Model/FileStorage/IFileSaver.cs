@@ -42,6 +42,9 @@ namespace Pilot.Web.Model.FileStorage
                     for (var i = 0; i < pages.Count; i++)
                     {
                         var buffer = pages[i];
+                        if (buffer == null)
+                            continue;
+                        
                         var filename = _directoryProvider.GetImagePath(id, i);
                         Save(buffer, filename);
                     }

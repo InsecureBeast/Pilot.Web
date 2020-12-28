@@ -56,3 +56,13 @@ export class Tools {
     return datePipe.transform(utcDate, format);
   }
 }
+
+export class StringUtils {
+  static isNullOrEmpty(value: string) : boolean {
+    if (value){
+      return value.length == 0;
+    }
+    
+    return true;
+  }
+}

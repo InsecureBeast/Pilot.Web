@@ -4,15 +4,15 @@ import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 
 import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState,
-  IUserStateMachine, MUserStateMachine, IXpsDigitalSignature } from './data/data.classes';
+  IUserStateMachine, MUserStateMachine, IXpsDigitalSignature, IDatabaseInfo } from './data/data.classes';
 import { RequestType, HeadersProvider } from './headers.provider';
 import { Change } from './modifier/change';
 import { Modifier } from './modifier/modifier';
 
 @Injectable({ providedIn: 'root' })
 export class RepositoryService {
-
   private metadata: IMetadata;
+  private databaseInfo: IDatabaseInfo;
   private types: Map<number, IType>;
   private people: Map<number, IPerson>;
   private organizationUnits: Map<number, IOrganizationUnit>;
@@ -127,9 +127,10 @@ export class RepositoryService {
     const organizationUnits$ = this.getOrganizationUnits();
     const currentPerson$ = this.getCurrentPersonInternal();
     const states$ = this.getUserStates();
+    const databaseInfo$ = this.getDatabaseInfo();
 
-    const zip$ = zip(metadata$, people$, organizationUnits$, currentPerson$, states$).subscribe(
-      ([metadata, people, organizationUnits, currentPerson, states]) => {
+    const zip$ = zip(metadata$, people$, organizationUnits$, currentPerson$, states$, databaseInfo$).subscribe(
+      ([metadata, people, organizationUnits, currentPerson, states, databaseInfo]) => {
         this.metadata = metadata;
         this.types = new Map<number, IType>();
         for (const attr of this.metadata.types) {
@@ -158,6 +159,8 @@ export class RepositoryService {
           this.stateMachines.set(stateMachine.id, new MUserStateMachine(stateMachine));
         }
 
+        this.databaseInfo = databaseInfo;
+        
         init.next(true);
         init.complete();
         zip$.unsubscribe();
@@ -178,6 +181,10 @@ export class RepositoryService {
 
   getOrganizationUnit(id: number): IOrganizationUnit {
     return this.organizationUnits.get(id);
+  }
+
+  getDatabaseId(): string {
+    return this.databaseInfo.databaseId;
   }
 
   getPersonOnOrganizationUnit(positionId: number): IPerson {
@@ -226,7 +233,7 @@ export class RepositoryService {
     return new Modifier(this);
   }
 
-  signDocumentAsync(id: string, cancel: Subject<any>) {
+  signDocumentAsync(id: string, cancel: Subject<any>): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const headers = this.headersProvider.getHeaders();
       const url = 'api/Documents/SignDocument?documentId=' + id;
@@ -256,5 +263,10 @@ export class RepositoryService {
   private getUserStates(): Observable<IUserState[]> {
     const headers = this.headersProvider.getHeaders();
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
+  }
+
+  private getDatabaseInfo(): Observable<IDatabaseInfo> {
+    const headers = this.headersProvider.getHeaders();
+    return this.http.get<IDatabaseInfo>(this.baseUrl + 'api/Metadata/GetDatabaseInfo', { headers: headers }).pipe(first());
   }
 }

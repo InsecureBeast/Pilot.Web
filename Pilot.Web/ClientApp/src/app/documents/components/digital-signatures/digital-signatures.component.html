@@ -28,7 +28,7 @@
   </ul>
   <div class="d-flex justify-content-center" *ngIf="showSignButton">
     <button class="btn btn-primary btn-block m-4" 
-            [disabled] = "isSigninigInProcess"
+            [disabled] = "isSigninigInProcess || !canUserSign"
             style="width: 10rem;" 
             type="button" 
             (click)="sign()">

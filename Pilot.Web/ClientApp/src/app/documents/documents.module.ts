@@ -18,7 +18,7 @@ import { UserStateModule } from '../ui/user-state/user-state-module';
 import { ObjectCardDialogModule } from '../ui/object-card-dialog/object-card-dialog.module';
 import { DigitalSignaturesComponent } from './components/digital-signatures/digital-signatures.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { FileDropDirective } from './file-drop.directive';
+import { FileDropDirective } from '../core/directives/file-drop.directive';
 import { BootstrapUiModule } from "../bootstrap-ui.module";
 
 @NgModule({

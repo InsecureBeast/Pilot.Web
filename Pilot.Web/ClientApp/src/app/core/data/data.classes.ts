@@ -1,11 +1,11 @@
 import { IObjectExtensions } from '../tools/iobject.extensions';
 
-export class DatabaseInfo {
+export interface IDatabaseInfo {
 
   metadataVersion: number;
   lastChangeset;
   person;
-  databaseId;
+  databaseId: string;
   databaseVersion: number;
   people;
   organizationUnits;
