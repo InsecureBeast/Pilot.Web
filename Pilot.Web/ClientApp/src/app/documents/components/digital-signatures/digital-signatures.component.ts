@@ -1,14 +1,15 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Guid } from 'guid-typescript';
-import { Subject } from 'rxjs';
-import { IObject, IOrganizationUnit, IPerson, ISignature } from 'src/app/core/data/data.classes';
+import { Subject, Subscription } from 'rxjs';
+import { IFile, IObject, IOrganizationUnit, IPerson, ISignature } from 'src/app/core/data/data.classes';
 import { RequestType } from 'src/app/core/headers.provider';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { DateTools } from 'src/app/core/tools/date.tools';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { StringUtils } from 'src/app/core/tools/tools';
 import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
+import { VersionsSelectorService } from '../document-versions/versions-selector.service';
 
 class DigitalSignature {
 
@@ -26,10 +27,19 @@ class DigitalSignature {
   }
 
   setPersonTitle (person: IPerson, position: IOrganizationUnit): void {
-    const personName = (param1, param2) => `${param1} (${param2})`;
-    if (person && position) {
-      this.person = personName(person.displayName, position.title);
+    const personNameFunc = (param1, param2) => `${param1} (${param2})`;
+    let personName = '';
+    let positionTitle = '';
+
+    if (person) {
+      personName = person.displayName;
     }
+
+    if (position) {
+      positionTitle = position.title;
+    }
+
+    this.person = personNameFunc(personName, positionTitle);
   }
 }
 
@@ -43,6 +53,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
   private _document: IObject;
   private _isActual = true;
   private ngUnsubscribe = new Subject<void>();
+  private versionSubscription: Subscription;
 
   @Input()
   get document(): IObject {
@@ -55,11 +66,6 @@ export class DigitalSignaturesComponent implements OnDestroy {
     }
   }
 
-  @Input()
-  set isActual(value: boolean) {
-    this._isActual = value;
-  }
-
   signatures: Array<DigitalSignature>;
   isSigninigInProcess: boolean;
   showSignButton: boolean;
@@ -70,15 +76,42 @@ export class DigitalSignaturesComponent implements OnDestroy {
   constructor(
     private readonly repository: RepositoryService,
     private readonly translate: TranslateService,
-    private readonly errorService: ErrorHandlerService) {
+    private readonly errorService: ErrorHandlerService,
+    private readonly versionSelector: VersionsSelectorService) {
 
     this.signatures = new Array<DigitalSignature>();
     this.isSigninigInProcess = false;
     this.showSignButton = false;
+
+    this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(async s => {
+      if (!s) {
+        return;
+      }
+
+      if (!this._document) {
+        return;
+      }
+
+      try {
+        this._isActual = this._document.actualFileSnapshot.created === s.created;
+        const newDocument = await this.repository.getObjectAsync(this._document.id, RequestType.New);
+        this._document = newDocument;
+        this.signatures = new Array<DigitalSignature>();
+        this.fillSignatures(s.files);
+        // this.updateSignaturesAsync(s.files); // todo
+        this.canUserSign = this.canSign();
+      } catch (error) {
+        //
+      }
+
+    });
   }
 
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
+    if (this.versionSubscription) {
+      this.versionSubscription.unsubscribe();
+    }
   }
 
   async sign(): Promise<void> {
@@ -97,8 +130,12 @@ export class DigitalSignaturesComponent implements OnDestroy {
   }
 
   private loadSignatures(document: IObject) {
+    this.fillSignatures(document.actualFileSnapshot.files);
+    this.updateSignaturesAsync(document);
+  }
 
-    const xpsFile = FilesSelector.getXpsFile(document.actualFileSnapshot.files);
+  private fillSignatures(files: IFile[]): void {
+    const xpsFile = FilesSelector.getXpsFile(files);
     if (!xpsFile) {
       return;
     }
@@ -113,8 +150,6 @@ export class DigitalSignaturesComponent implements OnDestroy {
 
       this.signatures.push(digitalSignature);
     }
-
-    this.updateSignaturesAsync(document);
   }
 
   private updateSignaturesAsync(document: IObject): void {
@@ -177,11 +212,11 @@ export class DigitalSignaturesComponent implements OnDestroy {
     }
 
     const signature = this.getSignature(spotId);
-    if (!signature || signature.databaseId !== this.repository.getDatabaseId()){
+    if (!signature || signature.databaseId !== this.repository.getDatabaseId()) {
       return false;
     }
 
-    if (signature.objectId !== Guid.EMPTY /*&& !IsRelatedTaskStarted(signature.ObjectId)*/){
+    if (signature.objectId !== Guid.EMPTY /*&& !IsRelatedTaskStarted(signature.ObjectId)*/) {
       return false;
     }
 
