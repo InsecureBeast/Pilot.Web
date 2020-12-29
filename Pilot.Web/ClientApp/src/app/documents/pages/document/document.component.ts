@@ -23,6 +23,7 @@ import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from 'src/app/core/notification.service';
 
 @Component({
   selector: 'app-document',
@@ -66,7 +67,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly documentService: DocumentsService,
     private readonly modalService: ModalService,
     private readonly typeIconService: TypeIconService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private readonly notificationService: NotificationService) {
 
     this.isActualVersionSelected = true;
     this.images = new Array();
@@ -153,7 +155,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.downloadService.downloadFile(this.document);
   }
 
-
   downloadDocument($event: IObjectNode) {
     this.downloadService.downloadFile($event.source);
   }
@@ -212,6 +213,10 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   selectTab(tabId: number) {
     this.staticTabs.tabs[tabId].active = true;
+  }
+
+  onError($event): void {
+    this.notificationService.showError($event);
   }
 
   private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {

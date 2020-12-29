@@ -55,7 +55,9 @@
       <div class="h-100 pt-1">
         <tabset #staticTabs>
           <tab heading="Signatures" customClass="h-100">
-            <app-digital-signatures [document]="document"></app-digital-signatures>
+            <app-digital-signatures 
+              [document]="document" 
+              (error)="onError($event)"></app-digital-signatures>
           </tab>
           <tab heading="Versions">
             <div class="">

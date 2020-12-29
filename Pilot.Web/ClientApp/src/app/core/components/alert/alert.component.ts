@@ -1,11 +1,12 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscriber, Subscription} from "rxjs";
-import {NotificationService} from "../../notification.service";
-import {HttpErrorResponse} from "@angular/common/http";
+import {Subscriber, Subscription} from 'rxjs';
+import {NotificationService} from '../../notification.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
 
 class AlertMessage {
-  type: string
-  message: string
+  type: string;
+  message: string;
 }
 
 @Component({
@@ -15,12 +16,13 @@ class AlertMessage {
 })
 export class AlertComponent implements OnInit, OnDestroy {
 
-  errorSubscription: Subscription
+  errorSubscription: Subscription;
 
   constructor(private notificationService: NotificationService,
+              private errorHandlerService: ErrorHandlerService,
               private ref: ChangeDetectorRef) { }
 
-  messages: AlertMessage[]
+  messages: AlertMessage[];
 
   ngOnInit(): void {
     this.messages = new Array<AlertMessage>();
@@ -30,9 +32,7 @@ export class AlertComponent implements OnInit, OnDestroy {
         const msg = new AlertMessage();
         msg.type = 'danger';
         if (e instanceof HttpErrorResponse) {
-          msg.message = e.message;
-        } else {
-          msg.message = e.rejection?.message ?? e.message;
+          msg.message = this.errorHandlerService.handleErrorMessage(e);
         }
 
         this.messages.push(msg);

@@ -1,4 +1,5 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Guid } from 'guid-typescript';
 import { Subject, Subscription } from 'rxjs';
@@ -8,7 +9,6 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { DateTools } from 'src/app/core/tools/date.tools';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { StringUtils } from 'src/app/core/tools/tools';
-import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
 import { VersionsSelectorService } from '../document-versions/versions-selector.service';
 
 class DigitalSignature {
@@ -66,6 +66,8 @@ export class DigitalSignaturesComponent implements OnDestroy {
     }
   }
 
+  @Output() error = new EventEmitter<HttpErrorResponse>();
+
   signatures: Array<DigitalSignature>;
   isSigninigInProcess: boolean;
   showSignButton: boolean;
@@ -76,7 +78,6 @@ export class DigitalSignaturesComponent implements OnDestroy {
   constructor(
     private readonly repository: RepositoryService,
     private readonly translate: TranslateService,
-    private readonly errorService: ErrorHandlerService,
     private readonly versionSelector: VersionsSelectorService) {
 
     this.signatures = new Array<DigitalSignature>();
@@ -101,9 +102,8 @@ export class DigitalSignaturesComponent implements OnDestroy {
         this.updateSignaturesAsync(newDocument, s);
         this.canUserSign = this.canSign();
       } catch (error) {
-        //
+        this.error.emit(error);
       }
-
     });
   }
 
@@ -126,6 +126,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
       }
     } catch (error) {
       this.isSigninigInProcess = false;
+      this.error.emit(error);
     }
   }
 
@@ -185,9 +186,9 @@ export class DigitalSignaturesComponent implements OnDestroy {
       this.canUserSign = this.canSign();
     })
     .catch(e => {
-      this.errorService.handleErrorMessage(e);
       this.showSignButton = false;
       this.isSignaturesLoading = false;
+      this.error.emit(e);
     });
   }
 

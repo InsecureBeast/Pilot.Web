@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Ascon.Pilot.Transport;
 using log4net;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Pilot.Web.Model.Middleware
 {
@@ -37,7 +39,9 @@ namespace Pilot.Web.Model.Middleware
             catch (Exception e)
             {
                 _logger.Error(e);
-                throw;
+                context.Response.StatusCode = 500; //Internal error
+                var result = JsonConvert.SerializeObject(new { error = e.Message });
+                await context.Response.WriteAsync(result);
             }
         }
     }

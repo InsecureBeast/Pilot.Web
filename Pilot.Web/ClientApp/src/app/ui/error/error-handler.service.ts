@@ -36,6 +36,10 @@ export class ErrorHandlerService {
       return e.error;
     }
 
+    if (e.status === 500) {
+      return e.error.error;
+    }
+
     return e.message;
   }
 }
