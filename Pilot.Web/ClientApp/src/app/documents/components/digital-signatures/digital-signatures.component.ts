@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Guid } from 'guid-typescript';
 import { Subject, Subscription } from 'rxjs';
-import { IFile, IObject, IOrganizationUnit, IPerson, ISignature } from 'src/app/core/data/data.classes';
+import { IFile, IObject, IOrganizationUnit, IPerson, ISignature, IFileSnapshot } from 'src/app/core/data/data.classes';
 import { RequestType } from 'src/app/core/headers.provider';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { DateTools } from 'src/app/core/tools/date.tools';
@@ -98,7 +98,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
         this._document = newDocument;
         this.signatures = new Array<DigitalSignature>();
         this.fillSignatures(s.files);
-        // this.updateSignaturesAsync(s.files); // todo
+        this.updateSignaturesAsync(newDocument, s);
         this.canUserSign = this.canSign();
       } catch (error) {
         //
@@ -121,7 +121,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
       if (res) {
         const newDocument = await this.repository.getObjectAsync(this._document.id, RequestType.New);
         this._document = newDocument;
-        this.updateSignaturesAsync(this._document);
+        this.updateSignaturesAsync(this._document, this._document.actualFileSnapshot);
         this.isSigninigInProcess = false;
       }
     } catch (error) {
@@ -130,8 +130,9 @@ export class DigitalSignaturesComponent implements OnDestroy {
   }
 
   private loadSignatures(document: IObject) {
-    this.fillSignatures(document.actualFileSnapshot.files);
-    this.updateSignaturesAsync(document);
+    const snapshot = document.actualFileSnapshot;
+    this.fillSignatures(snapshot.files);
+    this.updateSignaturesAsync(document, snapshot);
   }
 
   private fillSignatures(files: IFile[]): void {
@@ -152,12 +153,12 @@ export class DigitalSignaturesComponent implements OnDestroy {
     }
   }
 
-  private updateSignaturesAsync(document: IObject): void {
+  private updateSignaturesAsync(document: IObject, snapshot: IFileSnapshot): void {
     if (this.signatures.length === 0) {
       this.isSignaturesLoading = true;
     }
 
-    this.repository.getDocumentSignaturesAsync(document.id, this.ngUnsubscribe)
+    this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe)
     .then(signatures => {
       this.isSignaturesLoading = false;
       for (const sig of signatures) {

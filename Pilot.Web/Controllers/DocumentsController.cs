@@ -90,6 +90,19 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
+        public IList<XpsDigitalSignature> GetDocumentSignaturesWithSnapshot(string documentId, string snapshotDate)
+        {
+            var actor = HttpContext.GetTokenActor();
+            var api = _contextService.GetServerApi(actor);
+            var guid = Guid.Parse(documentId);
+            var snapshotDateTime = DateTime.Parse(snapshotDate);
+            var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
+            var signatureBuffer = xpsServiceApi.GetSignatures(guid, snapshotDateTime);
+            return XpsDigitalSignatureSerializer.Deserialize(signatureBuffer);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
         public bool SignDocument(string documentId)
         {
             var actor = HttpContext.GetTokenActor();

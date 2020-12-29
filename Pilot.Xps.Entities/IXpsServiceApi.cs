@@ -11,5 +11,6 @@ namespace Pilot.Xps.Entities
         byte[] MergeXpsDocument(Guid documentId);
         SignResult SignDocument(Guid documentId, int personId);
         byte[] GetSignatures(Guid documentId);
+        byte[] GetSignatures(Guid documentId, DateTime snapshotDateTime);
     }
 }

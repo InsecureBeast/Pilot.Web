@@ -106,7 +106,19 @@ export class RepositoryService {
   getDocumentSignaturesAsync(id: string, cancel: Subject<any>): Promise<IXpsDigitalSignature[]> {
     return new Promise((resolve, reject) => {
       const headers = this.headersProvider.getHeaders();
-      const url = 'api/Documents/GetDocumentSignatures?documentId=' + id;
+      const url = `api/Documents/GetDocumentSignatures?documentId=${id}`;
+      this.http
+        .get<IXpsDigitalSignature[]>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((objects) => resolve(objects), e => reject(e));
+    });
+  }
+
+  getDocumentSignaturesWithSnapshotAsync(id: string, snapshotDate: string, cancel: Subject<any>): Promise<IXpsDigitalSignature[]> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = `api/Documents/GetDocumentSignaturesWithSnapshot?documentId=${id}&snapshotDate=${snapshotDate}`;
       this.http
         .get<IXpsDigitalSignature[]>(this.baseUrl + url, { headers: headers })
         .pipe(first())
