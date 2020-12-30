@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Pilot.Web.Model;
 using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Tools;
@@ -102,17 +102,23 @@ namespace Pilot.Web.Controllers
         }
 
         [Authorize]
-        [HttpGet("[action]")]
-        public bool SignDocument(string documentId)
+        [HttpPost("[action]")]
+        public bool SignDocument([FromBody] DocumentSignData data)
         {
+            var positions = data.Positions.ToObject<int[]>();
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
-            
-            var guid = Guid.Parse(documentId);
+            var guid = Guid.Parse(data.DocumentId);
             var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
             var currentPerson = api.GetCurrentPerson();
-            var result = xpsServiceApi.SignDocument(guid, currentPerson.Id);
+            var result = xpsServiceApi.SignDocument(guid, positions, currentPerson.Id);
             return result == SignResult.SignedSuccessfully;
         }
+    }
+
+    public class DocumentSignData
+    {
+        public string DocumentId { get; set; }
+        public JArray Positions { get; set; }
     }
 }

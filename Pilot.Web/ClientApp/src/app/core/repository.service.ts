@@ -4,7 +4,7 @@ import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 
 import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState,
-  IUserStateMachine, MUserStateMachine, IXpsDigitalSignature, IDatabaseInfo } from './data/data.classes';
+  IUserStateMachine, MUserStateMachine, IXpsDigitalSignature, IDatabaseInfo, DocumentSignData } from './data/data.classes';
 import { RequestType, HeadersProvider } from './headers.provider';
 import { Change } from './modifier/change';
 import { Modifier } from './modifier/modifier';
@@ -172,7 +172,7 @@ export class RepositoryService {
         }
 
         this.databaseInfo = databaseInfo;
-        
+
         init.next(true);
         init.complete();
         zip$.unsubscribe();
@@ -245,12 +245,15 @@ export class RepositoryService {
     return new Modifier(this);
   }
 
-  signDocumentAsync(id: string, cancel: Subject<any>): Promise<boolean> {
+  signDocumentAsync(id: string, positionIds: number[], cancel: Subject<any>): Promise<boolean> {
     return new Promise((resolve, reject) => {
+      const data = new DocumentSignData();
+      data.documentId = id;
+      data.positions = positionIds;
       const headers = this.headersProvider.getHeaders();
-      const url = 'api/Documents/SignDocument?documentId=' + id;
+      const url = 'api/Documents/SignDocument';
       this.http
-        .get<boolean>(this.baseUrl + url, { headers: headers })
+        .post<boolean>(this.baseUrl + url, data, { headers: headers })
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe((result) => resolve(result), e => reject(e));

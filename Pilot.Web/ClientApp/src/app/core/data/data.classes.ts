@@ -318,5 +318,10 @@ export interface IXpsDigitalSignature {
   isValid: boolean;
   isAdditional: boolean;
   role: string;
-  canUserSign: boolean;s
+  canUserSign: boolean;
+}
+
+export class DocumentSignData {
+  documentId: string;
+  positions: number[];
 }

@@ -1,6 +1,6 @@
 <header>
-  <nav class='navbar navbar-expand-sm fixed-top navbar-toggleable-sm navbar-light bg-content' *ngIf="isLoggedIn$ | async">
-    <div class="container">
+  <nav class='navbar navbar-expand-sm fixed-top navbar-toggleable-sm navbar-light bg-content pl-0 pr-0' *ngIf="isLoggedIn$ | async">
+    <div class="container-fluid">
       <a class="navbar-brand" [routerLink]='["/"]'>Pilot-WEB</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation"
               [attr.aria-expanded]="isExpanded"

@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
-import {ActivatedRoute, ParamMap, NavigationStart, Router, RoutesRecognized} from '@angular/router';
+import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
-import { INode, IObjectNode} from '../../shared/node.interface';
+import { INode, IObjectNode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';

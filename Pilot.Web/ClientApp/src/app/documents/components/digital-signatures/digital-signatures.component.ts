@@ -21,6 +21,8 @@ class DigitalSignature {
   role: string;
   canUserSign = false;
   isSigned = false;
+  isChecked = false;
+  position: number;
 
   constructor(id: string) {
     this.id = id;
@@ -40,6 +42,7 @@ class DigitalSignature {
     }
 
     this.person = personNameFunc(personName, positionTitle);
+    this.position = position.id;
   }
 }
 
@@ -73,6 +76,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
   showSignButton: boolean;
   isSignaturesLoading: boolean;
   canUserSign: boolean;
+  isSomeSignatureChecked: boolean;
 
   /** digital-signatures ctor */
   constructor(
@@ -107,6 +111,15 @@ export class DigitalSignaturesComponent implements OnDestroy {
     });
   }
 
+  checkSignature(signature: DigitalSignature): void {
+    if (!signature.canUserSign) {
+      return;
+    }
+
+    signature.isChecked = !signature.isChecked;
+    this.isSomeSignatureChecked = this.signatures.some(s => s.isChecked);
+  }
+
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
     if (this.versionSubscription) {
@@ -117,7 +130,8 @@ export class DigitalSignaturesComponent implements OnDestroy {
   async sign(): Promise<void> {
     this.isSigninigInProcess = true;
     try {
-      const res = await this.repository.signDocumentAsync(this._document.id, this.ngUnsubscribe);
+      const positionIds = this.signatures.filter(s => s.isChecked).map(s => s.position);
+      const res = await this.repository.signDocumentAsync(this._document.id, positionIds, this.ngUnsubscribe);
       if (res) {
         const newDocument = await this.repository.getObjectAsync(this._document.id, RequestType.New);
         this._document = newDocument;
@@ -149,6 +163,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
       digitalSignature.setPersonTitle(person, position);
       digitalSignature.canUserSign = this.canSignWithSpotId(signature.id);
       digitalSignature.isSigned = !StringUtils.isNullOrEmpty(signature.sign);
+      digitalSignature.isChecked = digitalSignature.canUserSign;
 
       this.signatures.push(digitalSignature);
     }
@@ -180,6 +195,11 @@ export class DigitalSignaturesComponent implements OnDestroy {
         sc.isCertificateValid = sig.isCertificateValid;
         sc.canUserSign = this.canSignWithSpotId(sig.id);
         sc.isSigned = sig.isSigned;
+        sc.isChecked = sc.canUserSign && !sig.isSigned;
+
+        if (sc.isChecked) {
+          this.isSomeSignatureChecked = true;
+        }
       }
 
       this.showSignButton = true;
@@ -229,6 +249,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
 
   private getSignature(spotId: string): ISignature {
     const files = this._document.actualFileSnapshot.files;
-    return files.flatMap(f => f.signatures).find(x => x.id === spotId);
+    const ss = files.flatMap(f => f.signatures).find(x => x.id === spotId);
+    return ss;
   }
 }
