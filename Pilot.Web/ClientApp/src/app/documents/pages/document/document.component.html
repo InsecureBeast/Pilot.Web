@@ -19,13 +19,6 @@
         </div>
       </div>
 
-      <div *ngIf="document">
-        <span>{{document.title}}</span>
-        <div>
-          <app-user-state [object]="document"></app-user-state>
-        </div>
-      </div>
-
       <div class="text-center mt-3" *ngIf="images">
         <div *ngFor="let page of images">
           <img [src]="page" class="doc-page">
@@ -66,6 +59,22 @@
                 (onClose)="closeDocumentVersions($event)">
               </app-document-versions>
             </div>
+          </tab>
+          <tab heading="Info">
+            <div class="p-2">
+              <div *ngIf="document">
+                <span>{{document.title}}</span>
+                <div>
+                  <app-user-state [object]="document"></app-user-state>
+                </div>
+              </div>
+            </div>
+            <!-- <div *ngIf="document" class="p-3" style="background: var(--bg); border-left: 1px solid var(--border);">
+              <app-document-card 
+                       [document]="document" 
+                       [isReadonly]="true">
+              </app-document-card>
+            </div> -->
           </tab>
         </tabset>
       </div>
