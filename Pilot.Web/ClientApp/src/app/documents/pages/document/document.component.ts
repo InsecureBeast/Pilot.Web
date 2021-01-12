@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -31,7 +31,7 @@ import { NotificationService } from 'src/app/core/notification.service';
   styleUrls: ['./document.component.css']
 })
 /** document component*/
-export class DocumentComponent implements OnInit, OnDestroy {
+export class DocumentComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
@@ -72,6 +72,13 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
     this.isActualVersionSelected = true;
     this.images = new Array();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.staticTabs.tabs[0].heading = this.translate.instant('signatures');
+      this.staticTabs.tabs[1].heading = this.translate.instant('versions');
+    });
   }
 
   ngOnInit(): void {

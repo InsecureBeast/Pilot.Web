@@ -208,6 +208,13 @@ export class DigitalSignaturesComponent implements OnDestroy {
     .catch(e => {
       this.showSignButton = false;
       this.isSignaturesLoading = false;
+      this.canUserSign = false;
+      if (e.status === 500) {
+        if (e.error.error === 'Command IXpsServiceApi_Pilot-XPS-Server handler is not registered') {
+          return;
+        }
+      }
+
       this.error.emit(e);
     });
   }
