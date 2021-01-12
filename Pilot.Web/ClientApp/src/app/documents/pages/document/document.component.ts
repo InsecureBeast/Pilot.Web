@@ -76,9 +76,11 @@ export class DocumentComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.staticTabs.tabs[0].heading = this.translate.instant('signatures');
-      this.staticTabs.tabs[1].heading = this.translate.instant('versions');
-      this.staticTabs.tabs[2].heading = this.translate.instant('info');
+      if (this.staticTabs.tabs) {
+        this.staticTabs.tabs[0].heading = this.translate.instant('signatures');
+        this.staticTabs.tabs[1].heading = this.translate.instant('versions');
+        this.staticTabs.tabs[2].heading = this.translate.instant('info');
+      }
     });
   }
 
