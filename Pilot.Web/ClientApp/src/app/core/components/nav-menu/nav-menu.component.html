@@ -5,9 +5,10 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation"
               [attr.aria-expanded]="isExpanded"
               (click)="toggle()">
-        <span class="navbar-toggler-icon  mb-1"></span>
+        <span class="navbar-toggler-icon mb-1" *ngIf="!isExpanded"></span>
+        <span class="material-icons" *ngIf="isExpanded">close</span>
       </button>
-      <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" [ngClass]='{"show": isExpanded}'>
+      <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse h-100vh font-large" [ngClass]='{"show": isExpanded}'>
         <ul class="navbar-nav flex-grow">
           <li class="nav-item" [routerLinkActive]='["link-active"]'>
             <a class="nav-link noselect" [routerLink]='["/documents", documentRootId]' translate="documents" (click)="toggleOff()"></a>

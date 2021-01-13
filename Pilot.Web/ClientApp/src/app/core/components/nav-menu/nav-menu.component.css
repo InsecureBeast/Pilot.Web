@@ -25,10 +25,6 @@ html {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
-.bg-dark {
-  background-color: #343951;
-}
-
 .navbar-toggler {
   border-image: none;
   border: none;

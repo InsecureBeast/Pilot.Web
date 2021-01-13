@@ -21,12 +21,20 @@ html, body {
   background-color: var(--bg-content);
 }
 
+.bg-dark {
+  background-color: var(--dark);
+}
+
 .text-second {
   color: var(--second);
 }
 
 .container-fluid {
   height: 100%;
+}
+
+.h-100vh {
+  height: 100vh;
 }
 
 @media (max-width: 800px) {
