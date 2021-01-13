@@ -8,7 +8,9 @@
         <span class="navbar-toggler-icon mb-1" *ngIf="!isExpanded"></span>
         <span class="material-icons" *ngIf="isExpanded">close</span>
       </button>
-      <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse h-100vh font-large" [ngClass]='{"show": isExpanded}'>
+      <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse font-large" 
+        [ngClass]='{"show": isExpanded}'
+        [class.h-100vh]="isExpanded">
         <ul class="navbar-nav flex-grow">
           <li class="nav-item" [routerLinkActive]='["link-active"]'>
             <a class="nav-link noselect" [routerLink]='["/documents", documentRootId]' translate="documents" (click)="toggleOff()"></a>
