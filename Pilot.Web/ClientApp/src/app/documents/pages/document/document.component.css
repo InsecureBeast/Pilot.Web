@@ -15,6 +15,10 @@ img.doc-page {
   background: var(--bg-content);
 }
 
+.h-30 {
+  margin-top: 30vh;
+}
+
 .versions-view {
   position: fixed;
   right: 0;

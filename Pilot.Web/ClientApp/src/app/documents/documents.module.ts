@@ -19,8 +19,7 @@ import { ObjectCardDialogModule } from '../ui/object-card-dialog/object-card-dia
 import { DigitalSignaturesComponent } from './components/digital-signatures/digital-signatures.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FileDropDirective } from '../core/directives/file-drop.directive';
-import { BootstrapUiModule } from "../bootstrap-ui.module";
-import { ObjectCardDialogComponent } from '../ui/object-card-dialog/object-card-dialog.component';
+import { BootstrapUiModule } from '../bootstrap-ui.module';
 import { DocumentCardModule } from '../ui/document-card/document-card.module';
 
 @NgModule({
