@@ -4,7 +4,7 @@
                       (onPreviousDocument)="previousDocument($event)"
                       (onNextDocument)="nextDocument($event)"
                       (onShowVersions)="toggleDocumentVersions($event)"
-                      (onShowDocumentCard)="onShowDocumentCard($event)"
+                      (onShowDocumentCard)="onShowDocumentCard(cardTemplate)"
                       (onShowFiles)="showFiles($event)">
 </app-document-toolbar>
 
@@ -92,9 +92,11 @@
 
 <app-error *ngIf="error && !showFilesMode" [response]="error"></app-error>
 
-<pw-modal id="documentCardModal">
-  <app-object-card-dialog [object]="document"
+<ng-template #cardTemplate>
+  <div class="modal-body">
+    <app-object-card-dialog [object]="document"
                           (onClose)="onCloseDocumentCard($event)"
                           (onSave)="onChangeDocumentCard($event)">
-  </app-object-card-dialog>
-</pw-modal>
+    </app-object-card-dialog>
+  </div>
+</ng-template>

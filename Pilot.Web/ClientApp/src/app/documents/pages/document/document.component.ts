@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -17,13 +17,13 @@ import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
-import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from 'src/app/core/notification.service';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-document',
@@ -38,8 +38,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
-  private documents = new Array<string>();
-  private documentCardModal = 'documentCardModal';
+  private cardModalRef: BsModalRef;
 
   document: IObject;
   node: ObjectNode;
@@ -65,7 +64,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
     private readonly documentService: DocumentsService,
-    private readonly modalService: ModalService,
+    private readonly modalService: BsModalService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
     private readonly notificationService: NotificationService) {
@@ -83,7 +82,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       }
 
       const version = params.get('v');
-      this.loadDocument(id, version, true);
+      this.loadDocument(id, version);
     });
 
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
@@ -174,36 +173,17 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.showFilesMode = event;
   }
 
-  previousDocument(node: INode) {
-    this.cancelAllRequests(false);
-    const indexOf = this.documents.findIndex(doc => doc === this.document.id);
-    if (!this.canPreviousDocument(indexOf)) {
-      return;
-    }
-
-    const prevId = this.documents[indexOf - 1];
-    this.loadDocument(prevId);
-    this.updateLocation(this.document.parentId, prevId);
-  }
-
-  nextDocument(node: INode) {
-    this.cancelAllRequests(false);
-    const indexOf = this.documents.findIndex(doc => doc === this.document.id);
-    if (!this.canNextDocument(indexOf)) {
-      return;
-    }
-
-    const nextId = this.documents[indexOf + 1];
-    this.loadDocument(nextId);
-    this.updateLocation(this.document.parentId, nextId);
-  }
-
-  onShowDocumentCard($event): void {
-    this.modalService.open(this.documentCardModal);
+  onShowDocumentCard(template: TemplateRef<any>): void {
+    const config = new ModalOptions();
+    // config.backdrop = true;
+    // config.ignoreBackdropClick = true;
+    config.animated = true;
+    config.class = 'modal-dialog-centered align-items-stretch';
+    this.cardModalRef = this.modalService.show(template, config);
   }
 
   onCloseDocumentCard($event): void {
-    this.modalService.close(this.documentCardModal);
+    this.modalService.hide(this.cardModalRef.id);
   }
 
   onChangeDocumentCard(id: string): void {
@@ -227,7 +207,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
+  private loadDocument(id: string, version?: string): void {
     this.error = null;
     this.repository.getObjectAsync(id)
       .then(source => {
@@ -255,27 +235,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
         }
 
         this.loadSnapshot(snapshot);
-
-        if (loadNeighbors) {
-          this.loadNeighbors(source);
-        }
       })
       .catch(e => {
-        this.isLoading = false;
-        this.error = e;
-      });
-  }
-
-  private loadNeighbors(source: IObject): void {
-    this.repository.getObjectAsync(source.parentId)
-      .then(parent => {
-        for (const child of parent.children) {
-          const type = this.repository.getType(child.typeId);
-          if (TypeExtensions.isDocument(type)) {
-            this.documents.push(child.objectId);
-          }
-        }
-      }).catch(e => {
         this.isLoading = false;
         this.error = e;
       });
@@ -349,29 +310,5 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
       }
     }
-  }
-
-  private canNextDocument(indexOf: number): boolean {
-    if (indexOf === -1) {
-      return false;
-    }
-
-    if (indexOf === this.documents.length - 1) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private canPreviousDocument(indexOf: number): boolean {
-    if (indexOf === -1) {
-      return false;
-    }
-
-    if (indexOf === 0) {
-      return false;
-    }
-
-    return true;
   }
 }

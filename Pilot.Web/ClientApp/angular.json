@@ -29,7 +29,8 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
               "src/root.css",
-              "src/buttons.css"
+              "src/buttons.css",
+              "src/css/transitions.css"
             ],
             "scripts": []
           },

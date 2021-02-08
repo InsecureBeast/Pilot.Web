@@ -95,6 +95,7 @@ html, body {
   word-wrap: normal;
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
+  font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
   /*margin-top: 1px;*/
   -webkit-touch-callout: none; /* iOS Safari */
