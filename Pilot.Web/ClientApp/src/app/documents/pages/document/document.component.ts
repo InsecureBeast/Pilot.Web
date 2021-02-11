@@ -175,8 +175,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   onShowDocumentCard(template: TemplateRef<any>): void {
     const config = new ModalOptions();
-    // config.backdrop = true;
-    // config.ignoreBackdropClick = true;
     config.animated = true;
     config.class = 'modal-dialog-centered align-items-stretch';
     this.cardModalRef = this.modalService.show(template, config);

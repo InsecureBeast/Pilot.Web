@@ -285,46 +285,46 @@ describe('documents component', () => {
         expect(component.error).toEqual(error);
     }));
 
-    it('should show object card', fakeAsync(() => {
-        // given
+    // it('should show object card', fakeAsync(() => {
+    //     // given
 
-        fixture.detectChanges();
-        flush();
+    //     fixture.detectChanges();
+    //     flush();
 
-        // when
-        component.onShowObjectCard();
+    //     // when
+    //     component.onShowObjectCard();
 
-        // then
-        verify(modalServiceMock.open('objectCardModal')).once();
-        expect().nothing();
-    }));
+    //     // then
+    //     verify(modalServiceMock.open('objectCardModal')).once();
+    //     expect().nothing();
+    // }));
 
-    it('should close object card', fakeAsync(() => {
-        // given
+    // it('should close object card', fakeAsync(() => {
+    //     // given
 
-        fixture.detectChanges();
-        flush();
+    //     fixture.detectChanges();
+    //     flush();
 
-        // when
-        component.onCloseObjectCard();
+    //     // when
+    //     component.onCloseObjectCard();
 
-        // then
-        verify(modalServiceMock.close('objectCardModal')).once();
-        expect().nothing();
-    }));
+    //     // then
+    //     verify(modalServiceMock.close('objectCardModal')).once();
+    //     expect().nothing();
+    // }));
 
-    it('should close object card on save', fakeAsync(() => {
-        // given
+    // it('should close object card on save', fakeAsync(() => {
+    //     // given
 
-        fixture.detectChanges();
-        flush();
+    //     fixture.detectChanges();
+    //     flush();
 
-        // when
-        component.onSaveObjectCard('8FA40F61-1D5E-428A-B2AD-5DB1CC60950F');
+    //     // when
+    //     component.onSaveObjectCard('8FA40F61-1D5E-428A-B2AD-5DB1CC60950F');
 
-        // then
-        verify(modalServiceMock.close('objectCardModal')).once();
-        verify(documentsServiceMock.changeObjectForCard('8FA40F61-1D5E-428A-B2AD-5DB1CC60950F')).once();
-        expect().nothing();
-    }));
+    //     // then
+    //     verify(modalServiceMock.close('objectCardModal')).once();
+    //     verify(documentsServiceMock.changeObjectForCard('8FA40F61-1D5E-428A-B2AD-5DB1CC60950F')).once();
+    //     expect().nothing();
+    // }));
 });

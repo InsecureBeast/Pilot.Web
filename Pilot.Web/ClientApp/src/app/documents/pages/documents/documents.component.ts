@@ -15,7 +15,6 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
-import { ModalService } from 'src/app/ui/modal/modal.service';
 import { IObject } from 'src/app/core/data/data.classes';
 
 @Component({
@@ -30,9 +29,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
-  private documentCardModal = 'objectCardModal';
 
-  modalRef: BsModalRef;
+  private modalRef: BsModalRef;
+  private cardModalRef: BsModalRef;
+
   checked = new Array<INode>();
   checkedNode: IObject;
   currentItem: ObjectNode;
@@ -49,7 +49,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService,
     private readonly bsModalService: BsModalService) {
 
   }
@@ -156,20 +155,27 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onDownloadFinished(any): void {
-    this.bsModalService.hide();
+    if (this.modalRef){
+      this.bsModalService.hide(this.modalRef.id);
+    }
   }
 
   onError(error: HttpErrorResponse): void {
     this.error = error;
   }
 
-  onShowObjectCard(): void {
+  onShowObjectCard(template: TemplateRef<any>): void {
     this.checkedNode = this.getCheckedNode();
-    this.modalService.open(this.documentCardModal);
+    const config = new ModalOptions();
+    config.animated = true;
+    config.class = 'modal-dialog-centered align-items-stretch';
+    this.cardModalRef = this.bsModalService.show(template, config);
   }
 
   onCloseObjectCard(): void {
-    this.modalService.close(this.documentCardModal);
+    if (this.cardModalRef){
+      this.bsModalService.hide(this.cardModalRef.id);
+    }
   }
 
   onSaveObjectCard(id: string): void {
