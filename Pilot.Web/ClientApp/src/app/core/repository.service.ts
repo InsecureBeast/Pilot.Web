@@ -50,9 +50,16 @@ export class RepositoryService {
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
-  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
+  getChildrenAsync(
+    objectId: string,
+    childrenType: number,
+    cancel: Subject<any>,
+    requestType: RequestType = RequestType.None): Promise<IObject[]> {
+
+    let headers = this.headersProvider.getHeaders();
+    headers = this.SetRequestType(requestType, headers);
+
     return new Promise((resolve, reject) => {
-      const headers = this.headersProvider.getHeaders();
       const url = 'api/Documents/GetDocumentChildren?id=' + objectId + '&childrenType=' + childrenType;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
@@ -76,19 +83,23 @@ export class RepositoryService {
 
   getObjectAsync(id: string, requestType: RequestType = RequestType.None): Promise<IObject> {
     let headers = this.headersProvider.getHeaders();
-
-    if (requestType !== RequestType.None) {
-      const currentRequestType = this.requestType;
-      this.requestType = requestType;
-      headers = this.headersProvider.getHeaders();
-      this.requestType = currentRequestType;
-    }
+    headers = this.SetRequestType(requestType, headers);
     return new Promise((resolve, reject) => {
       this.http
         .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers })
         .pipe(first())
         .subscribe((objects) => resolve(objects), e => reject(e));
     });
+  }
+
+  private SetRequestType(requestType: RequestType, headers) {
+    if (requestType !== RequestType.None) {
+      const currentRequestType = this.requestType;
+      this.requestType = requestType;
+      headers = this.headersProvider.getHeaders();
+      this.requestType = currentRequestType;
+    }
+    return headers;
   }
 
   getObjectsAsync(ids: string[]): Promise<IObject[]> {

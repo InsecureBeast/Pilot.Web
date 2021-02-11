@@ -26,9 +26,12 @@ export class DownloadService {
     });
   }
 
-  downloadFileArchive(ids: string[]): void {
-    this.filesRepository.getFileArchive(ids).then(data => {
-      this.runLoadFile(data, 'Archive.zip', 'application/zip');
+  downloadFileArchive(ids: string[]): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.filesRepository.getFileArchive(ids).then(data => {
+        this.runLoadFile(data, 'Archive.zip', 'application/zip');
+        resolve(true);
+      }, err => reject(err));
     });
   }
 

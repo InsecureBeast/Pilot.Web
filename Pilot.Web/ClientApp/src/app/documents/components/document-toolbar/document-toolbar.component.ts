@@ -65,7 +65,7 @@ export class DocumentToolbarComponent implements OnDestroy {
     this.onShowVersions.emit(this.document);
   }
 
-  openDocumentCard() : void {
+  openDocumentCard(): void {
     this.onShowDocumentCard.emit();
   }
 

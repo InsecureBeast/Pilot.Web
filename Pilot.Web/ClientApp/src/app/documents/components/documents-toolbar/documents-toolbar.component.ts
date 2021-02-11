@@ -44,14 +44,14 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
     this.downloadFinished.emit();
   }
 
-  downloadArchive(): void {
+  async downloadArchive(): Promise<void> {
     if (!this.checkedNodes) {
       return;
     }
 
     this.downloadStarted.emit();
     const selected = this.checkedNodes.map(n => n.id);
-    this.downloadService.downloadFileArchive(selected);
+    await this.downloadService.downloadFileArchive(selected);
     this.downloadFinished.emit();
   }
 

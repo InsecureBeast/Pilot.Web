@@ -33,6 +33,7 @@ import { FilesRepositoryService } from '../../../core/files-repository.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AccessCalculator } from '../../../core/tools/access.calculator';
 import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
+import { Recoverable } from 'repl';
 
 @Component({
     selector: 'app-document-list',
@@ -252,7 +253,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     input.click();
   }
 
-  async openModal(): Promise<void> {
+  async openProgressModal(): Promise<void> {
     if (this.modalRef != null) {
       return;
     }
@@ -286,11 +287,11 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
 
   private async uploadFiles(fileList: FileList): Promise<void> {
     try {
-      await this.openModal();
+      await this.openProgressModal();
       await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
           this.uploadProgressPercent = p;
         });
-      this.loadChildren(this.parent.id, this.parent.isSource);
+      this.loadChildren(this.parent.id, this.parent.isSource, RequestType.New);
     } catch (e) {
       console.log(e);
       this.closeModal();
@@ -327,13 +328,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     this.canUploadFile = item.isSource && canCreateChild;
   }
 
-  private loadChildren(id: string, isSource: boolean) {
+  private loadChildren(id: string, isSource: boolean, requestType: RequestType = RequestType.None) {
     let type = ChildrenType.ListView;
     if (isSource) {
       type = ChildrenType.Storage;
     }
 
-    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
+    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe, requestType)
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);

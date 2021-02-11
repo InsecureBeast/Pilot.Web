@@ -146,7 +146,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   onDownloadStarted(template: TemplateRef<any>): void {
     const config = new ModalOptions();
-    config.backdrop = true;
+    config.backdrop = false;
     config.ignoreBackdropClick = true;
     config.animated = false;
     config.class = 'modal-dialog-centered';
