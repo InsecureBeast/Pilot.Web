@@ -157,7 +157,9 @@ export class DocumentComponent implements OnInit, OnDestroy {
   downloadDocument($event: IObjectNode) {
     this.downloadService.downloadFile($event.source);
   }
-  toggleDocumentVersions($event): void {    this.isInfoShown = !this.isInfoShown;
+
+  toggleDocumentVersions($event): void {
+    this.isInfoShown = !this.isInfoShown;
   }
 
   closeDocumentVersions($event): void {

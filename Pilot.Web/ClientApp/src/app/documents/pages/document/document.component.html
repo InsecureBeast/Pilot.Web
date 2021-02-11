@@ -61,7 +61,7 @@
               </app-document-versions>
             </div>
           </tab>
-          <tab heading="{{ 'info' | translate }}">
+          <!-- <tab heading="{{ 'info' | translate }}">
             <div class="p-2">
               <div *ngIf="document">
                 <span>{{document.title}}</span>
@@ -70,13 +70,13 @@
                 </div>
               </div>
             </div>
-            <!-- <div *ngIf="document" class="p-3" style="background: var(--bg); border-left: 1px solid var(--border);">
+            <div *ngIf="document" class="p-3" style="background: var(--bg); border-left: 1px solid var(--border);">
               <app-document-card 
                        [document]="document" 
                        [isReadonly]="true">
               </app-document-card>
-            </div> -->
-          </tab>
+            </div>
+          </tab> -->
         </tabset>
       </div>
     </div>
@@ -98,5 +98,16 @@
                           (onClose)="onCloseDocumentCard($event)"
                           (onSave)="onChangeDocumentCard($event)">
     </app-object-card-dialog>
+  </div>
+</ng-template>
+
+<ng-template #bottomSheetTemplate>
+  <div class="modal-body">
+    <ul>
+      <li>Download</li>
+      <li>Object properties</li>
+      <li>Signatures</li>
+      <li>Hystory</li>
+    </ul>
   </div>
 </ng-template>

@@ -4,6 +4,7 @@ import { first } from 'rxjs/operators';
 import { FilesRepositoryService } from './files-repository.service';
 import { IObject } from './data/data.classes';
 import { FilesSelector } from './tools/files.selector';
+import { TypeExtensions } from './tools/type.extensions';
 
 @Injectable({ providedIn: 'root' })
 export class DownloadService {
@@ -18,8 +19,11 @@ export class DownloadService {
         .pipe(first())
         .subscribe(data => {
           const file = FilesSelector.getSourceFile(object.actualFileSnapshot.files);
-          const fileExt = file.name.split('.').pop();
-          const name = object.title;
+          let name = object.title;
+          if (!TypeExtensions.isProjectFile(object.type.name)) {
+            const fileExt = file.name.split('.').pop();
+            name = `${name}.${fileExt}`;
+          }
           this.runLoadFile(data, name, 'application/octet-stream');
           resolve(true);
         }, err => reject(err));
