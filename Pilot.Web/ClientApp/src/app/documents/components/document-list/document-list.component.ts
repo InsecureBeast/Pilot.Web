@@ -321,13 +321,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
       this.nodes.push(new EmptyObjectNode());
     }
     this.isLoaded = true;
-    this.loadChildren(item.id, item.isSource);
+    this.loadChildren(item.id, item.isSource, RequestType.None);
 
     const canCreateChild = IObjectExtensions.hasAccess(this.accessCalculator.calcAccess(item.source), AccessLevel.Create);
     this.canUploadFile = item.isSource && canCreateChild;
   }
 
-  private loadChildren(id: string, isSource: boolean, requestType: RequestType = RequestType.None) {
+  private loadChildren(id: string, isSource: boolean, requestType: RequestType) {
     let type = ChildrenType.ListView;
     if (isSource) {
       type = ChildrenType.Storage;

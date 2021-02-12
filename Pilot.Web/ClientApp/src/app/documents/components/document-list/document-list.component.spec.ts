@@ -25,6 +25,7 @@ import { skipUntil, skipWhile } from 'rxjs/operators';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AccessCalculator } from 'src/app/core/tools/access.calculator';
+import { RequestType } from 'src/app/core/headers.provider';
 
 describe('documents component', () => {
     let component: DocumentListComponent;
@@ -63,7 +64,8 @@ describe('documents component', () => {
         const childObject1 = randomIObject('2DC0C3C9-2B8C-44F6-A7A9-0997B4EE6BE4');
         const childObject2 = randomIObject('2F7726BA-5694-4B1C-9DE2-0E4C30B12C81');
         const objects = [childObject1, childObject2];
-        when(repositoryMock.getChildrenAsync(parentId, ChildrenType.ListView, anything())).thenResolve(objects);
+        when(repositoryMock.getChildrenAsync(parentId, ChildrenType.ListView, anything(), RequestType.None)).thenResolve(objects);
+        when(repositoryMock.getChildrenAsync(parentId, ChildrenType.ListView, anything(), RequestType.New)).thenResolve(objects);
         return nodeMock;
     };
 
