@@ -33,7 +33,6 @@ import { FilesRepositoryService } from '../../../core/files-repository.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AccessCalculator } from '../../../core/tools/access.calculator';
 import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
-import { Recoverable } from 'repl';
 
 @Component({
     selector: 'app-document-list',
