@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { SystemIds } from '../../data/system.ids';
+import { RepositoryService } from '../../repository.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -15,7 +16,7 @@ export class NavMenuComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
   documentRootId = SystemIds.rootId;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private repository: RepositoryService) {
   }
 
   ngOnInit(): void {
@@ -37,6 +38,7 @@ export class NavMenuComponent implements OnInit {
   onLogout(event: Event): boolean {
     this.collapse();
     this.authService.logout();
+    this.repository.clear();
     this.router.navigate(['/login']);
     return false;
   }

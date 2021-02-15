@@ -194,6 +194,11 @@ export class RepositoryService {
     return init;
   }
 
+  clear() {
+    this.currentPerson = null;
+    this.metadata = null;
+  }
+
   getPerson(id: number): IPerson {
     return this.people.get(id);
   }

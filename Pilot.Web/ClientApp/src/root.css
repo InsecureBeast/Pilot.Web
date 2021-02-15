@@ -9,6 +9,7 @@
   --gray-light: #eaebef;
   --border: #dee2e6;
   --bg: #ffffff;
+  --black: #000000;
 }
 
 .font-small {
@@ -21,4 +22,9 @@
 
 .font-x-large {
   font-size: x-large;
+}
+
+:root {
+  --font-weight-normal: 100;
+  --font-weight-bold: 500;
 }

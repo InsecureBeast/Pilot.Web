@@ -31,3 +31,8 @@ html {
   padding: 0;
   outline: none;
 }
+
+.link-active {
+  font-weight: var(--font-weight-bold);
+  color: var(--black);
+}

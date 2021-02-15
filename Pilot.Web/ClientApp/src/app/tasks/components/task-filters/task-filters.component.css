@@ -27,17 +27,17 @@ li.filter-item a {
   }
 
   li.filter-item a:hover {
-    color: var(--dark);
+    color: var(--black);
     text-decoration: none;
   }
 
   li.filter-item a:active {
-    color: var(--dark);
+    color: var(--black);
   }
 
 .active {
-    color: var(--dark)!important;
-    font-weight: 500;
+    color: var(--black)!important;
+    font-weight: var(--font-weight-bold);
 }
 
 .filter-one-line-text {
