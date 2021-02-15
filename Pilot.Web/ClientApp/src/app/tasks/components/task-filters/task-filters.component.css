@@ -5,7 +5,7 @@
 }
 
 .filter-item {
-  max-width: 400px;
+  /* max-width: 400px; */
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -15,6 +15,7 @@
 
 li.filter-item a {
   color: var(--gray);
+  display: block;
 }
 
   li.filter-item a:link {
@@ -36,6 +37,7 @@ li.filter-item a {
 
 .active {
     color: var(--dark)!important;
+    font-weight: 500;
 }
 
 .filter-one-line-text {
