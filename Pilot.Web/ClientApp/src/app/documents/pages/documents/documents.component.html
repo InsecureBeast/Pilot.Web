@@ -4,7 +4,9 @@
     <app-documents-toolbar class="col-12 p-0"
                            *ngIf="checked != null && checked.length > 0"
                            [checkedNodes]="checked"
-                           (onShowDocumentCard)="onShowObjectCard($event)">
+                           (onShowDocumentCard)="onShowObjectCard(cardTemplate)"
+                           (downloadStarted)="onDownloadStarted(downloadTemplate)"
+                           (downloadFinished)="onDownloadFinished($event)">
     </app-documents-toolbar>
 
 
@@ -13,10 +15,10 @@
                        (onSelected)="onItemSelected($event)">
       </app-breadcrumbs>
       <app-document-list [parent]="currentItem"
-                         (onSelected)="onItemSelected($event)"
-                         (onChecked)="onItemsChecked($event)"
-                         (onLoaded)="onListLoaded($event)"
-                         (onError)="onError($event)">
+                         (selected)="onItemSelected($event)"
+                         (checked)="onItemsChecked($event)"
+                         (loaded)="onListLoaded($event)"
+                         (error)="onError($event)">
       </app-document-list>
     </div>
 
@@ -25,9 +27,20 @@
 
 <app-error *ngIf="error" [response]="error"></app-error>
 
-<pw-modal id="objectCardModal">
-  <app-object-card-dialog [object]="checkedNode"
-                          (onClose)="onCloseObjectCard($event)"
-                          (onSave)="onSaveObjectCard($event)">
-  </app-object-card-dialog>
-</pw-modal>
+<ng-template #cardTemplate>
+  <div class="modal-body">
+    <app-object-card-dialog [object]="checkedNode"
+                            (onClose)="onCloseObjectCard($event)"
+                            (onSave)="onSaveObjectCard($event)">
+    </app-object-card-dialog>
+  </div>
+</ng-template>
+
+<ng-template #downloadTemplate>
+  <div class="modal-body">
+    <div class="spinner-grow text-primary align-middle" role="status">
+      <span class="sr-only"></span>
+    </div>
+    <span class="align-middle ml-2">Prepare to download ...</span>
+  </div>
+</ng-template>

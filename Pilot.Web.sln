@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pilot.Web", "Pilot.Web\Pilot.Web.csproj", "{0D7705E2-39EC-453A-9982-91B90AA799E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentRender", "documentRender\DocumentRender.csproj", "{CEA9E521-9AEE-4332-A837-D9DDA5B37869}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pilot.Web.Tests", "Pilot.Web.Tests\Pilot.Web.Tests.csproj", "{34AC6BA0-4FF9-46C7-A734-B7ABBAA9098E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pilot.Web.Tests", "Pilot.Web.Tests\Pilot.Web.Tests.csproj", "{34AC6BA0-4FF9-46C7-A734-B7ABBAA9098E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pilot.Xps.Entities", "Pilot.Xps.Entities\Pilot.Xps.Entities.csproj", "{D4DBCE56-CE3B-4823-B3DB-262D9D279DA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{34AC6BA0-4FF9-46C7-A734-B7ABBAA9098E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34AC6BA0-4FF9-46C7-A734-B7ABBAA9098E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34AC6BA0-4FF9-46C7-A734-B7ABBAA9098E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4DBCE56-CE3B-4823-B3DB-262D9D279DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4DBCE56-CE3B-4823-B3DB-262D9D279DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4DBCE56-CE3B-4823-B3DB-262D9D279DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4DBCE56-CE3B-4823-B3DB-262D9D279DA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

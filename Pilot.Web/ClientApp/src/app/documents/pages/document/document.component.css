@@ -1,5 +1,5 @@
 img.doc-page {
-  border: 1px solid lightgray;
+  border: 1px solid var(--border);
   margin-bottom: 8px;
   margin-top: 8px;
   max-width: 90%;
@@ -12,25 +12,38 @@ img.doc-page {
 }
 
 .doc-info {
-  background: white;
-  border-left: 1px solid rgb(222, 226, 230);
+  background: var(--bg-content);
+}
+
+.h-30 {
+  margin-top: 30vh;
 }
 
 .versions-view {
   position: fixed;
   right: 0;
-  top: 3rem;
+  top: 3.5rem;
   bottom: 0;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 991px) {
   .doc-info {
-    /*height: 30vh;*/
-    border-top: 1px solid rgb(222, 226, 230);
+    height: 60vh;
+    border-top: 1px solid var(--border);
   }
 
   .versions-view {
     top: unset;
     left: 0;
   }
+
+  :host ::ng-deep div.tab-content {
+    height: 100%;
+  }
+}
+
+:host ::ng-deep div.tab-content {
+  height: calc(100% - 2.7rem);
+  background-color: var(--bg);
+  border-left: 1px solid var(--border);
 }

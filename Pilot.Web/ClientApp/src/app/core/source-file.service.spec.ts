@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { IProgressUpdater, SourceFileService } from './source-file.service';
 import { FilesRepositoryService } from './files-repository.service';
-import { instance, mock, when } from 'ts-mockito'
+import { instance, mock, when, anything } from 'ts-mockito';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { IFile, IFileBody, IFileSnapshot } from './data/data.classes';
 import { BehaviorSubject, Subject } from 'rxjs';

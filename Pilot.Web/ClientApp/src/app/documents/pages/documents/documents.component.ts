@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { SystemIds } from '../../../core/data/system.ids';
 import { RepositoryService } from '../../../core/repository.service';
@@ -15,7 +16,6 @@ import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { BimTypeNames } from '../../../bim/shared/bim-type.names';
 import { RequestType } from 'src/app/core/headers.provider';
-import { ModalService } from 'src/app/ui/modal/modal.service';
 import { IObject } from 'src/app/core/data/data.classes';
 
 @Component({
@@ -30,7 +30,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
-  private documentCardModal = "objectCardModal";
+
+  private modalRef: BsModalRef;
+  private cardModalRef: BsModalRef;
 
   checked = new Array<INode>();
   checkedNode: IObject;
@@ -48,7 +50,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService) {
+    private readonly bsModalService: BsModalService) {
 
   }
 
@@ -56,14 +58,16 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       let id = params.get('id');
-      if (!id)
+      if (!id) {
         id = SystemIds.rootId;
+      }
 
       let isSource = false;
-      if (this.activatedRoute.snapshot?.url.length !== 0) {
-        const urlSegment = this.activatedRoute.snapshot?.url[0].path;
-        if (urlSegment === 'files')
+      if (this.activatedRoute.snapshot.url.length > 1) {
+        const urlSegment = this.activatedRoute.snapshot.url[1].path;
+        if (urlSegment === 'files') {
           isSource = true;
+        }
       }
 
       const promise = this.repository.getObjectAsync(id);
@@ -87,9 +91,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     });
 
     this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
-      if (!id)
+      if (!id) {
         return;
-      
+      }
+
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.checkedNode = object;
       });
@@ -97,12 +102,15 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
-    if (this.routerSubscription)
+    }
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
-    if (this.objectCardChangeSubscription)  
+    }
+    if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
+    }
 
     // cancel
     this.ngUnsubscribe.next();
@@ -118,20 +126,20 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.navigationService.navigateToFile(node.id);
+        this.navigationService.navigateToFile(this.currentItem.id, node.id);
       } else {
-        this.navigationService.navigateToDocument(node.id);
+        this.navigationService.navigateToDocument(this.currentItem.id, node.id);
       }
-      
+
       return;
     }
 
-    if (node.isSource)
+    if (node.isSource) {
       this.navigationService.navigateToFilesFolder(node.id);
-    else {
-      var modelType = this.repository.getTypeByName(BimTypeNames.bimCoordinationModel);
+    } else {
+      const modelType = this.repository.getTypeByName(BimTypeNames.bimCoordinationModel);
       if (modelType && node.source.type.id === modelType.id) {
-        this.navigationService.navigateToCoordinationModel(node.id);
+        this.navigationService.navigateToCoordinationModel(this.currentItem.id, node.id);
         return;
       }
       this.navigationService.navigateToDocumentsFolder(node.id);
@@ -142,28 +150,50 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     this.checked = nodes;
   }
 
+  onDownloadStarted(template: TemplateRef<any>): void {
+    const config = new ModalOptions();
+    config.backdrop = false;
+    config.ignoreBackdropClick = true;
+    config.animated = false;
+    config.class = 'modal-dialog-centered';
+
+    this.modalRef = this.bsModalService.show(template, config);
+  }
+
+  onDownloadFinished(any): void {
+    if (this.modalRef) {
+      this.bsModalService.hide(this.modalRef.id);
+    }
+  }
+
   onError(error: HttpErrorResponse): void {
     this.error = error;
   }
 
-  onShowObjectCard() : void {
+  onShowObjectCard(template: TemplateRef<any>): void {
     this.checkedNode = this.getCheckedNode();
-    this.modalService.open(this.documentCardModal);
+    const config = new ModalOptions();
+    config.animated = true;
+    config.class = 'modal-dialog-centered align-items-stretch';
+    this.cardModalRef = this.bsModalService.show(template, config);
   }
 
-  onCloseObjectCard() : void {
-    this.modalService.close(this.documentCardModal);
+  onCloseObjectCard(): void {
+    if (this.cardModalRef) {
+      this.bsModalService.hide(this.cardModalRef.id);
+    }
   }
-  
+
   onSaveObjectCard(id: string): void {
     this.documentsService.changeObjectForCard(id);
     this.onCloseObjectCard();
   }
 
-  private getCheckedNode() : IObject{
-    if (this.checked && this.checked.length > 0)
+  private getCheckedNode(): IObject {
+    if (this.checked && this.checked.length > 0) {
       return this.checked[0].source;
+    }
 
-    return undefined;  
+    return undefined;
   }
 }

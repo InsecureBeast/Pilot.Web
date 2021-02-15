@@ -16,7 +16,6 @@ import { BimDocumentComponent } from './bim-document/bim-document.component';
     RouterModule,
     TranslateModule,
     BimDocumentRoutingModule
-   
   ],
   declarations: [
     BimDocumentComponent

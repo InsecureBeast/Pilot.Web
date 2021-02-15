@@ -3,15 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, zip,  BehaviorSubject } from 'rxjs';
 import { first, takeUntil } from 'rxjs/operators';
 
-import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
+import { IMetadata, IObject, IType, IPerson, IOrganizationUnit, IUserState,
+  IUserStateMachine, MUserStateMachine, IXpsDigitalSignature, IDatabaseInfo, DocumentSignData } from './data/data.classes';
 import { RequestType, HeadersProvider } from './headers.provider';
 import { Change } from './modifier/change';
 import { Modifier } from './modifier/modifier';
 
 @Injectable({ providedIn: 'root' })
 export class RepositoryService {
-
   private metadata: IMetadata;
+  private databaseInfo: IDatabaseInfo;
   private types: Map<number, IType>;
   private typeNames: Map<string, IType>;
   private people: Map<number, IPerson>;
@@ -55,9 +56,16 @@ export class RepositoryService {
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });
   }
 
-  getChildrenAsync(objectId: string, childrenType: number, cancel: Subject<any>): Promise<IObject[]> {
+  getChildrenAsync(
+    objectId: string,
+    childrenType: number,
+    cancel: Subject<any>,
+    requestType: RequestType = RequestType.None): Promise<IObject[]> {
+
+    let headers = this.headersProvider.getHeaders();
+    headers = this.SetRequestType(requestType, headers);
+
     return new Promise((resolve, reject) => {
-      const headers = this.headersProvider.getHeaders();
       const url = 'api/Documents/GetDocumentChildren?id=' + objectId + '&childrenType=' + childrenType;
       this.http
         .get<IObject[]>(this.baseUrl + url, { headers: headers })
@@ -81,19 +89,23 @@ export class RepositoryService {
 
   getObjectAsync(id: string, requestType: RequestType = RequestType.None): Promise<IObject> {
     let headers = this.headersProvider.getHeaders();
-
-    if (requestType !== RequestType.None) {
-      const currentRequestType = this.requestType;
-      this.requestType = requestType;
-      headers = this.headersProvider.getHeaders();
-      this.requestType = currentRequestType;
-    }
+    headers = this.SetRequestType(requestType, headers);
     return new Promise((resolve, reject) => {
       this.http
         .get<IObject>(this.baseUrl + 'api/Documents/GetObject?id=' + id, { headers: headers })
         .pipe(first())
         .subscribe((objects) => resolve(objects), e => reject(e));
     });
+  }
+
+  private SetRequestType(requestType: RequestType, headers) {
+    if (requestType !== RequestType.None) {
+      const currentRequestType = this.requestType;
+      this.requestType = requestType;
+      headers = this.headersProvider.getHeaders();
+      this.requestType = currentRequestType;
+    }
+    return headers;
   }
 
   getObjectsAsync(ids: string[]): Promise<IObject[]> {
@@ -105,6 +117,30 @@ export class RepositoryService {
         .post<IObject[]>(path, body, { headers: headers })
         .pipe(first())
         .subscribe(objects => resolve(objects), err => reject(err));
+    });
+  }
+
+  getDocumentSignaturesAsync(id: string, cancel: Subject<any>): Promise<IXpsDigitalSignature[]> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = `api/Documents/GetDocumentSignatures?documentId=${id}`;
+      this.http
+        .get<IXpsDigitalSignature[]>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((objects) => resolve(objects), e => reject(e));
+    });
+  }
+
+  getDocumentSignaturesWithSnapshotAsync(id: string, snapshotDate: string, cancel: Subject<any>): Promise<IXpsDigitalSignature[]> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = `api/Documents/GetDocumentSignaturesWithSnapshot?documentId=${id}&snapshotDate=${snapshotDate}`;
+      this.http
+        .get<IXpsDigitalSignature[]>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((objects) => resolve(objects), e => reject(e));
     });
   }
 
@@ -120,9 +156,10 @@ export class RepositoryService {
     const organizationUnits$ = this.getOrganizationUnits();
     const currentPerson$ = this.getCurrentPersonInternal();
     const states$ = this.getUserStates();
+    const databaseInfo$ = this.getDatabaseInfo();
 
-    const zip$ = zip(metadata$, people$, organizationUnits$, currentPerson$, states$).subscribe(
-      ([metadata, people, organizationUnits, currentPerson, states]) => {
+    const zip$ = zip(metadata$, people$, organizationUnits$, currentPerson$, states$, databaseInfo$).subscribe(
+      ([metadata, people, organizationUnits, currentPerson, states, databaseInfo]) => {
         this.metadata = metadata;
         this.types = new Map<number, IType>();
         this.typeNames = new Map<string, IType>();
@@ -153,6 +190,8 @@ export class RepositoryService {
           this.stateMachines.set(stateMachine.id, new MUserStateMachine(stateMachine));
         }
 
+        this.databaseInfo = databaseInfo;
+
         init.next(true);
         init.complete();
         zip$.unsubscribe();
@@ -161,6 +200,11 @@ export class RepositoryService {
       });
 
     return init;
+  }
+
+  clear() {
+    this.currentPerson = null;
+    this.metadata = null;
   }
 
   getPerson(id: number): IPerson {
@@ -173,6 +217,10 @@ export class RepositoryService {
 
   getOrganizationUnit(id: number): IOrganizationUnit {
     return this.organizationUnits.get(id);
+  }
+
+  getDatabaseId(): string {
+    return this.databaseInfo.databaseId;
   }
 
   getPersonOnOrganizationUnit(positionId: number): IPerson {
@@ -221,6 +269,21 @@ export class RepositoryService {
     return new Modifier(this);
   }
 
+  signDocumentAsync(id: string, positionIds: number[], cancel: Subject<any>): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const data = new DocumentSignData();
+      data.documentId = id;
+      data.positions = positionIds;
+      const headers = this.headersProvider.getHeaders();
+      const url = 'api/Documents/SignDocument';
+      this.http
+        .post<boolean>(this.baseUrl + url, data, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((result) => resolve(result), e => reject(e));
+    });
+  }
+
   private getPeople(): Observable<IPerson[]> {
     const headers = this.headersProvider.getHeaders();
     return this.http.get<IPerson[]>(this.baseUrl + 'api/Metadata/GetPeople', { headers: headers }).pipe(first());
@@ -239,5 +302,10 @@ export class RepositoryService {
   private getUserStates(): Observable<IUserState[]> {
     const headers = this.headersProvider.getHeaders();
     return this.http.get<IUserState[]>(this.baseUrl + 'api/Metadata/GetUserStates', { headers: headers }).pipe(first());
+  }
+
+  private getDatabaseInfo(): Observable<IDatabaseInfo> {
+    const headers = this.headersProvider.getHeaders();
+    return this.http.get<IDatabaseInfo>(this.baseUrl + 'api/Metadata/GetDatabaseInfo', { headers: headers }).pipe(first());
   }
 }

@@ -73,7 +73,11 @@ export class TaskListComponent implements  OnInit, OnDestroy{
     this.onChecked.emit(checked);
   }
 
-  update(node: TaskNode) : void {
+  update(node: TaskNode): void {
+    if (!node){
+      return;
+    }
+
     this.repositoryService.getObjectAsync(node.source.id).then(source => {
       node.update(source);
     });

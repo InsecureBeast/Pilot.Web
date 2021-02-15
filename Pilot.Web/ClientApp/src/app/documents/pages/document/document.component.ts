@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
-import { INode } from '../../shared/node.interface';
+import { INode, IObjectNode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService, IProgressUpdater } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
@@ -17,8 +17,13 @@ import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { RequestType } from 'src/app/core/headers.provider';
-import { ModalService } from 'src/app/ui/modal/modal.service';
 import { DocumentsService } from '../../shared/documents.service';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { ObjectNode } from '../../shared/object.node';
+import { TypeIconService } from '../../../core/type-icon.service';
+import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from 'src/app/core/notification.service';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-document',
@@ -26,26 +31,28 @@ import { DocumentsService } from '../../shared/documents.service';
   styleUrls: ['./document.component.css']
 })
 /** document component*/
-export class DocumentComponent implements OnInit, OnDestroy {
+export class DocumentComponent implements OnInit, OnDestroy, IProgressUpdater {
 
   private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
-  private documents = new Array<string>();
-  private documentCardModal = 'documentCardModal';
+  private cardModalRef: BsModalRef;
 
   document: IObject;
+  node: ObjectNode;
   images: SafeUrl[];
   isLoading: boolean;
   isInfoShown: boolean;
   error: HttpErrorResponse;
+  showFilesMode: boolean;
   progress: number;
-  
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
   selectedVersionCreator: string;
+
+  @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;
 
   /** document-details ctor */
   constructor(
@@ -57,13 +64,17 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
     private readonly documentService: DocumentsService,
-    private readonly modalService: ModalService) {
+    private readonly modalService: BsModalService,
+    private readonly typeIconService: TypeIconService,
+    private readonly translate: TranslateService,
+    private readonly notificationService: NotificationService) {
 
     this.isActualVersionSelected = true;
     this.images = new Array();
   }
 
   ngOnInit(): void {
+
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const id = params.get('id');
       if (!id) {
@@ -71,7 +82,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       }
 
       const version = params.get('v');
-      this.loadDocument(id, version, true);
+      this.loadDocument(id, version);
     });
 
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
@@ -89,7 +100,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
         version = s.created;
       }
 
-      this.updateLocation(this.document.id, version);
+      this.updateLocation(this.document.parentId, this.document.id, version);
       this.loadSnapshot(s);
     });
 
@@ -143,11 +154,15 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.downloadService.downloadFile(this.document);
   }
 
+  downloadDocument($event: IObjectNode) {
+    this.downloadService.downloadFile($event.source);
+  }
+
   toggleDocumentVersions($event): void {
     this.isInfoShown = !this.isInfoShown;
   }
 
-  closeDocumentVersions(): void {
+  closeDocumentVersions($event): void {
     this.isInfoShown = false;
   }
 
@@ -156,57 +171,50 @@ export class DocumentComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  previousDocument(node: INode) {
-    this.cancelAllRequests(false);
-    const indexOf = this.documents.findIndex(doc => doc === this.document.id);
-    if (!this.canPreviousDocument(indexOf)) {
-      return;
-    }
-
-    const prevId = this.documents[indexOf - 1];
-    this.loadDocument(prevId);
-    this.updateLocation(prevId);
+  showFiles(event: boolean): void {
+    this.showFilesMode = event;
   }
 
-  nextDocument(node: INode) {
-    this.cancelAllRequests(false);
-    const indexOf = this.documents.findIndex(doc => doc === this.document.id);
-    if (!this.canNextDocument(indexOf)) {
-      return;
+  onShowDocumentCard(template: TemplateRef<any>): void {
+    const config = new ModalOptions();
+    config.animated = true;
+    config.class = 'modal-dialog-centered align-items-stretch';
+    this.cardModalRef = this.modalService.show(template, config);
+  }
+
+  onCloseDocumentCard($event): void {
+    this.modalService.hide(this.cardModalRef.id);
+  }
+
+  onChangeDocumentCard(id: string): void {
+    this.documentService.changeObjectForCard(id);
+    this.onCloseDocumentCard(null);
+  }
+
+  onError($event): void {
+    this.notificationService.showError($event);
+  }
+
+  isSourceFile(): boolean {
+    if (this.document) {
+      return TypeExtensions.isProjectFileOrFolder(this.document.type);
     }
 
-    const nextId = this.documents[indexOf + 1];
-    this.loadDocument(nextId);
-    this.updateLocation(nextId);
+    return false;
   }
 
   update(value: number): void {
     this.progress = value;
     this.isLoading = this.progress < this.getMaxValue();
   }
-
   getMinValue(): number {
     return 10;
   }
-
   getMaxValue(): number {
     return 100;
   }
 
-  onShowDocumentCard(): void {
-    this.modalService.open(this.documentCardModal);
-  }
-
-  onCloseDocumentCard(): void {
-    this.modalService.close(this.documentCardModal);
-  }
-
-  onChangeDocumentCard(id: string): void {
-    this.documentService.changeObjectForCard(id);
-    this.onCloseDocumentCard();
-  }
-
-  private loadDocument(id: string, version?: string, loadNeighbors?: boolean): void {
+  private loadDocument(id: string, version?: string): void {
     this.error = null;
     this.repository.getObjectAsync(id)
       .then(source => {
@@ -215,6 +223,9 @@ export class DocumentComponent implements OnInit, OnDestroy {
         }
 
         this.document = source;
+        if (source.type.isMountable) {
+          this.node = new ObjectNode(source, true, this.typeIconService, this.ngUnsubscribe, this.translate);
+        }
         let snapshot = source.actualFileSnapshot;
         this.isActualVersionSelected = !version;
         if (!this.isActualVersionSelected) {
@@ -231,10 +242,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
         }
 
         this.loadSnapshot(snapshot);
-
-        if (loadNeighbors) {
-          this.loadNeighbors(source);
-        }
       })
       .catch(e => {
         this.isLoading = false;
@@ -242,25 +249,11 @@ export class DocumentComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadNeighbors(source: IObject): void {
-    this.repository.getObjectAsync(source.parentId)
-      .then(parent => {
-        for (const child of parent.children) {
-          const type = this.repository.getType(child.typeId);
-          if (TypeExtensions.isDocument(type)) {
-            this.documents.push(child.objectId);
-          }
-        }
-      }).catch(e => {
-        this.error = e;
-      });
-  }
-
-  private updateLocation(id: string, version?: string): void {
+  private updateLocation(folderId: string, id: string, version?: string): void {
     if (!version) {
-      this.location.replaceState('document/' + id);
+      this.location.replaceState(`/documents/${folderId}/doc/${id}`);
     } else {
-      this.location.replaceState('document/' + id + '/' + version);
+      this.location.replaceState(`/documents/${folderId}/doc/${id}/${version}`);
     }
   }
 
@@ -273,7 +266,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       const file = FilesSelector.getSourceFile(snapshot.files);
       this.sourceFileService.showXpsDocumentAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images, this)
         .then(_ => {
-           
+
         })
         .catch(e => {
           this.isLoading = false;
@@ -327,29 +320,5 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
       }
     }
-  }
-
-  private canNextDocument(indexOf: number): boolean {
-    if (indexOf === -1) {
-      return false;
-    }
-
-    if (indexOf === this.documents.length - 1) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private canPreviousDocument(indexOf: number): boolean {
-    if (indexOf === -1) {
-      return false;
-    }
-
-    if (indexOf === 0) {
-      return false;
-    }
-
-    return true;
   }
 }

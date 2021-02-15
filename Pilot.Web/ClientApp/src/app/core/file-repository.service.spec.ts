@@ -1,23 +1,32 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing"
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HeadersProvider } from './headers.provider';
 import { FilesRepositoryService } from './files-repository.service';
+import { instance, mock } from 'ts-mockito';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('FilesRepositoryService', () => {
   let service: FilesRepositoryService;
   let httpMock: HttpTestingController;
+  let headersProviderMock: HeadersProvider;
   let headersProvider: HeadersProvider;
+  let translate: TranslateService;
 
   beforeEach(() => {
+    headersProviderMock = mock(HeadersProvider);
+    headersProvider = instance(headersProviderMock);
+
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, TranslateModule.forRoot() ],
       providers: [
         { provide: 'BASE_URL', useValue: 'http://localhost/' },
-        FilesRepositoryService]
+        { provide: HeadersProvider, useValue: headersProvider },
+
+        ]
     });
     service = TestBed.inject(FilesRepositoryService);
     httpMock = TestBed.inject(HttpTestingController);
-    headersProvider = TestBed.inject(HeadersProvider);
+    translate = TestBed.inject(TranslateService);
   });
 
   it('should be created', () => {
@@ -26,7 +35,7 @@ describe('FilesRepositoryService', () => {
 
   it('should get document pages count', () => {
     // given
-    const fileId = "8D39D207-687C-49BB-A481-0115AE18A4F8";
+    const fileId = '8D39D207-687C-49BB-A481-0115AE18A4F8';
     service.getDocumentPagesCount(fileId, 456, 1).subscribe(count => {
         // then
         expect(count).toBe(10);
@@ -41,7 +50,7 @@ describe('FilesRepositoryService', () => {
 
   it('should get document page content', () => {
     // given
-    const fileId = "8D39D207-687C-49BB-A481-0115AE18A4F8";
+    const fileId = '8D39D207-687C-49BB-A481-0115AE18A4F8';
     const expected = new ArrayBuffer(5);
     service.getDocumentPageContent(fileId, 2).subscribe(content => {
         // then
@@ -57,7 +66,7 @@ describe('FilesRepositoryService', () => {
 
   it('should get file content', () => {
     // given
-    const fileId = "8D39D207-687C-49BB-A481-0115AE18A4F8";
+    const fileId = '8D39D207-687C-49BB-A481-0115AE18A4F8';
     const expected = new ArrayBuffer(5);
     service.getFile(fileId, 564).subscribe(content => {
         // then
@@ -73,7 +82,7 @@ describe('FilesRepositoryService', () => {
 
   it('should get thumbnail content', () => {
     // given
-    const fileId = "8D39D207-687C-49BB-A481-0115AE18A4F8";
+    const fileId = '8D39D207-687C-49BB-A481-0115AE18A4F8';
     const expected = new ArrayBuffer(5);
     service.getThumbnail(fileId, 564).subscribe(content => {
         // then
@@ -89,9 +98,9 @@ describe('FilesRepositoryService', () => {
 
   it('should get file archive', () => {
     // given
-    const fileId = "8D39D207-687C-49BB-A481-0115AE18A4F8";
-    const fileId2 = "94B71B7D-19E0-4198-B8E6-497BD70936BC";
-    const ids = [ fileId, fileId2 ]; 
+    const fileId = '8D39D207-687C-49BB-A481-0115AE18A4F8';
+    const fileId2 = '94B71B7D-19E0-4198-B8E6-497BD70936BC';
+    const ids = [ fileId, fileId2 ];
     const expected = new ArrayBuffer(5);
     service.getFileArchive(ids).then(content => {
         // then
@@ -99,7 +108,7 @@ describe('FilesRepositoryService', () => {
     });
 
     const req = httpMock.expectOne({
-      method: 'POST', 
+      method: 'POST',
       url: 'http://localhost/api/Files/GetFileArchive'
     });
 

@@ -39,7 +39,7 @@ export class SourceFileService {
     });
   }
 
-  async getImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+  getImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
     return new Promise((resolve, reject) => {
       var imageType = this.getImageDataType(file.name);
       if (imageType) {
@@ -58,7 +58,7 @@ export class SourceFileService {
     });
   }
 
-  async getThumbnailFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+  getThumbnailFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
     return new Promise((resolve, reject) => {
         this.fileStorageService.getFile(file.body.id, file.body.size)
           .pipe(takeUntil(cancel))
@@ -70,7 +70,7 @@ export class SourceFileService {
     });
   }
 
-  async getXpsThumbnailAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
+  getXpsThumbnailAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
     return new Promise((resolve, reject) => {
       this.fileStorageService.getThumbnail(file.body.id, file.body.size)
         .pipe(first())
@@ -158,31 +158,31 @@ export class SourceFileService {
 
   private getImageDataType(filename: string): string {
 
-    if (filename.toLowerCase().endsWith(".png")) {
+    if (filename.toLowerCase().endsWith('.png')) {
       return '.png';
     }
 
-    if (filename.toLowerCase().endsWith(".svg")) {
+    if (filename.toLowerCase().endsWith('.svg')) {
       return 'svg+xml;charset=utf-8';
     }
 
-    if (filename.toLowerCase().endsWith(".jpeg")) {
+    if (filename.toLowerCase().endsWith('.jpeg')) {
       return '.jpeg';
     }
 
-    if (filename.toLowerCase().endsWith(".jpg")) {
+    if (filename.toLowerCase().endsWith('.jpg')) {
       return '.jpg';
     }
 
-    if (filename.toLowerCase().endsWith(".bmp")) {
+    if (filename.toLowerCase().endsWith('.bmp')) {
       return '.bmp';
     }
 
-    if (filename.toLowerCase().endsWith(".gif")) {
+    if (filename.toLowerCase().endsWith('.gif')) {
       return '.gif';
     }
 
-    if (filename.toLowerCase().endsWith(".ico")) {
+    if (filename.toLowerCase().endsWith('.ico')) {
       return '.ico';
     }
 

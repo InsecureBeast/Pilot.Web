@@ -34,36 +34,36 @@ export class AuthService {
     const token = this.getToken();
     const headers = new HttpHeaders({
       'Accept': 'application/json',
-      'Authorization': "Bearer " + token,
+      'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json'
     });
 
     const observable = this.http.get<any>(this.baseUrl + 'api/Auth/SignOut', { headers: headers });
     observable.pipe(first()).subscribe(result => {
-        this.clearToken();
         this.error$.next(null);
         this.isLoggedIn$.next(false);
       },
       e => {
-        //this.error$.next(e);
-        this.clearToken();
         this.error$.next(null);
         this.isLoggedIn$.next(false);
     });
+
+    this.clearToken();
   }
 
   get isLoggedIn(): Observable<boolean> {
-    return this.isLoggedIn$.asObservable();
+    return this.isLoggedIn$;
   }
 
   get error(): Observable<any> {
-    return this.error$.asObservable();
+    return this.error$;
   }
 
   getToken(): string {
     const token = localStorage.getItem(TOKEN);
-    if (!token)
+    if (!token) {
       return null;
+    }
     return token;
   }
 
@@ -71,7 +71,8 @@ export class AuthService {
     localStorage.setItem(TOKEN, token);
   }
 
-  private clearToken(): void {
+  clearToken(): void {
     localStorage.removeItem(TOKEN);
+    this.isLoggedIn$.next(false);
   }
 }

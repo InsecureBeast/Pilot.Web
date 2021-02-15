@@ -14,12 +14,15 @@ html {
   }
 }
 
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+@media (max-width: 575.98px) {
+  .navbar-expand-sm>.container, .navbar-expand-sm>.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
 }
 
-.bg-dark {
-  background-color: #343951;
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 .navbar-toggler {
@@ -27,4 +30,9 @@ html {
   border: none;
   padding: 0;
   outline: none;
+}
+
+.link-active {
+  font-weight: var(--font-weight-bold);
+  color: var(--black);
 }

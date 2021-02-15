@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Ascon.Pilot.Transport;
 using log4net;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Pilot.Web.Model.Middleware
 {
@@ -24,20 +26,22 @@ namespace Pilot.Web.Model.Middleware
             }
             catch (TransportException e)
             {
-                _logger.Error(e);
+                _logger.Info(e.Message);
                 context.Response.StatusCode = 503; //Service Unavailable
                 await context.Response.WriteAsync("Pilot-Server is unavailable");
             }
             catch (UnauthorizedAccessException e)
             {
-                _logger.Error(e);
+                _logger.Info(e.Message);
                 context.Response.StatusCode = 401; //Unauthorized
                 await context.Response.WriteAsync(e.Message);
             }
             catch (Exception e)
             {
                 _logger.Error(e);
-                throw;
+                context.Response.StatusCode = 500; //Internal error
+                var result = JsonConvert.SerializeObject(new { error = e.Message });
+                await context.Response.WriteAsync(result);
             }
         }
     }

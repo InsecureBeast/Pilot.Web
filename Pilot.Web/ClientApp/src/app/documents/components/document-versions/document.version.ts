@@ -1,6 +1,4 @@
-import { Injectable } from '@angular/core';
-
-import { IPerson, IFileSnapshot } from '../../../core/data/data.classes';
+import { IFileSnapshot } from '../../../core/data/data.classes';
 import { RepositoryService } from '../../../core/repository.service';
 import { Tools } from '../../../core/tools/tools';
 import { FilesSelector } from '../../../core/tools/files.selector';
@@ -24,25 +22,27 @@ export class DocumentVersion implements IDocumentVersion {
   constructor(protected sourceSnapshot: IFileSnapshot, repository: RepositoryService) {
 
     this.created = Tools.toUtcCsDateTime(sourceSnapshot.created).toLocaleString();
-    this.creator = "";
+    this.creator = '';
     const creator = repository.getPerson(sourceSnapshot.creatorId);
-    if (creator)
+    if (creator) {
       this.creator = creator.displayName;
+    }
 
     this.fileId = this.getFileId();
     this.snapshot = sourceSnapshot;
   }
 
   protected getFileId(): string {
-    
     let file = FilesSelector.getXpsFile(this.sourceSnapshot.files);
-    if (file == null)
+    if (file == null) {
       file = FilesSelector.getPdfFile(this.sourceSnapshot.files);
+    }
 
-    if (file)
+    if (file) {
       return file.body.id;
+    }
 
-    return "";
+    return '';
   }
 }
 
@@ -54,9 +54,10 @@ export class FileVersion extends DocumentVersion implements IDocumentVersion {
 
   protected getFileId(): string {
     const file = FilesSelector.getSourceFile(this.sourceSnapshot.files);
-    if (file)
+    if (file) {
       return file.body.id;
+    }
 
-    return "";
+    return '';
   }
 }

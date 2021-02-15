@@ -5,7 +5,7 @@
 }
 
 .filter-item {
-  max-width: 400px;
+  /* max-width: 400px; */
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -15,6 +15,7 @@
 
 li.filter-item a {
   color: var(--gray);
+  display: block;
 }
 
   li.filter-item a:link {
@@ -26,16 +27,17 @@ li.filter-item a {
   }
 
   li.filter-item a:hover {
-    color: var(--dark);
+    color: var(--black);
     text-decoration: none;
   }
 
   li.filter-item a:active {
-    color: var(--dark);
+    color: var(--black);
   }
 
 .active {
-    color: var(--dark)!important;
+    color: var(--black)!important;
+    font-weight: var(--font-weight-bold);
 }
 
 .filter-one-line-text {

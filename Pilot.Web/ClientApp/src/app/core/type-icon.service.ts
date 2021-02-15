@@ -42,14 +42,15 @@ export class TypeIconProvider {
   }
 
   getTypeIcon(item: IObject): SafeUrl {
-    if (!item)
+    if (!item) {
       return null;
+    }
 
     const typeIcon = item.type.icon;
     if (!typeIcon) {
       return null;
     }
-    return Tools.getImage(typeIcon, "svg+xml;charset=utf-8", this.sanitizer);
+    return Tools.getImage(typeIcon, 'svg+xml;charset=utf-8', this.sanitizer);
   }
 
   getSvgIcon(svgIcon: string): SafeUrl {
@@ -77,6 +78,11 @@ export class TypeIconProvider {
         imageFile = FilesSelector.getSourceFile(item.actualFileSnapshot.files);
         return this.sourceFileService.getImageFileToShowAsync(imageFile, cancel);
       }
+
+      // const preview = FilesSelector.getSourceThumbnailFile(item.actualFileSnapshot.files);
+      // if (preview) {
+      //   return this.sourceFileService.getThumbnailFileToShowAsync(preview, cancel);
+      // }
     }
 
     return new Promise((resolve, reject) => {

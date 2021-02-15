@@ -12,27 +12,28 @@ namespace Pilot.Web.Model
     public interface IFilesOperationService
     {
         byte[] CompressObjectsToArchive(IEnumerable<PObject> objects, string actor);
+        byte[] DownloadFile(Guid documentId, string actor);
     }
 
     class FilesOperationService : IFilesOperationService
     {
         private readonly IContextService _contextService;
+        private readonly IFileDownloadService _fileDownloadService;
 
-        public FilesOperationService(IContextService contextService)
+        public FilesOperationService(IContextService contextService, IFileDownloadService fileDownloadService)
         {
             _contextService = contextService;
+            _fileDownloadService = fileDownloadService;
         }
 
         public byte[] CompressObjectsToArchive(IEnumerable<PObject> objects, string actor)
         {
             var api = _contextService.GetServerApi(actor);
-            var loader = _contextService.GetFileLoader(actor);
-
             using (var compressedFileStream = new MemoryStream())
             {
                 using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Update, true))
                 {
-                    AddObjectsToArchive(api, loader, objects, zipArchive, "");
+                    AddObjectsToArchive(api, objects, zipArchive, "", actor);
                 }
 
                 var data = compressedFileStream.ToArray();
@@ -40,7 +41,33 @@ namespace Pilot.Web.Model
             }
         }
 
-        private void AddObjectsToArchive(IServerApiService apiService, IFileLoader fileLoader, IEnumerable<PObject> objects, ZipArchive archive, string currentPath)
+        public byte[] DownloadFile(Guid documentId, string actor)
+        {
+            var api = _contextService.GetServerApi(actor);
+            var document = api.GetObjects(new[] { documentId }).FirstOrDefault();
+            return InternalDownloadFile(document, actor);
+        }
+
+        private byte[] InternalDownloadFile(PObject document, string actor)
+        {
+            var file = document?.GetSourceFile();
+            if (file == null)
+                return null;
+
+            byte[] bytes;
+            if (FileExtensionHelper.IsXpsAlike(file.Name))
+            {
+                bytes = _fileDownloadService.Download(document.Id, actor);
+                if (bytes != null)
+                    return bytes;
+            }
+
+            var fileLoader = _contextService.GetFileLoader(actor);
+            bytes = fileLoader.Download(file.Id, file.Size);
+            return bytes;
+        }
+
+        private void AddObjectsToArchive(IServerApiService apiService, IEnumerable<PObject> objects, ZipArchive archive, string currentPath, string actor)
         {
             var stack = new Stack<PObject>();
             foreach (var child in objects)
@@ -82,7 +109,7 @@ namespace Pilot.Web.Model
                         entryName = $"{pObject.Title}{Path.GetExtension(dFile.Name)}";
                     }
 
-                    var fileBody = fileLoader.Download(dFile.Id, dFile.Size);
+                    var fileBody = InternalDownloadFile(pObject, actor);
                     if (archive.Entries.Any(x => x.Name == entryName))
                         entryName += " Conflicted";
 
