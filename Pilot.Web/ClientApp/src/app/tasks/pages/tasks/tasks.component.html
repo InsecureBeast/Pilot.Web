@@ -19,8 +19,8 @@
 
 <div class="pt-6 row h-100" *ngIf="!error">
 
-  <div class="d-none d-sm-block col-sm-3 col-md-3 col-xl-2">
-    <app-task-filters class=""
+  <div class="d-none d-sm-block col-sm-3">
+    <app-task-filters class="fixed" style="width: 23%;"
                       [selectedFilter]="selectedFilter"
                       (onSelected)="onFilterSelected($event)"
                       (onLoaded)="onFiltersLoaded($event)"
@@ -28,7 +28,7 @@
 
     </app-task-filters>
   </div>
-  <div class="col-12 col-sm-9 col-md-9 col-xl-10 task-list pb-2">
+  <div class="col-12 col-sm-9 task-list pb-2">
     <div class="h-100 bg-white rounded shadow-sm mr-n2 ml-n2">
       <app-task-list class="p-0 mb-3"
                      [filter]="selectedFilter"
