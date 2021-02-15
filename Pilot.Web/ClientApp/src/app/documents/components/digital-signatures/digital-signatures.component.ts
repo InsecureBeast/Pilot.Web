@@ -157,6 +157,9 @@ export class DigitalSignaturesComponent implements OnDestroy {
     }
 
     for (const signature of xpsFile.signatures) {
+      if (this.signatures.find(s => s.id === signature.id)) {
+        continue;
+      }
       const person = this.repository.getPersonOnOrganizationUnit(signature.positionId);
       const position = this.repository.getOrganizationUnit(signature.positionId);
       const digitalSignature = new DigitalSignature(signature.id);
