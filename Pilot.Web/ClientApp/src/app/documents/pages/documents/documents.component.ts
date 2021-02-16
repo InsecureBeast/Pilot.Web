@@ -95,7 +95,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
       }
 
       this.repository.getObjectAsync(id, RequestType.New).then(object => {
-        this.checkedNode = object;
+        if (this.checked && this.checked.length > 0) {
+          this.checked[0].update(object);
+        }
       });
     });
   }

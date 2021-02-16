@@ -78,6 +78,7 @@ export class ObjectNode implements IObjectNode {
   }
 
   update(source: IObject): void {
+    this.source = source;
     this.created = Tools.toUtcCsDateTime(source.created).toLocaleString();
     this.id = source.id;
     this.parentId = source.parentId;
