@@ -11,7 +11,7 @@ import localeRu from '@angular/common/locales/ru';
 export class AppComponent {
   title = 'app';
 
-  constructor(/*private repository: RepositoryService,*/ translate: TranslateService) {
+  constructor(translate: TranslateService) {
     translate.addLangs(['en', 'ru'])
     translate.setDefaultLang('en');
     translate.use('ru');

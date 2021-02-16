@@ -12,6 +12,7 @@ namespace Pilot.Web.Model
         void Notify(DMetadataChangeset changeset);
         void Notify(OrganisationUnitChangeset changeset);
         void Notify(PersonChangeset changeset);
+        void UpdateCommandResult(Guid requestId, byte[] data, ServerCommandResult result);
     }
 
     public interface IRemoteSearchServiceListener
@@ -49,7 +50,7 @@ namespace Pilot.Web.Model
 
         public void NotifyCommandResult(Guid requestId, byte[] data, ServerCommandResult result)
         {
-            throw new NotImplementedException();
+            _listener.UpdateCommandResult(requestId, data, result);
         }
 
         public void NotifyGeometrySearchResult(DGeometrySearchResult searchResult)

@@ -4,7 +4,6 @@ import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { AccessLevel, IObject } from 'src/app/core/data/data.classes';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { DocumentCardComponent } from '../document-card/document-card.component';
-import { ObjectCardDialogService } from './object-card-dialog.service';
 
 @Component({
     selector: 'app-object-card-dialog',
@@ -15,15 +14,14 @@ export class ObjectCardDialogComponent {
 
   @Input() object: IObject;
   @Output() onClose = new EventEmitter<any>();
-  //@Output() onSave = new EventEmitter<string>();
+  @Output() onSave = new EventEmitter<string>();
   
   @ViewChild(DocumentCardComponent, { static: false })
   private cardComponent: DocumentCardComponent;
   
   constructor(
     private readonly repository: RepositoryService,
-    private readonly accessCalculator: AccessCalculator,
-    private readonly objectCardDialogService: ObjectCardDialogService) {
+    private readonly accessCalculator: AccessCalculator) {
 
   }
     
@@ -53,8 +51,7 @@ export class ObjectCardDialogComponent {
     });
     
     modifier.apply().subscribe(res => {
-      this.objectCardDialogService.changeDocumentForCard(this.object.id);
-      //this.onSave.emit(this.object.id);
+      this.onSave.emit(this.object.id);
     });
   }
 }

@@ -4,6 +4,7 @@ import { first } from 'rxjs/operators';
 import { FilesRepositoryService } from './files-repository.service';
 import { IObject } from './data/data.classes';
 import { FilesSelector } from './tools/files.selector';
+import { TypeExtensions } from './tools/type.extensions';
 
 @Injectable({ providedIn: 'root' })
 export class DownloadService {
@@ -14,33 +15,39 @@ export class DownloadService {
 
   downloadFile(object: IObject): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      var file = FilesSelector.getSourceFile(object.actualFileSnapshot.files);
-      this.filesRepository.getFile(file.body.id, file.body.size)
+      this.filesRepository.getDocumentFile(object.id)
         .pipe(first())
         .subscribe(data => {
-          const fileExt = file.name.split('.').pop();
-          const name = object.title + '.' + fileExt;
-          this.runLoadFile(data, name, "application/octet-stream");
+          const file = FilesSelector.getSourceFile(object.actualFileSnapshot.files);
+          let name = object.title;
+          if (!TypeExtensions.isProjectFile(object.type.name)) {
+            const fileExt = file.name.split('.').pop();
+            name = `${name}.${fileExt}`;
+          }
+          this.runLoadFile(data, name, 'application/octet-stream');
           resolve(true);
         }, err => reject(err));
     });
   }
 
-  downloadFileArchive(ids: string[]): void {
-    this.filesRepository.getFileArchive(ids).then(data => {
-      this.runLoadFile(data, "Archive.zip", "application/zip");
+  downloadFileArchive(ids: string[]): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.filesRepository.getFileArchive(ids).then(data => {
+        this.runLoadFile(data, 'Archive.zip', 'application/zip');
+        resolve(true);
+      }, err => reject(err));
     });
   }
 
   private runLoadFile(data: ArrayBuffer, name: string, dataType: string): void {
     const blob = new Blob([data], { type: dataType });
-    
-    //detect whether the browser is IE/Edge or another browser
+
+    // detect whether the browser is IE/Edge or another browser
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      //To IE or Edge browser, using msSaveorOpenBlob method to download file.
+      // To IE or Edge browser, using msSaveorOpenBlob method to download file.
       window.navigator.msSaveOrOpenBlob(blob, name);
     } else {
-      //To another browser, create a tag to download file.
+      // To another browser, create a tag to download file.
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.target = '_blank';

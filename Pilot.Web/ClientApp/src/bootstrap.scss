@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+// variables
+$dark: #212636;
+$gray: #8d8d8d;
+$bg-content: #f5f6fc;
+$second: #9e9e9e;
+$primary: #ffa000;
+$primary-dark: #EC971F;
+$primary-light: #EED485;
+$gray-light: #eaebef;
+$border: #dee2e6;
+$bg: #ffffff;
+
+// $border-radius: 0;
+// $border-radius-sm: 0;
+// $border-radius-lg: 0;
+
+
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+// @import 'abstracts/variables';
+// @import 'abstracts/breakpoints';

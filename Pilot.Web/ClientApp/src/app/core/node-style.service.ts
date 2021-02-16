@@ -9,33 +9,33 @@ export class NodeStyleService {
 
   constructor() {
 
-    var nodeStyle = this.loadNodeStyle();
+    const nodeStyle = this.loadNodeStyle();
     this.current = nodeStyle;
     this.setNodeStyle(nodeStyle);
   }
 
-  public get currentNodeStyle(): NodeStyle {
+  get currentNodeStyle(): NodeStyle {
     return this.current;
   }
 
-  public setNodeStyle(style: NodeStyle): void {
-    localStorage.setItem("nodeStyle", style.toString());
+  setNodeStyle(style: NodeStyle): void {
+    localStorage.setItem('nodeStyle', style.toString());
     this.current = style;
     this.nodeStyleSource.next(style);
   }
 
-  public getNodeStyle(): Observable<NodeStyle> {
+  getNodeStyle(): Observable<NodeStyle> {
     return this.nodeStyleSource.asObservable();
   }
 
   private loadNodeStyle(): NodeStyle {
-    var nodeStyle = localStorage.getItem("nodeStyle");
+    const nodeStyle = localStorage.getItem('nodeStyle');
 
-    if (nodeStyle === "0") {
+    if (nodeStyle === '0') {
       return NodeStyle.ListView;
     }
 
-    if (nodeStyle === "1") {
+    if (nodeStyle === '1') {
       return NodeStyle.GridView;
     }
 

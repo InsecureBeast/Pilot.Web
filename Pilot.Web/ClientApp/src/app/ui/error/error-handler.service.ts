@@ -14,12 +14,14 @@ export class ErrorHandlerService {
   handleErrorMessage(e: HttpErrorResponse): string {
 
     if (e.status === 400) {
-      if (e.error.errors)
+      if (e.error.errors) {
         return JSON.stringify(e.error.errors);
+      }
 
       const message = e.error as string;
-      if (message && message.indexOf("SecurityAccessDeniedException") !== -1)
-        return "Access denied. The user name or password is incorrect";
+      if (message && message.indexOf('SecurityAccessDeniedException') !== -1) {
+        return 'Access denied. The user name or password is incorrect';
+      }
 
       return e.error;
     }
@@ -30,8 +32,13 @@ export class ErrorHandlerService {
       return e.message;
     }
 
-    if (e.status === 503)
+    if (e.status === 503) {
       return e.error;
+    }
+
+    if (e.status === 500) {
+      return e.error.error;
+    }
 
     return e.message;
   }

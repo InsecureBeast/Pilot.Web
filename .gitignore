@@ -1,4 +1,16 @@
 /.vs/*
+/.idea/*
 /documentRender/bin/*
 /documentRender/obj/*
 /Serializer/obj/*
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+/Pilot.Web.Tests/bin/*
+/Pilot.Web.Tests/obj/*
+/Pilot.Xps.Connection/bin/*
+/Pilot.Xps.Connection/obj/*
+/Pilot.Xps.Entities/bin/*
+/Pilot.Xps.Entities/obj/*

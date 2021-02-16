@@ -1,14 +1,26 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, AfterViewChecked, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+  AfterViewChecked,
+  HostListener,
+  ViewChild, TemplateRef
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, NavigationStart, Scroll } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RepositoryService } from '../../../core/repository.service';
-import { ObjectNode, EmptyObjectNode } from "../../shared/object.node";
+import { ObjectNode, EmptyObjectNode } from '../../shared/object.node';
 import { ChildrenType } from '../../../core/data/children.types';
-import { IObject } from '../../../core/data/data.classes';
+import { AccessLevel, IObject } from '../../../core/data/data.classes';
 import { NodeStyle, NodeStyleService } from '../../../core/node-style.service';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode, IObjectNode } from '../../shared/node.interface';
@@ -17,7 +29,10 @@ import { DocumentsService } from '../../shared/documents.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { SystemStates } from 'src/app/core/data/system.states';
 import { first } from 'rxjs/operators';
-import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
+import { FilesRepositoryService } from '../../../core/files-repository.service';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { AccessCalculator } from '../../../core/tools/access.calculator';
+import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
 
 @Component({
     selector: 'app-document-list',
@@ -25,26 +40,50 @@ import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-ca
     styleUrls: ['./document-list.component.css']
 })
 /** documents-list component*/
-export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, AfterViewChecked {
-  
+export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecked {
+
   private routerSubscription: Subscription;
   private nodeStyleServiceSubscription: Subscription;
   private checkedNodesSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
+  private _parent: IObjectNode;
 
-  @Input() parent: ObjectNode;
+  @Input() canCheck = true;
+  @Input()
+  get parent(): IObjectNode {
+    return this._parent;
+  }
+  set parent(node: IObjectNode) {
+    this._parent = node;
+    if (!this._parent) {
+      return;
+    }
 
-  @Output() onChecked = new EventEmitter<IObjectNode[]>();
-  @Output() onSelected = new EventEmitter<INode>();
-  @Output() onError = new EventEmitter<HttpErrorResponse>();
-  @Output() onLoaded = new EventEmitter<INode>();
+    this.isLoaded = false;
 
+    // or get item from changes
+    this.cancelAllRequests(false);
+    this.init(this.parent);
+  }
+
+  @Output() checked = new EventEmitter<IObjectNode[]>();
+  @Output() selected = new EventEmitter<INode>();
+  @Output() error = new EventEmitter<HttpErrorResponse>();
+  @Output() loaded = new EventEmitter<INode>();
+
+  @ViewChild('modalTemplate')
+  private modalTemplate: TemplateRef<any>;
+
+  modalRef: BsModalRef = null;
   nodeStyle: NodeStyle;
   nodes: IObjectNode[];
   isLoading: boolean;
   isAnyItemChecked: boolean;
   isLoaded: boolean;
+  canUploadFile: boolean;
+  dropZoneActivity = false;
+  uploadProgressPercent: number;
 
   /** documents-list ctor */
   constructor(
@@ -54,36 +93,28 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     private typeIconService: TypeIconService,
     private translate: TranslateService,
     private documentsService: DocumentsService,
-    private readonly objectCardDialogService: ObjectCardDialogService,
-    private router: Router) {
+    private filesRepositoryService: FilesRepositoryService,
+    private router: Router,
+    private modalService: BsModalService,
+    private accessCalculator: AccessCalculator) {
 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-
-    if (!this.parent)
-      return;
-
-    this.isLoaded = false;
-
-    // or get item from changes
-    this.cancelAllRequests(false);
-    this.init(this.parent);
   }
 
   ngOnInit(): void {
     this.checkedNodesSubscription = this.documentsService.clearChecked.subscribe(v => {
-      if (v)
+      if (v) {
         this.clearChecked();
+      }
     });
 
     this.nodeStyleServiceSubscription = this.nodeStyleService.getNodeStyle().subscribe(value => {
       this.nodeStyle = value;
 
-      if (!this.nodes)
+      if (!this.nodes) {
         return;
+      }
 
-      for (let node of this.nodes) {
+      for (const node of this.nodes) {
         node.loadPreview();
       }
     });
@@ -93,55 +124,69 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.cancelAllRequests(false);
-          this.repository.requestType = RequestType.FromCache;
+          this.repository.setRequestType(RequestType.FromCache);
         }
       }
     });
 
-    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
-      if (!id)
+    this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
+      if (!id) {
         return;
+      }
       this.update(id);
     });
   }
 
   ngAfterViewChecked(): void {
     if (this.isLoaded) {
-      this.onLoaded.emit(this.parent);
+      this.loaded.emit(this.parent);
       this.isLoaded = false;
     }
   }
 
   ngOnDestroy(): void {
-    if (this.nodeStyleServiceSubscription)
+    if (this.nodeStyleServiceSubscription) {
       this.nodeStyleServiceSubscription.unsubscribe();
+    }
 
-    if (this.routerSubscription)
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
+    }
 
-    if (this.checkedNodesSubscription)
+    if (this.checkedNodesSubscription) {
       this.checkedNodesSubscription.unsubscribe();
+    }
 
-    if (this.objectCardChangeSubscription)
+    if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
+    }
 
     this.cancelAllRequests(true);
   }
 
-  selected(item: IObjectNode): void {
-    if (!item.id)
+  select(item: IObjectNode): void {
+    if (!item.id) {
       return;
+    }
 
-    this.repository.requestType = RequestType.New;
-    this.clearChecked();
-    this.nodes = null;
-    this.objectCardDialogService.changeDocumentForCard(null);
-    this.onSelected.emit(item);
+    if (this.canCheck) {
+      this.repository.setRequestType(RequestType.New);
+      this.clearChecked();
+      this.nodes = null;
+      this.documentsService.changeObjectForCard(null);
+    }
+
+    this.selected.emit(item);
   }
 
-  checked(node: IObjectNode, event: MouseEvent): void {
-    if (!node.id)
+  check(node: IObjectNode, event: MouseEvent): void {
+    if (!this.canCheck) {
       return;
+    }
+
+    if (!node.id) {
+      return;
+    }
 
     if (!event.ctrlKey) {
       this.clearChecked();
@@ -151,22 +196,27 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     this.isAnyItemChecked = true;
 
     const checked = this.nodes.filter(n => n.isChecked);
-    this.onChecked.emit(checked);
+    this.checked.emit(checked);
   }
 
   addChecked(node: IObjectNode): void {
+    if (!this.canCheck) {
+      return;
+    }
+
     node.isChecked = !node.isChecked;
     this.isAnyItemChecked = true;
 
     const checked = this.nodes.filter(n => n.isChecked);
-    this.onChecked.emit(checked);
+    this.checked.emit(checked);
 
-    if (checked.length === 0)
+    if (checked.length === 0) {
       this.isAnyItemChecked = false;
+    }
   }
 
-  downloadDocument(node: IObjectNode) {
-    this.downloadService.downloadFile(node.source);
+  async downloadDocument(node: IObjectNode) {
+    await this.downloadService.downloadFile(node.source);
   }
 
   isEmptyNode(node: IObjectNode): boolean {
@@ -176,8 +226,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
   isStatesExists(node: IObjectNode): boolean {
     const noneStates = node.stateAttributes.filter(a => {
       const value = node.source.attributes[a.name];
-      if (!value)
+      if (!value) {
         return true;
+      }
 
       return value === SystemStates.NONE_STATE_ID;
     });
@@ -185,16 +236,81 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
     return noneStates.length !== node.stateAttributes.length;
   }
 
-  private update(objectId: string): void {
-    if (!this.nodes)
-      return;
+  dropZoneState($event: boolean) {
+    this.dropZoneActivity = $event;
+  }
 
-    this.repository.getObjectWithRequestTypeAsync(objectId, RequestType.New).then(object => {
-      let index = this.nodes.findIndex(n => n.id === objectId);
-      const oldNode = this.nodes.find(n => n.id === objectId)
+  async onFilesDropped(fileList: FileList) {
+    await this.uploadHandler(fileList);
+  }
+
+  onUploadButtonClick() {
+    const input = window.document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.onchange = (e: any) => this.uploadHandler(e.target.files);
+    input.click();
+  }
+
+  async openProgressModal(): Promise<void> {
+    if (this.modalRef != null) {
+      return;
+    }
+
+    this.modalRef = this.modalService.show(this.modalTemplate,
+      {
+        backdrop: 'static'
+      });
+
+    await this.sleep(2000);
+  }
+
+  closeModal() {
+    this.modalRef?.hide();
+    this.modalRef = null;
+  }
+
+  private async sleep(ms): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async uploadHandler(fileList: FileList) {
+    try {
+      console.log('fileList', fileList);
+      await this.uploadFiles(fileList);
+    } catch (e) {
+      this.error.emit(e);
+      throw e;
+    }
+  }
+
+  private async uploadFiles(fileList: FileList): Promise<void> {
+    try {
+      await this.openProgressModal();
+      await this.filesRepositoryService.uploadFiles(this.parent.id, fileList, (p) => {
+          this.uploadProgressPercent = p;
+        });
+      this.loadChildren(this.parent.id, this.parent.isSource, RequestType.New);
+    } catch (e) {
+      console.log(e);
+      this.closeModal();
+      throw e;
+    } finally {
+      this.closeModal();
+    }
+  }
+
+  private update(objectId: string): void {
+    if (!this.nodes) {
+      return;
+    }
+
+    this.repository.getObjectAsync(objectId, RequestType.New).then(object => {
+      const index = this.nodes.findIndex(n => n.id === objectId);
+      const oldNode = this.nodes.find(n => n.id === objectId);
       const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       newNode.isChecked = oldNode.isChecked;
-      this.nodes[index]= newNode;
+      this.nodes[index] = newNode;
     });
   }
 
@@ -205,38 +321,44 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       this.nodes.push(new EmptyObjectNode());
     }
     this.isLoaded = true;
-    this.loadChildren(item.id, item.isSource);
+    this.loadChildren(item.id, item.isSource, RequestType.None);
+
+    const canCreateChild = IObjectExtensions.hasAccess(this.accessCalculator.calcAccess(item.source), AccessLevel.Create);
+    this.canUploadFile = item.isSource && canCreateChild;
   }
 
-  private loadChildren(id: string, isSource: boolean) {
+  private loadChildren(id: string, isSource: boolean, requestType: RequestType) {
     let type = ChildrenType.ListView;
-    if (isSource)
+    if (isSource) {
       type = ChildrenType.Storage;
+    }
 
-    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe)
+    this.repository.getChildrenAsync(id, type, this.ngUnsubscribe, requestType)
       .then(nodes => {
         this.isLoading = false;
         this.addNodes(nodes, isSource);
-        this.onChecked.emit(null);
+        this.checked.emit(null);
 
-        this.objectCardDialogService.documentForCard$.pipe(first()).subscribe(id => {
-          if (!id)
+        this.documentsService.objectForCard$.pipe(first()).subscribe(objectForCardId => {
+          if (!objectForCardId) {
             return;
-          this.update(id);
+          }
+          this.update(objectForCardId);
         });
       })
       .catch(e => {
-        this.onError.emit(e);
+        this.error.emit(e);
         this.isLoading = false;
       });
-  }
+    }
 
   private addNodes(documents: IObject[], isSource: boolean): void {
     this.nodes = new Array<ObjectNode>();
-    for (let doc of documents) {
-      if (doc.type.name === "Root_object_type") // todo: filter not available items
+    for (const doc of documents) {
+      if (doc.type.name === 'Root_object_type') { // todo: filter not available items
         continue;
-        
+      }
+
       const node = new ObjectNode(doc, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
       this.nodes.push(node);
     }
@@ -244,13 +366,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
 
   private clearChecked(): void {
     if (this.nodes) {
-      for (let node of this.nodes) {
+      for (const node of this.nodes) {
         node.isChecked = false;
       }
     }
 
     this.isAnyItemChecked = false;
-    this.onChecked.emit(null);
+    this.checked.emit(null);
   }
 
   private cancelAllRequests(isCompleted: boolean): void {
@@ -258,8 +380,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, OnChanges, Afte
       // This aborts all HTTP requests.
       this.ngUnsubscribe.next();
       // This completes the subject properly.
-      if (isCompleted)
+      if (isCompleted) {
         this.ngUnsubscribe.complete();
+      }
     }
   }
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Subscription, Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
 
 import { SystemIds } from '../../../core/data/system.ids';
 import { RepositoryService } from '../../../core/repository.service';
@@ -14,10 +15,7 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
-import { ModalService } from 'src/app/ui/modal/modal.service';
-import { DocumentListComponent } from '../../components/document-list/document-list.component';
 import { IObject } from 'src/app/core/data/data.classes';
-import { ObjectCardDialogService } from 'src/app/ui/object-card-dialog/object-card-dialog.service';
 
 @Component({
     selector: 'app-documents',
@@ -31,7 +29,9 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
-  private documentCardModal = "documentCardModal";
+
+  private modalRef: BsModalRef;
+  private cardModalRef: BsModalRef;
 
   checked = new Array<INode>();
   checkedNode: IObject;
@@ -39,9 +39,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   error: HttpErrorResponse;
 
-  @ViewChild(DocumentListComponent, { static: false })
-  private documentListComponent: DocumentListComponent;
-  
   /** documents ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -52,8 +49,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
-    private readonly modalService: ModalService,
-    private readonly objectCardDialogService: ObjectCardDialogService) {
+    private readonly bsModalService: BsModalService) {
 
   }
 
@@ -61,18 +57,20 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       let id = params.get('id');
-      if (!id)
+      if (!id) {
         id = SystemIds.rootId;
-
-      let isSource = false;
-      if (this.activatedRoute.snapshot.url.length !== 0) {
-        const urlSegment = this.activatedRoute.snapshot.url[0].path;
-        if (urlSegment === 'files')
-          isSource = true;
       }
 
-      this.repository.getObjectAsync(id)
-        .then(source => {
+      let isSource = false;
+      if (this.activatedRoute.snapshot.url.length > 1) {
+        const urlSegment = this.activatedRoute.snapshot.url[1].path;
+        if (urlSegment === 'files') {
+          isSource = true;
+        }
+      }
+
+      const promise = this.repository.getObjectAsync(id);
+        promise.then(source => {
           this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
           this.isLoading = false;
         })
@@ -87,27 +85,31 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         const startEvent = <NavigationStart>event;
         if (startEvent.navigationTrigger === 'popstate') {
           this.documentsService.changeClearChecked(true);
-          this.repository.requestType = RequestType.FromCache;
         }
       }
     });
 
-    this.objectCardChangeSubscription = this.objectCardDialogService.documentForCard$.subscribe(id => {
-      this.onCloseDocumentCard();
-
-      if (!id)
+    this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
+      if (!id) {
         return;
-      
-      this.repository.getObjectWithRequestTypeAsync(id, RequestType.New).then(object => {
+      }
+
+      this.repository.getObjectAsync(id, RequestType.New).then(object => {
         this.checkedNode = object;
       });
     });
   }
 
   ngOnDestroy(): void {
-    this.navigationSubscription.unsubscribe();
-    this.routerSubscription.unsubscribe();
-    this.objectCardChangeSubscription.unsubscribe();
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+    if (this.objectCardChangeSubscription) {
+      this.objectCardChangeSubscription.unsubscribe();
+    }
 
     // cancel
     this.ngUnsubscribe.next();
@@ -123,50 +125,69 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
     if (node.isDocument) {
       if (node.isSource) {
-        this.navigationService.navigateToFile(node.id);
+        this.navigationService.navigateToFile(this.currentItem.id, node.id);
       } else {
-        this.navigationService.navigateToDocument(node.id);
+        this.navigationService.navigateToDocument(this.currentItem.id, node.id);
       }
-      
+
       return;
     }
 
-    if (node.isSource)
+    if (node.isSource) {
       this.navigationService.navigateToFilesFolder(node.id);
-    else
+    } else {
       this.navigationService.navigateToDocumentsFolder(node.id);
+    }
   }
 
   onItemsChecked(nodes: INode[]): void {
     this.checked = nodes;
   }
 
-  onError(error): void {
+  onDownloadStarted(template: TemplateRef<any>): void {
+    const config = new ModalOptions();
+    config.backdrop = false;
+    config.ignoreBackdropClick = true;
+    config.animated = false;
+    config.class = 'modal-dialog-centered';
+
+    this.modalRef = this.bsModalService.show(template, config);
+  }
+
+  onDownloadFinished(any): void {
+    if (this.modalRef){
+      this.bsModalService.hide(this.modalRef.id);
+    }
+  }
+
+  onError(error: HttpErrorResponse): void {
     this.error = error;
   }
 
-  onShowDocumentCard() : void {
+  onShowObjectCard(template: TemplateRef<any>): void {
     this.checkedNode = this.getCheckedNode();
-    this.modalService.open(this.documentCardModal);
+    const config = new ModalOptions();
+    config.animated = true;
+    config.class = 'modal-dialog-centered align-items-stretch';
+    this.cardModalRef = this.bsModalService.show(template, config);
   }
 
-  onCloseDocumentCard() : void {
-    this.modalService.close(this.documentCardModal);
+  onCloseObjectCard(): void {
+    if (this.cardModalRef){
+      this.bsModalService.hide(this.cardModalRef.id);
+    }
   }
-  
-  // onChangeDocumentCard(nodeId: string): void {
-  //   this.documentListComponent.updateAsync(this.checkedNode).then(newNode => {
-  //     this.checked = new Array<INode>();
-  //     this.checked.push(newNode);
-  //     this.checkedNode = this.getCheckedNode();
-  //   });
-  //   this.onCloseDocumentCard();
-  // }
 
-  private getCheckedNode() : IObject{
-    if (this.checked && this.checked.length > 0)
+  onSaveObjectCard(id: string): void {
+    this.documentsService.changeObjectForCard(id);
+    this.onCloseObjectCard();
+  }
+
+  private getCheckedNode(): IObject {
+    if (this.checked && this.checked.length > 0) {
       return this.checked[0].source;
+    }
 
-    return undefined;  
+    return undefined;
   }
 }

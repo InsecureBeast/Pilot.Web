@@ -6,7 +6,6 @@ using Ascon.Pilot.DataClasses;
 using log4net;
 using Pilot.Web.Model.Search;
 using Pilot.Web.Model.Search.NextTasksSearchExpression;
-using Pilot.Web.Model.Search.NextTasksSearchExpression.Tokens;
 
 namespace Pilot.Web.Model
 {

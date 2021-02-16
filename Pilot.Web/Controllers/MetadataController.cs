@@ -32,6 +32,15 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
+        public DDatabaseInfo GetDatabaseInfo() 
+        { 
+            var actor = HttpContext.GetTokenActor();
+            var api = _contextService.GetServerApi(actor);
+            return api.GetDatabaseInfo();
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
         public ICommonSettings GetPersonalSettings(string key)
         {
             var actor = HttpContext.GetTokenActor();

@@ -95,3 +95,70 @@
   left: -0.01rem;
   padding: 0.93rem;
 }
+
+/* ------------------------------Drop area -------------------------------------------------*/
+.drop-container {
+  width: 100%;
+  display: block;
+  float: left;
+  overflow: hidden;
+  position: relative;
+  border-radius: .25rem;
+  border: 1px solid transparent;
+  z-index: 1000;
+}
+
+.drop-area {
+  width: 100%;
+  display: block;
+  float: left;
+}
+
+.drop-container-active {
+  border: 1px dashed var(--second);
+}
+
+.drop-popup {
+  display: table;
+}
+
+.drop-popup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 20;
+  display: none;
+}
+
+.drop-popup-help {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+
+}
+
+.drop-popup-button {
+  cursor: pointer; 
+  color: var(--primary)
+}
+
+  .drop-popup-button:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+
+img {
+  margin-bottom: 28px;
+}
+
+.drop-popup-help-text {
+  font-weight: 500;
+}
+
+.upload-info-area {
+  visibility: visible;
+  border: 1px dashed var(--second);
+  box-sizing: border-box;
+  border-radius: .25rem;
+}

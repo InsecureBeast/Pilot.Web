@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -7,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Pilot.Web")]
 [assembly: AssemblyDescription("Pilot.Web")]
 [assembly: AssemblyProduct("Pilot.Web")]
-[assembly: AssemblyCopyright("Copyright © Company 2020")]
+[assembly: AssemblyCopyright("Copyright © Company 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,6 +20,8 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("0102990A-C96D-4925-8952-F1CF83A1ED78")]
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "logger.config", Watch = true)]
+[assembly: InternalsVisibleTo("Pilot.Web.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,5 +32,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("20.8.24.0")]
-[assembly: AssemblyFileVersion("20.8.24.0")]
+[assembly: AssemblyVersion("21.0.0.0")]
+[assembly: AssemblyFileVersion("21.0.0.0")]

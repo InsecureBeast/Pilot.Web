@@ -22,8 +22,9 @@ export class ImagesCacheInterceptor implements HttpInterceptor {
       const fileId = this.getParam(request.url, 'fileId');
       if (fileId !== null) {
         const promise = this.indexedStorage.getImageFile(fileId).then(value => {
-          if (value)
+          if (value) {
             return new HttpResponse({ status: 200, body: Tools.base64ToArrayBuffer(value) });
+          }
 
           return this.next(request, next).toPromise();
         });

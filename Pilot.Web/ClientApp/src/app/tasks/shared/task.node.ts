@@ -1,14 +1,14 @@
-import { SafeUrl } from "@angular/platform-browser";
-import { TranslateService } from "@ngx-translate/core";
+import { SafeUrl } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 
-import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors } from "../../core/data/data.classes";
+import { IObject, IType, IUserState, OrgUnitKind, RelationType, IOrganizationUnit, UserStateColors } from '../../core/data/data.classes';
 import { RepositoryService } from '../../core/repository.service';
-import { SystemTaskAttributes } from "../../core/data/system.types";
-import { Tools } from "../../core/tools/tools";
-import { TypeExtensions } from "../../core/tools/type.extensions";
-import { TaskNodeFactory } from "./task-node.factory";
-import { UserState, UserStateColorService } from "src/app/core/data/user.state";
-import { TypeIconService } from "src/app/core/type-icon.service";
+import { SystemTaskAttributes } from '../../core/data/system.types';
+import { Tools } from '../../core/tools/tools';
+import { TypeExtensions } from '../../core/tools/type.extensions';
+import { TaskNodeFactory } from './task-node.factory';
+import { UserState, UserStateColorService } from 'src/app/core/data/user.state';
+import { TypeIconService } from 'src/app/core/type-icon.service';
 
 export class TaskNode {
 
@@ -28,7 +28,7 @@ export class TaskNode {
   id: string;
   parentId: string;
   title: string;
-  description : string;
+  description: string;
   type: IType;
   icon: SafeUrl;
   userState: UserState;
@@ -50,7 +50,7 @@ export class TaskNode {
 
   set isVisible(value: boolean) {
     this._isVisible = value;
-    for (var child of this.loadedChildren) {
+    for (const child of this.loadedChildren) {
       child.isVisible = value;
     }
   }
@@ -66,11 +66,13 @@ export class TaskNode {
       this.repository.getObjectsAsync(children).then(objs => {
         for (const source of objs) {
           const node = taskFactory.createNode(source);
-          if (!node)
+          if (!node) {
             continue;
+          }
 
-          if (TypeExtensions.isStage(this.type))
+          if (TypeExtensions.isStage(this.type)) {
             node.isInWorkflow = true;
+          }
 
           index++;
           list.splice(index, 0, node);
@@ -82,7 +84,7 @@ export class TaskNode {
     });
   }
 
-  update (source: IObject) : void {
+  update (source: IObject): void {
     this.source = source;
     this.title = this.getTitle(source);
     this.description = this.getDescription(source);
@@ -96,9 +98,10 @@ export class TaskNode {
     this._isVisible = true;
   }
 
-  setIntent():void {
-    if (this.source.context)
+  setIntent(): void {
+    if (this.source.context) {
       this.intent = this.source.context.length;
+    }
   }
 
   private getOrgUnit(source: IObject, attrName: string): IOrganizationUnit {
@@ -120,10 +123,11 @@ export class TaskNode {
       if (position.kind === OrgUnitKind.Position) {
         const person = this.repository.getPerson(position.person);
         if (person) {
-          if (person.id === currentPerson.id)
-            return this.translate.instant("you");
-          else
+          if (person.id === currentPerson.id) {
+            return this.translate.instant('you');
+          } else {
             return person.displayName;
+          }
         }
       } else {
         return position.title;
@@ -163,10 +167,11 @@ export class TaskNode {
     }
     this.isTask = TypeExtensions.isTask(source.type);
     const state = this.getState(source, this.repository);
-    if (state)
+    if (state) {
       this.userState = new UserState(state, this.typeIconService, this.userStateColorService);
+    }
 
-    //this.isInWorkflow = !this.isTask || source.context.length > 1;
+    // this.isInWorkflow = !this.isTask || source.context.length > 1;
     this.attachments = source.relations.filter(r => r.type === RelationType.TaskAttachments);
     this.attributes = new Map(Object.entries(source.attributes));
 
@@ -176,25 +181,24 @@ export class TaskNode {
       const deadlineDate = Tools.toUtcCsDateTime(deadlineAttrString);
       this.isOutdated = deadlineDate.valueOf() - new Date().valueOf() < 0;
     }
-    
   }
 
   private getTitle(source: IObject): string {
     if (source.attributes) {
-      const title = source.attributes["title"];
+      const title = source.attributes['title'];
       return title;
     }
 
-    return "";
+    return '';
   }
 
   private getDescription(source: IObject): string {
     if (source.attributes) {
-      const description = source.attributes["description"];
+      const description = source.attributes['description'];
       return description;
     }
 
-    return "";
+    return '';
   }
 }
 

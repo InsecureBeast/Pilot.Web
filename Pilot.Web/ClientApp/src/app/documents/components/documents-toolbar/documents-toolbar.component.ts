@@ -15,6 +15,8 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
 
   @Input() checkedNodes: INode[];
   @Output() onShowDocumentCard = new EventEmitter<any>();
+  @Output() downloadStarted = new EventEmitter<any>();
+  @Output() downloadFinished = new EventEmitter<any>();
 
   /** documents-toolbar ctor */
   constructor(
@@ -24,27 +26,33 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    
+
   }
 
   ngOnDestroy(): void {
-    
+
   }
 
-  download(): void {
-    if (!this.checkedNodes)
+  async download(): Promise<void> {
+    if (!this.checkedNodes) {
       return;
+    }
 
+    this.downloadStarted.emit();
     const selected = this.checkedNodes[0];
-    this.downloadService.downloadFile(selected.source);
+    await this.downloadService.downloadFile(selected.source);
+    this.downloadFinished.emit();
   }
 
-  downloadArchive(): void {
-    if (!this.checkedNodes)
+  async downloadArchive(): Promise<void> {
+    if (!this.checkedNodes) {
       return;
+    }
 
+    this.downloadStarted.emit();
     const selected = this.checkedNodes.map(n => n.id);
-    this.downloadService.downloadFileArchive(selected);
+    await this.downloadService.downloadFileArchive(selected);
+    this.downloadFinished.emit();
   }
 
   isNodeChecked(): boolean {
@@ -52,10 +60,12 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
   }
 
   isDocumentChecked(): boolean {
-    if (!this.checkedNodes)
+    if (!this.checkedNodes) {
       return false;
-    if (this.checkedNodes.length !== 1)
+    }
+    if (this.checkedNodes.length !== 1) {
       return false;
+    }
 
     return this.checkedNodes[0].isDocument;
   }
@@ -65,7 +75,7 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
     this.checkedNodes = new Array();
   }
 
-  openDocumentCard() : void {
+  openDocumentCard(): void {
     this.onShowDocumentCard.emit();
   }
 }

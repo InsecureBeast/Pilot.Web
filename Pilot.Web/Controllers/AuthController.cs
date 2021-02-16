@@ -2,13 +2,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using log4net;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Pilot.Web.Model;
 using Pilot.Web.Model.Auth;
-using Pilot.Web.Tools;
 
 namespace Pilot.Web.Controllers
 {
@@ -57,7 +55,7 @@ namespace Pilot.Web.Controllers
         {
             try
             {
-                var actor = HttpContext.GetTokenActor();
+                var actor = _contextService.GetTokenActor(HttpContext);
                 if (actor == null)
                     return Ok();
 
