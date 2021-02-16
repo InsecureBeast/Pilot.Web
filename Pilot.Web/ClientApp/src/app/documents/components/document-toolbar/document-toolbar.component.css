@@ -33,3 +33,7 @@
     max-width: 80px;
   }
 }
+
+.nav-item.checked {
+  background-color: var(--gray-light);
+}
