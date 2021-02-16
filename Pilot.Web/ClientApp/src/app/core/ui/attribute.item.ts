@@ -6,6 +6,7 @@ import { TransitionsManager } from '../transitions/transitions.manager';
 import { IObjectExtensions } from '../tools/iobject.extensions';
 import { TypeIconService } from '../type-icon.service';
 import { SafeUrl } from '@angular/platform-browser';
+import { SystemStates } from '../data/system.states';
 
 export class AttributeItem {
 
@@ -87,11 +88,16 @@ export class StateAttributeItem extends AttributeItem {
 
     this.options = new Array<UserState>();
 
-    const currentState = repository.getUserState(value);
-    if (currentState) {
+    let currentState = repository.getUserState(value);
+    if (!currentState) {
+      currentState = repository.getUserState(SystemStates.NONE_STATE_ID);
+    }
+
+    if (currentState.id === SystemStates.NONE_STATE_ID && !attribute.obligatory) {
       const currentUserState = new UserState(currentState, typeIconService, userStateColorService);
       this.options.push(currentUserState);
     }
+
     const currentPerson = repository.getCurrentPerson();
     const attrsMap = IObjectExtensions.objectAttributesToMap(source.attributes);
     const transitions = transitionsManager.getAvailableTransitions(attribute, attrsMap, currentPerson);
