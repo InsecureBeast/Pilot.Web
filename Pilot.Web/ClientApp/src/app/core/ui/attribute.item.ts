@@ -79,7 +79,7 @@ export class StateAttributeItem extends AttributeItem {
   constructor(
     source: IObject,
     attribute: IAttribute,
-    value: string,
+    strValue: string,
     repository: RepositoryService,
     transitionsManager: TransitionsManager,
     typeIconService: TypeIconService,
@@ -88,15 +88,18 @@ export class StateAttributeItem extends AttributeItem {
 
     this.options = new Array<UserState>();
 
-    let currentState = repository.getUserState(value);
+    let currentState = repository.getUserState(strValue);
     if (!currentState) {
       currentState = repository.getUserState(SystemStates.NONE_STATE_ID);
     }
 
-    if (currentState.id === SystemStates.NONE_STATE_ID && !attribute.obligatory) {
-      const currentUserState = new UserState(currentState, typeIconService, userStateColorService);
-      this.options.push(currentUserState);
-    }
+    //if (currentState.id === SystemStates.NONE_STATE_ID && !attribute.obligatory) {
+    //  const currentUserState = new UserState(currentState, typeIconService, userStateColorService);
+    //  this.options.push(currentUserState);
+    //}
+
+    this.value = new UserState(currentState, typeIconService, userStateColorService);
+    this.options.push(this.value);
 
     const currentPerson = repository.getCurrentPerson();
     const attrsMap = IObjectExtensions.objectAttributesToMap(source.attributes);

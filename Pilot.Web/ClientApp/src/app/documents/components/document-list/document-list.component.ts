@@ -133,7 +133,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
       if (!id) {
         return;
       }
-      this.update(id);
+      this.update(id, false);
     });
   }
 
@@ -300,7 +300,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  private update(objectId: string): void {
+  private update(objectId: string, isSource: boolean): void {
     if (!this.nodes) {
       return;
     }
@@ -308,8 +308,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     this.repository.getObjectAsync(objectId, RequestType.New).then(object => {
       const index = this.nodes.findIndex(n => n.id === objectId);
       const oldNode = this.nodes.find(n => n.id === objectId);
-      const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-      newNode.isChecked = oldNode.isChecked;
+      if (oldNode) {
+        isSource = oldNode.isSource;
+      }
+      const newNode = new ObjectNode(object, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+      if (oldNode) {
+        newNode.isChecked = oldNode.isChecked;
+      }
       this.nodes[index] = newNode;
     });
   }
@@ -343,7 +348,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
           if (!objectForCardId) {
             return;
           }
-          this.update(objectForCardId);
+          this.update(objectForCardId, isSource);
         });
       })
       .catch(e => {

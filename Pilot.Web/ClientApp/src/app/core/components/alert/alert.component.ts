@@ -31,10 +31,7 @@ export class AlertComponent implements OnInit, OnDestroy {
       .onError.subscribe(e => {
         const msg = new AlertMessage();
         msg.type = 'danger';
-        if (e instanceof HttpErrorResponse) {
-          msg.message = this.errorHandlerService.handleErrorMessage(e);
-        }
-
+        msg.message = this.errorHandlerService.handleErrorMessage(e);
         this.messages.push(msg);
         this.ref.detectChanges();
       });
