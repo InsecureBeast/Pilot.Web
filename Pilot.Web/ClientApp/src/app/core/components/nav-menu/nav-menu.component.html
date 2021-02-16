@@ -12,10 +12,10 @@
         [ngClass]='{"show": isExpanded}'
         [class.h-100vh]="isExpanded">
         <ul class="navbar-nav flex-grow">
-          <li class="nav-item" [routerLinkActive]='["link-active"]'>
-            <a class="nav-link noselect" [routerLink]='["/documents", documentRootId]' translate="documents" (click)="toggleOff()"></a>
+          <li class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]="{ exact: false }" >
+            <a class="nav-link noselect" [routerLink]='["/documents"]' translate="documents" (click)="toggleOff()"></a>
           </li>
-          <li class="nav-item" [routerLinkActive]='["link-active"]'>
+          <li class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]="{ exact: false }">
             <a class="nav-link noselect" [routerLink]='["/tasks"]' translate="tasks" (click)="toggleOff()"></a>
           </li>
           <li class="nav-item" [routerLinkActive]='["link-active"]' *ngIf="isLoggedIn$ | async">
