@@ -46,5 +46,6 @@
   "noSignature": "No signature",
   "signatures": "Signatures",
   "sign": "Sign",
-  "info": "Info"
+  "info": "Info",
+  "selectFilter": "Select filter"
 }

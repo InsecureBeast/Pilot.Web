@@ -31,7 +31,7 @@
   
   .bottom-sheet-header h4.title {
     display: inline-block;
-    font-weight: 500;
+    font-weight: 600;
     margin: 0;
     font-size: 1rem;
   }
@@ -39,6 +39,7 @@
   .bottom-sheet-header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.16);
     padding: 16px;
+    text-align: center;
   }
   
   .bg-dark-header {

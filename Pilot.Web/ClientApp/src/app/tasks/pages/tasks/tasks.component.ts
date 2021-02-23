@@ -11,6 +11,7 @@ import { TasksSyncService as TasksService } from '../../shared/tasks.service';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
 import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-tasks',
@@ -34,18 +35,15 @@ export class TasksComponent implements OnInit, OnDestroy {
   private taskListComponent: TaskListComponent;
 
   @ViewChild('bottomSheet') bottomSheet: BottomSheetComponent;
-  options: IBottomSheetConfig =
-  {
-    closeButtonTitle: 'Close',
-    enableCloseButton: false
-  };
+  options: IBottomSheetConfig;
 
   /** tasks ctor */
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private tasksNavigationService: TasksNavigationService,
-    private tasksService: TasksService) {
+    private tasksService: TasksService,
+    private readonly translate: TranslateService) {
 
     this.checked = new Array();
   }
@@ -71,6 +69,12 @@ export class TasksComponent implements OnInit, OnDestroy {
       this.processScrollEvent(event);
       this.processBackEvent(event);
     });
+
+    this.options = {
+      closeButtonTitle: 'Close',
+      enableCloseButton: false,
+      title: this.translate.instant('selectFilter')
+    };
   }
 
   ngOnDestroy(): void {
