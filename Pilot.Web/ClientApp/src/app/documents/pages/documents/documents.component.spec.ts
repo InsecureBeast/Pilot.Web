@@ -15,7 +15,6 @@ import { INode } from '../../shared/node.interface';
 import { IObject, IType } from 'src/app/core/data/data.classes';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { ModalService } from 'src/app/components/modal/modal.service';
 
 describe('documents component', () => {
     let component: DocumentsComponent;
@@ -29,8 +28,6 @@ describe('documents component', () => {
     let documentsService: DocumentsService;
     let scrollPositionServiceMock: ScrollPositionService;
     let scrollPositionService: ScrollPositionService;
-    let modalServiceMock: ModalService;
-    let modalService: ModalService;
     let bsModalServiceMock: BsModalService;
     let bsModalService: BsModalService;
     let repositoryMock: RepositoryService;
@@ -73,8 +70,6 @@ describe('documents component', () => {
         documentsService = instance(documentsServiceMock);
         scrollPositionServiceMock = mock(ScrollPositionService);
         scrollPositionService = instance(scrollPositionServiceMock);
-        modalServiceMock = mock(ModalService);
-        modalService = instance(modalServiceMock);
         bsModalServiceMock = mock(BsModalService);
         bsModalService = instance(bsModalServiceMock);
 
@@ -102,7 +97,6 @@ describe('documents component', () => {
                 { provide: DocumentsNavigationService, useValue: navigationService },
                 { provide: DocumentsService, useValue: documentsService },
                 { provide: ScrollPositionService, useValue: scrollPositionService },
-                { provide: ModalService, useValue: modalService },
                 { provide: BsModalService, useValue: bsModalService }
             ]
         });

@@ -20,6 +20,7 @@ import { ErrorModule } from './components/error/error.module';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { AlertComponent } from './components/alert/alert.component';
 import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -35,6 +36,7 @@ export function createTranslateLoader(http: HttpClient) {
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     ErrorModule,

@@ -18,12 +18,12 @@ import { TaskListComponent } from '../../components/task-list/task-list.componen
 })
 /** tasks component*/
 export class TasksComponent implements OnInit, OnDestroy {
-  
+
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
-  private filtersModalId = "filtersModal";
-  private storageFilterName = "tasks_filter";
+  private filtersModalId = 'filtersModal';
+  private storageFilterName = 'tasks_filter';
   private filterId: number;
 
   selectedFilter: TaskFilter;

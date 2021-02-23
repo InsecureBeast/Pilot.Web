@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
-import { INode, IObjectNode } from '../../shared/node.interface';
+import { IObjectNode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
@@ -24,6 +24,8 @@ import { TypeIconService } from '../../../core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from 'src/app/core/notification.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
+import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 
 @Component({
   selector: 'app-document',
@@ -53,6 +55,9 @@ export class DocumentComponent implements OnInit, OnDestroy {
   selectedVersionCreator: string;
 
   @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;
+
+  @ViewChild('bottomSheet') bottomSheet: BottomSheetComponent;
+  options: IBottomSheetConfig;
 
   /** document-details ctor */
   constructor(
@@ -122,6 +127,12 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.document = object;
       });
     });
+
+    this.options = {
+      title: 'Angular Bottom Sheet',
+      backgroundColor: '#ffffff',
+      fontColor: '#363636'
+    };
   }
 
   ngOnDestroy(): void {
@@ -160,6 +171,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   toggleDocumentVersions($event): void {
     this.isInfoShown = !this.isInfoShown;
+    this.bottomSheet.open();
   }
 
   closeDocumentVersions($event): void {

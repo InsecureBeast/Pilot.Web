@@ -20,6 +20,7 @@ import { ErrorModule } from '../components/error/error.module';
 import { UserStateModule } from '../components/user-state/user-state-module';
 import { ObjectCardDialogModule } from '../components/object-card-dialog/object-card-dialog.module';
 import { DocumentCardModule } from '../components/document-card/document-card.module';
+import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { DocumentCardModule } from '../components/document-card/document-card.mo
     ObjectCardDialogModule,
     DocumentCardModule,
     BootstrapUiModule,
-    TabsModule
+    TabsModule,
+    BottomSheetModule
   ],
   declarations: [
     DocumentsComponent,
