@@ -16,6 +16,7 @@ import { TasksRoutingModule } from './tasks-routing.module';
 import { TaskToolbarComponent } from './components/task-toolbar/task-toolbar.component';
 import { ErrorModule } from '../components/error/error.module';
 import { CustomModalModule } from '../components/modal/modal.module';
+import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -28,7 +29,8 @@ export function createTranslateLoader(http: HttpClient) {
     RouterModule,
     TranslateModule,
     CustomModalModule,
-    TasksRoutingModule
+    TasksRoutingModule,
+    BottomSheetModule
   ],
   declarations: [
     TaskFiltersComponent,

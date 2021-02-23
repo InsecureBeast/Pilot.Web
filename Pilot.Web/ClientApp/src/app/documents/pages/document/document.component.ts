@@ -129,8 +129,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
     });
 
     this.options = {
-      title: 'Angular Bottom Sheet',
-      backgroundColor: '#ffffff',
       fontColor: '#363636'
     };
   }

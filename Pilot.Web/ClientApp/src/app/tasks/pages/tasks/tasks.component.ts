@@ -8,8 +8,9 @@ import { TaskFilter } from '../../components/task-filters/task-filters.component
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
 import { TaskNode } from '../../shared/task.node';
 import { TasksSyncService as TasksService } from '../../shared/tasks.service';
-import { ModalService } from 'src/app/components/modal/modal.service';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
+import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
+import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 
 @Component({
     selector: 'app-tasks',
@@ -22,7 +23,6 @@ export class TasksComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
-  private filtersModalId = 'filtersModal';
   private storageFilterName = 'tasks_filter';
   private filterId: number;
 
@@ -33,13 +33,19 @@ export class TasksComponent implements OnInit, OnDestroy {
   @ViewChild(TaskListComponent, { static: false })
   private taskListComponent: TaskListComponent;
 
+  @ViewChild('bottomSheet') bottomSheet: BottomSheetComponent;
+  options: IBottomSheetConfig =
+  {
+    closeButtonTitle: 'Close',
+    enableCloseButton: false
+  };
+
   /** tasks ctor */
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private tasksNavigationService: TasksNavigationService,
-    private tasksService: TasksService,
-    private modalService: ModalService) {
+    private tasksService: TasksService) {
 
     this.checked = new Array();
   }
@@ -50,10 +56,11 @@ export class TasksComponent implements OnInit, OnDestroy {
       this.filterId = +filterId;
       if (!filterId) {
         filterId = localStorage.getItem(this.storageFilterName);
-        if (filterId)
+        if (filterId) {
           this.filterId = +filterId;
-        else
+        } else {
           this.filterId = 0;
+        }
       }
 
       this.tasksNavigationService.navigateToFilter(this.filterId);
@@ -67,11 +74,13 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
+    }
 
-    if (this.routerSubscription)
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
+    }
   }
 
   onFiltersLoaded(filters: [TaskFilter[], TaskFilter[]]): void {
@@ -92,7 +101,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   onFilterSelected(filter: TaskFilter): void {
-    this.modalService.close(this.filtersModalId);
+    this.bottomSheet.close();
     this.selectedFilter = filter;
     this.clearChecked();
     this.tasksService.changeSelectedNode(undefined);
@@ -114,11 +123,11 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   showFilters(): void {
-    this.modalService.open(this.filtersModalId);
+    this.bottomSheet.open();
   }
 
   closeFilters(): void {
-    this.modalService.close(this.filtersModalId);
+    this.bottomSheet.close();
   }
 
   clearChecked(): void {
@@ -137,10 +146,10 @@ export class TasksComponent implements OnInit, OnDestroy {
     }
   }
 
-  private processScrollEvent(event: Event) : void {
+  private processScrollEvent(event: Event): void {
     if (event instanceof Scroll) {
       if (event.position) {
-        window.scrollTo(0, event.position["1"]);
+        window.scrollTo(0, event.position['1']);
       }
     }
   }
