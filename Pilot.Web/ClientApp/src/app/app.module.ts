@@ -10,16 +10,16 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { AppComponent } from './app.component';
 import { AuthGuard } from './auth/auth.guard';
-import { ErrorModule } from './ui/error/error.module';
 import { RouteReuseService } from './core/route-reuse.service';
 import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ImagesCacheInterceptor } from './core/interceptors/images-cache.interceptor';
 import { ClickStopPropagationDirective, ClickPreventDefaultDirective } from './core/directives/stop-propagation.directive';
-import { AppRoutingModule } from "./app-routing.module";
-import { NavMenuComponent } from './core/components/nav-menu/nav-menu.component';
 import { BootstrapUiModule } from './bootstrap-ui.module';
 import { GlobalErrorHandler } from './core/global-error-handler';
-import { AlertComponent } from './core/components/alert/alert.component';
+import { ErrorModule } from './components/error/error.module';
+import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
+import { AlertComponent } from './components/alert/alert.component';
+import { AppRoutingModule } from './app-routing.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);

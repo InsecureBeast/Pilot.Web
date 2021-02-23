@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testi
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, ParamMap, Event, ActivatedRouteSnapshot, UrlHandlingStrategy, UrlSegment } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap, Event, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { anyString, instance, mock, verify, when } from 'ts-mockito';
 import { BehaviorSubject, of, Subject } from 'rxjs';
@@ -11,11 +11,11 @@ import { TypeIconService } from 'src/app/core/type-icon.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from 'src/app/core/scroll-position.service';
-import { ModalService } from 'src/app/ui/modal/modal.service';
 import { INode } from '../../shared/node.interface';
 import { IObject, IType } from 'src/app/core/data/data.classes';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { ModalService } from 'src/app/components/modal/modal.service';
 
 describe('documents component', () => {
     let component: DocumentsComponent;

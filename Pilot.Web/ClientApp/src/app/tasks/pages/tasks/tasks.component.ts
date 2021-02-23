@@ -8,9 +8,8 @@ import { TaskFilter } from '../../components/task-filters/task-filters.component
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
 import { TaskNode } from '../../shared/task.node';
 import { TasksSyncService as TasksService } from '../../shared/tasks.service';
-import { ModalService } from 'src/app/ui/modal/modal.service';
+import { ModalService } from 'src/app/components/modal/modal.service';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
-
 
 @Component({
     selector: 'app-tasks',

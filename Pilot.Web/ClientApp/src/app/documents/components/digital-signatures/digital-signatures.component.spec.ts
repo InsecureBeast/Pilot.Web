@@ -1,12 +1,12 @@
 ﻿import { TestBed, async, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
-import { BrowserModule, By } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IXpsDigitalSignature } from 'src/app/core/data/data.classes';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
 import { instance, mock, when } from 'ts-mockito';
 import { DigitalSignaturesComponent } from './digital-signatures.component';
+import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 
 let component: DigitalSignaturesComponent;
 let fixture: ComponentFixture<DigitalSignaturesComponent>;
@@ -15,10 +15,10 @@ describe('digital-signatures component', () => {
     let repositoryMock: RepositoryService;
     let repository: RepositoryService;
     let translate: TranslateService;
-    let errorHandlerServiceMock : ErrorHandlerService;
-    let errorHandlerService : ErrorHandlerService;
+    let errorHandlerServiceMock: ErrorHandlerService;
+    let errorHandlerService: ErrorHandlerService;
 
-    beforeEach(async(() => {
+    beforeEach((() => {
         repositoryMock = mock(RepositoryService);
         repository = instance(repositoryMock);
 

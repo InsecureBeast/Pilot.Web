@@ -1,8 +1,8 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscriber, Subscription} from 'rxjs';
-import {NotificationService} from '../../notification.service';
-import {HttpErrorResponse} from '@angular/common/http';
-import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
+import {Subscription} from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorHandlerService } from '../error/error-handler.service';
+import { NotificationService } from 'src/app/core/notification.service';
 
 class AlertMessage {
   type: string;

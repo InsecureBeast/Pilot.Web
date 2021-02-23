@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../../auth/auth.service';
-import { SystemIds } from '../../data/system.ids';
-import { RepositoryService } from '../../repository.service';
+import { SystemIds } from 'src/app/core/data/system.ids';
+import { AuthService } from 'src/app/auth/auth.service';
+import { RepositoryService } from 'src/app/core/repository.service';
 
 @Component({
   selector: 'app-nav-menu',

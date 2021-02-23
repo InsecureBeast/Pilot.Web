@@ -6,9 +6,9 @@ import { first, skipWhile } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../auth.service';
-import { ErrorHandlerService } from '../../ui/error/error-handler.service';
 import { SystemIds } from '../../core/data/system.ids';
 import { RepositoryService } from '../../core/repository.service';
+import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 
 @Component({
     selector: 'app-auth',

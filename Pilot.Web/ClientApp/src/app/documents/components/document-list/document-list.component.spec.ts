@@ -1,27 +1,20 @@
 import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testing';
-import { BrowserModule, By } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
+import { Router, Event } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { anyString, instance, mock, verify, when, deepEqual, anything } from 'ts-mockito';
-import { BehaviorSubject, of, Subject } from 'rxjs';
-import { DocumentsComponent } from '../../pages/documents/documents.component';
+import { instance, mock, when, anything } from 'ts-mockito';
+import { of, Subject } from 'rxjs';
 import { DocumentListComponent } from './document-list.component';
 import { TypeIconService } from 'src/app/core/type-icon.service';
-import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
-import { ScrollPositionService } from 'src/app/core/scroll-position.service';
-import { ModalService } from 'src/app/ui/modal/modal.service';
-import { INode, IObjectNode } from '../../shared/node.interface';
-import { IChild, IObject, IType } from 'src/app/core/data/data.classes';
-import { HttpErrorResponse } from '@angular/common/http';
+import { IObjectNode } from '../../shared/node.interface';
 import { DownloadService } from 'src/app/core/download.service';
 import { NodeStyle, NodeStyleService } from 'src/app/core/node-style.service';
-import { ObjectNode } from '../../shared/object.node';
 import { ChildrenType } from 'src/app/core/data/children.types';
 import { createIChildStub, randomIObject } from 'src/tests/utils';
-import { skipUntil, skipWhile } from 'rxjs/operators';
+import { skipWhile } from 'rxjs/operators';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AccessCalculator } from 'src/app/core/tools/access.calculator';
@@ -154,7 +147,7 @@ describe('documents component', () => {
     //     const firstEl = fixture.debugElement.queryAll(By.css('li'));
     //     // when
     //     let checkedNode: IObjectNode;
-    //     component.checked.pipe(skipWhile(a => !a)).subscribe((value) => 
+    //     component.checked.pipe(skipWhile(a => !a)).subscribe((value) =>
     //     {
     //         checkedNode = value[0];
     //     });

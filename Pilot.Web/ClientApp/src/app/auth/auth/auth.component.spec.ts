@@ -4,13 +4,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router, Params } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
 import { anyString, instance, mock, verify, when, deepEqual } from 'ts-mockito';
 import { AuthService } from '../auth.service';
 import { AuthComponent } from './auth.component';
 import { of, Subject, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SystemIds } from 'src/app/core/data/system.ids';
+import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 
 describe('auth component', () => {
     let component: AuthComponent;

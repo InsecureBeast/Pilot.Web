@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ErrorHandlerService } from 'src/app/ui/error/error-handler.service';
 import { instance, mock } from 'ts-mockito';
 import { AlertComponent } from './alert.component';
+import { ErrorHandlerService } from '../error/error-handler.service';
 
 describe('AlertComponent', () => {
   let component: AlertComponent;
