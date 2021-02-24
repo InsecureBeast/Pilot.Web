@@ -101,23 +101,8 @@
   </div>
 </ng-template>
 
-<ng-template #bottomSheetTemplate>
-  <div class="modal-body">
-    <ul>
-      <li>Download</li>
-      <li>Object properties</li>
-      <li>Signatures</li>
-      <li>Hystory</li>
-    </ul>
-  </div>
-</ng-template>
-
 <app-bottom-sheet [options]="options" #bottomSheet>
-  <!-- Your content goes here -->
-  <ul>
-    <li>Download</li>
-    <li>Object properties</li>
-    <li>Signatures</li>
-    <li>Hystory</li>
-  </ul>
+  <app-context-menu #contextMenu>
+
+  </app-context-menu>
 </app-bottom-sheet>

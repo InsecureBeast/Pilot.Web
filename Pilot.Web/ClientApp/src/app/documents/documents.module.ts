@@ -21,6 +21,7 @@ import { UserStateModule } from '../components/user-state/user-state-module';
 import { ObjectCardDialogModule } from '../components/object-card-dialog/object-card-dialog.module';
 import { DocumentCardModule } from '../components/document-card/document-card.module';
 import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
+import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.modul
     DocumentsToolbarComponent,
     DocumentTreeComponent,
     FileDropDirective,
-    DigitalSignaturesComponent
+    DigitalSignaturesComponent,
+    ContextMenuComponent
   ],
   exports: [
     DocumentsComponent,

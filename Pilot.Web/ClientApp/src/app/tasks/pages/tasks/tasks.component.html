@@ -54,8 +54,10 @@
 </div>
 
 <app-bottom-sheet [options]="options" #bottomSheet>
-  <app-task-filters [selectedFilter]="selectedFilter"
-                    (onSelected)="onFilterSelected($event)"
-                    (onError)="onError($event)">
-  </app-task-filters>
+  <div class="pl-3 pr-3 pb-3">
+    <app-task-filters [selectedFilter]="selectedFilter"
+                      (onSelected)="onFilterSelected($event)"
+                      (onError)="onError($event)">
+    </app-task-filters>
+  </div>
 </app-bottom-sheet>

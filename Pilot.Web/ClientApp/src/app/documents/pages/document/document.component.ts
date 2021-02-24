@@ -26,6 +26,7 @@ import { NotificationService } from 'src/app/core/notification.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
 import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
 
 @Component({
   selector: 'app-document',
@@ -54,9 +55,10 @@ export class DocumentComponent implements OnInit, OnDestroy {
   selectedVersionCreated: string;
   selectedVersionCreator: string;
 
-  @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;
-
-  @ViewChild('bottomSheet') bottomSheet: BottomSheetComponent;
+  @ViewChild('cardTemplate') private cardTemplate: TemplateRef<any>;
+  @ViewChild('staticTabs', { static: false }) private staticTabs: TabsetComponent;
+  @ViewChild('contextMenu') private contextMenu: ContextMenuComponent;
+  @ViewChild('bottomSheet') private bottomSheet: BottomSheetComponent;
   options: IBottomSheetConfig;
 
   /** document-details ctor */
@@ -129,7 +131,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
     });
 
     this.options = {
-      fontColor: '#363636'
     };
   }
 
@@ -169,6 +170,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   toggleDocumentVersions($event): void {
     this.isInfoShown = !this.isInfoShown;
+    this.fillContextMenu();
     this.bottomSheet.open();
   }
 
@@ -320,5 +322,56 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
       }
     }
+  }
+
+  private fillContextMenu() {
+    this.contextMenu.clear();
+
+    const downloadItem = MenuItem
+      .createItem(this.translate.instant('download'))
+      .withIcon('file_download')
+      .withAction(() => {
+        this.bottomSheet.close();
+        this.download(null);
+      });
+    this.contextMenu.addMenuItem(downloadItem);
+
+    if (this.document.type.isMountable) {
+      const sourceFilesItem = MenuItem
+        .createItem(this.translate.instant('sourceFiles'))
+        .withIcon('folder')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.showFiles(true);
+        });
+      this.contextMenu.addMenuItem(sourceFilesItem);
+    }
+
+    const versionsItem = MenuItem
+      .createItem(this.translate.instant('versions'))
+      .withIcon('list_alt')
+      .withAction(() => {
+        this.bottomSheet.close();
+        this.onShowDocumentCard(this.cardTemplate);
+      });
+    this.contextMenu.addMenuItem(versionsItem);
+
+    const signaturesItem = MenuItem
+      .createItem(this.translate.instant('signatures'))
+      .withIcon('edit')
+      .withAction(() => {
+        this.bottomSheet.close();
+        this.onShowDocumentCard(this.cardTemplate);
+      });
+    this.contextMenu.addMenuItem(signaturesItem);
+
+    const cardItem = MenuItem
+      .createItem(this.translate.instant('card'))
+      .withIcon('info_outline')
+      .withAction(() => {
+        this.bottomSheet.close();
+        this.onShowDocumentCard(this.cardTemplate);
+      });
+    this.contextMenu.addMenuItem(cardItem);
   }
 }
