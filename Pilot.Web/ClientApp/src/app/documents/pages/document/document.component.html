@@ -1,7 +1,7 @@
 <app-document-toolbar [document]="document"
                       (documentClosed)="close($event)"
                       (documentDownloaded)="download($event)"
-                      (moreShown)="showMore($event)"
+                      (moreShown)="onShowMore($event)"
                       (documentCardOpened)="onShowDocumentCard(cardTemplate)"
                       (filesShown)="showFiles($event)">
 </app-document-toolbar>

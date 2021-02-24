@@ -167,7 +167,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.downloadService.downloadFile($event.source);
   }
 
-  showMore($event): void {
+  onShowMore($event): void {
     this.fillContextMenu();
     this.bottomSheet.open();
   }
@@ -314,7 +314,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.contextMenu.clear();
 
     const downloadItem = MenuItem
-      .createItem(this.translate.instant('download'))
+      .createItem('downloadId', this.translate.instant('download'))
       .withIcon('save_alt')
       .withAction(() => {
         this.bottomSheet.close();
@@ -324,7 +324,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
     if (this.document.type.isMountable) {
       const sourceFilesItem = MenuItem
-        .createItem(this.translate.instant('sourceFiles'))
+        .createItem('sourceFilesId', this.translate.instant('sourceFiles'))
         .withIcon('folder_open')
         .withAction(() => {
           this.bottomSheet.close();
@@ -334,7 +334,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     }
 
     const versionsItem = MenuItem
-      .createItem(this.translate.instant('versions'))
+      .createItem('versionsId', this.translate.instant('versions'))
       .withIcon('list_alt')
       .withAction(() => {
         this.bottomSheet.close();
@@ -343,7 +343,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.contextMenu.addMenuItem(versionsItem);
 
     const signaturesItem = MenuItem
-      .createItem(this.translate.instant('signatures'))
+      .createItem('signaturesId', this.translate.instant('signatures'))
       .withIcon('edit')
       .withAction(() => {
         this.bottomSheet.close();
@@ -352,7 +352,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.contextMenu.addMenuItem(signaturesItem);
 
     const cardItem = MenuItem
-      .createItem(this.translate.instant('card'))
+      .createItem('cardId', this.translate.instant('card'))
       .withIcon('info_outline')
       .withAction(() => {
         this.bottomSheet.close();

@@ -33,6 +33,7 @@ export class ContextMenuComponent implements OnInit {
 }
 
 export class MenuItem {
+  id: string;
   icon: string;
   title: string;
   execute: () => void;
@@ -42,9 +43,10 @@ export class MenuItem {
     this.canExecute = () => true;
   }
 
-  static createItem(title: string): MenuItem {
+  static createItem(id: string, title: string): MenuItem {
     const item = new MenuItem();
     item.title = title;
+    item.id = id;
     return item;
   }
 
