@@ -11,11 +11,11 @@ import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
 import { INode } from '../../shared/node.interface';
-import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
 import { IObject } from 'src/app/core/data/data.classes';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 @Component({
     selector: 'app-documents',
@@ -157,7 +157,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onDownloadFinished(any): void {
-    if (this.modalRef){
+    if (this.modalRef) {
       this.bsModalService.hide(this.modalRef.id);
     }
   }
@@ -175,7 +175,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   onCloseObjectCard(): void {
-    if (this.cardModalRef){
+    if (this.cardModalRef) {
       this.bsModalService.hide(this.cardModalRef.id);
     }
   }

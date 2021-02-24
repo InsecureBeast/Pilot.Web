@@ -26,13 +26,11 @@ export class DocumentToolbarComponent implements OnDestroy {
     this.documentChanged(value);
   }
 
-  @Output() onDocumentClosed = new EventEmitter<any>();
-  @Output() onDownload = new EventEmitter<any>();
-  @Output() onPreviousDocument = new EventEmitter<any>();
-  @Output() onNextDocument = new EventEmitter<any>();
-  @Output() onShowVersions = new EventEmitter<any>();
-  @Output() onShowDocumentCard = new EventEmitter<any>();
-  @Output() onShowFiles = new EventEmitter<boolean>();
+  @Output() documentClosed = new EventEmitter<any>();
+  @Output() documentDownloaded = new EventEmitter<any>();
+  @Output() moreShown = new EventEmitter<any>();
+  @Output() documentCardOpened = new EventEmitter<any>();
+  @Output() filesShown = new EventEmitter<boolean>();
 
   /** document-toolbar ctor */
   constructor() {
@@ -44,34 +42,26 @@ export class DocumentToolbarComponent implements OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  previous($event): void {
-    this.onPreviousDocument.emit();
-  }
-
-  next($event): void {
-    this.onNextDocument.emit();
-  }
-
   close($event): void {
-    this.onDocumentClosed.emit($event);
+    this.documentClosed.emit($event);
   }
 
   download($event): void {
-    this.onDownload.emit($event);
+    this.documentDownloaded.emit($event);
   }
 
-  showVersions($event): void {
+  showMore($event): void {
     this.isVersionsChecked = !this.isVersionsChecked;
-    this.onShowVersions.emit(this.document);
+    this.moreShown.emit(this.document);
   }
 
   openDocumentCard(): void {
-    this.onShowDocumentCard.emit();
+    this.documentCardOpened.emit();
   }
 
   showFiles(): void {
     this.showFilesMode = !this.showFilesMode;
-    this.onShowFiles.emit(this.showFilesMode);
+    this.filesShown.emit(this.showFilesMode);
   }
 
   private documentChanged(document: IObject): void {

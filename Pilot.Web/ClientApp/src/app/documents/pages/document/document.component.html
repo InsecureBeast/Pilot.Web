@@ -1,14 +1,12 @@
 <app-document-toolbar [document]="document"
-                      (onDocumentClosed)="close($event)"
-                      (onDownload)="download($event)"
-                      (onPreviousDocument)="previousDocument($event)"
-                      (onNextDocument)="nextDocument($event)"
-                      (onShowVersions)="toggleDocumentVersions($event)"
-                      (onShowDocumentCard)="onShowDocumentCard(cardTemplate)"
-                      (onShowFiles)="showFiles($event)">
+                      (documentClosed)="close($event)"
+                      (documentDownloaded)="download($event)"
+                      (moreShown)="showMore($event)"
+                      (documentCardOpened)="onShowDocumentCard(cardTemplate)"
+                      (filesShown)="showFiles($event)">
 </app-document-toolbar>
 
-<div class="pt-6" *ngIf="!error && !showFilesMode">
+<div class="pt-6" *ngIf="!error">
   <div class="row m-0">
     <div class="col-12 col-lg-8 p-0 pb-5">
 
@@ -44,7 +42,7 @@
     </div>
 
     <div class="versions-view col-12 col-lg-4 doc-info overflow-auto p-0 d-none d-lg-block"
-        [class.d-block]="isInfoShown"
+        
         *ngIf="document">
       <div class="h-100 pt-1">
         <tabset #staticTabs >
@@ -83,14 +81,7 @@
   </div>
 </div>
 
-<div class="pt-6" *ngIf="showFilesMode && node">
-  <app-document-list [parent]="node"
-                     [canCheck]="false"
-                     (onSelected)="downloadDocument($event)">
-  </app-document-list>
-</div>
-
-<app-error *ngIf="error && !showFilesMode" [response]="error"></app-error>
+<app-error *ngIf="error" [response]="error"></app-error>
 
 <ng-template #cardTemplate>
   <div class="modal-body">

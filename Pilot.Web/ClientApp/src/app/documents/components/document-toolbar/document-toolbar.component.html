@@ -1,18 +1,18 @@
 <nav class="navbar navbar-expand fixed-top navbar-light bg-content justify-content-between">
   <ul class="navbar-nav">
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="download($event)">
-      <span class="navbar-text toolbar-text material-icons nav-icon">file_download</span>
+      <span class="navbar-text toolbar-text material-icons nav-icon">save_alt</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="download"></span>
+    </li>
+    <li click-stop-propagation click-prevent-default
+        class="nav-item nav-item-button" (click)="showFiles()" *ngIf="canShowFiles">
+      <span class="navbar-text toolbar-text nav-icon material-icons">folder_open</span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="sourceFiles"></span>
     </li>
     <li click-stop-propagation click-prevent-default 
         class="nav-item nav-item-button" (click)="openDocumentCard()">
-      <span class="navbar-text toolbar-text nav-icon material-icons">insert_drive_file</span>
+      <span class="navbar-text toolbar-text nav-icon material-icons">info_outline</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="card"></span>
-    </li>
-    <li click-stop-propagation click-prevent-default
-        class="nav-item nav-item-button" (click)="showFiles()" [class.checked]="showFilesMode" *ngIf="canShowFiles">
-      <span class="navbar-text toolbar-text nav-icon material-icons">folder</span>
-      <span class="navbar-text toolbar-text hidden-phone noselect" translate="sourceFiles"></span>
     </li>
   </ul>
 
@@ -25,8 +25,7 @@
   </ul> -->
 
   <ul class="navbar-nav noselect">
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button d-block d-lg-none" (click)="showVersions($event)"
-        [class.checked]="isVersionsChecked">
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button d-block d-lg-none" (click)="showMore($event)" >
       <span class="navbar-text toolbar-text material-icons nav-icon">more_vert</span>
     </li>
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button noselect" (click)="close($event)">

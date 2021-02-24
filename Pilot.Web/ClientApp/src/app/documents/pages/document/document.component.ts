@@ -27,6 +27,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
 import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
+import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 @Component({
   selector: 'app-document',
@@ -47,9 +48,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   node: ObjectNode;
   images: SafeUrl[];
   isLoading: boolean;
-  isInfoShown: boolean;
   error: HttpErrorResponse;
-  showFilesMode: boolean;
 
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
@@ -66,7 +65,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly sourceFileService: SourceFileService,
     private readonly downloadService: DownloadService,
-    private readonly location: Location,
+    private readonly navigationService: DocumentsNavigationService,
     private readonly repository: RepositoryService,
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
@@ -107,7 +106,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
         version = s.created;
       }
 
-      this.updateLocation(this.document.parentId, this.document.id, version);
+      this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
       this.loadSnapshot(s);
     });
 
@@ -157,7 +156,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   close($event): void {
     this.cancelAllRequests(false);
     this.repository.setRequestType(RequestType.FromCache);
-    this.location.back();
+    this.navigationService.back();
   }
 
   download($event): void {
@@ -168,14 +167,9 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.downloadService.downloadFile($event.source);
   }
 
-  toggleDocumentVersions($event): void {
-    this.isInfoShown = !this.isInfoShown;
+  showMore($event): void {
     this.fillContextMenu();
     this.bottomSheet.open();
-  }
-
-  closeDocumentVersions($event): void {
-    this.isInfoShown = false;
   }
 
   selectActualVersion(): boolean {
@@ -184,7 +178,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   }
 
   showFiles(event: boolean): void {
-    this.showFilesMode = event;
+    this.navigationService.navigateToFilesFolder(this.node.id);
   }
 
   onShowDocumentCard(template: TemplateRef<any>): void {
@@ -254,14 +248,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
       });
   }
 
-  private updateLocation(folderId: string, id: string, version?: string): void {
-    if (!version) {
-      this.location.replaceState(`/documents/${folderId}/doc/${id}`);
-    } else {
-      this.location.replaceState(`/documents/${folderId}/doc/${id}/${version}`);
-    }
-  }
-
   private loadSnapshot(snapshot: IFileSnapshot): void {
     this.isLoading = true;
     this.images = new Array<SafeUrl>();
@@ -329,7 +315,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
     const downloadItem = MenuItem
       .createItem(this.translate.instant('download'))
-      .withIcon('file_download')
+      .withIcon('save_alt')
       .withAction(() => {
         this.bottomSheet.close();
         this.download(null);
@@ -339,7 +325,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     if (this.document.type.isMountable) {
       const sourceFilesItem = MenuItem
         .createItem(this.translate.instant('sourceFiles'))
-        .withIcon('folder')
+        .withIcon('folder_open')
         .withAction(() => {
           this.bottomSheet.close();
           this.showFiles(true);

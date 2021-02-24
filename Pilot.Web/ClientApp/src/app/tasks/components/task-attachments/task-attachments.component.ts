@@ -38,15 +38,17 @@ export class TaskAttachmentsComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     this.attachments = new Array<ObjectNode>();
 
-    if (!this.taskNode)
+    if (!this.taskNode) {
       return;
+    }
 
     const relations = this.taskNode.relations.filter(r => r.type === RelationType.TaskAttachments);
-    if (relations.length === 0)
+    if (relations.length === 0) {
       return;
+    }
 
     this.repository.getObjectsAsync(relations.map(r => r.targetId)).then(objects => {
-      for (let attachment of objects) {
+      for (const attachment of objects) {
         const node = new ObjectNode(attachment, null, this.typeIconService, this.ngUnsubscribe, this.translate);
         this.attachments.push(node);
       }
@@ -61,17 +63,19 @@ export class TaskAttachmentsComponent implements OnInit, OnChanges, OnDestroy {
   select(node: ObjectNode, event: MouseEvent): void {
 
     if (node.isDocument) {
-      if (node.isSource)
+      if (node.isSource) {
         this.navigator.navigateToFile(node.parentId, node.source);
-      else
+      } else {
         this.navigator.navigateToDocument(node.parentId, node.source);
+      }
 
-      return
+      return;
     }
 
-    if (node.isSource)
+    if (node.isSource) {
       this.navigator.navigateToDocumentsFolder(node.id);
-    else
+    } else {
       this.navigator.navigateToDocumentsFolder(node.id);
+    }
   }
 }

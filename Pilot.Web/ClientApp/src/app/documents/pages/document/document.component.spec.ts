@@ -18,6 +18,7 @@ import { RequestType } from 'src/app/core/headers.provider';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TemplateRef, ViewContainerRef } from '@angular/core';
 import { Mock } from 'protractor/built/driverProviders';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 describe('document component', () => {
     let component: DocumentComponent;
@@ -36,8 +37,8 @@ describe('document component', () => {
     let sourceFileService: SourceFileService;
     let downloadServiceMock: DownloadService;
     let downloadService: DownloadService;
-    let locationMock: Location;
-    let location: Location;
+    let locationMock: DocumentsNavigationService;
+    let location: DocumentsNavigationService;
     let versionSelectorMock: VersionsSelectorService;
     let versionSelector: VersionsSelectorService;
     let typeIconServiceMock: TypeIconService;
@@ -75,7 +76,7 @@ describe('document component', () => {
         sourceFileService = instance(sourceFileServiceMock);
         downloadServiceMock = mock(DownloadService);
         downloadService = instance(downloadServiceMock);
-        locationMock = mock(Location);
+        locationMock = mock(DocumentsNavigationService);
         location = instance(locationMock);
         versionSelectorMock = mock(VersionsSelectorService);
         versionSelector = instance(versionSelectorMock);
@@ -211,7 +212,7 @@ describe('document component', () => {
         component.onShowDocumentCard(cardTemplate);
 
         // then
-        //verify(modalServiceMock.show(anything())).once();
+        // verify(modalServiceMock.show(anything())).once();
         expect().nothing();
     }));
 
@@ -225,10 +226,10 @@ describe('document component', () => {
         // component.onShowDocumentCard(cardTemplate);
 
         // when
-        //component.onCloseDocumentCard(null);
+        // component.onCloseDocumentCard(null);
 
         // then
-        //verify(modalServiceMock.hide(1)).once();
+        // verify(modalServiceMock.hide(1)).once();
         expect().nothing();
     }));
 
@@ -239,11 +240,11 @@ describe('document component', () => {
         flush();
 
         // when
-        //component.onChangeDocumentCard(id);
+        // component.onChangeDocumentCard(id);
 
         // then
-        //verify(documentsServiceMock.changeObjectForCard(id)).once();
-        //verify(modalServiceMock.hide(0)).once();
+        // verify(documentsServiceMock.changeObjectForCard(id)).once();
+        // verify(modalServiceMock.hide(0)).once();
         expect().nothing();
     }));
 });
