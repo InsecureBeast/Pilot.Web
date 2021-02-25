@@ -47,5 +47,6 @@
   "signatures": "Signatures",
   "sign": "Sign",
   "info": "Info",
-  "selectFilter": "Select filter"
+  "selectFilter": "Select filter",
+  "documentVersionsCaption": "Document versions"
 }

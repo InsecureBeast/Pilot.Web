@@ -47,5 +47,6 @@
   "signatures": "Подписи",
   "sign": "Подписать",
   "info": "Информация",
-  "selectFilter": "Выберите фильтр"
+  "selectFilter": "Выберите фильтр",
+  "documentVersionsCaption": "Версии документа"
 }

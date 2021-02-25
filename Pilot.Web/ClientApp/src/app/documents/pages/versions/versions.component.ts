@@ -8,7 +8,7 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 @Component({
   selector: 'app-versions',
   templateUrl: './versions.component.html',
-  styleUrls: ['./versions.component.css']
+  styleUrls: ['./versions.component.css', '../../shared/toolbar.css']
 })
 export class VersionsComponent implements OnInit, OnDestroy {
   private navigationSubscription: Subscription;
@@ -56,5 +56,9 @@ export class VersionsComponent implements OnInit, OnDestroy {
       return;
     }
     this.navigationService.navigateToDocumentVersion(this.document.parentId, this.document.id, snapshot.created);
+  }
+
+  back(): void {
+    this.navigationService.back();
   }
 }
