@@ -5,14 +5,14 @@
         <span class="navbar-text toolbar-text nav-icon material-icons">keyboard_backspace</span>
       </li>
       <li class="nav-item">
-        <span class="navbar-text toolbar-text" translate="documentVersionsCaption"></span>
+        <span class="navbar-text toolbar-text" translate="signatures"></span>
       </li>
     </ul>
 </nav>
   
-<div class="pt-6">
-    <app-document-versions
-        [document]="document"
-        (versionSelected)="onVersionSelected($event)">
-    </app-document-versions>
+<div class="pt-6 h-100">
+    <app-digital-signatures 
+        [document]="document" 
+        (error)="onError($event)">
+    </app-digital-signatures>
 </div>

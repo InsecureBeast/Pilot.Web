@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { anyOfClass, anything, instance, mock, verify, when } from 'ts-mockito';
+import { anyOfClass, instance, mock, verify, when } from 'ts-mockito';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { DocumentsService } from '../../shared/documents.service';
 import { IFileSnapshot, IObject, IType } from 'src/app/core/data/data.classes';
@@ -16,15 +16,12 @@ import { TypeIconService } from 'src/app/core/type-icon.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequestType } from 'src/app/core/headers.provider';
 import { BsModalService, ModalOptions, BsModalRef } from 'ngx-bootstrap/modal';
-import { TemplateRef, ViewContainerRef } from '@angular/core';
-import { Mock } from 'protractor/built/driverProviders';
+import { TemplateRef } from '@angular/core';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { DocumentToolbarComponent } from '../../components/document-toolbar/document-toolbar.component';
-import { BottomSheetModule } from 'src/app/components/bottom-sheet/bottom-sheet.module';
 import { ContextMenuComponent } from '../../components/context-menu/context-menu.component';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Config } from 'protractor';
 
 describe('document component', () => {
     let component: DocumentComponent;

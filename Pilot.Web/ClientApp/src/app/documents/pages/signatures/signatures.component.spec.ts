@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VersionsComponent } from './versions.component';
+import { SignaturesComponent } from './signatures.component';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { mock, instance, when } from 'ts-mockito';
-import { IObject } from 'src/app/core/data/data.classes';
-import { BehaviorSubject, of } from 'rxjs';
+import { of, Subject, BehaviorSubject } from 'rxjs';
+import { IFileSnapshot, IObject, IType } from 'src/app/core/data/data.classes';
 
-describe('VersionsComponent', () => {
+describe('SignaturesComponent', () => {
   let repositoryMock: RepositoryService;
   let repository: RepositoryService;
   let activatedRouteMock: ActivatedRoute;
@@ -16,8 +16,8 @@ describe('VersionsComponent', () => {
   let router: Router;
   let paramMapMock: ParamMap;
 
-  let component: VersionsComponent;
-  let fixture: ComponentFixture<VersionsComponent>;
+  let component: SignaturesComponent;
+  let fixture: ComponentFixture<SignaturesComponent>;
 
   beforeEach(async () => {
     routerMock = mock(Router);
@@ -32,6 +32,7 @@ describe('VersionsComponent', () => {
     const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
     when(paramMapMock.get('id')).thenReturn(objectId);
     when(activatedRouteMock.paramMap).thenReturn(new BehaviorSubject<ParamMap>(paramMap));
+    // when(routerMock.events).thenReturn(new Subject<Event>());
 
     const documentMock = mock<IObject>();
     const document = instance(documentMock);
@@ -40,7 +41,7 @@ describe('VersionsComponent', () => {
     when(repositoryMock.getObjectAsync(objectId)).thenResolve(document);
 
     await TestBed.configureTestingModule({
-      declarations: [ VersionsComponent ],
+      declarations: [ SignaturesComponent ],
       providers: [
         { provide: ActivatedRoute, useValue: activatedRoute, params: of({id: '151512b6-6d83-4512-8e81-adfd79394e3d'}) },
         { provide: RepositoryService, useValue: repository },
@@ -51,7 +52,7 @@ describe('VersionsComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VersionsComponent);
+    fixture = TestBed.createComponent(SignaturesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

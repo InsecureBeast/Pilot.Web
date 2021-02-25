@@ -23,6 +23,7 @@ import { DocumentCardModule } from '../components/document-card/document-card.mo
 import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 import { VersionsComponent } from './pages/versions/versions.component';
+import { SignaturesComponent } from './pages/signatures/signatures.component';
 
 @NgModule({
   imports: [
@@ -51,7 +52,8 @@ import { VersionsComponent } from './pages/versions/versions.component';
     FileDropDirective,
     DigitalSignaturesComponent,
     ContextMenuComponent,
-    VersionsComponent
+    VersionsComponent,
+    SignaturesComponent
   ],
   exports: [
     DocumentsComponent,

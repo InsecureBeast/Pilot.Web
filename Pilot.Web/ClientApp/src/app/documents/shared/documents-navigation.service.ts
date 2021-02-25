@@ -67,4 +67,8 @@ export class DocumentsNavigationService {
       this.router.navigate([`/documents/${folderId}/doc/${id}/${version}`], { replaceUrl: replaceUrl });
     }
   }
+
+  navigateToDocumentSignatures(parentId: string, documentId: string, replaceUrl = true) {
+    this.router.navigate([`/documents/${parentId}/doc/${documentId}/signatures`], { replaceUrl: replaceUrl });
+  }
 }

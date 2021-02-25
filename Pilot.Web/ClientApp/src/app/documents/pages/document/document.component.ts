@@ -235,8 +235,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  goToVersionsPage(): void {
-    this.versionSelector.changeSelectedSnapshot(this.selectedSnapshot);
+  private goToVersionsPage(): void {
     this.navigationService.navigateToDocumentVersions(this.document.parentId, this.document.id, false);
   }
 
@@ -374,7 +373,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       .withIcon('edit')
       .withAction(() => {
         this.bottomSheet.close();
-        this.onShowDocumentCard(this.cardTemplate);
+        this.navigationService.navigateToDocumentSignatures(this.document.parentId, this.document.id, false);
       });
     this.contextMenu.addMenuItem(signaturesItem);
 

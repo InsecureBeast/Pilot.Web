@@ -1,16 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { IObject, IFileSnapshot } from 'src/app/core/data/data.classes';
+import { Subscription } from 'rxjs';
+import { IObject } from 'src/app/core/data/data.classes';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 @Component({
-  selector: 'app-versions',
-  templateUrl: './versions.component.html',
-  styleUrls: ['./versions.component.css', '../../shared/toolbar.css']
+  selector: 'app-signatures',
+  templateUrl: './signatures.component.html',
+  styleUrls: ['./signatures.component.css', '../../shared/toolbar.css']
 })
-export class VersionsComponent implements OnInit, OnDestroy {
+export class SignaturesComponent implements OnInit, OnDestroy {
+
   private navigationSubscription: Subscription;
 
   document: IObject;
@@ -19,8 +20,7 @@ export class VersionsComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly repository: RepositoryService,
     private readonly navigationService: DocumentsNavigationService) {
-
-    }
+  }
 
   ngOnInit(): void {
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
@@ -39,7 +39,11 @@ export class VersionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadDocument(id: string) {
+  back(): void {
+    this.navigationService.back();
+  }
+
+  private loadDocument(id: string) {
     this.repository.getObjectAsync(id)
       .then(source => {
         if (!source) {
@@ -48,17 +52,5 @@ export class VersionsComponent implements OnInit, OnDestroy {
 
         this.document = source;
       });
-  }
-
-  onVersionSelected(snapshot: IFileSnapshot): void {
-    if (this.document.actualFileSnapshot.created === snapshot.created) {
-      this.navigationService.navigateToDocumentVersion(this.document.parentId, this.document.id);
-      return;
-    }
-    this.navigationService.navigateToDocumentVersion(this.document.parentId, this.document.id, snapshot.created);
-  }
-
-  back(): void {
-    this.navigationService.back();
   }
 }
