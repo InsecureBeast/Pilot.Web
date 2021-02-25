@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { TaskFilter } from '../../components/task-filters/task-filters.component';
+import { TaskFilter, TaskFiltersComponent } from '../../components/task-filters/task-filters.component';
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
 import { TaskNode } from '../../shared/task.node';
 import { TasksSyncService as TasksService } from '../../shared/tasks.service';
@@ -30,12 +30,12 @@ export class TasksComponent implements OnInit, OnDestroy {
   selectedFilter: TaskFilter;
   checked: TaskNode[];
   error: HttpErrorResponse;
-
-  @ViewChild(TaskListComponent, { static: false })
-  private taskListComponent: TaskListComponent;
-
-  @ViewChild('bottomSheet') bottomSheet: BottomSheetComponent;
   options: IBottomSheetConfig;
+  commonFilters: TaskFilter[];
+  personalFilters: TaskFilter[];
+
+  @ViewChild(TaskListComponent, { static: false })  private taskListComponent: TaskListComponent;
+  @ViewChild('bottomSheet') private bottomSheet: BottomSheetComponent;
 
   /** tasks ctor */
   constructor(
@@ -88,16 +88,16 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   onFiltersLoaded(filters: [TaskFilter[], TaskFilter[]]): void {
-    const commonFilters = filters[0];
-    const personalFilters = filters[1];
+    this.commonFilters = filters[0];
+    this.personalFilters = filters[1];
 
-    let selected = commonFilters.find(f => f.id === this.filterId);
+    let selected = this.commonFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;
     }
 
-    selected = personalFilters.find(f => f.id === this.filterId);
+    selected = this.personalFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;

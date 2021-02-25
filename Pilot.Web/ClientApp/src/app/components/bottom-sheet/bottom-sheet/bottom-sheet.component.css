@@ -37,7 +37,6 @@
   }
   
   .bottom-sheet-header {
-    border-bottom: 1px solid var(--border);
     padding: 16px;
     text-align: center;
   }

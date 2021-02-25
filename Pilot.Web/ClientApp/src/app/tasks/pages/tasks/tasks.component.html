@@ -54,10 +54,27 @@
 </div>
 
 <app-bottom-sheet [options]="options" #bottomSheet>
-  <div class="pl-3 pr-3 pb-3">
-    <app-task-filters [selectedFilter]="selectedFilter"
-                      (onSelected)="onFilterSelected($event)"
-                      (onError)="onError($event)">
-    </app-task-filters>
+  <div class="">
+    <ul class="list-group list-group-flush ">
+      <li class="list-group-item list-group-item-action pointer border-0" *ngFor="let filter of commonFilters" (click)="onFilterSelected(filter)" 
+          [attr.id]="'cmi' + filter.id">
+          <div class="d-flex flex-row justify-content-between">
+            <div class="">{{filter.name}}</div>
+            <span class="material-icons" *ngIf="filter.id === selectedFilter.id" style="color: var(--primary);">check_circle</span>
+          </div>
+      </li>
+    </ul>
+    
+    <div class="border-bottom" style="height: 2px;"></div>
+
+    <ul class="list-group list-group-flush ">
+      <li class="list-group-item list-group-item-action pointer border-0" *ngFor="let filter of personalFilters" (click)="onFilterSelected(filter)" 
+          [attr.id]="'cmi' + filter.id">
+          <div class="d-flex flex-row justify-content-between">
+            <div class="">{{filter.name}}</div>
+            <span class="material-icons" *ngIf="filter.id === selectedFilter.id" style="color: var(--primary);">check_circle</span>
+          </div>
+      </li>
+    </ul>
   </div>
 </app-bottom-sheet>
