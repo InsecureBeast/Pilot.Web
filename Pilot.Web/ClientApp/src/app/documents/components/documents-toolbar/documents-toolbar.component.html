@@ -2,7 +2,7 @@
   <ul class="navbar-nav">
     <li click-stop-propagation click-prevent-default
         class="nav-item nav-item-button" (click)="download()" *ngIf="isDocumentChecked()">
-      <span class="navbar-text toolbar-text nav-icon material-icons">file_download</span>
+      <span class="navbar-text toolbar-text nav-icon material-icons">save_alt</span>
       <span class="navbar-text toolbar-text hidden-phone" translate="download"></span>
     </li>
     <li click-stop-propagation click-prevent-default 
@@ -12,7 +12,7 @@
     </li>
     <li click-stop-propagation click-prevent-default 
         class="nav-item nav-item-button" (click)="openDocumentCard()" *ngIf="isDocumentChecked()">
-      <span class="navbar-text toolbar-text nav-icon material-icons">insert_drive_file</span>
+      <span class="navbar-text toolbar-text nav-icon material-icons">info_outline</span>
       <span class="navbar-text toolbar-text hidden-phone" translate="card"></span>
     </li>
   </ul>
