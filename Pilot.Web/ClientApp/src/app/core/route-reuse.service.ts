@@ -53,7 +53,7 @@ export class RouteReuseService implements  RouteReuseStrategy {
         reUseUrl = future.routeConfig.data.reuse;
       }
     }
-    const defaultReuse = (future.routeConfig !== current.routeConfig);
+    const defaultReuse = (future.routeConfig === current.routeConfig);
     const should = reUseUrl || defaultReuse;
     return should;
   }
