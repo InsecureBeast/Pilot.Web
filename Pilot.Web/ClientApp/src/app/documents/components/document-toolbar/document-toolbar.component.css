@@ -1,39 +1,3 @@
-@media screen and (max-width: 1200px) {
-  .toolbar-text {
-    max-width: 500px;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .toolbar-text {
-    max-width: 350px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .toolbar-text {
-    max-width: 350px;
-  }
-}
-
-@media screen and (max-width: 576px) {
-  .toolbar-text {
-    max-width: 220px;
-  }
-}
-
-@media screen and (max-width: 450px) {
-  .toolbar-text {
-    max-width: 120px;
-  }
-}
-
-@media screen and (max-width: 350px) {
-  .toolbar-text {
-    max-width: 80px;
-  }
-}
-
 .nav-item.checked {
   background-color: var(--gray-light);
 }

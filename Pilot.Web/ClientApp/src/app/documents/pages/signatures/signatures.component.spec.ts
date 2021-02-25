@@ -4,8 +4,8 @@ import { SignaturesComponent } from './signatures.component';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { mock, instance, when } from 'ts-mockito';
-import { of, Subject, BehaviorSubject } from 'rxjs';
-import { IFileSnapshot, IObject, IType } from 'src/app/core/data/data.classes';
+import { of, BehaviorSubject } from 'rxjs';
+import { IObject } from 'src/app/core/data/data.classes';
 
 describe('SignaturesComponent', () => {
   let repositoryMock: RepositoryService;
@@ -32,7 +32,6 @@ describe('SignaturesComponent', () => {
     const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
     when(paramMapMock.get('id')).thenReturn(objectId);
     when(activatedRouteMock.paramMap).thenReturn(new BehaviorSubject<ParamMap>(paramMap));
-    // when(routerMock.events).thenReturn(new Subject<Event>());
 
     const documentMock = mock<IObject>();
     const document = instance(documentMock);

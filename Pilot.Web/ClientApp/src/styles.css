@@ -36,6 +36,9 @@ html, body {
 .h-100vh {
   height: 100vh;
 }
+.w-45 {
+  width: 45% !important;
+}
 
 @media (max-width: 800px) {
   .hidden-phone {
