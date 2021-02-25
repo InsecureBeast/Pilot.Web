@@ -36,7 +36,6 @@ import { DocumentsNavigationService as DocumentsNavigationService } from '../../
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy {
 
-  private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
@@ -91,25 +90,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
       this.loadDocument(id, version);
     });
 
-    this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
-      // if (!s) {
-      //   return;
-      // }
-
-      // if (!this.document) {
-      //   return;
-      // }
-
-      // this.isActualVersionSelected = this.document.actualFileSnapshot.created === s.created;
-      // let version = '';
-      // if (!this.isActualVersionSelected) {
-      //   version = s.created;
-      // }
-
-      // this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
-      // this.loadSnapshot(s);
-    });
-
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         const startEvent = <NavigationStart>event;
@@ -135,10 +115,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
-
-    if (this.versionSubscription) {
-      this.versionSubscription.unsubscribe();
-    }
 
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
@@ -359,24 +335,25 @@ export class DocumentComponent implements OnInit, OnDestroy {
       this.contextMenu.addMenuItem(sourceFilesItem);
     }
 
-    const versionsItem = MenuItem
-      .createItem('versionsId', this.translate.instant('versions'))
-      .withIcon('list_alt')
-      .withAction(() => {
-        this.bottomSheet.close();
-        this.goToVersionsPage();
-      });
-    this.contextMenu.addMenuItem(versionsItem);
+    if (!this.isSourceFile()) {
+      const versionsItem = MenuItem
+        .createItem('versionsId', this.translate.instant('versions'))
+        .withIcon('list_alt')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.goToVersionsPage();
+        });
+      this.contextMenu.addMenuItem(versionsItem);
 
-    const signaturesItem = MenuItem
-      .createItem('signaturesId', this.translate.instant('signatures'))
-      .withIcon('edit')
-      .withAction(() => {
-        this.bottomSheet.close();
-        this.navigationService.navigateToDocumentSignatures(this.document.parentId, this.document.id, false);
-      });
-    this.contextMenu.addMenuItem(signaturesItem);
-
+      const signaturesItem = MenuItem
+        .createItem('signaturesId', this.translate.instant('signatures'))
+        .withIcon('edit')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.navigationService.navigateToDocumentSignatures(this.document.parentId, this.document.id, false);
+        });
+      this.contextMenu.addMenuItem(signaturesItem);
+    }
     const cardItem = MenuItem
       .createItem('cardId', this.translate.instant('card'))
       .withIcon('info_outline')

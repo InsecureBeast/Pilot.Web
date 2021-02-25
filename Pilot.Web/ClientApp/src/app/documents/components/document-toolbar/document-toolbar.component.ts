@@ -4,6 +4,7 @@ import { SafeUrl} from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 
 import { IObject } from '../../../core/data/data.classes';
+import { TypeExtensions } from 'src/app/core/tools/type.extensions';
 
 @Component({
     selector: 'app-document-toolbar',
@@ -20,6 +21,7 @@ export class DocumentToolbarComponent implements OnDestroy {
   canShowFiles: boolean;
   isVersionsChecked: boolean;
   showFilesMode = false;
+  isSourceFile = false;
 
   @Input()
   set document(value: IObject) {
@@ -75,5 +77,6 @@ export class DocumentToolbarComponent implements OnDestroy {
     this.title = document.title;
     this.icon = document.type.icon;
     this.canShowFiles = document.type.isMountable;
+    this.isSourceFile = TypeExtensions.isProjectFileOrFolder(document.type);
   }
 }
