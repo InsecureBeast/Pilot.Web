@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/c
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
-import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
 
@@ -43,6 +42,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private cardModalRef: BsModalRef;
+  private selectedSnapshot: IFileSnapshot;
 
   document: IObject;
   node: ObjectNode;
@@ -92,22 +92,22 @@ export class DocumentComponent implements OnInit, OnDestroy {
     });
 
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
-      if (!s) {
-        return;
-      }
+      // if (!s) {
+      //   return;
+      // }
 
-      if (!this.document) {
-        return;
-      }
+      // if (!this.document) {
+      //   return;
+      // }
 
-      this.isActualVersionSelected = this.document.actualFileSnapshot.created === s.created;
-      let version = '';
-      if (!this.isActualVersionSelected) {
-        version = s.created;
-      }
+      // this.isActualVersionSelected = this.document.actualFileSnapshot.created === s.created;
+      // let version = '';
+      // if (!this.isActualVersionSelected) {
+      //   version = s.created;
+      // }
 
-      this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
-      this.loadSnapshot(s);
+      // this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
+      // this.loadSnapshot(s);
     });
 
     this.routerSubscription = this.router.events.subscribe((event) => {
@@ -156,7 +156,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   close($event): void {
     this.cancelAllRequests(false);
     this.repository.setRequestType(RequestType.FromCache);
-    this.navigationService.back();
+    this.navigationService.navigateToDocumentsFolder(this.document.parentId);
   }
 
   download($event): void {
@@ -173,8 +173,30 @@ export class DocumentComponent implements OnInit, OnDestroy {
   }
 
   selectActualVersion(): boolean {
-    this.versionSelector.changeSelectedSnapshot(this.document.actualFileSnapshot);
+    this.selectedSnapshot = this.document.actualFileSnapshot;
+    this.onVersionSelected(this.selectedSnapshot);
+    this.versionSelector.changeSelectedSnapshot(this.selectedSnapshot);
     return false;
+  }
+
+  onVersionSelected(snapshot: IFileSnapshot): void {
+    if (!snapshot) {
+      return;
+    }
+
+    if (!this.document) {
+      return;
+    }
+
+    this.isActualVersionSelected = this.document.actualFileSnapshot.created === snapshot.created;
+    let version = '';
+    if (!this.isActualVersionSelected) {
+      version = snapshot.created;
+    }
+
+    this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
+    this.selectedSnapshot = snapshot;
+    this.loadSnapshot(snapshot);
   }
 
   showFiles(event: boolean): void {
@@ -211,6 +233,11 @@ export class DocumentComponent implements OnInit, OnDestroy {
     }
 
     return false;
+  }
+
+  goToVersionsPage(): void {
+    this.versionSelector.changeSelectedSnapshot(this.selectedSnapshot);
+    this.navigationService.navigateToDocumentVersions(this.document.parentId, this.document.id, false);
   }
 
   private loadDocument(id: string, version?: string): void {
@@ -338,7 +365,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       .withIcon('list_alt')
       .withAction(() => {
         this.bottomSheet.close();
-        this.onShowDocumentCard(this.cardTemplate);
+        this.goToVersionsPage();
       });
     this.contextMenu.addMenuItem(versionsItem);
 

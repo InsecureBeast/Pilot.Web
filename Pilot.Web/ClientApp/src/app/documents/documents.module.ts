@@ -22,6 +22,7 @@ import { ObjectCardDialogModule } from '../components/object-card-dialog/object-
 import { DocumentCardModule } from '../components/document-card/document-card.module';
 import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
+import { VersionsComponent } from './pages/versions/versions.component';
 
 @NgModule({
   imports: [
@@ -49,7 +50,8 @@ import { ContextMenuComponent } from './components/context-menu/context-menu.com
     DocumentTreeComponent,
     FileDropDirective,
     DigitalSignaturesComponent,
-    ContextMenuComponent
+    ContextMenuComponent,
+    VersionsComponent
   ],
   exports: [
     DocumentsComponent,

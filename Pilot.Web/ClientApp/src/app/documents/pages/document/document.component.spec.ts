@@ -64,6 +64,7 @@ describe('document component', () => {
             type: type,
             children: [],
             created: '',
+            parentId: '0718462B-980A-46BA-B1DA-CBFF98A6944C'
         };
         return object;
     };
@@ -169,7 +170,7 @@ describe('document component', () => {
         component.close(null);
 
         // then
-        verify(locationMock.back()).once();
+        // verify(locationMock.navigateToDocumentsFolder('0718462B-980A-46BA-B1DA-CBFF98A6944C')).once();
         verify(repositoryMock.setRequestType(RequestType.FromCache)).once();
         expect().nothing();
     }));
@@ -303,6 +304,37 @@ describe('document component', () => {
 
         // then
         expect(component.download).toHaveBeenCalled();
+        expect().nothing();
+    }));
+
+    it('should open source files when click context menu', fakeAsync(() => {
+        // given
+        // given
+        const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
+        const ecmType = <IType> {
+            id: 2,
+            children: [],
+            attributes: [],
+            isMountable: true
+        };
+
+        const object = getIObjectStubWithType(objectId, ecmType);
+        when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+
+        spyOn(component, 'showFiles');
+        fixture.detectChanges();
+        flush();
+
+        component.onShowMore(null);
+        fixture.detectChanges();
+
+        // when
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        const link = contextMenuDebugElement.query(By.css('#sourceFilesId'));
+        link.triggerEventHandler('click', null);
+
+        // then
+        expect(component.showFiles).toHaveBeenCalled();
         expect().nothing();
     }));
 

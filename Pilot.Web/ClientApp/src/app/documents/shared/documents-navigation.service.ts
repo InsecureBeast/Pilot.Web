@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { IObject } from 'src/app/core/data/data.classes';
+import { SystemIds } from 'src/app/core/data/system.ids';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsNavigationService {
@@ -30,8 +31,8 @@ export class DocumentsNavigationService {
     }
   }
 
-  navigateToDocumentsFolder(folderId: string): void {
-    this.router.navigateByUrl(`/documents/${folderId}`);
+  navigateToDocumentsFolder(folderId: string, replaceUrl = false): void {
+    this.router.navigate([`/documents/${folderId}`], { replaceUrl: replaceUrl });
   }
 
   navigateToFilesFolder(folderId: string): void {
@@ -47,7 +48,23 @@ export class DocumentsNavigationService {
   }
 
   back(): void {
-    // TODO go to documents root if location stack is empty.
-    this.location.back();
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.navigateToDocumentsFolder(SystemIds.rootId);
+    }
+  }
+
+  navigateToDocumentVersions(parentId: string, documentId: string, replaceUrl = true) {
+    this.router.navigate([`/documents/${parentId}/doc/${documentId}/versions`], { replaceUrl: replaceUrl });
+  }
+
+  navigateToDocumentVersion(folderId: string, id: string, version?: string, replaceUrl = true): void {
+    this.location.replaceState('', null);
+    if (!version) {
+      this.router.navigate([`/documents/${folderId}/doc/${id}`], { replaceUrl: replaceUrl });
+    } else {
+      this.router.navigate([`/documents/${folderId}/doc/${id}/${version}`], { replaceUrl: replaceUrl });
+    }
   }
 }

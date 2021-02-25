@@ -42,7 +42,6 @@
     </div>
 
     <div class="versions-view col-12 col-lg-4 doc-info overflow-auto p-0 d-none d-lg-block"
-        
         *ngIf="document">
       <div class="h-100 pt-1">
         <tabset #staticTabs >
@@ -55,7 +54,8 @@
             <div class="">
               <app-document-versions
                 [document]="document"
-                (onClose)="closeDocumentVersions($event)">
+                (onClose)="closeDocumentVersions($event)"
+                (versionSelected)="onVersionSelected($event)">
               </app-document-versions>
             </div>
           </tab>
