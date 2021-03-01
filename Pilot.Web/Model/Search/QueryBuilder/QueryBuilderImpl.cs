@@ -33,18 +33,18 @@ namespace Pilot.Web.Model.Search.QueryBuilder
             return builder;
         }
 
-        //public static IQueryBuilder CreateFilesQueryBuilder(IProjectionsRepository repository)
-        //{
-        //    var userTypes = repository
-        //        .GetTypes()
-        //        .Where(x => x.Value.Kind == TypeKind.User)
-        //        .Select(x => x.Key)
-        //        .ToArray();
+        public static IQueryBuilder CreateFilesQueryBuilder(IServerApiService repository)
+        {
+            var userTypes = repository
+                .GetTypes()
+                .Where(x => x.Value.Kind == TypeKind.User)
+                .Select(x => x.Key)
+                .ToArray();
 
-        //    var builder = new QueryBuilderImpl();
-        //    builder.Must(ObjectFields.TypeId.BeAnyOf(userTypes));
-        //    return builder;
-        //}
+            var builder = new QueryBuilderImpl();
+            builder.Must(ObjectFields.TypeId.BeAnyOf(userTypes));
+            return builder;
+        }
 
         public static IQueryBuilder CreateEmptyQueryBuilder()
         {

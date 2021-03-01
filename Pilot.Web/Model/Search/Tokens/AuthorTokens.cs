@@ -42,6 +42,11 @@ namespace Pilot.Web.Model.Search.Tokens
         };
     }
 
+    abstract class OrgUnitArgumentToken : ArgumentToken
+    {
+        public override bool AllowCustomValues => false;
+    }
+
     class AuthorCommaToken : CommaToken
     {
         public override string Hint => "add author";

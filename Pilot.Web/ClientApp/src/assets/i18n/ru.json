@@ -48,5 +48,8 @@
   "sign": "Подписать",
   "info": "Информация",
   "selectFilter": "Выберите фильтр",
-  "documentVersionsCaption": "Версии документа"
+  "documentVersionsCaption": "Версии документа",
+  "attributeTokenAlias": "Аттрибут",
+  "attributeTokenAliasHint": "указать значение атрибута",
+  "whitespace": "пробел"
 }

@@ -142,7 +142,7 @@ namespace Pilot.Web.Model
         {
             CheckApi();
             var searchService = _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
-            var searchResult = await searchService.Search(filter);
+            var searchResult = await searchService.SearchTasks(filter);
             if (searchResult.Found == null)
                 return Array.Empty<PObject>();
 
@@ -155,7 +155,7 @@ namespace Pilot.Web.Model
         {
             CheckApi();
             var searchService = _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
-            var searchResult = await searchService.SearchObjectWithFilter(filter, taskId);
+            var searchResult = await searchService.SearchTasksWithFilter(filter, taskId);
             if (searchResult.Found == null)
                 return Enumerable.Empty<PObject>();
 

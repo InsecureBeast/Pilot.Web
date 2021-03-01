@@ -24,6 +24,7 @@ namespace Pilot.Web.Model.Search.Tokens
 
     class SearchContextArgumentToken : ArgumentToken
     {
+        public bool IsContextSearch => Value == "current folder\\";
         protected override List<Type> ValidNextTypes => new List<Type>
         {
             typeof(WhitespaceToken)

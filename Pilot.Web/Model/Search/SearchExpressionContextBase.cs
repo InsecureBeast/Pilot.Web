@@ -709,6 +709,17 @@ namespace Pilot.Web.Model.Search
                     return string.Empty;
         }
 
+        protected int[] GetPositions(IServerApiService repository, IEnumerable<int> personIds)
+        {
+            var positions = new List<int>();
+            foreach (var personId in personIds)
+            {
+                var person = repository.GetPerson(personId);
+                if (person != null)
+                    positions.AddRange(person.Positions);
+            }
+            return positions.ToArray();
+        }
         protected bool IsUserType(INType type)
         {
             return !type.IsService && type.Kind == TypeKind.User;

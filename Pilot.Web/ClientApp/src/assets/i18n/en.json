@@ -48,5 +48,8 @@
   "sign": "Sign",
   "info": "Info",
   "selectFilter": "Select filter",
-  "documentVersionsCaption": "Document versions"
+  "documentVersionsCaption": "Document versions",
+  "attributeTokenAlias":"Attribute",
+  "attributeTokenAliasHint": "specify an attribute value",
+  "whitespace": "whitespace"
 }
