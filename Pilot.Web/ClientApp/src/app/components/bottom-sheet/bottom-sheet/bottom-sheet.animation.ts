@@ -10,4 +10,5 @@ export const SlideUpToggleAnimation = [
             animate('200ms ease-in', style({ transform: 'translateY(100%)' }))
         ])
     ])
-]
+];
+

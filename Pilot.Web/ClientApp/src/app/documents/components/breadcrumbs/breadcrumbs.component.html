@@ -11,6 +11,28 @@
   </ol>
 
   <ul class="navbar-nav breadcrumb noselect">
+    <li class="breadcrumb-button search-input"
+        @searchInputSlideInToggle
+        *ngIf="isShowSearchInput">
+      <div class="input-group" >
+        <div class="input-group-prepend">
+          <a click-stop-propagation click-prevent-default [routerLink]="" 
+             class="material-icons nav-icon input-group-text" id="search-addon1" 
+             (click)="toggleSearchInput(false)">chevron_right</a>
+        </div>
+        <input type="search" class="form-control" placeholder="Search" 
+               aria-label="Search" aria-describedby="basic-addon1"
+               (keyup.enter)="search()">
+        <div class="input-group-append">
+          <a click-stop-propagation click-prevent-default [routerLink]="" 
+             class="material-icons nav-icon input-group-text" id="search-addon2" 
+             (click)="search()">search</a>
+        </div>
+      </div>
+    </li>
+    <li class="breadcrumb-button">
+      <a click-stop-propagation click-prevent-default [routerLink]="" class="material-icons nav-icon" (click)="toggleSearchInput(true)">search</a>
+    </li>
     <li class="breadcrumb-item" *ngIf="nodeStyle === 1">
       <a click-stop-propagation click-prevent-default [routerLink]="" class="material-icons nav-icon" (click)="changeStyle(0)">view_list</a>
     </li>

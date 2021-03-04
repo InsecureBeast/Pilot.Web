@@ -1,21 +1,13 @@
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from "@ngx-translate/core";
 
-export abstract class SearchTokenBase {
+export abstract class TokenBase {
     constructor(protected readonly translate: TranslateService) { }
 
     abstract get alias(): string;
     abstract get hint(): string;
     abstract get serializationAlias(): string;
-    get isSuggestible(): boolean {
-        return true;
-    }
-
-    abstract get nextTokens(): ReadonlyArray<SearchTokenBase>;
+    abstract get nextTokens(): ReadonlyArray<TokenBase>;
 }
-
-
-
-
 
 // export interface IToken {
 //     validNexts: ReadonlyArray<IToken>;

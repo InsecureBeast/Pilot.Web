@@ -12,11 +12,25 @@ import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { SystemIds } from '../../../core/data/system.ids';
 import { RequestType } from 'src/app/core/headers.provider';
 import { DocumentsService } from '../../shared/documents.service';
+import { trigger, transition, style, animate } from '@angular/animations';
+
+export const SearchInputSlideInToggleAnimation = [
+  trigger('searchInputSlideInToggle', [
+      transition(':enter', [
+          style({ left: 'calc(100% - 139px)' }),
+          animate('150ms ease-in')
+      ]),
+      transition(':leave', [
+          animate('150ms ease-in', style({ left: 'calc(100% - 139px)' }))
+      ])
+  ])
+];
 
 @Component({
     selector: 'app-breadcrumbs',
     templateUrl: './breadcrumbs.component.html',
-    styleUrls: ['./breadcrumbs.component.css']
+    styleUrls: ['./breadcrumbs.component.css'],
+    animations: [SearchInputSlideInToggleAnimation]
 })
 /** breadcrumbs component*/
 export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
@@ -46,6 +60,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   hiddenBreadcrumbs: BreadcrumbNode[];
   itemWidth: number;
   nodeStyle: NodeStyle;
+  isShowSearchInput = false;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
@@ -97,6 +112,14 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     if (style === 1) {
       this.nodeStyleService.setNodeStyle(NodeStyle.GridView);
     }
+  }
+
+  toggleSearchInput(show: boolean): void {
+    this.isShowSearchInput = show;
+  }
+
+  search(): void {
+    // throw new Error('search');
   }
 
   private init(item: ObjectNode) {
