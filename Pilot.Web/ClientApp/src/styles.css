@@ -33,6 +33,10 @@ html, body {
   height: 100%;
 }
 
+.container-xl {
+  height: 100%;
+}
+
 .h-100vh {
   height: 100vh;
 }

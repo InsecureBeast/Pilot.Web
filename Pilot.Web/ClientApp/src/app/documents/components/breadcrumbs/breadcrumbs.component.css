@@ -19,7 +19,7 @@
 .breadcrumb-item + .breadcrumb-item:before {
   content: "›";
   font-size: x-large;
-  margin-top:-15px;
+  margin-top: -7px;
 }
 
 li.breadcrumb-item a, li.breadcrumb-button a {
@@ -63,21 +63,20 @@ li.breadcrumb-item a, li.breadcrumb-button a {
 
 @media (max-width: 350px) {
   .breadcrumb-item {
-    max-width: 135px;
+    max-width: 125px;
   }
 }
 
-
-/*  search block */
+/*--------------------------------  search block  -----------------------------------------*/
 .input-group-text {
   padding: .375rem .3rem;
 }
 
 .search-input {
   position: fixed;
-  left: 13px;
+  left: 11px;
   top: 65px;
   right: 34px;
 }
 
-/* end search block */
+/*-------------------------------  end search block  --------------------------------------*/

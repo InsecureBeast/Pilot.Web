@@ -1,3 +1,9 @@
+.container-xxl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
