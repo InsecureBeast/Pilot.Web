@@ -5,10 +5,7 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-  OnChanges,
-  SimpleChanges,
   AfterViewChecked,
-  HostListener,
   ViewChild, TemplateRef
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -33,6 +30,7 @@ import { FilesRepositoryService } from '../../../core/files-repository.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AccessCalculator } from '../../../core/tools/access.calculator';
 import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
+import { SearchService } from 'src/app/core/search/search.service';
 
 @Component({
     selector: 'app-document-list',
@@ -96,7 +94,8 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     private filesRepositoryService: FilesRepositoryService,
     private router: Router,
     private modalService: BsModalService,
-    private accessCalculator: AccessCalculator) {
+    private accessCalculator: AccessCalculator,
+    private searchService: SearchService) {
 
   }
 
@@ -134,6 +133,25 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
         return;
       }
       this.update(id, false);
+    });
+
+    this.searchService.searchResults$.subscribe(found => {
+      // search results
+      //this.isLoading = false;
+      try {
+        this.addNodes(found, false);
+      } catch (e) {
+        let ee = e;
+      } 
+      
+      //this.checked.emit(null);
+
+      //this.documentsService.objectForCard$.pipe(first()).subscribe(objectForCardId => {
+      //  if (!objectForCardId) {
+      //    return;
+      //  }
+      //  this.update(objectForCardId, false);
+      //});
     });
   }
 

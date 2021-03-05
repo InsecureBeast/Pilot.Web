@@ -72,19 +72,27 @@ namespace Pilot.Web.Model
             return _searchCompletionSource.Task;
         }
 
+        private Dictionary<Guid, TaskCompletionSource<DSearchResult>> _searchKeeper =
+            new Dictionary<Guid, TaskCompletionSource<DSearchResult>>();
+
         public Task<DSearchResult> SearchObjects(string searchString)
         {
             var request = CreateRequestForObject(searchString);
             // todo for files?
             var searchDefinition = CreateSearchDefinition(request.SearchString);
             _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            _searchKeeper[searchDefinition.Id] = _searchCompletionSource;
             _apiService.AddSearch(searchDefinition);
             return _searchCompletionSource.Task;
         }
 
         public void Notify(DSearchResult result)
         {
-            _searchCompletionSource?.TrySetResult(result);
+            if (_searchKeeper.TryGetValue(result.SearchDefinitionId, out var tcs))
+            {
+                tcs?.SetResult(result);
+                _searchKeeper.Remove(result.SearchDefinitionId);
+            }
         }
 
         private string CreateRequestForTask(string filter)

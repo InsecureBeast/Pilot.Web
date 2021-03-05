@@ -20,10 +20,11 @@ import { ErrorModule } from '../components/error/error.module';
 import { UserStateModule } from '../components/user-state/user-state-module';
 import { ObjectCardDialogModule } from '../components/object-card-dialog/object-card-dialog.module';
 import { DocumentCardModule } from '../components/document-card/document-card.module';
-import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 import { VersionsComponent } from './pages/versions/versions.component';
 import { SignaturesComponent } from './pages/signatures/signatures.component';
+import { FormsModule } from '@angular/forms';
+import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { SignaturesComponent } from './pages/signatures/signatures.component';
     DocumentCardModule,
     BootstrapUiModule,
     TabsModule,
-    BottomSheetModule
+    BottomSheetModule,
+    FormsModule
   ],
   declarations: [
     DocumentsComponent,

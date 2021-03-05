@@ -13,6 +13,7 @@ import { SystemIds } from '../../../core/data/system.ids';
 import { RequestType } from 'src/app/core/headers.provider';
 import { DocumentsService } from '../../shared/documents.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { SearchService } from 'src/app/core/search/search.service';
 
 export const SearchInputSlideInToggleAnimation = [
   trigger('searchInputSlideInToggle', [
@@ -25,6 +26,35 @@ export const SearchInputSlideInToggleAnimation = [
       ])
   ])
 ];
+
+export class BreadcrumbNode implements INode {
+
+  id: string;
+  parentId: string;
+  title: string;
+  isActive: boolean;
+  isSource: boolean;
+  isDocument: boolean;
+  isChecked: boolean;
+  isRoot: boolean;
+
+  /** BreadcrumbNode ctor */
+  constructor(public source: IObject, isActive: boolean) {
+    this.update(source);
+    this.isActive = isActive;
+  }
+
+  update(source: IObject): void {
+    this.source = source;
+    this.id = source.id;
+    this.title = source.title;
+    this.isDocument = false;
+    this.parentId = source.parentId;
+    this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
+    this.source = source;
+    this.isRoot = source.id === SystemIds.rootId;
+  }
+}
 
 @Component({
     selector: 'app-breadcrumbs',
@@ -61,17 +91,19 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   itemWidth: number;
   nodeStyle: NodeStyle;
   isShowSearchInput = false;
+  searchInputText: string;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
     private readonly nodeStyleService: NodeStyleService,
-    private readonly documentsService: DocumentsService) {
+    private readonly documentsService: DocumentsService,
+    private readonly searchService: SearchService) {
 
   }
 
   ngOnInit(): void {
-    this.nodeStyleSubscription = this.nodeStyleService.getNodeStyle().subscribe(style => {
-      this.nodeStyle = style;
+    this.nodeStyleSubscription = this.nodeStyleService.getNodeStyle().subscribe(nodeStyle => {
+      this.nodeStyle = nodeStyle;
     });
   }
 
@@ -105,11 +137,11 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.onSelected.emit(bc);
   }
 
-  changeStyle(style: number): void {
-    if (style === 0) {
+  changeStyle(nodeStyle: number): void {
+    if (nodeStyle === 0) {
       this.nodeStyleService.setNodeStyle(NodeStyle.ListView);
     }
-    if (style === 1) {
+    if (nodeStyle === 1) {
       this.nodeStyleService.setNodeStyle(NodeStyle.GridView);
     }
   }
@@ -119,7 +151,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   search(): void {
-    // throw new Error('search');
+    // todo get text from wizard
+    this.searchService.searchObjects(this.searchInputText, this.ngUnsubscribe);
   }
 
   private init(item: ObjectNode) {
@@ -186,34 +219,5 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
       this.breadcrumbsCountSource.next(3);
       // this.itemWidth = 250;
     }
-  }
-}
-
-export class BreadcrumbNode implements INode {
-
-  id: string;
-  parentId: string;
-  title: string;
-  isActive: boolean;
-  isSource: boolean;
-  isDocument: boolean;
-  isChecked: boolean;
-  isRoot: boolean;
-
-  /** BreadcrumbNode ctor */
-  constructor(public source: IObject, isActive: boolean) {
-    this.update(source);
-    this.isActive = isActive;
-  }
-
-  update(source: IObject): void {
-    this.source = source;
-    this.id = source.id;
-    this.title = source.title;
-    this.isDocument = false;
-    this.parentId = source.parentId;
-    this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
-    this.source = source;
-    this.isRoot = source.id === SystemIds.rootId;
   }
 }
