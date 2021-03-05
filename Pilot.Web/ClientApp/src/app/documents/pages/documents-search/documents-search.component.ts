@@ -58,6 +58,9 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         } catch (e) {
           const ee = e;
         }
+      }, e => {
+        this.documentList.isLoading = false;
+        throw e;
       });
 
       this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
