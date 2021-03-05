@@ -12,13 +12,15 @@
 
     <div #documentsView class="col-12 p-0">
       <app-breadcrumbs [parent]="currentItem"
-                       (onSelected)="onItemSelected($event)">
+                       (onSelected)="onItemSelected($event)"
+                       #breadcrumbs>
       </app-breadcrumbs>
       <app-document-list [parent]="currentItem"
                          (selected)="onItemSelected($event)"
                          (checked)="onItemsChecked($event)"
                          (loaded)="onListLoaded($event)"
-                         (error)="onError($event)">
+                         (error)="onError($event)"
+                         #documentList>
       </app-document-list>
     </div>
 

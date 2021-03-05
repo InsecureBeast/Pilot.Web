@@ -55,7 +55,7 @@ export class DocumentsNavigationService {
     }
   }
 
-  navigateToDocumentVersions(parentId: string, documentId: string, replaceUrl = true) {
+  navigateToDocumentVersions(parentId: string, documentId: string, replaceUrl = true): void {
     this.router.navigate([`/documents/${parentId}/doc/${documentId}/versions`], { replaceUrl: replaceUrl });
   }
 
@@ -68,7 +68,11 @@ export class DocumentsNavigationService {
     }
   }
 
-  navigateToDocumentSignatures(parentId: string, documentId: string, replaceUrl = true) {
+  navigateToDocumentSignatures(parentId: string, documentId: string, replaceUrl = true): void {
     this.router.navigate([`/documents/${parentId}/doc/${documentId}/signatures`], { replaceUrl: replaceUrl });
+  }
+
+  navigateToSearchDocuments(folderId: string, request: string): void {
+    this.router.navigate([`/documents/${folderId}/search`], { queryParams: { q: request } });
   }
 }

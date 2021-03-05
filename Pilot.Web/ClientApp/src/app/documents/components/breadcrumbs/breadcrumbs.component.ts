@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, 
+  Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -7,13 +8,14 @@ import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
 import { RepositoryService } from '../../../core/repository.service';
-import { INode } from '../../shared/node.interface';
+import { INode, IObjectNode } from '../../shared/node.interface';
 import { NodeStyleService, NodeStyle } from '../../../core/node-style.service';
 import { SystemIds } from '../../../core/data/system.ids';
 import { RequestType } from 'src/app/core/headers.provider';
 import { DocumentsService } from '../../shared/documents.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SearchService } from 'src/app/core/search/search.service';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 export const SearchInputSlideInToggleAnimation = [
   trigger('searchInputSlideInToggle', [
@@ -37,6 +39,7 @@ export class BreadcrumbNode implements INode {
   isDocument: boolean;
   isChecked: boolean;
   isRoot: boolean;
+  isSearchItem = false;
 
   /** BreadcrumbNode ctor */
   constructor(public source: IObject, isActive: boolean) {
@@ -56,6 +59,19 @@ export class BreadcrumbNode implements INode {
   }
 }
 
+class SearchResultsBreadcrumbNode extends BreadcrumbNode {
+
+  isSearchItem = true;
+  isRoot = false;
+
+  constructor() {
+    super(null, true);
+  }
+
+  update(source: IObject): void {
+  }
+}
+
 @Component({
     selector: 'app-breadcrumbs',
     templateUrl: './breadcrumbs.component.html',
@@ -68,7 +84,6 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   private ol: ElementRef;
   private breadcrumbsCountSource = new BehaviorSubject<number>(2);
   private nodeStyleSubscription: Subscription;
-
   private ngUnsubscribe = new Subject<void>();
   private allBreadcrumbNodes: BreadcrumbNode[];
 
@@ -90,13 +105,14 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   hiddenBreadcrumbs: BreadcrumbNode[];
   itemWidth: number;
   nodeStyle: NodeStyle;
-  isShowSearchInput = false;
+  isAddSearchResultItem: boolean;
   searchInputText: string;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
     private readonly nodeStyleService: NodeStyleService,
     private readonly documentsService: DocumentsService,
+    private readonly navigationService: DocumentsNavigationService,
     private readonly searchService: SearchService) {
 
   }
@@ -147,12 +163,12 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleSearchInput(show: boolean): void {
-    this.isShowSearchInput = show;
+    this.searchService.isSearchInputShown = show;
   }
 
   search(): void {
     // todo get text from wizard
-    this.searchService.searchObjects(this.searchInputText, this.ngUnsubscribe);
+    this.navigationService.navigateToSearchDocuments(this.parent.id, this.searchInputText);
   }
 
   private init(item: ObjectNode) {
@@ -163,7 +179,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.loadBreadcrumbs(item);
   }
 
-  private loadBreadcrumbs(node: ObjectNode) {
+  private loadBreadcrumbs(node: IObjectNode) {
     this.repository.getObjectParentsAsync(node.id, this.ngUnsubscribe)
       .then(parents => {
         this.allBreadcrumbNodes = new Array<BreadcrumbNode>();
@@ -193,6 +209,13 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
       } else {
         list.push(breadcrumbNode);
       }
+    }
+
+    if (this.isAddSearchResultItem) {
+      this.breadcrumbs = list.slice(0, 1);
+      this.breadcrumbs.push(new SearchResultsBreadcrumbNode());
+      this.hiddenBreadcrumbs = hiddenList;
+      return;
     }
 
     this.breadcrumbs = list;

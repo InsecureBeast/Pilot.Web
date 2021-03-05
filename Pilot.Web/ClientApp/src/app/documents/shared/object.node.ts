@@ -154,3 +154,32 @@ export class EmptyObjectNode implements IObjectNode {
     // do nothing
   }
 }
+
+export class SearchResultsObjectNode implements IObjectNode {
+
+  id: string;
+  isDocument: boolean;
+  source: IObject;
+  isSource: boolean;
+  isChecked: boolean;
+  children: IChild[];
+  title: string;
+  icon: SafeUrl;
+  childrenCount: number;
+  stateAttributes: IAttribute[];
+
+  constructor() {
+    this.source = new EmptyObject();
+    this.children = this.source.children;
+    this.childrenCount = -1;
+    this.stateAttributes = new Array<IAttribute>();
+  }
+
+  update(source: IObject): void {
+    throw new Error('Method not implemented.');
+  }
+
+  loadPreview(): void {
+    // do nothing
+  }
+}

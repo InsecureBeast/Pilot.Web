@@ -49,6 +49,8 @@
   "info": "Info",
   "selectFilter": "Select filter",
   "documentVersionsCaption": "Document versions",
+  "searchResults": "Search results",
+  "search": "Search",
   "attributeTokenAlias":"Attribute",
   "attributeTokenAliasHint": "specify an attribute value",
   "whitespace": "whitespace"

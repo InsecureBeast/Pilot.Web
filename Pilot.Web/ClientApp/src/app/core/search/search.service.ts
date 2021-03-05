@@ -11,6 +11,7 @@ export class SearchService {
 
     inSearchMode$ = this._inSearchMode$.asObservable();
     searchResults$ = this._searchResults$.asObservable();
+    isSearchInputShown: boolean;
 
     constructor(private readonly searchApi: SearchApi) {
     }

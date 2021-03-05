@@ -6,11 +6,14 @@ import { AuthGuard } from '../auth/auth.guard';
 import { VersionsComponent } from './pages/versions/versions.component';
 import { CanDeactivateVersionsGuard } from './components/document-versions/deactivate-versions.guard';
 import { SignaturesComponent } from './pages/signatures/signatures.component';
+import { DocumentsSearchComponent } from './pages/documents-search/documents-search.component';
 
 const routes: Routes = [
   { path: '', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
   { path: ':id', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
   { path: ':id/files', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
+  { path: ':id/search', component: DocumentsSearchComponent, canActivate: [AuthGuard], data: { reuse: false }},
+  { path: ':id/files/search', component: DocumentsSearchComponent, canActivate: [AuthGuard], data: { reuse: false }},
 
   { path: ':fid/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
   { path: ':fid/doc/:id/versions', component: VersionsComponent, canActivate: [AuthGuard] },

@@ -25,6 +25,7 @@ import { VersionsComponent } from './pages/versions/versions.component';
 import { SignaturesComponent } from './pages/signatures/signatures.component';
 import { FormsModule } from '@angular/forms';
 import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
+import { DocumentsSearchComponent } from './pages/documents-search/documents-search.component';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.modul
     DigitalSignaturesComponent,
     ContextMenuComponent,
     VersionsComponent,
-    SignaturesComponent
+    SignaturesComponent,
+    DocumentsSearchComponent
   ],
   exports: [
     DocumentsComponent,

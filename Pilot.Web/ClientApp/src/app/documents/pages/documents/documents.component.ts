@@ -25,8 +25,8 @@ import { DocumentsNavigationService } from '../../shared/documents-navigation.se
 /** documents component*/
 export class DocumentsComponent implements OnInit, OnDestroy {
 
-  private ngUnsubscribe = new Subject<void>();
-  private navigationSubscription: Subscription;
+  protected ngUnsubscribe = new Subject<void>();
+  protected navigationSubscription: Subscription;
   private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
 
@@ -41,11 +41,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   /** documents ctor */
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly repository: RepositoryService,
+    protected readonly activatedRoute: ActivatedRoute,
+    protected readonly repository: RepositoryService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
-    private readonly router: Router,
+    protected readonly router: Router,
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     private readonly scrollPositionService: ScrollPositionService,
@@ -54,31 +54,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
-    this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
-      let id = params.get('id');
-      if (!id) {
-        id = SystemIds.rootId;
-      }
-
-      let isSource = false;
-      if (this.activatedRoute.snapshot.url.length > 1) {
-        const urlSegment = this.activatedRoute.snapshot.url[1].path;
-        if (urlSegment === 'files') {
-          isSource = true;
-        }
-      }
-
-      const promise = this.repository.getObjectAsync(id);
-        promise.then(source => {
-          this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-          this.isLoading = false;
-        })
-        .catch(err => {
-          this.error = err;
-          this.isLoading = false;
-        });
-    });
+    this.subscribeNavigation();
 
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -183,6 +159,33 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onSaveObjectCard(id: string): void {
     this.documentsService.changeObjectForCard(id);
     this.onCloseObjectCard();
+  }
+
+  protected subscribeNavigation(): void {
+    this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      let id = params.get('id');
+      if (!id) {
+        id = SystemIds.rootId;
+      }
+
+      let isSource = false;
+      if (this.activatedRoute.snapshot.url.length > 1) {
+        const urlSegment = this.activatedRoute.snapshot.url[1].path;
+        if (urlSegment === 'files') {
+          isSource = true;
+        }
+      }
+
+      const promise = this.repository.getObjectAsync(id);
+      promise.then(source => {
+        this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+        this.isLoading = false;
+      })
+        .catch(err => {
+          this.error = err;
+          this.isLoading = false;
+        });
+    });
   }
 
   private getCheckedNode(): IObject {

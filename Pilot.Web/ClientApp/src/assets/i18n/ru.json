@@ -49,6 +49,8 @@
   "info": "Информация",
   "selectFilter": "Выберите фильтр",
   "documentVersionsCaption": "Версии документа",
+  "searchResults": "Результаты поиска",
+  "search": "Поиск",
   "attributeTokenAlias": "Аттрибут",
   "attributeTokenAliasHint": "указать значение атрибута",
   "whitespace": "пробел"

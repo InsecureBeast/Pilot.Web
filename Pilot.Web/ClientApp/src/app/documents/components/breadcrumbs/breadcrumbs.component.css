@@ -73,9 +73,9 @@ li.breadcrumb-item a, li.breadcrumb-button a {
 }
 
 .search-input {
-  position: fixed;
+  position: absolute;
   left: 11px;
-  top: 65px;
+  top: 1px;
   right: 34px;
 }
 

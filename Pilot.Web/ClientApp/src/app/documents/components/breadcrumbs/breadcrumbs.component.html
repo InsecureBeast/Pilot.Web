@@ -7,13 +7,16 @@
       <ng-container *ngIf="bc.isRoot">
         <ng-container *ngTemplateOutlet="rootItemTemplate;context:{bcItem:bc}"></ng-container>
       </ng-container>
+      <ng-container *ngIf="bc.isSearchItem">
+        <ng-container *ngTemplateOutlet="searchItemTemplate;context:{bcItem:bc}"></ng-container>
+      </ng-container>
     </li>
   </ol>
 
   <ul class="navbar-nav breadcrumb noselect">
     <li class="breadcrumb-button search-input"
         @searchInputSlideInToggle
-        *ngIf="isShowSearchInput">
+        *ngIf="this.searchService.isSearchInputShown">
       <div class="input-group" >
         <div class="input-group-prepend">
           <a click-stop-propagation 
@@ -25,7 +28,7 @@
         </div>
         <input type="search" 
                class="form-control" 
-               placeholder="Search" 
+               placeholder="{{ 'search' | translate }}" 
                [(ngModel)]="searchInputText"
                (keyup.enter)="search()">
         <div class="input-group-append">
@@ -80,4 +83,8 @@
      (click)="onSelect(bc)" 
      *ngIf="!bc.isActive">{{bc.title}}</a>
   <span *ngIf="bc.isActive">{{bc.title}}</span>
+</ng-template>
+
+<ng-template #searchItemTemplate let-bc="bcItem">
+  <span translate="searchResults"></span>
 </ng-template>
