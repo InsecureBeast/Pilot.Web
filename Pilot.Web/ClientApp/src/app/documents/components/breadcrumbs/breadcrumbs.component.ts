@@ -107,6 +107,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   nodeStyle: NodeStyle;
   isAddSearchResultItem: boolean;
   searchInputText: string;
+  isDisabledInputAnimation = true;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
@@ -163,6 +164,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleSearchInput(show: boolean): void {
+    this.isDisabledInputAnimation = false;
     this.searchService.isSearchInputShown = show;
   }
 

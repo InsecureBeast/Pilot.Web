@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SearchApi } from './search.api';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { IObject } from '../data/data.classes';
+import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class SearchService {
@@ -13,13 +14,13 @@ export class SearchService {
     searchResults$ = this._searchResults$.asObservable();
     isSearchInputShown: boolean;
 
-    constructor(private readonly searchApi: SearchApi) {
+    constructor(private readonly searchApi: SearchApi, private readonly eroorHandlerService: ErrorHandlerService) {
     }
 
     searchObjects(request: string, cancel: Subject<any>): void {
         this.searchApi.searchObjectsAsync(request, cancel)
         .then(objects => this._searchResults$.next(objects))
-        .catch((e) => this._searchResults$.error(e));
+        .catch((e) => this.eroorHandlerService.handleErrorMessage(e));
         // .finally(() => this._searchResults$.complete());
     }
 }

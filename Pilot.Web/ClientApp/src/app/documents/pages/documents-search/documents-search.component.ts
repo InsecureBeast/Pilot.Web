@@ -48,6 +48,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   ngAfterViewInit(): void {
     Tools.sleep(0).then(() => {
+      this.breadcrumbs.isDisabledInputAnimation = true;
       this.breadcrumbs.isAddSearchResultItem = true;
 
       this.documentList.isInitOnLoad = false;

@@ -30,8 +30,9 @@ export class AlertComponent implements OnInit, OnDestroy {
     this.errorSubscription = this.notificationService
       .onError.subscribe(e => {
         if (e as HttpErrorResponse) {
-          if (e.status === 401)
+          if (e.status === 401) {
             return;
+          }
         }
 
         const msg = new AlertMessage();

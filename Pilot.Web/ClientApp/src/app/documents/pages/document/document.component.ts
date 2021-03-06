@@ -132,7 +132,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   close($event): void {
     this.cancelAllRequests(false);
     this.repository.setRequestType(RequestType.FromCache);
-    this.navigationService.navigateToDocumentsFolder(this.document.parentId);
+    this.navigationService.back();
   }
 
   download($event): void {

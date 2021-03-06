@@ -15,6 +15,7 @@
 
   <ul class="navbar-nav breadcrumb noselect">
     <li class="breadcrumb-button search-input"
+        [@.disabled]="isDisabledInputAnimation"
         @searchInputSlideInToggle
         *ngIf="this.searchService.isSearchInputShown">
       <div class="input-group" >
