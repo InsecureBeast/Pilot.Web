@@ -88,7 +88,8 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.router.navigate(['/documents/' + SystemIds.rootId]);
             return;
           }
-          this.router.navigate([returnUrl]);
+          const uri = decodeURI(returnUrl);
+          this.router.navigateByUrl(uri);
         }, (e: HttpErrorResponse) => {
           this.isProcessing = false;
           this.error = this.errorService.handleErrorMessage(e);
