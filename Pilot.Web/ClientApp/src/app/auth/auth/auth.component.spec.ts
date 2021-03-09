@@ -125,9 +125,23 @@ describe('auth component', () => {
         component.login();
 
         // then
-        verify(routerMock.navigate(deepEqual(['/document/ad25cb46-d9a6-4b15-b03f-768433ed9879']))).once();
+        verify(routerMock.navigateByUrl(deepEqual('/document/ad25cb46-d9a6-4b15-b03f-768433ed9879'))).once();
         expect().nothing();
     });
+
+    // it('should navigate to search page on login', () => {
+    //     // then
+    //     queryParams['returnUrl'] = '%2Fdocuments%2Fad25cb46-d9a6-4b15-b03f-768433ed9879%2Fsearch%3Fq%3D%2520%25E2%2586%2592type:%2520%25D0%2594%25D0%25BE%25D0%25BA%25D1%2583%25D0%25BC%25D0%25B5%25D0%25BD%25D1%2582;';
+
+    //     // when
+    //     component.username = 'name';
+    //     component.password = 'pwd';
+    //     component.login();
+
+    //     // then
+    //     verify(routerMock.navigateByUrl(deepEqual('/document/ad25cb46-d9a6-4b15-b03f-768433ed9879/search?q= →type: Документ;'))).once();
+    //     expect().nothing();
+    // });
 
     it('should not login on enter', () => {
         // when
