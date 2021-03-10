@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { SearchApi } from './search.api';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
 import { IObject } from '../data/data.classes';
 import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class SearchService {
 
-    private _inSearchMode$ = new BehaviorSubject<boolean>(false);
-    private _searchResults$ = new BehaviorSubject<IObject[]>(new Array());
+    private _searchResults$ = new ReplaySubject<IObject[]>(1);
 
-    inSearchMode$ = this._inSearchMode$.asObservable();
     searchResults$ = this._searchResults$.asObservable();
     isSearchInputShown: boolean;
 

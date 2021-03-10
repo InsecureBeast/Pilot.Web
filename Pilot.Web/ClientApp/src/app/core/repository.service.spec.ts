@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing"
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RepositoryService } from './repository.service';
 import { HeadersProvider } from './headers.provider';
 import { IMetadata, IOrganizationUnit, IPerson, ITransition, IType, IUserState, IUserStateMachine, MUserStateMachine } from './data/data.classes';
@@ -17,17 +17,17 @@ describe('RepositoryService', () => {
   let currentPerson = <IPerson> {};
   let states = <IUserState[]> {};
 
-  const httpMockSetupExpects = function(){
+  const httpMockSetupExpects = function() {
     httpMock.expectOne({
       method: 'GET',
       url: 'http://localhost/api/Metadata/GetMetadata'
     }).flush(metadata);
 
     httpMock.expectOne({
-      method: 'GET', 
+      method: 'GET',
       url: 'http://localhost/api/Metadata/GetPeople'
     }).flush(people);
-    
+
     httpMock.expectOne({
       method: 'GET',
       url: 'http://localhost/api/Metadata/GetOrganizationUnits'
@@ -42,7 +42,7 @@ describe('RepositoryService', () => {
       method: 'GET',
       url: 'http://localhost/api/Metadata/GetUserStates'
     }).flush(states);
-  }
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -86,21 +86,21 @@ describe('RepositoryService', () => {
   });
 
   it('should get type', () => {
-    //when
+    // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getType(2);
+      const actual = service.getType(2);
       // then
       expect(actual.id).toBe(2);
-      expect(actual.title).toBe('Type2')
+      expect(actual.title).toBe('Type2');
     });
 
     httpMockSetupExpects();
   });
 
   it('should return undefined if type not exists', () => {
-    //when
+    // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getType(10);
+      const actual = service.getType(10);
       // then
       expect(actual).toBeUndefined();
     });
@@ -113,15 +113,15 @@ describe('RepositoryService', () => {
     const person1 = <IPerson> { id: 1, displayName: 'Person1'};
     const person2 = <IPerson> { id: 2, displayName: 'Person2'};
     const person3 = <IPerson> { id: 3, displayName: 'Person3'};
-    people = [person1, person2, person3]
+    people = [person1, person2, person3];
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getPerson(2);
+      const actual = service.getPerson(2);
 
       // then
       expect(actual.id).toBe(2);
-      expect(actual.displayName).toBe('Person2')
+      expect(actual.displayName).toBe('Person2');
     });
 
     httpMockSetupExpects();
@@ -130,7 +130,7 @@ describe('RepositoryService', () => {
   it('should get undefined if person not exists', () => {
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getPerson(20);
+      const actual = service.getPerson(20);
 
       // then
       expect(actual).toBeUndefined();
@@ -145,11 +145,11 @@ describe('RepositoryService', () => {
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getCurrentPerson();
+      const actual = service.getCurrentPerson();
 
       // then
       expect(actual.id).toBe(1);
-      expect(actual.displayName).toBe('Person1')
+      expect(actual.displayName).toBe('Person1');
     });
 
     httpMockSetupExpects();
@@ -164,11 +164,11 @@ describe('RepositoryService', () => {
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getOrganizationUnit(3);
+      const actual = service.getOrganizationUnit(3);
 
       // then
       expect(actual.id).toBe(3);
-      expect(actual.title).toBe('OrgUnit3')
+      expect(actual.title).toBe('OrgUnit3');
     });
 
     httpMockSetupExpects();
@@ -177,7 +177,7 @@ describe('RepositoryService', () => {
   it('should get undefined organization unit if not exists', () => {
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getOrganizationUnit(30);
+      const actual = service.getOrganizationUnit(30);
 
       // then
       expect(actual).toBeUndefined();
@@ -196,11 +196,11 @@ describe('RepositoryService', () => {
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getPersonOnOrganizationUnit(1);
+      const actual = service.getPersonOnOrganizationUnit(1);
 
       // then
       expect(actual.id).toBe(2);
-      expect(actual.displayName).toBe('Person2')
+      expect(actual.displayName).toBe('Person2');
     });
 
     httpMockSetupExpects();
@@ -216,7 +216,7 @@ describe('RepositoryService', () => {
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getPersonOnOrganizationUnit(1);
+      const actual = service.getPersonOnOrganizationUnit(1);
 
       // then
       expect(actual).toBeNull();
@@ -235,11 +235,11 @@ describe('RepositoryService', () => {
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getPersonOnOrganizationUnit(1);
+      const actual = service.getPersonOnOrganizationUnit(1);
 
       // then
       expect(actual.id).toBe(2);
-      expect(actual.displayName).toBe('Person2')
+      expect(actual.displayName).toBe('Person2');
     });
 
     httpMockSetupExpects();
@@ -255,7 +255,7 @@ describe('RepositoryService', () => {
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getPersonOnOrganizationUnit(1);
+      const actual = service.getPersonOnOrganizationUnit(1);
 
       // then
       expect(actual).toBeNull();
@@ -266,14 +266,14 @@ describe('RepositoryService', () => {
 
   it('should get user state', () => {
     // given
-    const userState1 = <IUserState> { id: "guid1", name: "UserState1", title: "State1"};
-    const userState2 = <IUserState> { id: "guid2", name: "UserState2", title: "State2"};
-    const userState3 = <IUserState> { id: "guid3", name: "UserState3", title: "State3"};
+    const userState1 = <IUserState> { id: 'guid1', name: 'UserState1', title: 'State1'};
+    const userState2 = <IUserState> { id: 'guid2', name: 'UserState2', title: 'State2'};
+    const userState3 = <IUserState> { id: 'guid3', name: 'UserState3', title: 'State3'};
     states = [ userState1, userState2, userState3];
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getUserState('guid2');
+      const actual = service.getUserState('guid2');
 
       // then
       expect(actual).toEqual(userState2);
@@ -285,7 +285,7 @@ describe('RepositoryService', () => {
   it('should get undefined user state if not exists', () => {
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getUserState('guid20');
+      const actual = service.getUserState('guid20');
 
       // then
       expect(actual).toBeUndefined();
@@ -296,14 +296,14 @@ describe('RepositoryService', () => {
 
   it('should get state machine', () => {
     // given
-    const stateMachine1 = <IUserStateMachine> { id: "guid1", title: "StateMachine1", stateTransitions: new Map<string, ITransition[]>()};
-    const stateMachine2 = <IUserStateMachine> { id: "guid2", title: "StateMachine2", stateTransitions: new Map<string, ITransition[]>()};
-    const stateMachine3 = <IUserStateMachine> { id: "guid3", title: "StateMachine3", stateTransitions: new Map<string, ITransition[]>()};
+    const stateMachine1 = <IUserStateMachine> { id: 'guid1', title: 'StateMachine1', stateTransitions: new Map<string, ITransition[]>()};
+    const stateMachine2 = <IUserStateMachine> { id: 'guid2', title: 'StateMachine2', stateTransitions: new Map<string, ITransition[]>()};
+    const stateMachine3 = <IUserStateMachine> { id: 'guid3', title: 'StateMachine3', stateTransitions: new Map<string, ITransition[]>()};
     metadata.stateMachines = [ stateMachine1, stateMachine2, stateMachine3];
 
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getStateMachine('guid2');
+      const actual = service.getStateMachine('guid2');
 
       // then
       expect(actual.id).toEqual(stateMachine2.id);
@@ -316,7 +316,7 @@ describe('RepositoryService', () => {
   it('should get empty state machine', () => {
     // when
     service.initialize().pipe(skipWhile((v) => !v)).subscribe(isInit => {
-      let actual = service.getStateMachine('guid2');
+      const actual = service.getStateMachine('guid2');
 
       // then
       expect(actual).toEqual(MUserStateMachine.Null);
@@ -336,7 +336,7 @@ describe('RepositoryService', () => {
 
   it('should send apply changes', () => {
     // given
-    const change = new Change("guid");
+    const change = new Change('guid');
     const changes = [ change ];
     // when
     service.applyChange(changes).subscribe(res => {
@@ -346,6 +346,6 @@ describe('RepositoryService', () => {
     const req = httpMock.expectOne(`http://localhost/api/Modifier/Change`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toBe(JSON.stringify(changes));
-    httpMock.verify()
+    httpMock.verify();
   });
 });
