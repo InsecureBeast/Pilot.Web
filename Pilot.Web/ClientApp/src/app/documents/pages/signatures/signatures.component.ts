@@ -4,6 +4,8 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { Subscription } from 'rxjs';
 import { IObject } from 'src/app/core/data/data.classes';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NotificationService } from 'src/app/core/notification.service';
 
 @Component({
   selector: 'app-signatures',
@@ -19,7 +21,8 @@ export class SignaturesComponent implements OnInit, OnDestroy {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly repository: RepositoryService,
-    private readonly navigationService: DocumentsNavigationService) {
+    private readonly navigationService: DocumentsNavigationService,
+    private readonly notificationService: NotificationService) {
   }
 
   ngOnInit(): void {
@@ -41,6 +44,10 @@ export class SignaturesComponent implements OnInit, OnDestroy {
 
   back(): void {
     this.navigationService.back();
+  }
+
+  onError($event: HttpErrorResponse): void {
+    this.notificationService.showError($event);
   }
 
   private loadDocument(id: string) {
