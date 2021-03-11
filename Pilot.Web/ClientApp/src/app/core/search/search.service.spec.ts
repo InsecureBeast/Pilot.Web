@@ -1,6 +1,6 @@
 import { SearchService } from './search.service';
 import { SearchApi } from './search.api';
-import { mock, instance, when, anything, verify } from 'ts-mockito';
+import { mock, instance, when, verify } from 'ts-mockito';
 import { TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 import { IObject } from '../data/data.classes';
@@ -21,7 +21,6 @@ describe('SearchService', () => {
       errorService = instance(errorServiceMock);
 
       TestBed.configureTestingModule({
-        // imports: [HttpClientTestingModule, TranslateModule.forRoot() ],
         providers: [
           { provide: SearchApi, useValue: searchApi },
           { provide: ErrorHandlerService, useValue: errorService },
@@ -57,10 +56,6 @@ describe('SearchService', () => {
         // given
         const cancel = new Subject<any>();
         const error = new HttpErrorResponse({error: 'no connection'});
-        const f1 = mock<IObject>();
-        const f2 = mock<IObject>();
-
-        const found = [ f1, f2 ];
         when(searchApiMock.searchObjectsAsync('text', cancel)).thenReject(error);
 
         // when

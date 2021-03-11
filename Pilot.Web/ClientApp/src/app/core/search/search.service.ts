@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SearchApi } from './search.api';
-import { Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
+import { Subject, ReplaySubject } from 'rxjs';
 import { IObject } from '../data/data.classes';
 import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 
