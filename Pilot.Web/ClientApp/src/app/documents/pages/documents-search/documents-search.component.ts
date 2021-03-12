@@ -22,6 +22,7 @@ import { Subscription } from 'rxjs';
 export class DocumentsSearchComponent extends DocumentsComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private searchSubscription: Subscription;
+  private activeRouteSubscription: Subscription;
 
   @ViewChild('documentList') private documentList: DocumentListComponent;
   @ViewChild('breadcrumbs') private breadcrumbs: BreadcrumbsComponent;
@@ -64,7 +65,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         throw e;
       });
 
-      this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
+      this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
         const q = this.activatedRoute.snapshot.queryParams['q'];
         if (q) {
           this.documentList.isLoading = true;
@@ -82,6 +83,18 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
       this.searchSubscription.unsubscribe();
     }
 
+    if (this.activeRouteSubscription) {
+      this.activeRouteSubscription.unsubscribe();
+    }
+
     super.ngOnDestroy();
+  }
+
+  getEmptyImage(): string {
+    return '/assets/images/empty-search.svg';
+  }
+
+  getEmptyCaption(): string {
+    return this.translate.instant('searchResultsIsEmpty');
   }
 }

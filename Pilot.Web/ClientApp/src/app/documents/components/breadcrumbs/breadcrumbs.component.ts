@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, 
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener,
   Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { DocumentsService } from '../../shared/documents.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { SearchService } from 'src/app/core/search/search.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { Tools } from 'src/app/core/tools/tools';
 
 export const SearchInputSlideInToggleAnimation = [
   trigger('searchInputSlideInToggle', [
@@ -63,6 +64,7 @@ class SearchResultsBreadcrumbNode extends BreadcrumbNode {
 
   isSearchItem = true;
   isRoot = false;
+  isActive = true;
 
   constructor() {
     super(null, true);
@@ -108,6 +110,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   isAddSearchResultItem: boolean;
   searchInputText: string;
   isDisabledInputAnimation = true;
+  isSearchInputFocused: boolean;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
@@ -166,6 +169,9 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   toggleSearchInput(show: boolean): void {
     this.isDisabledInputAnimation = false;
     this.searchService.isSearchInputShown = show;
+    Tools.sleep(200).then(() => {
+      this.isSearchInputFocused = show;
+    });
   }
 
   search(): void {
@@ -206,6 +212,9 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     const loadedBreadcrumbs = this.allBreadcrumbNodes;
     for (let i = 0; i < loadedBreadcrumbs.length; i++) {
       const breadcrumbNode = loadedBreadcrumbs[i];
+      if (this.isAddSearchResultItem) {
+        breadcrumbNode.isActive = false;
+      }
       if (i < loadedBreadcrumbs.length - count) {
         hiddenList.push(breadcrumbNode);
       } else {

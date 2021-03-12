@@ -51,7 +51,8 @@
   "documentVersionsCaption": "Версии документа",
   "searchResults": "Результаты поиска",
   "search": "Поиск",
-  "attributeTokenAlias": "Аттрибут",
+  "searchResultsIsEmpty": "Поиск не дал результатов",
+  "attributeTokenAlias": "Атрибут",
   "attributeTokenAliasHint": "указать значение атрибута",
   "whitespace": "пробел"
 }

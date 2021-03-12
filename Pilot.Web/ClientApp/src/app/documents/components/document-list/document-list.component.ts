@@ -70,6 +70,9 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     this.init(this.parent);
   }
 
+  @Input() emptyImage: string;
+  @Input() emptyCaption: string;
+
   @Output() checked = new EventEmitter<IObjectNode[]>();
   @Output() selected = new EventEmitter<INode>();
   @Output() error = new EventEmitter<HttpErrorResponse>();

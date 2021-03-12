@@ -29,13 +29,14 @@
       </div>
 
       <div class="content-center" style="z-index: -1" *ngIf="nodes && nodes.length === 0">
-        <img src="/assets/images/empty-folder.svg" class="error-image" />
-        <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+        <img [src]="emptyImage" class="error-image" />
+        <h4 class="font-weight-light mt-3">{{emptyCaption}}</h4>
       </div>
     </div>
   </div>
 
   <!-- <div class="drop-popup" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+    /assets/images/empty-folder.svg
     <div class="drop-popup-help">
       <ul class="navbar-nav noselect">
         <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">

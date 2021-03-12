@@ -26,6 +26,7 @@ import { SignaturesComponent } from './pages/signatures/signatures.component';
 import { FormsModule } from '@angular/forms';
 import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 import { DocumentsSearchComponent } from './pages/documents-search/documents-search.component';
+import { FocusDirective } from '../core/directives/focus.directive';
 
 @NgModule({
   imports: [
@@ -57,7 +58,8 @@ import { DocumentsSearchComponent } from './pages/documents-search/documents-sea
     ContextMenuComponent,
     VersionsComponent,
     SignaturesComponent,
-    DocumentsSearchComponent
+    DocumentsSearchComponent,
+    FocusDirective
   ],
   exports: [
     DocumentsComponent,

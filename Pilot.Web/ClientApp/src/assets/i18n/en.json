@@ -51,6 +51,7 @@
   "documentVersionsCaption": "Document versions",
   "searchResults": "Search results",
   "search": "Search",
+  "searchResultsIsEmpty": "The search has not given any results",
   "attributeTokenAlias":"Attribute",
   "attributeTokenAliasHint": "specify an attribute value",
   "whitespace": "whitespace"

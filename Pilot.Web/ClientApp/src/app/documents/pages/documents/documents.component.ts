@@ -44,7 +44,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     protected readonly activatedRoute: ActivatedRoute,
     protected readonly repository: RepositoryService,
     private readonly typeIconService: TypeIconService,
-    private readonly translate: TranslateService,
+    protected readonly translate: TranslateService,
     protected readonly router: Router,
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
@@ -159,6 +159,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   onSaveObjectCard(id: string): void {
     this.documentsService.changeObjectForCard(id);
     this.onCloseObjectCard();
+  }
+
+  getEmptyImage(): string {
+    return '/assets/images/empty-folder.svg';
+  }
+
+  getEmptyCaption(): string {
+    return this.translate.instant('folderIsEmpty');
   }
 
   protected subscribeNavigation(): void {

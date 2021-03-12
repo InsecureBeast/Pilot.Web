@@ -16,6 +16,8 @@
                        #breadcrumbs>
       </app-breadcrumbs>
       <app-document-list [parent]="currentItem"
+                         [emptyImage]="getEmptyImage()"
+                         [emptyCaption]="getEmptyCaption()"
                          (selected)="onItemSelected($event)"
                          (checked)="onItemsChecked($event)"
                          (loaded)="onListLoaded($event)"

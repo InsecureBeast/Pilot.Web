@@ -29,6 +29,7 @@
         </div>
         <input type="search" 
                class="form-control" 
+               [appFocus]="isSearchInputFocused"
                placeholder="{{ 'search' | translate }}" 
                [(ngModel)]="searchInputText"
                (keyup.enter)="search()">
