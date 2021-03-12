@@ -65,18 +65,6 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.documentList.isLoading = false;
         throw e;
       });
-
-      this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
-        const q = this.activatedRoute.snapshot.queryParams['q'];
-        if (q) {
-          this.documentList.isLoading = true;
-          this.documentList.nodes = null;
-          this.breadcrumbs.searchInputText = q;
-          const contextObjectId = this.currentItem.id;
-          this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
-        }
-      });
-
     });
   }
 
@@ -101,15 +89,15 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
   }
 
   protected onCurrentObjectLoaded(node: IObjectNode): void {
-    // this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
-    //   const q = this.activatedRoute.snapshot.queryParams['q'];
-    //   if (q) {
-    //     this.documentList.isLoading = true;
-    //     this.documentList.nodes = null;
-    //     this.breadcrumbs.searchInputText = q;
-    //     const contextObjectId = node.id;
-    //     this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
-    //   }
-    // });
+    this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
+      const q = this.activatedRoute.snapshot.queryParams['q'];
+      if (q) {
+        this.documentList.isLoading = true;
+        this.documentList.nodes = null;
+        this.breadcrumbs.searchInputText = q;
+        const contextObjectId = node.id;
+        this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
+      }
+    });
   }
 }
