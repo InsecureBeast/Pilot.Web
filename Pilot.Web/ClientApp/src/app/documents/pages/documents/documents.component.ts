@@ -10,7 +10,7 @@ import { SystemIds } from '../../../core/data/system.ids';
 import { RepositoryService } from '../../../core/repository.service';
 import { ObjectNode } from '../../shared/object.node';
 import { TypeIconService } from '../../../core/type-icon.service';
-import { INode } from '../../shared/node.interface';
+import { INode, IObjectNode } from '../../shared/node.interface';
 import { DocumentsService } from '../../shared/documents.service';
 import { ScrollPositionService } from '../../../core/scroll-position.service';
 import { RequestType } from 'src/app/core/headers.provider';
@@ -184,16 +184,22 @@ export class DocumentsComponent implements OnInit, OnDestroy {
         }
       }
 
-      const promise = this.repository.getObjectAsync(id);
-      promise.then(source => {
+      this.repository.getObjectAsync(id)
+      .then(source => {
         this.currentItem = new ObjectNode(source, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
         this.isLoading = false;
+        this.onCurrentObjectLoaded(this.currentItem);
       })
-        .catch(err => {
-          this.error = err;
-          this.isLoading = false;
-        });
+      .catch(err => {
+        this.error = err;
+        this.isLoading = false;
+        // this.onCurrentObjectLoaded(this.currentItem);
+      });
     });
+  }
+
+  protected onCurrentObjectLoaded(node: IObjectNode): void {
+
   }
 
   private getCheckedNode(): IObject {

@@ -13,6 +13,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { SearchService } from 'src/app/core/search/search.service';
 import { Tools } from 'src/app/core/tools/tools';
 import { Subscription } from 'rxjs';
+import { IObjectNode } from '../../shared/node.interface';
 
 @Component({
   selector: 'app-documents-search',
@@ -71,7 +72,8 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
           this.documentList.isLoading = true;
           this.documentList.nodes = null;
           this.breadcrumbs.searchInputText = q;
-          this.searchService.searchObjects(q, this.ngUnsubscribe);
+          const contextObjectId = this.currentItem.id;
+          this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
         }
       });
 
@@ -96,5 +98,18 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   getEmptyCaption(): string {
     return this.translate.instant('searchResultsIsEmpty');
+  }
+
+  protected onCurrentObjectLoaded(node: IObjectNode): void {
+    // this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
+    //   const q = this.activatedRoute.snapshot.queryParams['q'];
+    //   if (q) {
+    //     this.documentList.isLoading = true;
+    //     this.documentList.nodes = null;
+    //     this.breadcrumbs.searchInputText = q;
+    //     const contextObjectId = node.id;
+    //     this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
+    //   }
+    // });
   }
 }

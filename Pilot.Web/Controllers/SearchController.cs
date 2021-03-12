@@ -23,12 +23,13 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<IList<PObject>> SearchObjects(string searchRequest)
+        public async Task<IList<PObject>> SearchObjects(string searchRequest, bool isContextSearch, string contextObjectId)
         {
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
             var searchService = api.GetSearchService();
-            var searchResult = await searchService.SearchObjects(searchRequest);
+            var contextObjectGuid = Guid.Parse(contextObjectId);
+            var searchResult = await searchService.SearchObjects(searchRequest, isContextSearch, contextObjectGuid);
 
             if (searchResult.Found == null)
                 return Array.Empty<PObject>();

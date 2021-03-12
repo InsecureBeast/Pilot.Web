@@ -6,6 +6,7 @@ using Ascon.Pilot.DataClasses;
 using log4net;
 using Pilot.Web.Model.Search;
 using Pilot.Web.Model.Search.NextTasksSearchExpression;
+using Pilot.Web.Model.Search.QueryBuilder;
 using Pilot.Web.Model.Search.QueryBuilder.Tools;
 
 namespace Pilot.Web.Model
@@ -19,7 +20,7 @@ namespace Pilot.Web.Model
     {
         Task<DSearchResult> SearchTasks(string filter);
         Task<DSearchResult> SearchTasksWithFilter(string filter, Guid id);
-        Task<DSearchResult> SearchObjects(string searchString);
+        Task<DSearchResult> SearchObjects(string searchString, bool isContextSearch, Guid searchContextObjectId);
     }
 
     class SearchServiceFactory : ISearchServiceFactory
@@ -75,9 +76,20 @@ namespace Pilot.Web.Model
         private Dictionary<Guid, TaskCompletionSource<DSearchResult>> _searchKeeper =
             new Dictionary<Guid, TaskCompletionSource<DSearchResult>>();
 
-        public Task<DSearchResult> SearchObjects(string searchString)
+        public Task<DSearchResult> SearchObjects(string searchString, bool isContextSearch, Guid searchContextObjectId)
         {
             var request = CreateRequestForObject(searchString);
+            // context search
+            if (isContextSearch && searchContextObjectId != Guid.Empty && searchContextObjectId != DObject.RootId)
+            {
+                var queryBuilder = QueryBuilderImpl.CreateEmptyQueryBuilder();
+                queryBuilder.Must(ObjectFields.Context.Be(searchContextObjectId));
+                //queryBuilder.Must(ObjectFields.SearchContextObjectId.Be(_searchContextObjectId));
+                var str = request.SearchString;
+                str = $"{str} {queryBuilder}";
+                request = new SearchRequest(str);
+            }
+
             // todo for files?
             var searchDefinition = CreateSearchDefinition(request.SearchString);
             _searchCompletionSource = new TaskCompletionSource<DSearchResult>();

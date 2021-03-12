@@ -223,7 +223,11 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     if (this.isAddSearchResultItem) {
-      this.breadcrumbs = list.slice(0, 1);
+      if (list.length > 1) {
+        this.breadcrumbs = list.slice(1, 2);
+      } else {
+        this.breadcrumbs = list;
+      }
       this.breadcrumbs.push(new SearchResultsBreadcrumbNode());
       this.hiddenBreadcrumbs = hiddenList;
       return;

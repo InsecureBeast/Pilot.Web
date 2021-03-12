@@ -15,8 +15,8 @@ export class SearchService {
     constructor(private readonly searchApi: SearchApi, private readonly eroorHandlerService: ErrorHandlerService) {
     }
 
-    searchObjects(request: string, cancel: Subject<any>): void {
-        this.searchApi.searchObjectsAsync(request, cancel)
+    searchObjects(request: string, isContextSearch: boolean, contextObjectId: string, cancel: Subject<any>): void {
+        this.searchApi.searchObjectsAsync(request, isContextSearch, contextObjectId, cancel)
         .then(objects => this._searchResults$.next(objects))
         .catch((e) => this.eroorHandlerService.handleErrorMessage(e));
         // .finally(() => this._searchResults$.complete());
