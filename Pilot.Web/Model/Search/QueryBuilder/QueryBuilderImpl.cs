@@ -85,10 +85,12 @@ namespace Pilot.Web.Model.Search.QueryBuilder
         {
             return repository
                 .GetTypes()
-                .Where(x => x.Value.Kind == TypeKind.User
+                .Where(x => (x.Value.Kind == TypeKind.User
                             && !x.Value.IsTaskType()
                             && !x.Value.IsWorkflowStageType()
-                            && !x.Value.IsWorkflowType())
+                            && !x.Value.IsWorkflowType()) 
+                            || x.Value.Name == SystemTypes.PROJECT_FILE
+                            || x.Value.Name == SystemTypes.PROJECT_FOLDER)
                 .Select(x => x.Value);
         }
 

@@ -14,6 +14,10 @@ import { SearchService } from 'src/app/core/search/search.service';
 import { Tools } from 'src/app/core/tools/tools';
 import { Subscription } from 'rxjs';
 import { IObjectNode } from '../../shared/node.interface';
+import { SearchTokenAliases } from 'src/app/core/search/tokens/search-token.aliases';
+import { SystemTypes } from 'src/app/core/data/system.types';
+import { IType } from 'src/app/core/data/data.classes';
+import { SystemIds } from 'src/app/core/data/system.ids';
 
 @Component({
   selector: 'app-documents-search',
@@ -24,6 +28,8 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   private searchSubscription: Subscription;
   private activeRouteSubscription: Subscription;
+  private fileType: IType;
+  private fileFolderType: IType;
 
   @ViewChild('documentList') private documentList: DocumentListComponent;
   @ViewChild('breadcrumbs') private breadcrumbs: BreadcrumbsComponent;
@@ -46,6 +52,9 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   ngOnInit(): void {
     super.ngOnInit();
+    const types = this.repository.getTypes();
+    this.fileType = types.find(t => t.name === SystemTypes.PROJECT_FILE);
+    this.fileFolderType = types.find(t => t.name === SystemTypes.PROJECT_FOLDER);
   }
 
   ngAfterViewInit(): void {
@@ -90,12 +99,21 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   protected onCurrentObjectLoaded(node: IObjectNode): void {
     this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
-      const q = this.activatedRoute.snapshot.queryParams['q'];
+      let q = this.activatedRoute.snapshot.queryParams['q'];
       if (q) {
         this.documentList.isLoading = true;
         this.documentList.nodes = null;
         this.breadcrumbs.searchInputText = q;
         const contextObjectId = node.id;
+
+        if (this.currentItem.id !== SystemIds.rootId) {
+          if (this.currentItem.isSource) {
+            q = `${SearchTokenAliases.typeTokenAlias} ${this.fileType.title}, ${this.fileFolderType.title}; ${q}`;
+          } else {
+            q = `-${SearchTokenAliases.typeTokenAlias} ${this.fileType.title}, ${this.fileFolderType.title}; ${q}`;
+          }
+        }
+
         this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
       }
     });

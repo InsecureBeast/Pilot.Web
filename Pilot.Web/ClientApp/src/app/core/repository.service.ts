@@ -45,6 +45,10 @@ export class RepositoryService {
     return this.types.get(id);
   }
 
+  getTypes(): IType[] {
+    return this.metadata.types;
+  }
+
   getMetadata(): Observable<IMetadata> {
     const headers = this.headersProvider.getHeaders();
     return this.http.get<IMetadata>(this.baseUrl + 'api/Metadata/GetMetadata', { headers: headers });

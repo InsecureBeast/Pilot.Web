@@ -176,6 +176,12 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
 
   search(): void {
     // todo get text from wizard
+    let q = this.searchInputText;
+    if (this.parent.isSource) {
+      this.navigationService.navigateToSearchFiles(this.parent.id, this.searchInputText);
+      return;
+    }
+
     this.navigationService.navigateToSearchDocuments(this.parent.id, this.searchInputText);
   }
 

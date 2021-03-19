@@ -1,6 +1,6 @@
 import { SearchService } from './search.service';
 import { SearchApi } from './search.api';
-import { mock, instance, when, verify } from 'ts-mockito';
+import { mock, instance, when, verify, anything } from 'ts-mockito';
 import { TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
 import { IObject } from '../data/data.classes';
@@ -41,7 +41,7 @@ describe('SearchService', () => {
         const f2 = mock<IObject>();
 
         const found = [ f1, f2 ];
-        when(searchApiMock.searchObjectsAsync('text', cancel)).thenResolve(found);
+        when(searchApiMock.searchObjectsAsync('text', false, '8DB8E339-389E-4A9F-80F8-F725ABA6689B', cancel)).thenResolve(found);
 
         service.searchResults$.subscribe(results => {
             // then
@@ -49,17 +49,17 @@ describe('SearchService', () => {
         });
 
         // when
-        service.searchObjects('text', cancel);
+        service.searchObjects('text', false, '8DB8E339-389E-4A9F-80F8-F725ABA6689B', cancel);
     });
 
     it('should notify search error', fakeAsync(() => {
         // given
         const cancel = new Subject<any>();
         const error = new HttpErrorResponse({error: 'no connection'});
-        when(searchApiMock.searchObjectsAsync('text', cancel)).thenReject(error);
+        when(searchApiMock.searchObjectsAsync('text', false, '8DB8E339-389E-4A9F-80F8-F725ABA6689B', cancel)).thenReject(error);
 
         // when
-        service.searchObjects('text', cancel);
+        service.searchObjects('text', false, '8DB8E339-389E-4A9F-80F8-F725ABA6689B', cancel);
 
         // then
         flush();

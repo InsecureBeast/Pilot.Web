@@ -75,4 +75,9 @@ export class DocumentsNavigationService {
   navigateToSearchDocuments(folderId: string, request: string): void {
     this.router.navigate([`/documents/${folderId}/search`], { queryParams: { q: request } });
   }
+
+  navigateToSearchFiles(folderId: string, request: string): void {
+    this.router.navigate([`/documents/${folderId}/files/search`], { queryParams: { q: request } });
+  }
+
 }
