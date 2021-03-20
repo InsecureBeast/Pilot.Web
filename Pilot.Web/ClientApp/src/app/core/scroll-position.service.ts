@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Tools } from './tools/tools';
 
 @Injectable({providedIn: 'root'})
 export class ScrollPositionService {
@@ -10,8 +11,10 @@ export class ScrollPositionService {
   }
 
   restoreScrollPosition(id: string): void {
-    const pos = this.getPosition(id);
-    window.scrollTo(0, pos);
+    Tools.sleep(100).then(() => {
+      const pos = this.getPosition(id);
+      window.scrollTo(0, pos);
+    });
   }
 
   saveScrollPosition(id: string): void {
@@ -21,11 +24,11 @@ export class ScrollPositionService {
 
   saveTasksScrollPosition(): void {
     const pos = window.pageYOffset;
-    this.savePosition("tasks_position", pos);
+    this.savePosition('tasks_position', pos);
   }
 
   restoreTasksScrollPosition(): void {
-    const pos = this.getPosition("tasks_position");
+    const pos = this.getPosition('tasks_position');
     window.scrollTo(0, pos);
   }
 

@@ -45,14 +45,18 @@ export class Queue<T> {
             item.subscription.next(res);
             this.queue.shift();
             this.startNextRequest();
-        });
+        })
+          .catch(e => {
+            this.queue.shift();
+            this.startNextRequest();
+          });
     }
 
     private startNextRequest() {
         // get next request, if any.
         if (this.queue.length > 0) {
-        const request = this.queue[0];
-        this.execute(request);
+          const request = this.queue[0];
+          this.execute(request);
         }
     }
 }

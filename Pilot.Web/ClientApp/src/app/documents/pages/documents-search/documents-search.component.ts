@@ -18,6 +18,7 @@ import { SearchTokenAliases } from 'src/app/core/search/tokens/search-token.alia
 import { SystemTypes } from 'src/app/core/data/system.types';
 import { IType } from 'src/app/core/data/data.classes';
 import { SystemIds } from 'src/app/core/data/system.ids';
+import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
   selector: 'app-documents-search',
@@ -101,10 +102,16 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
     this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
       let q = this.activatedRoute.snapshot.queryParams['q'];
       if (q) {
-        this.documentList.isLoading = true;
-        this.documentList.nodes = null;
+
         this.breadcrumbs.searchInputText = q;
         const contextObjectId = node.id;
+
+        if (this.repository.getRequestType() === RequestType.FromCache) {
+          this.documentList.isLoading = false;
+        } else {
+          this.documentList.isLoading = true;
+          this.documentList.nodes = null;
+        }
 
         if (this.currentItem.id !== SystemIds.rootId) {
           if (this.currentItem.isSource) {
