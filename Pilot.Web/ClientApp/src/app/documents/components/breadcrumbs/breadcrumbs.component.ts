@@ -157,32 +157,37 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.onSelected.emit(bc);
   }
 
-  changeStyle(nodeStyle: number): void {
+  changeStyle(nodeStyle: number): boolean {
     if (nodeStyle === 0) {
       this.nodeStyleService.setNodeStyle(NodeStyle.ListView);
     }
     if (nodeStyle === 1) {
       this.nodeStyleService.setNodeStyle(NodeStyle.GridView);
     }
+
+    return true;
   }
 
-  toggleSearchInput(show: boolean): void {
+  toggleSearchInput(show: boolean): boolean {
     this.isDisabledInputAnimation = false;
     this.searchService.isSearchInputShown = show;
     Tools.sleep(200).then(() => {
       this.isSearchInputFocused = show;
     });
+
+    return true;
   }
 
-  search(): void {
+  search(): boolean {
     // todo get text from wizard
-    let q = this.searchInputText;
+    const q = this.searchInputText;
     if (this.parent.isSource) {
       this.navigationService.navigateToSearchFiles(this.parent.id, this.searchInputText);
-      return;
+      return true;
     }
 
     this.navigationService.navigateToSearchDocuments(this.parent.id, this.searchInputText);
+    return true;
   }
 
   private init(item: ObjectNode) {

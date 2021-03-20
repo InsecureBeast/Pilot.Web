@@ -20,8 +20,7 @@
         *ngIf="this.searchService.isSearchInputShown">
       <div class="input-group" >
         <div class="input-group-prepend">
-          <a click-stop-propagation 
-             click-prevent-default 
+          <a queryParamsHandling="preserve"
              [routerLink]="" 
              class="material-icons nav-icon input-group-text" 
              id="close-search-button" 
@@ -34,8 +33,7 @@
                [(ngModel)]="searchInputText"
                (keyup.enter)="search()">
         <div class="input-group-append">
-          <a click-stop-propagation 
-             click-prevent-default 
+          <a queryParamsHandling="preserve"
              [routerLink]="" 
              class="material-icons nav-icon input-group-text" 
              id="search-button" 
@@ -45,22 +43,19 @@
     </li>
     <li class="breadcrumb-button">
       <a id="open-search-button" 
-         click-stop-propagation 
-         click-prevent-default 
+         queryParamsHandling="preserve"
          [routerLink]="" 
          class="material-icons nav-icon" 
          (click)="toggleSearchInput(true)">search</a>
     </li>
     <li class="breadcrumb-item" *ngIf="nodeStyle === 1">
-      <a click-stop-propagation 
-         click-prevent-default 
+      <a queryParamsHandling="preserve" 
          [routerLink]="" 
          class="material-icons nav-icon" 
          (click)="changeStyle(0)">view_list</a>
     </li>
     <li class="breadcrumb-item" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
-      <a click-stop-propagation 
-         click-prevent-default 
+      <a queryParamsHandling="preserve"
          [routerLink]="" 
          class="material-icons nav-icon" 
          (click)="changeStyle(1)">view_module</a>

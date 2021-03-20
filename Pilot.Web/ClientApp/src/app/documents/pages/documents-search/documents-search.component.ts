@@ -115,6 +115,8 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         }
 
         this.searchService.searchObjects(q, true, contextObjectId, this.ngUnsubscribe);
+      } else {
+        this.documentList.nodes = new Array();
       }
     });
   }
