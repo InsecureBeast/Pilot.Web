@@ -1,6 +1,6 @@
 .bottom-sheet-bg-overlay {
     background: rgba(0, 0, 0, .32);
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;

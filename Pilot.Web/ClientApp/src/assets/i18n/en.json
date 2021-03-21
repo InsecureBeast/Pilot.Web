@@ -54,5 +54,6 @@
   "searchResultsIsEmpty": "The search has not given any results",
   "attributeTokenAlias":"Attribute",
   "attributeTokenAliasHint": "specify an attribute value",
-  "whitespace": "whitespace"
+  "whitespace": "whitespace",
+  "noItemsToDisplay": "No items to display"
 }

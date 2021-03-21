@@ -54,5 +54,6 @@
   "searchResultsIsEmpty": "Поиск не дал результатов",
   "attributeTokenAlias": "Атрибут",
   "attributeTokenAliasHint": "указать значение атрибута",
-  "whitespace": "пробел"
+  "whitespace": "пробел",
+  "noItemsToDisplay": "Нет данных для отображения"
 }
