@@ -59,7 +59,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
   }
 
   ngAfterViewInit(): void {
-    Tools.sleep(0).then(() => {
+    Tools.sleep(10).then(() => {
       this.breadcrumbs.isDisabledInputAnimation = true;
       this.breadcrumbs.isAddSearchResultItem = true;
 
@@ -99,6 +99,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
   }
 
   protected onCurrentObjectLoaded(node: IObjectNode): void {
+    this.documentList.parent = null;
     this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
       let q = this.activatedRoute.snapshot.queryParams['q'];
       if (q) {
@@ -113,8 +114,8 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
           this.documentList.nodes = null;
         }
 
-        if (this.currentItem.id !== SystemIds.rootId) {
-          if (this.currentItem.isSource) {
+        if (node.id !== SystemIds.rootId) {
+          if (node.isSource) {
             q = `${SearchTokenAliases.typeTokenAlias} ${this.fileType.title}, ${this.fileFolderType.title}; ${q}`;
           } else {
             q = `-${SearchTokenAliases.typeTokenAlias} ${this.fileType.title}, ${this.fileFolderType.title}; ${q}`;

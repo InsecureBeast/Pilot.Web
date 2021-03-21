@@ -267,6 +267,9 @@ export class DigitalSignaturesComponent implements OnDestroy {
 
   private async isRelatedTaskStartedAsync(taskId: string): Promise<boolean> {
     const taskObject = await this.repository.getObjectAsync(taskId);
+    if (taskObject == null) {
+      return false;
+    }
     const stateValue = taskObject.attributes[SystemTaskAttributes.STATE];
 
     if (stateValue) {
