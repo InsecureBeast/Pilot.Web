@@ -15,7 +15,7 @@
                        (onSelected)="onItemSelected($event)"
                        #breadcrumbs>
       </app-breadcrumbs>
-      <app-document-list [parent]="currentItem"
+      <app-document-list [parent]="getNodeForList()"
                          [emptyImage]="getEmptyImage()"
                          [emptyCaption]="getEmptyCaption()"
                          (selected)="onItemSelected($event)"

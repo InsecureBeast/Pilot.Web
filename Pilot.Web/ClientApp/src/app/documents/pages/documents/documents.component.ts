@@ -48,7 +48,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     protected readonly router: Router,
     private readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
-    private readonly scrollPositionService: ScrollPositionService,
+    protected readonly scrollPositionService: ScrollPositionService,
     private readonly bsModalService: BsModalService) {
 
   }
@@ -167,6 +167,10 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   getEmptyCaption(): string {
     return this.translate.instant('folderIsEmpty');
+  }
+
+  getNodeForList(): IObjectNode {
+    return this.currentItem;
   }
 
   protected subscribeNavigation(): void {

@@ -98,6 +98,10 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
     return this.translate.instant('searchResultsIsEmpty');
   }
 
+  getNodeForList(): IObjectNode {
+    return null;
+  }
+
   protected onCurrentObjectLoaded(node: IObjectNode): void {
     this.documentList.parent = null;
     this.activeRouteSubscription = this.activatedRoute.queryParams.subscribe((params: ParamMap) => {
@@ -107,12 +111,14 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.breadcrumbs.searchInputText = q;
         const contextObjectId = node.id;
 
-        if (this.repository.getRequestType() === RequestType.FromCache) {
+        if (this.repository.getRequestType() === RequestType.FromCache && (this.documentList.nodes && this.documentList.nodes.length > 0)) {
           this.documentList.isLoading = false;
-        } else {
-          this.documentList.isLoading = true;
-          this.documentList.nodes = null;
+          this.scrollPositionService.restoreScrollPosition(this.currentItem.id);
+          return;
         }
+
+        this.documentList.isLoading = true;
+        this.documentList.nodes = null;
 
         if (node.id !== SystemIds.rootId) {
           if (node.isSource) {
