@@ -6,26 +6,33 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { mock, instance, when } from 'ts-mockito';
 import { of, BehaviorSubject } from 'rxjs';
 import { IObject } from 'src/app/core/data/data.classes';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { NotificationService } from 'src/app/core/notification.service';
 
 describe('SignaturesComponent', () => {
   let repositoryMock: RepositoryService;
   let repository: RepositoryService;
   let activatedRouteMock: ActivatedRoute;
   let activatedRoute: ActivatedRoute;
-  let routerMock: Router;
-  let router: Router;
+  let navigationServiceMock: DocumentsNavigationService;
+  let navigationService: DocumentsNavigationService;
+  let notificationServiceMock: NotificationService;
+  let notificationService: NotificationService;
+
   let paramMapMock: ParamMap;
 
   let component: SignaturesComponent;
   let fixture: ComponentFixture<SignaturesComponent>;
 
   beforeEach(async () => {
-    routerMock = mock(Router);
-    router = instance(routerMock);
+    navigationServiceMock = mock(DocumentsNavigationService);
+    navigationService = instance(navigationServiceMock);
     repositoryMock = mock(RepositoryService);
     repository = instance(repositoryMock);
     activatedRouteMock = mock(ActivatedRoute);
     activatedRoute = instance(activatedRouteMock);
+    notificationServiceMock = mock(NotificationService);
+    notificationService = instance(notificationServiceMock);
 
     paramMapMock = mock<ParamMap>();
     const paramMap = instance(paramMapMock);
@@ -44,7 +51,8 @@ describe('SignaturesComponent', () => {
       providers: [
         { provide: ActivatedRoute, useValue: activatedRoute, params: of({id: '151512b6-6d83-4512-8e81-adfd79394e3d'}) },
         { provide: RepositoryService, useValue: repository },
-        { provide: Router, useValue: router }
+        { provide: DocumentsNavigationService, useValue: navigationService },
+        { provide: NotificationService, useValue: notificationService }
       ]
     })
     .compileComponents();

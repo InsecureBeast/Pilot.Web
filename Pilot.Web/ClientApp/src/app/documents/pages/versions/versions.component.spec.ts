@@ -6,22 +6,23 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { mock, instance, when } from 'ts-mockito';
 import { IObject } from 'src/app/core/data/data.classes';
 import { BehaviorSubject, of } from 'rxjs';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 describe('VersionsComponent', () => {
   let repositoryMock: RepositoryService;
   let repository: RepositoryService;
   let activatedRouteMock: ActivatedRoute;
   let activatedRoute: ActivatedRoute;
-  let routerMock: Router;
-  let router: Router;
+  let navigationServiceMock: DocumentsNavigationService;
+  let navigationService: DocumentsNavigationService;
   let paramMapMock: ParamMap;
 
   let component: VersionsComponent;
   let fixture: ComponentFixture<VersionsComponent>;
 
   beforeEach(async () => {
-    routerMock = mock(Router);
-    router = instance(routerMock);
+    navigationServiceMock = mock(DocumentsNavigationService);
+    navigationService = instance(navigationServiceMock);
     repositoryMock = mock(RepositoryService);
     repository = instance(repositoryMock);
     activatedRouteMock = mock(ActivatedRoute);
@@ -44,7 +45,7 @@ describe('VersionsComponent', () => {
       providers: [
         { provide: ActivatedRoute, useValue: activatedRoute, params: of({id: '151512b6-6d83-4512-8e81-adfd79394e3d'}) },
         { provide: RepositoryService, useValue: repository },
-        { provide: Router, useValue: router }
+        { provide: DocumentsNavigationService, useValue: navigationService }
       ]
     })
     .compileComponents();
