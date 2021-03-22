@@ -63,7 +63,7 @@ li.breadcrumb-item a, li.breadcrumb-button a {
 
 @media (max-width: 350px) {
   .breadcrumb-item {
-    max-width: 125px;
+    max-width: 115px;
   }
 }
 
