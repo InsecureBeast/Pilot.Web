@@ -2,7 +2,7 @@ import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular
 import { DocumentsComponent } from '../documents/documents.component';
 import { DocumentListComponent } from '../../components/document-list/document-list.component';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { ActivatedRoute, Router, ParamMap, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap, NavigationEnd, NavigationStart } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,9 +84,8 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
       });
 
       this.router.events
-        .pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe((event: NavigationEnd) => {
-          console.log('prev:', event.url);
+        .pipe(filter(event => event instanceof NavigationStart))
+        .subscribe((event: NavigationStart) => {
           this.previousUrl = event.url;
         });
     });
@@ -129,7 +128,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.breadcrumbs.searchInputText = q;
         const contextObjectId = node.id;
 
-        if (this.notUpdateSearchRequest()) {
+        if (this.needNavigatFromCache()) {
           this.documentList.isLoading = false;
           this.scrollPositionService.restoreScrollPosition(this.currentItem.id);
           return;
@@ -153,9 +152,10 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
     });
   }
 
-  private notUpdateSearchRequest(): boolean {
+  private needNavigatFromCache(): boolean {
+    const requestType = this.repository.getRequestType() === RequestType.FromCache;
     const nodes = this.documentList.nodes && this.documentList.nodes.length > 0;
     const route = this.previousUrl?.includes('search');
-    return nodes && !route;
+    return requestType && nodes && !route;
   }
 }
