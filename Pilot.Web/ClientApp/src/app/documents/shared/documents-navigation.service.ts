@@ -1,24 +1,15 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { IObject } from 'src/app/core/data/data.classes';
 import { SystemIds } from 'src/app/core/data/system.ids';
-import { RepositoryService } from 'src/app/core/repository.service';
-import { RequestType } from 'src/app/core/headers.provider';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsNavigationService {
 
-  constructor(private router: Router, private readonly location: Location, private readonly repository: RepositoryService) {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        const startEvent = <NavigationStart>event;
-        if (startEvent.navigationTrigger === 'popstate') {
-          repository.setRequestType(RequestType.FromCache);
-        }
-      }
-    });
+  constructor(private router: Router, private readonly location: Location) {
+
   }
 
   navigateToDocument(folderId: string, document: string | IObject): void {

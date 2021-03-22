@@ -2,7 +2,7 @@ import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular
 import { DocumentsComponent } from '../documents/documents.component';
 import { DocumentListComponent } from '../../components/document-list/document-list.component';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap, NavigationEnd } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import { SystemTypes } from 'src/app/core/data/system.types';
 import { IType } from 'src/app/core/data/data.classes';
 import { SystemIds } from 'src/app/core/data/system.ids';
 import { RequestType } from 'src/app/core/headers.provider';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-documents-search',
@@ -32,9 +33,11 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
   private errorSubscription: Subscription;
   private fileType: IType;
   private fileFolderType: IType;
+  private previousUrl: string;
 
   @ViewChild('documentList') private documentList: DocumentListComponent;
   @ViewChild('breadcrumbs') private breadcrumbs: BreadcrumbsComponent;
+  
 
   constructor(
     activatedRoute: ActivatedRoute,
@@ -79,6 +82,13 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.documentList.nodes = new Array();
         console.error(e);
       });
+
+      this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe((event: NavigationEnd) => {
+          console.log('prev:', event.url);
+          this.previousUrl = event.url;
+        });
     });
   }
 
@@ -119,7 +129,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.breadcrumbs.searchInputText = q;
         const contextObjectId = node.id;
 
-        if (this.repository.getRequestType() === RequestType.FromCache && (this.documentList.nodes && this.documentList.nodes.length > 0)) {
+        if (this.notUpdateSearchRequest()) {
           this.documentList.isLoading = false;
           this.scrollPositionService.restoreScrollPosition(this.currentItem.id);
           return;
@@ -141,5 +151,11 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.documentList.nodes = new Array();
       }
     });
+  }
+
+  private notUpdateSearchRequest(): boolean {
+    const nodes = this.documentList.nodes && this.documentList.nodes.length > 0;
+    const route = this.previousUrl?.includes('search');
+    return nodes && !route;
   }
 }
