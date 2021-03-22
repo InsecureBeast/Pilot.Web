@@ -44,7 +44,7 @@ namespace Pilot.Web.Model
         private readonly IServerApiService _apiService;
         private readonly INPerson _person;
         private readonly IReadOnlyDictionary<int, INType> _types;
-        private TaskCompletionSource<DSearchResult> _searchCompletionSource;
+        private readonly Dictionary<Guid, TaskCompletionSource<DSearchResult>> _searchKeeper = new Dictionary<Guid, TaskCompletionSource<DSearchResult>>();
 
         public SearchService(IServerApiService apiService, ServerCallback callback, INPerson person, IReadOnlyDictionary<int, INType> types)
         {
@@ -58,9 +58,10 @@ namespace Pilot.Web.Model
         {
             var request = CreateRequestForTask(filter);
             var searchDefinition = CreateSearchDefinition(request);
-            _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            var searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            _searchKeeper[searchDefinition.Id] = searchCompletionSource;
             _apiService.AddSearch(searchDefinition);
-            return _searchCompletionSource.Task;
+            return searchCompletionSource.Task;
         }
 
         public Task<DSearchResult> SearchTasksWithFilter(string filter, Guid id)
@@ -68,13 +69,11 @@ namespace Pilot.Web.Model
             var request = CreateRequestForTask(filter);
             request += $@"+DObject\.Id:{id}";
             var searchDefinition = CreateSearchDefinition(request);
-            _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            var searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            _searchKeeper[searchDefinition.Id] = searchCompletionSource;
             _apiService.AddSearch(searchDefinition);
-            return _searchCompletionSource.Task;
+            return searchCompletionSource.Task;
         }
-
-        private Dictionary<Guid, TaskCompletionSource<DSearchResult>> _searchKeeper =
-            new Dictionary<Guid, TaskCompletionSource<DSearchResult>>();
 
         public Task<DSearchResult> SearchObjects(string searchString, bool isContextSearch, Guid searchContextObjectId)
         {
@@ -92,10 +91,10 @@ namespace Pilot.Web.Model
 
             // todo for files?
             var searchDefinition = CreateSearchDefinition(request.SearchString);
-            _searchCompletionSource = new TaskCompletionSource<DSearchResult>();
-            _searchKeeper[searchDefinition.Id] = _searchCompletionSource;
+            var searchCompletionSource = new TaskCompletionSource<DSearchResult>();
+            _searchKeeper[searchDefinition.Id] = searchCompletionSource;
             _apiService.AddSearch(searchDefinition);
-            return _searchCompletionSource.Task;
+            return searchCompletionSource.Task;
         }
 
         public void Notify(DSearchResult result)

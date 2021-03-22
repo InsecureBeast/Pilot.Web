@@ -22,7 +22,10 @@ export class SearchApi {
               .get<IObject[]>(this.baseUrl + url, { headers: headers })
               .pipe(first())
               .pipe(takeUntil(cancel))
-              .subscribe((objects) => resolve(objects), e => reject(e));
+              .subscribe((objects) => resolve(objects),
+                e => {
+                   reject(e);
+                });
         });
     }
 }

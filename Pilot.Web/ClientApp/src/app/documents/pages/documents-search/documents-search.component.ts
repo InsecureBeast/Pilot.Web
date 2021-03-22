@@ -29,6 +29,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   private searchSubscription: Subscription;
   private activeRouteSubscription: Subscription;
+  private errorSubscription: Subscription;
   private fileType: IType;
   private fileFolderType: IType;
 
@@ -64,16 +65,19 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
       this.breadcrumbs.isAddSearchResultItem = true;
 
       this.documentList.isInitOnLoad = false;
+      this.errorSubscription = this.searchService.error.subscribe(error => {
+        this.documentList.isLoading = false;
+        this.documentList.nodes = new Array();
+        console.error(error);
+      });
+
       this.searchSubscription = this.searchService.searchResults$.subscribe(found => {
-        try {
-          this.documentList.addNodes(found, false);
-          this.documentList.isLoading = false;
-        } catch (e) {
-          const ee = e;
-        }
+        this.documentList.addNodes(found, false);
+        this.documentList.isLoading = false;
       }, e => {
         this.documentList.isLoading = false;
-        throw e;
+        this.documentList.nodes = new Array();
+        console.error(e);
       });
     });
   }
@@ -85,6 +89,10 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
     if (this.activeRouteSubscription) {
       this.activeRouteSubscription.unsubscribe();
+    }
+
+    if (this.errorSubscription) {
+      this.errorSubscription.unsubscribe();
     }
 
     super.ngOnDestroy();
