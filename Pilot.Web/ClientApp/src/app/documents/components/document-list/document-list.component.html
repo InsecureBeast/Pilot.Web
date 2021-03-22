@@ -19,9 +19,10 @@
       <ng-container *ngIf="nodeStyle === 1">
         <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
       </ng-container>
-      <div class="upload-info-area m-2 mt-3 p-4" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+      <div class="upload-info-area m-2 mt-3 p-4 text-center" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+        <img src="assets/images/upload.svg" class="error-image text-secondary"/>
         <ul class="navbar-nav noselect">
-          <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
+          <li class="nav-item nav-item-button align-self-center">
             <span class="noselect align-self-center" translate="dropInfo"></span>
             <span class="noselect align-self-center drop-popup-button ml-1" translate="upload"></span>
           </li>
