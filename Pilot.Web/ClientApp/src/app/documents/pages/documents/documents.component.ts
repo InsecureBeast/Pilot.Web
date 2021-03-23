@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, TemplateRef } from '@angular/core';
-import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Subscription, Subject } from 'rxjs';
@@ -27,7 +27,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   protected ngUnsubscribe = new Subject<void>();
   protected navigationSubscription: Subscription;
-  private routerSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
 
   private modalRef: BsModalRef;
@@ -45,8 +44,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     protected readonly repository: RepositoryService,
     private readonly typeIconService: TypeIconService,
     protected readonly translate: TranslateService,
-    protected readonly router: Router,
-    private readonly navigationService: DocumentsNavigationService,
+    protected readonly navigationService: DocumentsNavigationService,
     private readonly documentsService: DocumentsService,
     protected readonly scrollPositionService: ScrollPositionService,
     private readonly bsModalService: BsModalService) {
@@ -55,15 +53,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeNavigation();
-
-    this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        const startEvent = <NavigationStart>event;
-        if (startEvent.navigationTrigger === 'popstate') {
-          this.documentsService.changeClearChecked(true);
-        }
-      }
-    });
 
     this.objectCardChangeSubscription = this.documentsService.objectForCard$.subscribe(id => {
       if (!id) {
@@ -82,9 +71,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
+
     if (this.objectCardChangeSubscription) {
       this.objectCardChangeSubscription.unsubscribe();
     }

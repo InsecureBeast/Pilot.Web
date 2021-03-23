@@ -2,7 +2,7 @@ import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular
 import { DocumentsComponent } from '../documents/documents.component';
 import { DocumentListComponent } from '../../components/document-list/document-list.component';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { ActivatedRoute, Router, ParamMap, NavigationEnd, NavigationStart } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,6 @@ import { SystemTypes } from 'src/app/core/data/system.types';
 import { IType } from 'src/app/core/data/data.classes';
 import { SystemIds } from 'src/app/core/data/system.ids';
 import { RequestType } from 'src/app/core/headers.provider';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-documents-search',
@@ -33,24 +32,21 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
   private errorSubscription: Subscription;
   private fileType: IType;
   private fileFolderType: IType;
-  private previousUrl: string;
 
   @ViewChild('documentList') private documentList: DocumentListComponent;
   @ViewChild('breadcrumbs') private breadcrumbs: BreadcrumbsComponent;
-  
 
   constructor(
     activatedRoute: ActivatedRoute,
     repository: RepositoryService,
     typeIconService: TypeIconService,
     translate: TranslateService,
-    router: Router,
     navigationService: DocumentsNavigationService,
     documentsService: DocumentsService,
     scrollPositionService: ScrollPositionService,
     bsModalService: BsModalService,
     private readonly searchService: SearchService) {
-    super(activatedRoute, repository, typeIconService, translate, router, navigationService,
+    super(activatedRoute, repository, typeIconService, translate, navigationService,
       documentsService, scrollPositionService, bsModalService);
 
   }
@@ -82,12 +78,6 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.documentList.nodes = new Array();
         console.error(e);
       });
-
-      this.router.events
-        .pipe(filter(event => event instanceof NavigationStart))
-        .subscribe((event: NavigationStart) => {
-          this.previousUrl = event.url;
-        });
     });
   }
 
@@ -128,12 +118,11 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
         this.breadcrumbs.searchInputText = q;
         const contextObjectId = node.id;
 
-        if (this.needNavigatFromCache()) {
+        if (this.isNavigatedFromCache()) {
           this.documentList.isLoading = false;
           this.scrollPositionService.restoreScrollPosition(this.currentItem.id);
           return;
         }
-
         this.documentList.isLoading = true;
         this.documentList.nodes = null;
 
@@ -152,10 +141,11 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
     });
   }
 
-  private needNavigatFromCache(): boolean {
+  private isNavigatedFromCache(): boolean {
     const requestType = this.repository.getRequestType() === RequestType.FromCache;
     const nodes = this.documentList.nodes && this.documentList.nodes.length > 0;
-    const route = this.previousUrl?.includes('search');
+    const route = this.navigationService.previousUrl?.includes('search');
+    // console.log(this.navigationService.previousUrl);
     return requestType && nodes && !route;
   }
 }
