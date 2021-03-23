@@ -4,7 +4,6 @@ import { NodeStyle, NodeStyleService } from './node-style.service';
 
 describe('NodeStyleService', () => {
   let service: NodeStyleService;
-  
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

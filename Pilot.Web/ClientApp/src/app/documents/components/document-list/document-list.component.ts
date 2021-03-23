@@ -5,10 +5,7 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-  OnChanges,
-  SimpleChanges,
   AfterViewChecked,
-  HostListener,
   ViewChild, TemplateRef
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -33,6 +30,7 @@ import { FilesRepositoryService } from '../../../core/files-repository.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AccessCalculator } from '../../../core/tools/access.calculator';
 import { IObjectExtensions } from '../../../core/tools/iobject.extensions';
+import { Tools } from 'src/app/core/tools/tools';
 
 @Component({
     selector: 'app-document-list',
@@ -64,8 +62,16 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
 
     // or get item from changes
     this.cancelAllRequests(false);
+    if (!this.isInitOnLoad) {
+      this.isLoaded = true;
+      return;
+    }
+
     this.init(this.parent);
   }
+
+  @Input() emptyImage: string;
+  @Input() emptyCaption: string;
 
   @Output() checked = new EventEmitter<IObjectNode[]>();
   @Output() selected = new EventEmitter<INode>();
@@ -84,6 +90,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
   canUploadFile: boolean;
   dropZoneActivity = false;
   uploadProgressPercent: number;
+  isInitOnLoad = true;
 
   /** documents-list ctor */
   constructor(
@@ -133,7 +140,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
       if (!id) {
         return;
       }
-      this.update(id);
+      this.update(id, false);
     });
   }
 
@@ -262,16 +269,12 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
         backdrop: 'static'
       });
 
-    await this.sleep(2000);
+    await Tools.sleep(2000);
   }
 
   closeModal() {
     this.modalRef?.hide();
     this.modalRef = null;
-  }
-
-  private async sleep(ms): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private async uploadHandler(fileList: FileList) {
@@ -300,7 +303,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  private update(objectId: string): void {
+  private update(objectId: string, isSource: boolean): void {
     if (!this.nodes) {
       return;
     }
@@ -308,8 +311,13 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
     this.repository.getObjectAsync(objectId, RequestType.New).then(object => {
       const index = this.nodes.findIndex(n => n.id === objectId);
       const oldNode = this.nodes.find(n => n.id === objectId);
-      const newNode = new ObjectNode(object, oldNode.isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
-      newNode.isChecked = oldNode.isChecked;
+      if (oldNode) {
+        isSource = oldNode.isSource;
+      }
+      const newNode = new ObjectNode(object, isSource, this.typeIconService, this.ngUnsubscribe, this.translate);
+      if (oldNode) {
+        newNode.isChecked = oldNode.isChecked;
+      }
       this.nodes[index] = newNode;
     });
   }
@@ -343,7 +351,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
           if (!objectForCardId) {
             return;
           }
-          this.update(objectForCardId);
+          this.update(objectForCardId, isSource);
         });
       })
       .catch(e => {
@@ -352,7 +360,7 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
       });
     }
 
-  private addNodes(documents: IObject[], isSource: boolean): void {
+  addNodes(documents: IObject[], isSource: boolean): void {
     this.nodes = new Array<ObjectNode>();
     for (const doc of documents) {
       if (doc.type.name === 'Root_object_type') { // todo: filter not available items

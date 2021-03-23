@@ -46,5 +46,14 @@
   "noSignature": "Нет подписи",
   "signatures": "Подписи",
   "sign": "Подписать",
-  "info": "Информация"
+  "info": "Информация",
+  "selectFilter": "Выберите фильтр",
+  "documentVersionsCaption": "Версии документа",
+  "searchResults": "Результаты поиска",
+  "search": "Поиск",
+  "searchResultsIsEmpty": "Поиск не дал результатов",
+  "attributeTokenAlias": "Атрибут",
+  "attributeTokenAliasHint": "указать значение атрибута",
+  "whitespace": "пробел",
+  "noItemsToDisplay": "Нет данных для отображения"
 }

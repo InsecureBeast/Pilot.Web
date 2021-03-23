@@ -30,7 +30,7 @@ describe('TypeIconProvider', () => {
   });
 
   it('should get svg icon as safe url', () => {
-    const actual = provider.getSvgIcon("FRdwa53");
+    const actual = provider.getSvgIcon('FRdwa53');
     expect(JSON.stringify(actual)).toBe('{"changingThisBreaksApplicationSecurity":"data:image/svg+xml;charset=utf-8;base64,FRdwa53"}');
   });
 
@@ -38,12 +38,12 @@ describe('TypeIconProvider', () => {
     // given
     const item = new Mock<IObject>();
     const type = new Mock<IType>();
-    type.setup(t => t.icon).is("deadwdqwq");
+    type.setup(t => t.icon).is('deadwdqwq');
     item.setup(i => i.type).is(type.Object);
-    
+
     // when
     const actual = provider.getTypeIcon(item.Object);
-    
+
     // then
     expect(JSON.stringify(actual)).toBe('{"changingThisBreaksApplicationSecurity":"data:image/svg+xml;charset=utf-8;base64,deadwdqwq"}');
   });
@@ -57,7 +57,7 @@ describe('TypeIconProvider', () => {
     const item = new Mock<IObject>();
     const type = new Mock<IType>(); // no setup for icon
     item.setup(i => i.type).is(type.Object);
-    
+
     const actual = provider.getTypeIcon(item.Object);
     expect(actual).toBeNull();
 
@@ -66,7 +66,7 @@ describe('TypeIconProvider', () => {
     const type2 = new Mock<IType>();
     type2.setup(t => t.icon).is(null);
     item.setup(i => i.type).is(type.Object);
-    
+
     const actual2 = provider.getTypeIcon(item.Object);
     expect(actual2).toBeNull();
   });

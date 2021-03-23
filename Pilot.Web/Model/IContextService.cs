@@ -11,6 +11,7 @@ namespace Pilot.Web.Model
     {
         IServerApiService GetServerApi(string actor);
         IFileLoader GetFileLoader(string actor);
+        ISearchService GetSearchService(string actor);
 
         void CreateContext(Credentials credentials);
         void RemoveContext(string actor);
@@ -41,6 +42,12 @@ namespace Pilot.Web.Model
             var apiService = GetRemoteService(key);
             var fileArchiveApi = apiService.GetFileArchiveApi();
             return new FileLoader(fileArchiveApi);
+        }
+
+        public ISearchService GetSearchService(string actor)
+        {
+            var apiService = GetRemoteService(actor);
+            return apiService.GetSearchServiceApi();
         }
 
         public void CreateContext(Credentials credentials)

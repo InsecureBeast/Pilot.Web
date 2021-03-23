@@ -5,6 +5,20 @@ import { TaskFiltersProvider } from './task-filters.provider';
 import { TasksRepositoryService } from '../../shared/tasks-repository.service';
 import { CommonSettingsDefaults } from '../../../core/data/common-settings.defaults';
 
+export class TaskFilter {
+  constructor(id: number, name: string, filter: string) {
+    this.id = id;
+    this.name = name;
+    this.searchValue = filter;
+    this.isActive = false;
+  }
+
+  name: string;
+  searchValue: string;
+  isActive: boolean;
+  id: number;
+}
+
 @Component({
     selector: 'app-task-filters',
     templateUrl: './task-filters.component.html',
@@ -37,15 +51,15 @@ export class TaskFiltersComponent implements OnInit {
       .subscribe(settings => {
           let index = 0;
           this.filters = new Array();
-          var filtersProvider = new TaskFiltersProvider(settings);
+          const filtersProvider = new TaskFiltersProvider(settings);
           filtersProvider.commonFilters.forEach((value: string, key: string) => {
-            var filter = new TaskFilter(index++, key, value);
+            const filter = new TaskFilter(index++, key, value);
             this.filters.push(filter);
           });
 
           this.personalFilters = new Array();
           filtersProvider.personalFilters.forEach((value: string, key: string) => {
-            var filter = new TaskFilter(index++, key, value);
+            const filter = new TaskFilter(index++, key, value);
             this.personalFilters.push(filter);
           });
 
@@ -60,31 +74,16 @@ export class TaskFiltersComponent implements OnInit {
   }
 
   selectFilterOnly(filter: TaskFilter): void {
-    if (!filter)
+    if (!filter) {
       return;
+    }
 
-    for (let f of this.filters) {
+    for (const f of this.filters) {
       f.isActive = f.name === filter.name;
     }
 
-    for (let f of this.personalFilters) {
-      f.isActive = f.name === filter.name;;
+    for (const f of this.personalFilters) {
+      f.isActive = f.name === filter.name;
     }
   }
 }
-
-export class TaskFilter {
-
-  constructor(id: number, name: string, filter: string) {
-    this.id = id;
-    this.name = name;
-    this.searchValue = filter;
-    this.isActive = false;
-  }
-
-  name: string;
-  searchValue: string;
-  isActive: boolean;
-  id: number;
-}
-

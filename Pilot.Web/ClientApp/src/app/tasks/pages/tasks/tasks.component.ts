@@ -4,13 +4,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { TaskFilter } from '../../components/task-filters/task-filters.component';
+import { TaskFilter, TaskFiltersComponent } from '../../components/task-filters/task-filters.component';
 import { TasksNavigationService } from '../../shared/tasks-navigation.service';
 import { TaskNode } from '../../shared/task.node';
 import { TasksSyncService as TasksService } from '../../shared/tasks.service';
-import { ModalService } from 'src/app/ui/modal/modal.service';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
-
+import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
+import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-tasks',
@@ -19,20 +20,22 @@ import { TaskListComponent } from '../../components/task-list/task-list.componen
 })
 /** tasks component*/
 export class TasksComponent implements OnInit, OnDestroy {
-  
+
   private navigationSubscription: Subscription;
   private routerSubscription: Subscription;
 
-  private filtersModalId = "filtersModal";
-  private storageFilterName = "tasks_filter";
+  private storageFilterName = 'tasks_filter';
   private filterId: number;
 
   selectedFilter: TaskFilter;
   checked: TaskNode[];
   error: HttpErrorResponse;
+  options: IBottomSheetConfig;
+  commonFilters: TaskFilter[];
+  personalFilters: TaskFilter[];
 
-  @ViewChild(TaskListComponent, { static: false })
-  private taskListComponent: TaskListComponent;
+  @ViewChild(TaskListComponent, { static: false })  private taskListComponent: TaskListComponent;
+  @ViewChild('bottomSheet') private bottomSheet: BottomSheetComponent;
 
   /** tasks ctor */
   constructor(
@@ -40,7 +43,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     private router: Router,
     private tasksNavigationService: TasksNavigationService,
     private tasksService: TasksService,
-    private modalService: ModalService) {
+    private readonly translate: TranslateService) {
 
     this.checked = new Array();
   }
@@ -51,10 +54,11 @@ export class TasksComponent implements OnInit, OnDestroy {
       this.filterId = +filterId;
       if (!filterId) {
         filterId = localStorage.getItem(this.storageFilterName);
-        if (filterId)
+        if (filterId) {
           this.filterId = +filterId;
-        else
+        } else {
           this.filterId = 0;
+        }
       }
 
       this.tasksNavigationService.navigateToFilter(this.filterId);
@@ -65,27 +69,35 @@ export class TasksComponent implements OnInit, OnDestroy {
       this.processScrollEvent(event);
       this.processBackEvent(event);
     });
+
+    this.options = {
+      closeButtonTitle: 'Close',
+      enableCloseButton: false,
+      title: this.translate.instant('selectFilter')
+    };
   }
 
   ngOnDestroy(): void {
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
+    }
 
-    if (this.routerSubscription)
+    if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
+    }
   }
 
   onFiltersLoaded(filters: [TaskFilter[], TaskFilter[]]): void {
-    const commonFilters = filters[0];
-    const personalFilters = filters[1];
+    this.commonFilters = filters[0];
+    this.personalFilters = filters[1];
 
-    let selected = commonFilters.find(f => f.id === this.filterId);
+    let selected = this.commonFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;
     }
 
-    selected = personalFilters.find(f => f.id === this.filterId);
+    selected = this.personalFilters.find(f => f.id === this.filterId);
     if (selected) {
       this.selectedFilter = selected;
       return;
@@ -93,7 +105,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   onFilterSelected(filter: TaskFilter): void {
-    this.modalService.close(this.filtersModalId);
+    this.bottomSheet.close();
     this.selectedFilter = filter;
     this.clearChecked();
     this.tasksService.changeSelectedNode(undefined);
@@ -115,11 +127,11 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   showFilters(): void {
-    this.modalService.open(this.filtersModalId);
+    this.bottomSheet.open();
   }
 
   closeFilters(): void {
-    this.modalService.close(this.filtersModalId);
+    this.bottomSheet.close();
   }
 
   clearChecked(): void {
@@ -138,10 +150,10 @@ export class TasksComponent implements OnInit, OnDestroy {
     }
   }
 
-  private processScrollEvent(event: Event) : void {
+  private processScrollEvent(event: Event): void {
     if (event instanceof Scroll) {
       if (event.position) {
-        window.scrollTo(0, event.position["1"]);
+        window.scrollTo(0, event.position['1']);
       }
     }
   }

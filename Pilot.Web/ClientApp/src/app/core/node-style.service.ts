@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+export enum NodeStyle {
+  ListView = 0,
+  GridView = 1
+}
+
 @Injectable({ providedIn: 'root' })
 export class NodeStyleService {
 
@@ -41,9 +46,4 @@ export class NodeStyleService {
 
     return NodeStyle.ListView;
   }
-}
-
-export enum NodeStyle {
-  ListView = 0,
-  GridView = 1
 }

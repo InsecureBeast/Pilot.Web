@@ -19,18 +19,20 @@
       <ng-container *ngIf="nodeStyle === 1">
         <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
       </ng-container>
-      <div class="upload-info-area m-2 mt-3 p-4" style="z-index: 1000" *ngIf="canUploadFile" (click)="onUploadButtonClick()">
+
+      <div class="upload-info-area m-2 mt-3 p-4 text-center" style="z-index: 1000" *ngIf="canUploadFile && !isLoading" (click)="onUploadButtonClick()">
+        <img src="assets/images/upload.svg" class="error-image text-secondary"/>
         <ul class="navbar-nav noselect">
-          <li click-stop-propagation click-prevent-default class="nav-item nav-item-button align-self-center">
+          <li class="nav-item nav-item-button align-self-center">
             <span class="noselect align-self-center" translate="dropInfo"></span>
             <span class="noselect align-self-center drop-popup-button ml-1" translate="upload"></span>
           </li>
         </ul>
       </div>
 
-      <div class="content-center" style="z-index: -1" *ngIf="nodes && nodes.length === 0">
-        <img src="/assets/images/empty-folder.svg" class="error-image" />
-        <h4 class="font-weight-light mt-3" translate="folderIsEmpty"></h4>
+      <div class="text-center" style="margin-top: 30vh;" *ngIf="nodes && nodes.length === 0">
+        <img [src]="emptyImage" class="error-image" />
+        <h4 class="font-weight-light mt-3">{{emptyCaption}}</h4>
       </div>
     </div>
   </div>
@@ -58,7 +60,7 @@
 </ng-template>
 
 <ng-template #listViewNodeTemplate>
-  <ul class="list-group shadow-sm mr-2 ml-2" *ngIf="!isLoading && nodes">
+  <ul class="list-group shadow-sm mt-2 mr-2 ml-2" *ngIf="!isLoading && nodes">
     <li class="list-group-item list-group-item-action"
         [class.list-group-item-primary]="node.isChecked"
         (click)="check(node, $event)"
@@ -108,7 +110,7 @@
         </div>
 
         <div class="overflow-hidden bg-white card-img" *ngIf="node.preview">
-          <img [src]="node.preview" class="card-img-center vcenter" alt="preview">
+          <img [src]="node.preview" class="card-img-center" alt="preview">
         </div>
 
         <div class="card-checker" *ngIf="isAnyItemChecked" (click)="addChecked(node); $event.stopPropagation();">
@@ -137,5 +139,9 @@
 </ng-template>
 
 <ng-template #gridViewEmptyNodeTemplate>
-  <div class="card shadow-sm"></div>
+  <div class="card shadow-sm">
+    <div class="load-wraper">
+      <div class="activity"></div>
+   </div>
+  </div>
 </ng-template>

@@ -10,6 +10,8 @@ import { DateTools } from 'src/app/core/tools/date.tools';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { StringUtils } from 'src/app/core/tools/tools';
 import { VersionsSelectorService } from '../document-versions/versions-selector.service';
+import { SystemTaskAttributes, SystemAttributes } from 'src/app/core/data/system.types';
+import { SystemStates } from 'src/app/core/data/system.states';
 
 class DigitalSignature {
 
@@ -72,11 +74,9 @@ export class DigitalSignaturesComponent implements OnDestroy {
   @Output() error = new EventEmitter<HttpErrorResponse>();
 
   signatures: Array<DigitalSignature>;
-  isSigninigInProcess: boolean;
+  isSigningInProcess: boolean;
   showSignButton: boolean;
   isSignaturesLoading: boolean;
-  canUserSign: boolean;
-  isSomeSignatureChecked: boolean;
 
   /** digital-signatures ctor */
   constructor(
@@ -85,7 +85,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
     private readonly versionSelector: VersionsSelectorService) {
 
     this.signatures = new Array<DigitalSignature>();
-    this.isSigninigInProcess = false;
+    this.isSigningInProcess = false;
     this.showSignButton = false;
 
     this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(async s => {
@@ -103,8 +103,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
         this._document = newDocument;
         this.signatures = new Array<DigitalSignature>();
         this.fillSignatures(s.files);
-        this.updateSignaturesAsync(newDocument, s);
-        this.canUserSign = this.canSign();
+        await this.updateSignaturesAsync(newDocument, s);
       } catch (error) {
         this.error.emit(error);
       }
@@ -115,9 +114,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
     if (!signature.canUserSign) {
       return;
     }
-
     signature.isChecked = !signature.isChecked;
-    this.isSomeSignatureChecked = this.signatures.some(s => s.isChecked);
   }
 
   ngOnDestroy(): void {
@@ -128,29 +125,36 @@ export class DigitalSignaturesComponent implements OnDestroy {
   }
 
   async sign(): Promise<void> {
-    this.isSigninigInProcess = true;
+    this.isSigningInProcess = true;
     try {
       const positionIds = this.signatures.filter(s => s.isChecked).map(s => s.position);
       const res = await this.repository.signDocumentAsync(this._document.id, positionIds, this.ngUnsubscribe);
       if (res) {
         const newDocument = await this.repository.getObjectAsync(this._document.id, RequestType.New);
         this._document = newDocument;
-        this.updateSignaturesAsync(this._document, this._document.actualFileSnapshot);
-        this.isSigninigInProcess = false;
+        await this.updateSignaturesAsync(this._document, this._document.actualFileSnapshot);
+        this.showSignButton = true;
+        this.isSigningInProcess = false;
       }
     } catch (error) {
-      this.isSigninigInProcess = false;
+      this.isSigningInProcess = false;
       this.error.emit(error);
     }
   }
 
-  private loadSignatures(document: IObject) {
+  canUserSign(): boolean {
+    const canUserSign = this.canSign();
+    const isSomeSignatureChecked = this.signatures.some(sig => sig.isChecked);
+    return !this.isSigningInProcess && canUserSign && isSomeSignatureChecked;
+  }
+
+  private async loadSignatures(document: IObject): Promise<void> {
     const snapshot = document.actualFileSnapshot;
     this.fillSignatures(snapshot.files);
     this.updateSignaturesAsync(document, snapshot);
   }
 
-  private fillSignatures(files: IFile[]): void {
+  private async fillSignatures(files: IFile[]): Promise<void> {
     const xpsFile = FilesSelector.getXpsFile(files);
     if (!xpsFile) {
       return;
@@ -164,7 +168,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
       const position = this.repository.getOrganizationUnit(signature.positionId);
       const digitalSignature = new DigitalSignature(signature.id);
       digitalSignature.setPersonTitle(person, position);
-      digitalSignature.canUserSign = this.canSignWithSpotId(signature.id);
+      digitalSignature.canUserSign = await this.canSignWithSpotId(signature.id);
       digitalSignature.isSigned = !StringUtils.isNullOrEmpty(signature.sign);
       digitalSignature.isChecked = digitalSignature.canUserSign;
 
@@ -172,14 +176,15 @@ export class DigitalSignaturesComponent implements OnDestroy {
     }
   }
 
-  private updateSignaturesAsync(document: IObject, snapshot: IFileSnapshot): void {
+  private async updateSignaturesAsync(document: IObject, snapshot: IFileSnapshot): Promise<void> {
     if (this.signatures.length === 0) {
       this.isSignaturesLoading = true;
     }
 
-    this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe)
-    .then(signatures => {
+    try {
+      const signatures = await this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe);
       this.isSignaturesLoading = false;
+
       for (const sig of signatures) {
         if (sig.isAdditional && !sig.isSigned) {
           continue;
@@ -196,22 +201,15 @@ export class DigitalSignaturesComponent implements OnDestroy {
         sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
         sc.role = sig.role;
         sc.isCertificateValid = sig.isCertificateValid;
-        sc.canUserSign = this.canSignWithSpotId(sig.id);
+        sc.canUserSign = await this.canSignWithSpotId(sig.id);
         sc.isSigned = sig.isSigned;
         sc.isChecked = sc.canUserSign && !sig.isSigned;
-
-        if (sc.isChecked) {
-          this.isSomeSignatureChecked = true;
-        }
       }
 
       this.showSignButton = true;
-      this.canUserSign = this.canSign();
-    })
-    .catch(e => {
+    } catch (e) {
       this.showSignButton = false;
       this.isSignaturesLoading = false;
-      this.canUserSign = false;
       if (e.status === 500) {
         if (e.error.error === 'Command IXpsServiceApi_Pilot-XPS-Server handler is not registered') {
           return;
@@ -222,7 +220,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
       }
 
       this.error.emit(e);
-    });
+    }
   }
 
   private cancelAllRequests(isCompleted: boolean): void {
@@ -241,7 +239,7 @@ export class DigitalSignaturesComponent implements OnDestroy {
     return this._isActual && some;
   }
 
-  private canSignWithSpotId(spotId: string): boolean {
+  private async canSignWithSpotId(spotId: string): Promise<boolean> {
     if (!spotId) {
       return false;
     }
@@ -251,7 +249,8 @@ export class DigitalSignaturesComponent implements OnDestroy {
       return false;
     }
 
-    if (signature.objectId !== Guid.EMPTY /*&& !IsRelatedTaskStarted(signature.ObjectId)*/) {
+    const isTaskStarted = await this.isRelatedTaskStartedAsync(signature.objectId);
+    if (signature.objectId !== Guid.EMPTY && !isTaskStarted) {
       return false;
     }
 
@@ -264,5 +263,30 @@ export class DigitalSignaturesComponent implements OnDestroy {
     const files = this._document.actualFileSnapshot.files;
     const ss = files.flatMap(f => f.signatures).find(x => x.id === spotId);
     return ss;
+  }
+
+  private async isRelatedTaskStartedAsync(taskId: string): Promise<boolean> {
+    const taskObject = await this.repository.getObjectAsync(taskId);
+    if (taskObject == null) {
+      return false;
+    }
+    const stateValue = taskObject.attributes[SystemTaskAttributes.STATE];
+
+    if (stateValue) {
+      if (stateValue === SystemStates.TASK_REVOKED_STATE_ID) {
+        return false;
+      }
+
+      if (stateValue !== SystemStates.NONE_STATE_ID || this.allowSigningNotStarted(taskObject)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private allowSigningNotStarted(taskObject: IObject): boolean {
+    const attr = taskObject.type.attributes.find(x => x.name === SystemAttributes.ALLOW_SIGNING_AT_NONE_STATE_NAME);
+    return attr && attr.configuration === '<True/>';
   }
 }

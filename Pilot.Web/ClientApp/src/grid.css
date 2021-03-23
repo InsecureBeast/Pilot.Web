@@ -1,0 +1,13 @@
+.container-xxl {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 1400px) {
+  .container-xxl {
+    max-width: 1320px;
+  }
+}

@@ -1,15 +1,9 @@
 <nav class="navbar navbar-expand fixed-top navbar-light bg-content justify-content-between">
   <ul class="navbar-nav">
-    <li *ngFor="let item of toolbarItems"
-        class="nav-item nav-item-button pt-2h"
-        [class.opacity-02]="requestState === 1"
-        click-stop-propagation click-prevent-default
-        (click)="onTransitionClick(item)">
-        <img [src]="item.icon"
-             class="nav-icon nav-icon-svg"
-             *ngIf="item.icon != null" alt="icon" >
-        <span class="hidden-phone noselect pr-2 align-middle">{{item.title}}</span>
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="close($event)">
+      <span class="navbar-text toolbar-text material-icons nav-icon">keyboard_backspace</span>
     </li>
+    
   </ul>
 
   <ul class="navbar-nav">
@@ -21,8 +15,15 @@
   </ul>
 
   <ul class="navbar-nav">
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="close($event)">
-      <span class="navbar-text toolbar-text material-icons nav-icon">close</span>
+    <li *ngFor="let item of toolbarItems"
+        class="nav-item nav-item-button pt-2h"
+        [class.opacity-02]="requestState === 1"
+        click-stop-propagation click-prevent-default
+        (click)="onTransitionClick(item)">
+        <img [src]="item.icon"
+             class="nav-icon nav-icon-svg"
+             *ngIf="item.icon != null" alt="icon" >
+        <span class="hidden-phone noselect pr-2 align-middle">{{item.title}}</span>
     </li>
   </ul>
 </nav>

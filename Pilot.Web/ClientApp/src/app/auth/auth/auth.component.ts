@@ -6,9 +6,10 @@ import { first, skipWhile } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../auth.service';
-import { ErrorHandlerService } from '../../ui/error/error-handler.service';
 import { SystemIds } from '../../core/data/system.ids';
 import { RepositoryService } from '../../core/repository.service';
+import { ErrorHandlerService } from 'src/app/components/error/error-handler.service';
+import { CustomUrlSerializer } from 'src/app/core/tools/custom-url.serializer';
 
 @Component({
     selector: 'app-auth',
@@ -88,7 +89,7 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.router.navigate(['/documents/' + SystemIds.rootId]);
             return;
           }
-          this.router.navigate([returnUrl]);
+          this.router.navigateByUrl(returnUrl);
         }, (e: HttpErrorResponse) => {
           this.isProcessing = false;
           this.error = this.errorService.handleErrorMessage(e);

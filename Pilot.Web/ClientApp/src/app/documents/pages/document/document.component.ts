@@ -2,12 +2,11 @@ import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/c
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
-import { Location } from '@angular/common';
 
 import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
-import { INode, IObjectNode } from '../../shared/node.interface';
+import { IObjectNode } from '../../shared/node.interface';
 import { FilesSelector } from '../../../core/tools/files.selector';
 import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
@@ -24,6 +23,10 @@ import { TypeIconService } from '../../../core/type-icon.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from 'src/app/core/notification.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
+import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
+import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 @Component({
   selector: 'app-document',
@@ -33,33 +36,35 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy {
 
-  private versionSubscription: Subscription;
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private cardModalRef: BsModalRef;
+  private selectedSnapshot: IFileSnapshot;
 
   document: IObject;
   node: ObjectNode;
   images: SafeUrl[];
   isLoading: boolean;
-  isInfoShown: boolean;
   error: HttpErrorResponse;
-  showFilesMode: boolean;
 
   isActualVersionSelected: boolean;
   selectedVersionCreated: string;
   selectedVersionCreator: string;
 
-  @ViewChild('staticTabs', { static: false }) staticTabs: TabsetComponent;
+  @ViewChild('cardTemplate') private cardTemplate: TemplateRef<any>;
+  @ViewChild('staticTabs', { static: false }) private staticTabs: TabsetComponent;
+  @ViewChild('contextMenu') private contextMenu: ContextMenuComponent;
+  @ViewChild('bottomSheet') private bottomSheet: BottomSheetComponent;
+  options: IBottomSheetConfig;
 
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly sourceFileService: SourceFileService,
     private readonly downloadService: DownloadService,
-    private readonly location: Location,
+    private readonly navigationService: DocumentsNavigationService,
     private readonly repository: RepositoryService,
     private readonly router: Router,
     private readonly versionSelector: VersionsSelectorService,
@@ -85,25 +90,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
       this.loadDocument(id, version);
     });
 
-    this.versionSubscription = this.versionSelector.selectedSnapshot$.subscribe(s => {
-      if (!s) {
-        return;
-      }
-
-      if (!this.document) {
-        return;
-      }
-
-      this.isActualVersionSelected = this.document.actualFileSnapshot.created === s.created;
-      let version = '';
-      if (!this.isActualVersionSelected) {
-        version = s.created;
-      }
-
-      this.updateLocation(this.document.parentId, this.document.id, version);
-      this.loadSnapshot(s);
-    });
-
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         const startEvent = <NavigationStart>event;
@@ -122,14 +108,13 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.document = object;
       });
     });
+
+    this.options = {
+    };
   }
 
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
-
-    if (this.versionSubscription) {
-      this.versionSubscription.unsubscribe();
-    }
 
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
@@ -147,7 +132,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   close($event): void {
     this.cancelAllRequests(false);
     this.repository.setRequestType(RequestType.FromCache);
-    this.location.back();
+    this.navigationService.back();
   }
 
   download($event): void {
@@ -158,21 +143,40 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.downloadService.downloadFile($event.source);
   }
 
-  toggleDocumentVersions($event): void {
-    this.isInfoShown = !this.isInfoShown;
-  }
-
-  closeDocumentVersions($event): void {
-    this.isInfoShown = false;
+  onShowMore($event): void {
+    this.fillContextMenu();
+    this.bottomSheet.open();
   }
 
   selectActualVersion(): boolean {
-    this.versionSelector.changeSelectedSnapshot(this.document.actualFileSnapshot);
+    this.selectedSnapshot = this.document.actualFileSnapshot;
+    this.onVersionSelected(this.selectedSnapshot);
+    this.versionSelector.changeSelectedSnapshot(this.selectedSnapshot);
     return false;
   }
 
+  onVersionSelected(snapshot: IFileSnapshot): void {
+    if (!snapshot) {
+      return;
+    }
+
+    if (!this.document) {
+      return;
+    }
+
+    this.isActualVersionSelected = this.document.actualFileSnapshot.created === snapshot.created;
+    let version = '';
+    if (!this.isActualVersionSelected) {
+      version = snapshot.created;
+    }
+
+    this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
+    this.selectedSnapshot = snapshot;
+    this.loadSnapshot(snapshot);
+  }
+
   showFiles(event: boolean): void {
-    this.showFilesMode = event;
+    this.navigationService.navigateToFilesFolder(this.node.id);
   }
 
   onShowDocumentCard(template: TemplateRef<any>): void {
@@ -205,6 +209,10 @@ export class DocumentComponent implements OnInit, OnDestroy {
     }
 
     return false;
+  }
+
+  private goToVersionsPage(): void {
+    this.navigationService.navigateToDocumentVersions(this.document.parentId, this.document.id, false);
   }
 
   private loadDocument(id: string, version?: string): void {
@@ -240,14 +248,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.error = e;
       });
-  }
-
-  private updateLocation(folderId: string, id: string, version?: string): void {
-    if (!version) {
-      this.location.replaceState(`/documents/${folderId}/doc/${id}`);
-    } else {
-      this.location.replaceState(`/documents/${folderId}/doc/${id}/${version}`);
-    }
   }
 
   private loadSnapshot(snapshot: IFileSnapshot): void {
@@ -310,5 +310,57 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
       }
     }
+  }
+
+  private fillContextMenu() {
+    this.contextMenu.clear();
+
+    const downloadItem = MenuItem
+      .createItem('downloadId', this.translate.instant('download'))
+      .withIcon('save_alt')
+      .withAction(() => {
+        this.bottomSheet.close();
+        this.download(null);
+      });
+    this.contextMenu.addMenuItem(downloadItem);
+
+    if (this.document.type.isMountable) {
+      const sourceFilesItem = MenuItem
+        .createItem('sourceFilesId', this.translate.instant('sourceFiles'))
+        .withIcon('folder_open')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.showFiles(true);
+        });
+      this.contextMenu.addMenuItem(sourceFilesItem);
+    }
+
+    if (!this.isSourceFile()) {
+      const versionsItem = MenuItem
+        .createItem('versionsId', this.translate.instant('versions'))
+        .withIcon('list_alt')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.goToVersionsPage();
+        });
+      this.contextMenu.addMenuItem(versionsItem);
+
+      const signaturesItem = MenuItem
+        .createItem('signaturesId', this.translate.instant('signatures'))
+        .withIcon('edit')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.navigationService.navigateToDocumentSignatures(this.document.parentId, this.document.id, false);
+        });
+      this.contextMenu.addMenuItem(signaturesItem);
+    }
+    const cardItem = MenuItem
+      .createItem('cardId', this.translate.instant('card'))
+      .withIcon('info_outline')
+      .withAction(() => {
+        this.bottomSheet.close();
+        this.onShowDocumentCard(this.cardTemplate);
+      });
+    this.contextMenu.addMenuItem(cardItem);
   }
 }

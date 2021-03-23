@@ -24,6 +24,8 @@ namespace Pilot.Web.Model
         public const string STATE_POSITION = "DObject.State.PositionId";
         public const string CONTEXT = "DObject.Context";
         public const string LEVEL = "DObject.Level";
+        public const string SIGN_AWAITING_POSITIONS = "DObject.SignAwaitingPositions";
+        public const string SIGNED_POSITIONS = "DObject.SignedPositions";
     }
 
     public static class FileFieldNames

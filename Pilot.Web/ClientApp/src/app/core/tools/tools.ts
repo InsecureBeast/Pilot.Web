@@ -55,14 +55,18 @@ export class Tools {
     const datePipe = new DatePipe(currentLang);
     return datePipe.transform(utcDate, format);
   }
+
+  static async sleep(ms): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
 
 export class StringUtils {
   static isNullOrEmpty(value: string) : boolean {
     if (value){
-      return value.length == 0;
+      return value.length === 0;
     }
-    
+
     return true;
   }
 }
