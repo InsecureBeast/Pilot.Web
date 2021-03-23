@@ -143,9 +143,7 @@ export class DocumentsSearchComponent extends DocumentsComponent implements Afte
 
   private isNavigatedFromCache(): boolean {
     const requestType = this.repository.getRequestType() === RequestType.FromCache;
-    const nodes = this.documentList.nodes && this.documentList.nodes.length > 0;
     const route = this.navigationService.previousUrl?.includes('search');
-    // console.log(this.navigationService.previousUrl);
-    return requestType && nodes && !route;
+    return requestType && !route;
   }
 }
