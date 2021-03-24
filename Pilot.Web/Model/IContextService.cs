@@ -54,6 +54,9 @@ namespace Pilot.Web.Model
         {
             lock (_services)
             {
+                if (string.IsNullOrEmpty(credentials.Username))
+                    throw new UnauthorizedAccessException("Access denied. The user name or password is incorrect.");
+
                 if (_services.ContainsKey(credentials.Username))
                     return;
 
