@@ -67,17 +67,17 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Publish Linux x64
-      run: dotnet publish --runtime linux-x64 --self-contained true -c Release -o Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_linux/ /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.Sha }} /p:useapphost=true
+      run: dotnet publish Pilot.Web\Pilot.Web.csproj /p:PublishProfile=Pilot.Web\Properties\PublishProfiles\Linux64.pubxml -c Release
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v2
       with:
         name: pilot-web_linux-${{ steps.gitversion.outputs.fullSemVer }}
-        path: Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_linux/
+        path: Pilot.Web\bin\Release\netcoreapp3.1\pilot-web_linux\
     - name: Publish Windows x64
-      run: dotnet publish --runtime win-x64 --self-contained true -c Release -o Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_windows/ /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.Sha }} /p:useapphost=true
+      run: dotnet publish Pilot.Web\Pilot.Web.csproj /p:PublishProfile=Pilot.Web\Properties\PublishProfiles\Windows64.pubxml -c Release
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v2
       with:
         name: pilot-web_windows-${{ steps.gitversion.outputs.fullSemVer }}
-        path: Pilot.Web\bin\Release\netcoreapp3.1/pilot-web_windows/
+        path: Pilot.Web\bin\Release\netcoreapp3.1\pilot-web_windows\
     
