@@ -84,7 +84,8 @@ namespace Pilot.Web.Model.ModifyData
             return _serverApi.GetObjects(new[] { id }).FirstOrDefault();
         }
 
-        public bool Apply(Guid id, IEnumerable<INChange> changes, IEnumerable<Guid> newFileBodies, ChangesetDataSource source = ChangesetDataSource.Native)
+        public Guid Apply(IEnumerable<INChange> changes, IEnumerable<Guid> newFileBodies, ChangesetDataSource source = ChangesetDataSource.Native,
+            MergeChangePolicy mergePolicy = MergeChangePolicy.Deny)
         {
             var bodies = newFileBodies.ToList();
             var changesetData = new DChangesetData { Identity = Guid.NewGuid() };
@@ -97,7 +98,7 @@ namespace Pilot.Web.Model.ModifyData
                 _changesetUploader.Upload(changesetData);
 
             _serverApi.Change(changesetData);
-            return true;
+            return changesetData.Identity;
         }
 
         public void Apply(DPersonUpdateInfo updateInfo)

@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
-import {AuthService} from "../auth/auth.service";
-import {HttpHeaders} from "@angular/common/http";
+import {Injectable} from '@angular/core';
+import {AuthService} from '../auth/auth.service';
+import {HttpHeaders} from '@angular/common/http';
 
 export enum RequestType {
     None = 0,
@@ -18,6 +18,7 @@ export class HeadersProvider {
   set requestType(value: RequestType) {
     this._requestType = value;
   }
+
   get requestType(): RequestType {
     return this._requestType;
   }
@@ -27,10 +28,14 @@ export class HeadersProvider {
       return this.getHeadersWithType('application/json', requestHeader);
   }
 
+  getNewHeaders(): HttpHeaders {
+    return this.getHeadersWithType('application/json', 'new');
+}
+
   getAuthHeader(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({
-      'Authorization': "Bearer " + token
+      'Authorization': 'Bearer ' + token
     });
   }
 
@@ -38,20 +43,22 @@ export class HeadersProvider {
     return this.getHeadersWithType('application/octet-stream', '');
   }
 
-  private getRequestTypeHeader() : string {
-    if (this.requestType === RequestType.New)
-      return "new";
-    if (this.requestType === RequestType.FromCache)
-      return "fromCache";
+  private getRequestTypeHeader(): string {
+    if (this.requestType === RequestType.New) {
+      return 'new';
+    }
+    if (this.requestType === RequestType.FromCache) {
+      return 'fromCache';
+    }
 
-    return "";
+    return '';
   }
 
   private getHeadersWithType(accept: string, requestHeader: string): HttpHeaders {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Accept': accept,
-      'Authorization': "Bearer " + token,
+      'Authorization': 'Bearer ' + token,
       'Content-Type': accept,
       'RequestType': requestHeader
     });

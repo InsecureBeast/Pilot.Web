@@ -29,5 +29,8 @@ namespace Pilot.Web.Model.Search.QueryBuilder
         public static DateTimeField SnapshotsCreated => new DateTimeField(FieldNames.SNAPSHOTS_CREATED);
 
         public static GuidField Context => new GuidField(FieldNames.CONTEXT);
+
+        public static Int32Field SignatureAwaitingBy => new Int32Field(FieldNames.SIGN_AWAITING_POSITIONS);
+        public static Int32Field SignedBy => new Int32Field(FieldNames.SIGNED_POSITIONS);
     }
 }

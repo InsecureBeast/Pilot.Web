@@ -1,10 +1,10 @@
 import { TestBed, ComponentFixture, fakeAsync, flush } from '@angular/core/testing';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, By } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap, Event } from '@angular/router';
 import { RepositoryService } from 'src/app/core/repository.service';
-import { anyOfClass, anything, instance, mock, verify, when } from 'ts-mockito';
+import { anyOfClass, instance, mock, verify, when } from 'ts-mockito';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { DocumentsService } from '../../shared/documents.service';
 import { IFileSnapshot, IObject, IType } from 'src/app/core/data/data.classes';
@@ -15,9 +15,13 @@ import { VersionsSelectorService } from '../../components/document-versions/vers
 import { TypeIconService } from 'src/app/core/type-icon.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequestType } from 'src/app/core/headers.provider';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { TemplateRef, ViewContainerRef } from '@angular/core';
-import { Mock } from 'protractor/built/driverProviders';
+import { BsModalService, ModalOptions, BsModalRef } from 'ngx-bootstrap/modal';
+import { TemplateRef } from '@angular/core';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { DocumentToolbarComponent } from '../../components/document-toolbar/document-toolbar.component';
+import { ContextMenuComponent } from '../../components/context-menu/context-menu.component';
+import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('document component', () => {
     let component: DocumentComponent;
@@ -36,14 +40,15 @@ describe('document component', () => {
     let sourceFileService: SourceFileService;
     let downloadServiceMock: DownloadService;
     let downloadService: DownloadService;
-    let locationMock: Location;
-    let location: Location;
+    let locationMock: DocumentsNavigationService;
+    let location: DocumentsNavigationService;
     let versionSelectorMock: VersionsSelectorService;
     let versionSelector: VersionsSelectorService;
     let typeIconServiceMock: TypeIconService;
     let typeIconService: TypeIconService;
     let translate: TranslateService;
     let paramMapMock: ParamMap;
+    let _document: IObject;
 
     const getIObjectStub = function(id: string): IObject {
         const type = <IType> {
@@ -56,9 +61,32 @@ describe('document component', () => {
             type: type,
             children: [],
             created: '',
+            parentId: '0718462B-980A-46BA-B1DA-CBFF98A6944C'
         };
         return object;
     };
+
+    const getIObjectStubWithType = function(id: string, type: IType): IObject {
+        const object = <IObject> {
+            id: id,
+            type: type,
+            children: [],
+            created: '',
+        };
+        return object;
+    };
+
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+          declarations: [
+            DocumentComponent,
+            BottomSheetComponent,
+            ContextMenuComponent,
+            DocumentToolbarComponent
+          ]
+        })
+        .compileComponents();
+      });
 
     beforeEach(async () => {
         repositoryMock = mock(RepositoryService);
@@ -75,7 +103,7 @@ describe('document component', () => {
         sourceFileService = instance(sourceFileServiceMock);
         downloadServiceMock = mock(DownloadService);
         downloadService = instance(downloadServiceMock);
-        locationMock = mock(Location);
+        locationMock = mock(DocumentsNavigationService);
         location = instance(locationMock);
         versionSelectorMock = mock(VersionsSelectorService);
         versionSelector = instance(versionSelectorMock);
@@ -96,14 +124,14 @@ describe('document component', () => {
 
         when(documentsServiceMock.objectForCard$).thenReturn(of(''));
 
-        const object = getIObjectStub(objectId);
-        when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+        _document = getIObjectStub(objectId);
+        when(repositoryMock.getObjectAsync(objectId)).thenResolve(_document);
 
         TestBed.configureTestingModule({
             declarations: [ DocumentComponent ],
-            imports: [ BrowserModule, TranslateModule.forRoot(), FormsModule ],
+            imports: [ BrowserModule, NoopAnimationsModule, TranslateModule.forRoot(), FormsModule ],
             providers: [
-                { provide: ActivatedRoute, useValue: activatedRoute },
+                { provide: ActivatedRoute, useValue: activatedRoute, params: of({id: '151512b6-6d83-4512-8e81-adfd79394e3d'}) },
                 { provide: SourceFileService, useValue: sourceFileService },
                 { provide: DownloadService, useValue: downloadService },
                 { provide: Location, useValue: location },
@@ -139,7 +167,7 @@ describe('document component', () => {
         component.close(null);
 
         // then
-        verify(locationMock.back()).once();
+        // verify(locationMock.navigateToDocumentsFolder('0718462B-980A-46BA-B1DA-CBFF98A6944C')).once();
         verify(repositoryMock.setRequestType(RequestType.FromCache)).once();
         expect().nothing();
     }));
@@ -161,44 +189,67 @@ describe('document component', () => {
         expect().nothing();
     }));
 
-    it('should show document version', fakeAsync(() => {
+    it('should show bottom context menu', (fakeAsync(() => {
         // given
-        component.isInfoShown = false;
         fixture.detectChanges();
         flush();
 
         // when
-        component.toggleDocumentVersions(null);
+        component.onShowMore(null);
 
         // then
-        expect(component.isInfoShown).toBeTrue();
-    }));
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        expect(contextMenuDebugElement).not.toBeNull();
+        expect(contextMenuDebugElement).not.toBeUndefined();
+    })));
 
-    it('should close document version if toolbar button pressed again', fakeAsync(() => {
+    it('should fill context menu for document', (fakeAsync(() => {
         // given
-        component.isInfoShown = true;
         fixture.detectChanges();
         flush();
 
         // when
-        component.toggleDocumentVersions(null);
+        component.onShowMore(null);
 
         // then
-        expect(component.isInfoShown).toBeFalse();
-    }));
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        const contextMenuComponent = contextMenuDebugElement.componentInstance;
+        expect(contextMenuComponent.items.length).toBe(4);
+        expect(contextMenuComponent.items[0].title).toBe('download');
+        expect(contextMenuComponent.items[1].title).toBe('versions');
+        expect(contextMenuComponent.items[2].title).toBe('signatures');
+        expect(contextMenuComponent.items[3].title).toBe('card');
+    })));
 
-    it('should close document version', fakeAsync(() => {
+    it('should fill context menu for ECM document', (fakeAsync(() => {
         // given
-        component.isInfoShown = true;
+        const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
+        const ecmType = <IType> {
+            id: 2,
+            children: [],
+            attributes: [],
+            isMountable: true
+        };
+
+        const object = getIObjectStubWithType(objectId, ecmType);
+        when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+
         fixture.detectChanges();
         flush();
 
         // when
-        component.closeDocumentVersions(null);
+        component.onShowMore(null);
 
         // then
-        expect(component.isInfoShown).toBeFalse();
-    }));
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        const contextMenuComponent = contextMenuDebugElement.componentInstance;
+        expect(contextMenuComponent.items.length).toBe(5);
+        expect(contextMenuComponent.items[0].title).toBe('download');
+        expect(contextMenuComponent.items[1].title).toBe('sourceFiles');
+        expect(contextMenuComponent.items[2].title).toBe('versions');
+        expect(contextMenuComponent.items[3].title).toBe('signatures');
+        expect(contextMenuComponent.items[4].title).toBe('card');
+    })));
 
     it('should show document card', fakeAsync(() => {
         // given
@@ -211,7 +262,76 @@ describe('document component', () => {
         component.onShowDocumentCard(cardTemplate);
 
         // then
-        //verify(modalServiceMock.show(anything())).once();
+        verify(modalServiceMock.show(cardTemplate, anyOfClass(ModalOptions))).once();
+        expect().nothing();
+    }));
+
+    it('should show document card when click context menu', fakeAsync(() => {
+        // given
+        spyOn(component, 'onShowDocumentCard');
+        fixture.detectChanges();
+        flush();
+
+        component.onShowMore(null);
+        fixture.detectChanges();
+
+        // when
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        const link = contextMenuDebugElement.query(By.css('#cardId'));
+        link.triggerEventHandler('click', null);
+
+        // then
+        expect(component.onShowDocumentCard).toHaveBeenCalled();
+        expect().nothing();
+    }));
+
+    it('should download document card when click context menu', fakeAsync(() => {
+        // given
+        spyOn(component, 'download');
+        fixture.detectChanges();
+        flush();
+
+        component.onShowMore(null);
+        fixture.detectChanges();
+
+        // when
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        const link = contextMenuDebugElement.query(By.css('#downloadId'));
+        link.triggerEventHandler('click', null);
+
+        // then
+        expect(component.download).toHaveBeenCalled();
+        expect().nothing();
+    }));
+
+    it('should open source files when click context menu', fakeAsync(() => {
+        // given
+        // given
+        const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
+        const ecmType = <IType> {
+            id: 2,
+            children: [],
+            attributes: [],
+            isMountable: true
+        };
+
+        const object = getIObjectStubWithType(objectId, ecmType);
+        when(repositoryMock.getObjectAsync(objectId)).thenResolve(object);
+
+        spyOn(component, 'showFiles');
+        fixture.detectChanges();
+        flush();
+
+        component.onShowMore(null);
+        fixture.detectChanges();
+
+        // when
+        const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
+        const link = contextMenuDebugElement.query(By.css('#sourceFilesId'));
+        link.triggerEventHandler('click', null);
+
+        // then
+        expect(component.showFiles).toHaveBeenCalled();
         expect().nothing();
     }));
 
@@ -220,15 +340,19 @@ describe('document component', () => {
         fixture.detectChanges();
         flush();
 
-        // const cardTemplateMock = mock(TemplateRef);
-        // const cardTemplate = instance(cardTemplateMock);
-        // component.onShowDocumentCard(cardTemplate);
+        const cardTemplateMock = mock(TemplateRef);
+        const cardTemplate = instance(cardTemplateMock);
+        const modalRefMock =  mock(BsModalRef);
+        const modalRef =  instance(modalRefMock);
+        when(modalRefMock.id).thenReturn(1);
+        when(modalServiceMock.show(cardTemplate, anyOfClass(ModalOptions))).thenReturn(modalRef);
+        component.onShowDocumentCard(cardTemplate);
 
         // when
-        //component.onCloseDocumentCard(null);
+        component.onCloseDocumentCard(null);
 
         // then
-        //verify(modalServiceMock.hide(1)).once();
+         verify(modalServiceMock.hide(1)).once();
         expect().nothing();
     }));
 
@@ -238,12 +362,20 @@ describe('document component', () => {
         fixture.detectChanges();
         flush();
 
+        const cardTemplateMock = mock(TemplateRef);
+        const cardTemplate = instance(cardTemplateMock);
+        const modalRefMock =  mock(BsModalRef);
+        const modalRef =  instance(modalRefMock);
+        when(modalRefMock.id).thenReturn(1);
+        when(modalServiceMock.show(cardTemplate, anyOfClass(ModalOptions))).thenReturn(modalRef);
+        component.onShowDocumentCard(cardTemplate);
+
         // when
-        //component.onChangeDocumentCard(id);
+        component.onChangeDocumentCard(id);
 
         // then
-        //verify(documentsServiceMock.changeObjectForCard(id)).once();
-        //verify(modalServiceMock.hide(0)).once();
+        verify(documentsServiceMock.changeObjectForCard(id)).once();
+        verify(modalServiceMock.hide(1)).once();
         expect().nothing();
     }));
 });

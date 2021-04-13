@@ -503,10 +503,14 @@ namespace Pilot.Web.Model.Search
             if (typeTokens.Any())
             {
                 var mustTypes = GetTypesFromTokens(typeTokens.Where(x => x.Context.GetTermOccur() == TermOccur.Must));
-                typeIds.IntersectWith(mustTypes.Select(x => x.Id));
+                var mustTypesIds = mustTypes.Select(x => x.Id).ToHashSet();
+                if (mustTypesIds.Any())
+                    typeIds.IntersectWith(mustTypes.Select(x => x.Id));
 
                 var mustNotTypes = GetTypesFromTokens(typeTokens.Where(x => x.Context.GetTermOccur() == TermOccur.MustNot));
-                typeIds.ExceptWith(mustNotTypes.Select(x => x.Id));
+                var mustNotTypesIds = mustNotTypes.Select(x => x.Id);
+                if (mustNotTypesIds.Any())
+                    typeIds.ExceptWith(mustNotTypes.Select(x => x.Id));
 
                 isFiltered = true;
             }
@@ -709,9 +713,22 @@ namespace Pilot.Web.Model.Search
                     return string.Empty;
         }
 
+        protected int[] GetPositions(IServerApiService repository, IEnumerable<int> personIds)
+        {
+            var positions = new List<int>();
+            foreach (var personId in personIds)
+            {
+                var person = repository.GetPerson(personId);
+                if (person != null)
+                    positions.AddRange(person.Positions);
+            }
+            return positions.ToArray();
+        }
         protected bool IsUserType(INType type)
         {
-            return !type.IsService && type.Kind == TypeKind.User;
+            return (!type.IsService && type.Kind == TypeKind.User) 
+                   || type.Name == SystemTypes.PROJECT_FILE 
+                   || type.Name == SystemTypes.PROJECT_FOLDER;
         }
 
         public ISearchExpression ToLocalizedExpression(string invariantExpressionString, ISearchExpressionFactory factory)

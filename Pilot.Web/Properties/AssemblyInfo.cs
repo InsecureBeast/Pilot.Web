@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Pilot.Web")]
 [assembly: AssemblyDescription("Pilot.Web")]
 [assembly: AssemblyProduct("Pilot.Web")]
-[assembly: AssemblyCopyright("Copyright © Company 2020")]
+[assembly: AssemblyCopyright("Copyright © Company 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("20.5.29.0")]
-[assembly: AssemblyFileVersion("20.5.29.0")]
+[assembly: AssemblyVersion("21.1.0.0")]
+[assembly: AssemblyFileVersion("21.1.0.0")]

@@ -11,7 +11,7 @@ import { IScene } from "../model/iscene.interface";
 @Component({
     selector: 'app-bim-document',
     templateUrl: './bim-document.component.html',
-  styleUrls: ['./bim-document.component.scss', '../../ui/toolbar.css']
+  styleUrls: ['./bim-document.component.scss', '../../documents/shared/toolbar.css']
 })
 /** bim-document component*/
 export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterViewInit, OnDestroy  {

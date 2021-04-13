@@ -13,7 +13,14 @@ export class VersionsSelectorService {
 
   }
 
-  changeSelectedSnapshot(snapshot: IFileSnapshot) {
-    this._selectedSnapshot$.next(snapshot);
+  changeSelectedSnapshot(snapshot?: IFileSnapshot) {
+    if (snapshot) {
+      this._selectedSnapshot$.next(snapshot);
+    }
+
+    const s = this._selectedSnapshot$.getValue();
+    this._selectedSnapshot$.next(s);
   }
+
+
 }

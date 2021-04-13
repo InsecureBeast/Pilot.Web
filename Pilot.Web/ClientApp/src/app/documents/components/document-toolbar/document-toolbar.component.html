@@ -1,36 +1,32 @@
 <nav class="navbar navbar-expand fixed-top navbar-light bg-content justify-content-between">
-  <ul class="navbar-nav">
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="download($event)">
-      <span class="navbar-text toolbar-text material-icons nav-icon">file_download</span>
-      <span class="navbar-text toolbar-text hidden-phone noselect" translate="download"></span>
+  <ul class="navbar-nav w-45">
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button noselect" (click)="close($event)">
+      <span class="navbar-text toolbar-text material-icons nav-icon">keyboard_backspace</span>
     </li>
-    <li click-stop-propagation click-prevent-default 
-        class="nav-item nav-item-button" (click)="openDocumentCard()">
-      <span class="navbar-text toolbar-text nav-icon material-icons">insert_drive_file</span>
-      <span class="navbar-text toolbar-text hidden-phone noselect" translate="card"></span>
-    </li>
-    <li click-stop-propagation click-prevent-default
-        class="nav-item nav-item-button" (click)="showFiles()" [class.checked]="showFilesMode" *ngIf="canShowFiles">
-      <span class="navbar-text toolbar-text nav-icon material-icons">folder</span>
-      <span class="navbar-text toolbar-text hidden-phone noselect" translate="sourceFiles"></span>
+    <li class="nav-item w-100">
+      <span class="navbar-text toolbar-text w-100">{{title}}</span>
     </li>
   </ul>
 
-  <!-- <ul class="navbar-nav noselect">
-    <li class="nav-item">
-      <span class="navbar-text toolbar-text">
-        {{title}}
-      </span>
-    </li>
-  </ul> -->
-
   <ul class="navbar-nav noselect">
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button d-block d-lg-none" (click)="showVersions($event)"
-        [class.checked]="isVersionsChecked">
-      <span class="navbar-text toolbar-text material-icons nav-icon">info_outline</span>
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="download($event)">
+      <span class="navbar-text toolbar-text material-icons nav-icon">save_alt</span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="download"></span>
     </li>
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button noselect" (click)="close($event)">
-      <span class="navbar-text toolbar-text material-icons nav-icon">close</span>
+    <li click-stop-propagation click-prevent-default
+        class="nav-item nav-item-button d-none d-lg-block" (click)="showFiles()" *ngIf="canShowFiles">
+      <span class="navbar-text toolbar-text nav-icon material-icons">folder_open</span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="sourceFiles"></span>
+    </li>
+    <li click-stop-propagation click-prevent-default 
+        class="nav-item nav-item-button d-none d-lg-block" (click)="openDocumentCard()">
+      <span class="navbar-text toolbar-text nav-icon material-icons">info_outline</span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="card"></span>
+    </li>
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button d-block d-lg-none" 
+        (click)="showMore($event)" 
+        id="moreButton">
+      <span class="navbar-text toolbar-text material-icons nav-icon">more_vert</span>
     </li>
   </ul>
 </nav>

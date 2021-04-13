@@ -1,0 +1,19 @@
+<div class="bottom-sheet-bg-overlay" *ngIf="flags.isBottomSheetEnabled" (click)="close()"></div>
+<div class="bottom-sheet-container" 
+    [ngClass]="{'bg-dark': options?.darkTheme}" 
+    *ngIf="flags.isBottomSheetEnabled"
+    [style.backgroundColor]="options?.backgroundColor" 
+    [style.color]="options?.fontColor" 
+    [@slideUpToggle]>
+  <div>
+    <div class="bottom-sheet-header" [ngClass]="{'bg-dark-header': options?.darkTheme}" *ngIf="options?.title">
+      <h4 class="title">{{options?.title}}</h4>
+    </div>
+    <div class="bottom-sheet-content">
+      <ng-content></ng-content>
+    </div>
+    <div class="bottom-sheet-footer" [ngClass]="{'bg-dark-footer': options?.darkTheme}" (click)="close()" *ngIf="flags.isCloseButtonEnabled">
+      {{options.closeButtonTitle}}
+    </div>
+  </div>
+</div>

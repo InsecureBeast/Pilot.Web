@@ -15,7 +15,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
     selector: 'app-task',
     templateUrl: './task.component.html',
-  styleUrls: ['./task.component.css', '../../../ui/toolbar.css']
+  styleUrls: ['./task.component.css', '../../../documents/shared/toolbar.css']
 })
 /** task component*/
 export class TaskComponent implements OnInit, OnDestroy {

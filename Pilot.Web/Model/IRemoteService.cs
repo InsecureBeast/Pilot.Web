@@ -9,6 +9,7 @@ namespace Pilot.Web.Model
     {
         IServerApiService GetServerApi();
         IFileArchiveApi GetFileArchiveApi();
+        ISearchService GetSearchServiceApi();
 
         bool IsActive { get; }
     }
@@ -39,6 +40,11 @@ namespace Pilot.Web.Model
             _serverApi = new ServerApiService(serverApi, dbInfo, searchFactory, backend);
             _serverCallback.RegisterCallbackListener((IRemoteServiceListener) _serverApi);
             IsActive = true;
+        }
+
+        public ISearchService GetSearchServiceApi()
+        {
+            return _serverApi.GetSearchService();
         }
 
         public bool IsActive { get; private set; }

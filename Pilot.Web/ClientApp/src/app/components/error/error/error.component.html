@@ -1,0 +1,32 @@
+<!-- <div class="content-center" *ngIf="code === 503">
+  <img src="/assets/images/disconnect.svg" class="error-image" />
+  <h5 class="font-weight-normal mt-2" translate="pilotServerUnavailable"></h5>
+  <p class="mt-3">{{message}}</p>
+  <button class="btn btn-primary mt-3" (click)="refresh()" translate="tryAgain"></button>
+</div> -->
+
+<!--<div class="content-center" *ngIf="code === 503">
+  <h5 class="text-muted">Pilot server is unavailable. Please try again later. </h5>
+  <span class="text-muted">An error occurred while sending request: </span>
+  <span class="text-muted">{{message}}</span>
+</div>-->
+
+<div class="content-center">
+  <img src="/assets/images/warning.svg" class="error-image" />
+  <h5 class="font-weight-normal mt-2" translate="errorTitle"></h5>
+  <span class="text-muted">{{message}}</span>
+  <br/>
+  <button class="btn btn-primary mt-3" (click)="refresh()" translate="tryAgain"></button>
+</div>
+
+
+<!--<div class="content-center" *ngIf="code != 500 && code != 503 && code">
+  <h5 class="text-muted">An error occurred while sending request. </h5>
+  <span class="text-muted">{{message}}</span>
+</div>-->
+
+<!--<div class="content-center">
+  <h5 class="text-muted">An error occurred while working.</h5>
+  <span class="text-muted">An error occurred while sending request: </span>
+  <span class="text-muted">{{message}}</span>
+</div>-->

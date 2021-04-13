@@ -47,6 +47,10 @@ export class RepositoryService {
     return this.types.get(id);
   }
 
+  getTypes(): IType[] {
+    return this.metadata.types;
+  }
+  
   getTypeByName(name: string): IType {
     return this.typeNames.get(name);
   }

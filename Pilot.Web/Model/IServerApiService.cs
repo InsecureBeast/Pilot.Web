@@ -40,6 +40,7 @@ namespace Pilot.Web.Model
         
         Task<ServerCommandRequestResult> InvokeServerCommand(string commandName, byte[] data);
         T GetServerCommandProxy<T>(string commandProcessorName) where T : class;
+        ISearchService GetSearchService();
     }
 
     public class ServerApiService : IServerApiService, IRemoteServiceListener
@@ -140,9 +141,8 @@ namespace Pilot.Web.Model
 
         public async Task<IEnumerable<PObject>> GetTasksAsync(string filter)
         {
-            CheckApi();
-            var searchService = _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
-            var searchResult = await searchService.Search(filter);
+            var searchService = GetSearchService();
+            var searchResult = await searchService.SearchTasks(filter);
             if (searchResult.Found == null)
                 return Array.Empty<PObject>();
 
@@ -153,9 +153,8 @@ namespace Pilot.Web.Model
 
         public async Task<IEnumerable<PObject>> GetTasksWithFilterAsync(string filter, Guid taskId)
         {
-            CheckApi();
-            var searchService = _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
-            var searchResult = await searchService.SearchObjectWithFilter(filter, taskId);
+            var searchService = GetSearchService();
+            var searchResult = await searchService.SearchTasksWithFilter(filter, taskId);
             if (searchResult.Found == null)
                 return Enumerable.Empty<PObject>();
 
@@ -338,6 +337,12 @@ namespace Pilot.Web.Model
         {
             var callService = new ServerCommandCallService<T>(this, commandProcessorName);
             return new Marshaller(callService).Get<T>();
+        }
+
+        public ISearchService GetSearchService()
+        {
+            CheckApi();
+            return _searchServiceFactory.GetSearchService(this, _currentPerson, _types);
         }
 
         public void UpdateCommandResult(Guid requestId, byte[] data, ServerCommandResult result)

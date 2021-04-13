@@ -20,7 +20,7 @@ export class TypeIconService {
   }
 
   getPreview(item: IObject, cancel: Subject<any>): Observable<SafeUrl> {
-    return this.queue.enqueue(() => { return this.iconsProvider.getPreviewAsync(item, cancel) }, cancel);
+    return this.queue.enqueue(() => this.iconsProvider.getPreviewAsync(item, cancel), cancel);
   }
 
   getTypeIcon(item: IObject): SafeUrl {

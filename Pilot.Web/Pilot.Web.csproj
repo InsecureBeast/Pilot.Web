@@ -20,10 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.34.0" />
+    <PackageReference Include="Ascon.Pilot.Server.Api" Version="21.8.3-alpha" />
     <PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.1.11" />
-    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00007" />
-    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00007" />
+    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00013" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00013" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.4" />
@@ -35,12 +35,8 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="Logs\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="Logs\**" />
-    <EmbeddedResource Remove="Logs\**" />
     <None Remove="$(SpaRoot)**" />
-    <None Remove="Logs\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 

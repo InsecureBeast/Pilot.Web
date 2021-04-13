@@ -23,12 +23,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
             // when
             var fileId = Guid.NewGuid();
             var page = new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
@@ -47,12 +49,14 @@ namespace Pilot.Web.Tests
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
             var fileLoader = new Mock<IFileLoader>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object,
+                fileStorageProvider.Object);
 
             // when
             var fileId = Guid.NewGuid();
@@ -80,12 +84,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // when
             var fileId = Guid.NewGuid();
@@ -104,12 +110,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // when
             var fileId = Guid.NewGuid();
@@ -126,12 +134,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // when
             var fileId = Guid.NewGuid();
@@ -156,12 +166,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // when
             var fileId = Guid.NewGuid();
@@ -182,12 +194,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // when
             var fileId = Guid.NewGuid();
@@ -216,12 +230,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // when
             var objectIds = new string[]
@@ -254,12 +270,14 @@ namespace Pilot.Web.Tests
             var contextService = new Mock<IContextService>();
             var documentRender = new Mock<IDocumentRender>();
             var fileStorage = new Mock<IFilesStorage>();
+            var fileStorageProvider = new Mock<IFileStorageProvider>();
             var filesOperationService = new Mock<IFilesOperationService>();
             var controller = new FilesController(
                 contextService.Object,
                 documentRender.Object,
                 fileStorage.Object,
-                filesOperationService.Object);
+                filesOperationService.Object, 
+                fileStorageProvider.Object);
 
             // then
             Assert.Throws<Exception>(() => controller.GetFileArchive(new string[0]));

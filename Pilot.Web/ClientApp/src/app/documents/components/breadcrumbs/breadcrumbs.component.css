@@ -5,6 +5,10 @@
   height: 24px;
 }
 
+.breadcrumb-button {
+  padding: 0px .3rem;
+}
+
 .breadcrumb-item {
   max-width: 400px;
   text-overflow: ellipsis;
@@ -15,21 +19,21 @@
 .breadcrumb-item + .breadcrumb-item:before {
   content: "›";
   font-size: x-large;
-  margin-top:-15px;
+  margin-top: -7px;
 }
 
-li.breadcrumb-item a {
+li.breadcrumb-item a, li.breadcrumb-button a {
   color: var(--gray);
 }
 
-  li.breadcrumb-item a:link {
+  li.breadcrumb-item a:link, li.breadcrumb-button a:link {
     color: var(--gray);
   }
-  li.breadcrumb-item a:visited {
+  li.breadcrumb-item a:visited, li.breadcrumb-button a:visited {
     color: var(--gray);
   }
-  li.breadcrumb-item a:hover {
-    color: #343951;
+  li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
+    color: var(--dark);
     text-decoration: none;
   }
 
@@ -53,12 +57,26 @@ li.breadcrumb-item a {
 
 @media (max-width: 400px) {
   .breadcrumb-item {
-    max-width: 145px;
+    max-width: 135px;
   }
 }
 
 @media (max-width: 350px) {
   .breadcrumb-item {
-    max-width: 135px;
+    max-width: 115px;
   }
 }
+
+/*--------------------------------  search block  -----------------------------------------*/
+.input-group-text {
+  padding: .375rem .3rem;
+}
+
+.search-input {
+  position: absolute;
+  left: 11px;
+  top: 1px;
+  right: 34px;
+}
+
+/*-------------------------------  end search block  --------------------------------------*/

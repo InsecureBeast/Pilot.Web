@@ -53,20 +53,28 @@
 
 </div>
 
-<pw-modal id="filtersModal">
-  <div class="mob-filters-view">
-    <div class="bg-white rounded-lg p-3">
-      <app-task-filters class=""
-                        [selectedFilter]="selectedFilter"
-                        (onSelected)="onFilterSelected($event)"
-                        (onError)="onError($event)">
-      </app-task-filters>
-    </div>
+<app-bottom-sheet [options]="options" #bottomSheet>
+  <div class="">
+    <ul class="list-group list-group-flush ">
+      <li class="list-group-item list-group-item-action pointer border-0" *ngFor="let filter of commonFilters" (click)="onFilterSelected(filter)" 
+          [attr.id]="'cmi' + filter.id">
+          <div class="d-flex flex-row justify-content-between">
+            <div class="">{{filter.name}}</div>
+            <span class="material-icons" *ngIf="filter.id === selectedFilter.id" style="color: var(--primary);">check_circle</span>
+          </div>
+      </li>
+    </ul>
+    
+    <div class="border-bottom" style="height: 2px;"></div>
 
-    <div class="bg-white rounded-lg p-3 mt-2">
-      <a click-stop-propagation
-         [routerLink]=""
-         (click)="closeFilters()" translate="cancel"></a>
-    </div>
-   </div>
-</pw-modal>
+    <ul class="list-group list-group-flush ">
+      <li class="list-group-item list-group-item-action pointer border-0" *ngFor="let filter of personalFilters" (click)="onFilterSelected(filter)" 
+          [attr.id]="'cmi' + filter.id">
+          <div class="d-flex flex-row justify-content-between">
+            <div class="">{{filter.name}}</div>
+            <span class="material-icons" *ngIf="filter.id === selectedFilter.id" style="color: var(--primary);">check_circle</span>
+          </div>
+      </li>
+    </ul>
+  </div>
+</app-bottom-sheet>

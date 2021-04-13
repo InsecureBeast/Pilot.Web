@@ -7,12 +7,11 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { IObjectExtensions } from 'src/app/core/tools/iobject.extensions';
 import { TransitionsManager } from 'src/app/core/transitions/transitions.manager';
 import { TransitionCommand } from '../../shared/transition.command';
-import { RequestType } from 'src/app/core/headers.provider';
 
 @Component({
     selector: 'app-task-toolbar',
     templateUrl: './task-toolbar.component.html',
-  styleUrls: ['./task-toolbar.component.css', '../../../ui/toolbar.css']
+  styleUrls: ['./task-toolbar.component.css', '../../../documents/shared/toolbar.css']
 })
 /** task-toolbar component*/
 export class TaskToolbarComponent {

@@ -11,6 +11,7 @@ namespace Pilot.Web.Model
     {
         IServerApiService GetServerApi(string actor);
         IFileLoader GetFileLoader(string actor);
+        ISearchService GetSearchService(string actor);
 
         void CreateContext(Credentials credentials);
         void RemoveContext(string actor);
@@ -43,10 +44,19 @@ namespace Pilot.Web.Model
             return new FileLoader(fileArchiveApi);
         }
 
+        public ISearchService GetSearchService(string actor)
+        {
+            var apiService = GetRemoteService(actor);
+            return apiService.GetSearchServiceApi();
+        }
+
         public void CreateContext(Credentials credentials)
         {
             lock (_services)
             {
+                if (string.IsNullOrEmpty(credentials.Username))
+                    throw new UnauthorizedAccessException("Access denied. The user name or password is incorrect.");
+
                 if (_services.ContainsKey(credentials.Username))
                     return;
 

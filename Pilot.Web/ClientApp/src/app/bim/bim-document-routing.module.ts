@@ -6,7 +6,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { BimDocumentComponent } from './bim-document/bim-document.component';
 
 const routes: Routes = [
-  { path: ':id/bim/:id', component: BimDocumentComponent, canActivate: [AuthGuard], data: { reuse: false } }
+  { path: ':fid/bim/:id', component: BimDocumentComponent, canActivate: [AuthGuard], data: { reuse: false } }
 ];
 
 @NgModule({

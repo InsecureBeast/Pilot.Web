@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 using Pilot.Web.Model;
 using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Model.FileStorage;
-using Pilot.Web.Model.ModifyData;
 using Pilot.Web.Tools;
 
 namespace Pilot.Web.Controllers
@@ -32,12 +31,14 @@ namespace Pilot.Web.Controllers
             IContextService contextService, 
             IDocumentRender documentRender, 
             IFilesStorage filesStorage, 
-            IFilesOperationService filesOperationService)
+            IFilesOperationService filesOperationService,
+            IFileStorageProvider fileStorageProvider)
         {
             _contextService = contextService;
             _documentRender = documentRender;
             _filesStorage = filesStorage;
             _filesOperationService = filesOperationService;
+            _fileStorageProvider = fileStorageProvider;
         }
 
         [Authorize]

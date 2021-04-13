@@ -15,7 +15,7 @@ export class RouteReuseService implements  RouteReuseStrategy {
     }
 
     let shouldReuse = false;
-    //console.log('checking if this route should be re used or not', route);
+    // console.log('checking if this route should be re used or not', route);
     if (route.routeConfig.data) {
       route.routeConfig.data.reuse ? shouldReuse = true : shouldReuse = false;
     }
@@ -23,26 +23,26 @@ export class RouteReuseService implements  RouteReuseStrategy {
   }
 
   store(route: ActivatedRouteSnapshot, handle: {}): void {
-    //console.log('storing handler');
+    // console.log('storing handler');
     if (handle) {
       this.handlers[this.getUrl(route)] = handle;
     }
   }
 
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    //console.log('checking if it should be re attached');
-    //return true;
+    // console.log('checking if it should be re attached');
+    // return true;
     const should = !!this.handlers[this.getUrl(route)];
     return should;
   }
 
   retrieve(route: ActivatedRouteSnapshot): {} {
-    if(!route.routeConfig || route.routeConfig.loadChildren) {
+    if (!route.routeConfig || route.routeConfig.loadChildren || route.routeConfig.children) {
       return null;
-    };
+    }
 
-    //console.log('Attach cached page for: ', route.data['key']);
-    //return this.handlers[route.data['key']];
+    // console.log('Attach cached page for: ', route.data['key']);
+    // return this.handlers[route.data['key']];
     return this.handlers[this.getUrl(route)];
   }
 
@@ -59,13 +59,10 @@ export class RouteReuseService implements  RouteReuseStrategy {
   }
 
   private getUrl(route: ActivatedRouteSnapshot): string {
-    if (route.routeConfig) {
-      const url = route.routeConfig.path;
-      //console.log('returning url', url);
-      return url;
-    }
-
-    return '';
+    return route.pathFromRoot
+       .map(v => v.url.map(segment => segment.toString()).join('/'))
+       .filter(url => !!url)
+       .join('/');
   }
 
 }
