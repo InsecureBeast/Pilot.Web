@@ -6,7 +6,8 @@ import { Subscription, Subject } from 'rxjs';
 
 import { BimModelService } from '../shared/bim-model.service';
 import { SceneFactoryService } from '../shared/scene-factory.service';
-import { IScene } from "../model/iscene.interface";
+import { IScene } from '../model/iscene.interface';
+import { Tools } from 'src/app/core/tools/tools';
 
 @Component({
     selector: 'app-bim-document',
@@ -29,7 +30,6 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     private readonly location: Location,
     private readonly bimModelService: BimModelService,
     private readonly sceneFactory: SceneFactoryService) {
-    
   }
 
   ngOnInit(): void {
@@ -40,42 +40,48 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
     this.scene = this.sceneFactory.createScene(this.containerElement);
     this.navigationSubscription = this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const id = params.get('id');
-      if (!id)
+      if (!id) {
         return;
+      }
 
-      this.isLoading = true;
-      this.progress = 0;
-      this.bimModelService.getModelPartsAsync(id, this.ngUnsubscribe).then(async modelParts => {
-        this.scene.stopAnimate();
-        let part = 100 / modelParts.length / 4;
-        for (let modelPart of modelParts) {
-          this.progress = this.progress + part;
-          const tessellations = await this.bimModelService.getModelPartTessellationsAsync(modelPart, this.ngUnsubscribe);
-          this.progress = this.progress + part;
-          const nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
-          this.progress = this.progress + part;
-          this.scene.updateObjects(tessellations, nodes);
-          this.progress = this.progress + part;
-        }
+      Tools.sleep(10).then(() => {
+        this.isLoading = true;
+        this.progress = 0;
+        this.bimModelService.getModelPartsAsync(id, this.ngUnsubscribe).then(async modelParts => {
+          this.scene.stopAnimate();
+          const part = 100 / modelParts.length / 4;
+          for (const modelPart of modelParts) {
+            this.progress = this.progress + part;
+            const tessellations = await this.bimModelService.getModelPartTessellationsAsync(modelPart, this.ngUnsubscribe);
+            this.progress = this.progress + part;
+            const nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
+            this.progress = this.progress + part;
+            this.scene.updateObjects(tessellations, nodes);
+            this.progress = this.progress + part;
+          }
 
-        this.isLoading = false;
-        this.progress = 100;
-        this.scene.stopAnimate();
+          this.isLoading = false;
+          this.progress = 100;
+          this.scene.stopAnimate();
+        });
       });
     });
   }
 
   ngAfterContentChecked(): void {
-    if (this.scene)
+    if (this.scene) {
       this.scene.updateRendererSize();
+    }
   }
 
   ngOnDestroy(): void {
-    if (this.scene)
+    if (this.scene) {
       this.scene.dispose();
+    }
 
-    if (this.navigationSubscription)
+    if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
+    }
 
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
