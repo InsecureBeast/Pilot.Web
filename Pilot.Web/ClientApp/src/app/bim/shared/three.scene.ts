@@ -26,7 +26,7 @@ export class ThreeScene implements IScene, IRenderLitener {
     this.createLight();
     this.stopAnimate();
   }
-  
+
   dispose(): void {
     this.renderer.dispose();
     this.renderer = null;
@@ -106,6 +106,11 @@ export class ThreeScene implements IScene, IRenderLitener {
     this.cameraControls.addEventListener('controlend', () => {
       this.stopAnimate();
     });
+
+    window.addEventListener('wheel', (ev) => {
+      // ev.preventDefault();
+      this.startAnimate();
+    }, false );
   }
 
   private createLight() {
