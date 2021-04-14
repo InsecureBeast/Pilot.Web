@@ -23,6 +23,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   @ViewChild('container3d') containerElement: ElementRef;
   isLoading: boolean;
   progress: number;
+  title: string;
 
   /** bim-document ctor */
   constructor(
@@ -44,7 +45,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
         return;
       }
 
-      Tools.sleep(10).then(() => {
+      Tools.sleep(10).then(async () => {
         this.isLoading = true;
         this.progress = 0;
         this.bimModelService.getModelPartsAsync(id, this.ngUnsubscribe).then(async modelParts => {
@@ -60,6 +61,7 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
             this.progress = this.progress + part;
           }
 
+          this.title = await this.bimModelService.getProjectTitle(id, this.ngUnsubscribe);
           this.isLoading = false;
           this.progress = 100;
           this.scene.stopAnimate();

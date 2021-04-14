@@ -48,4 +48,10 @@ export class BimModelService {
       }
     });
   }
+
+  async getProjectTitle(coordinationModelId: string, cancel: Subject<void>): Promise<string> {
+    const coordinationModel = await this.repository.getObjectAsync(coordinationModelId);
+    const project = await await this.repository.getObjectAsync(coordinationModel.parentId);
+    return project.title;
+  }
 }

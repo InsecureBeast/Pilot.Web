@@ -1,5 +1,11 @@
 <nav class="navbar navbar-expand fixed-top navbar-light bg-content justify-content-between">
-  <ul class="navbar-nav">
+  <ul class="navbar-nav w-45">
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button noselect" (click)="close($event)">
+      <span class="navbar-text toolbar-text material-icons nav-icon">keyboard_backspace</span>
+    </li>
+    <li class="nav-item w-100">
+      <span class="navbar-text toolbar-text w-100">{{title}}</span>
+    </li>
   </ul>
 
   <ul class="navbar-nav">
@@ -11,9 +17,9 @@
   </ul>
 
   <ul class="navbar-nav">
-    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="close($event)">
+    <!-- <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="close($event)">
       <span class="navbar-text toolbar-text material-icons nav-icon">close</span>
-    </li>
+    </li> -->
   </ul>
 </nav>
 
