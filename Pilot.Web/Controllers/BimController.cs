@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ascon.Pilot.BimUtils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pilot.Web.Model;
@@ -24,24 +25,36 @@ namespace Pilot.Web.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public Task<IList<Tessellation>> GetTessellations(string modelPartId, string fileId, long size)
+        public Task<IList<Tessellation>> GetTessellations(string modelPartId)
         {
-            var fileGuid = Guid.Parse(fileId);
             var modelPartGuid = Guid.Parse(modelPartId);
             var actor = HttpContext.GetTokenActor();
             var fileLoader = _contextService.GetFileLoader(actor);
-            return _bimModelService.GetTessellationsAsync(modelPartGuid, fileGuid, size, fileLoader);
+            var serverApi = _contextService.GetServerApi(actor);
+            return _bimModelService.GetTessellationsAsync(modelPartGuid, fileLoader, serverApi);
         }
 
         [Authorize]
         [HttpGet("[action]")]
-        public Task<IList<IfcNode>> GetNodes(string modelPartId, string fileId, long size)
+        public Task<IList<IfcNode>> GetNodes(string modelPartId)
         {
-            var fileGuid = Guid.Parse(fileId);
             var modelPartGuid = Guid.Parse(modelPartId);
             var actor = HttpContext.GetTokenActor();
             var fileLoader = _contextService.GetFileLoader(actor);
-            return _bimModelService.GetNodesAsync(modelPartGuid, fileGuid, size, fileLoader);
+            var serverApi = _contextService.GetServerApi(actor);
+            return _bimModelService.GetNodesAsync(modelPartGuid, fileLoader, serverApi);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public IList<ElementPropertySet> GetNodeProperties(string modelPartId, string nodeId)
+        {
+            var nodeGuid = Guid.Parse(nodeId);
+            var modelPartGuid = Guid.Parse(modelPartId);
+            var actor = HttpContext.GetTokenActor();
+            var fileLoader = _contextService.GetFileLoader(actor);
+            var serverApi = _contextService.GetServerApi(actor);
+            return _bimModelService.GetNodeProperties(modelPartGuid, nodeGuid, fileLoader, serverApi);
         }
     }
 }

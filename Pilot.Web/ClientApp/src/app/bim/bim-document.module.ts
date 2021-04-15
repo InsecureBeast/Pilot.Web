@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { BimDocumentRoutingModule } from './bim-document-routing.module';
 import { BimDocumentComponent } from './bim-document/bim-document.component';
+import { BimTreeviewComponent } from './bim-treeview/bim-treeview.component';
+import { TreeviewModule } from 'ngx-treeview';
+import { BimNodePropertiesComponent } from './bim-node-properties/bim-node-properties.component';
 
 @NgModule({
   imports: [
@@ -15,10 +16,13 @@ import { BimDocumentComponent } from './bim-document/bim-document.component';
     //ErrorModule,
     RouterModule,
     TranslateModule,
-    BimDocumentRoutingModule
+    BimDocumentRoutingModule,
+    TreeviewModule.forRoot()
   ],
   declarations: [
-    BimDocumentComponent
+    BimDocumentComponent,
+    BimTreeviewComponent,
+    BimNodePropertiesComponent
   ],
   exports: [
     BimDocumentComponent

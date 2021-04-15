@@ -29,7 +29,23 @@
          [style.width]="progress + '%'"></div>
   </div>
 
-  <div class="col-12 viewer-container">
-    <div #container3d class="h-100" id="container3d"></div>
+  <div class="d-none d-sm-block col-sm-4 pr-1"
+       style="font-size: 14px;">
+    <div class="h-50">
+      <app-bim-treeview [ifcNodes]="nodes"
+                        (selected)="onSelectedChange($event)">
+      </app-bim-treeview>
+    </div>
+    <div class="" *ngIf="selectedNode">
+      <app-bim-node-properties [node]="selectedNode">
+
+      </app-bim-node-properties>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-8 p-0">
+    <div class="col-12 viewer-container p-0">
+      <div #container3d class="h-100" id="container3d"></div>
+    </div>
   </div>
 </div>

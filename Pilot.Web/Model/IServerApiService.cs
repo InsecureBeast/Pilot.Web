@@ -17,9 +17,11 @@ namespace Pilot.Web.Model
         DDatabaseInfo GetDatabaseInfo();
         INMetadata GetMetadata();
         IEnumerable<PObject> GetObjects(Guid[] ids);
+        INObject GetObject(Guid id);
         IEnumerable<PObject> GetObjectChildren(Guid id, ChildrenType type);
         IEnumerable<PObject> GetObjectParents(Guid id);
         INType GetType(int id);
+        INType GetType(string name);
 
         Task<IEnumerable<PObject>> GetTasksAsync(string filter);
         Task<IEnumerable<PObject>> GetTasksWithFilterAsync(string filter, Guid taskId);
@@ -90,7 +92,7 @@ namespace Pilot.Web.Model
             if (parent == null)
                 throw new Exception("Object not found");
             
-            var childIds = GetChildrenByType(parent, type);
+            var childIds = GetChildrenByType(parent.Dto, type);
             
             var res = new List<PObject>();
             if (childIds.Any())
@@ -139,6 +141,17 @@ namespace Pilot.Web.Model
             return _types[id];
         }
 
+        public INType GetType(string name)
+        {
+            CheckApi();
+            foreach (var type in _types)
+            {
+                if (type.Value.Name == name)
+                    return type.Value;
+            }
+            return MType.Null;
+        }
+
         public async Task<IEnumerable<PObject>> GetTasksAsync(string filter)
         {
             var searchService = GetSearchService();
@@ -175,6 +188,13 @@ namespace Pilot.Web.Model
             var array = _serverApi.GetObjects(ids);
             var res = array.Select(o => new PObject(o, _metadata, _people));
             return res;
+        }
+
+        public INObject GetObject(Guid id)
+        {
+            var objects = _serverApi.GetObjects(new[] { id });
+            var dObject = objects.FirstOrDefault();
+            return dObject;
         }
 
         public ICommonSettings GetPersonalSettings(string key)
@@ -307,12 +327,6 @@ namespace Pilot.Web.Model
             }
 
             return childIds;
-        }
-
-        private DObject GetObject(Guid id)
-        {
-            var objects = _serverApi.GetObjects(new[] { id });
-            return objects.FirstOrDefault();
         }
 
         public void Notify(DMetadataChangeset changeset)

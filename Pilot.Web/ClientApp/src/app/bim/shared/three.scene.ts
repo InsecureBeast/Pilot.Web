@@ -109,7 +109,7 @@ export class ThreeScene implements IScene, IRenderLitener {
 
     window.addEventListener('wheel', (ev) => {
       // ev.preventDefault();
-      this.startAnimate();
+      // this.startAnimate();
     }, false );
   }
 

@@ -56,7 +56,7 @@ export class ThreeRender implements IRender {
               // const line = new THREE.LineSegments(edges, lineMaterial);
               // group.add(line);
               this.geometryCount++;
-              console.log(this.geometryCount);
+              // console.log(this.geometryCount);
             }
           });
         }

@@ -1,0 +1,14 @@
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col">Property</th>
+      <th scope="col">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr mdbTableCol *ngFor="let property of properties">
+        <td>{{property.name}}</td>
+        <td>{{property.value.value}}</td>
+      </tr>
+  </tbody>
+</table>

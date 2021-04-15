@@ -10,6 +10,8 @@
   --border: #dee2e6;
   --bg: #ffffff;
   --black: #000000;
+  --hover: #d5e9ff;
+  --selected: #b8daff;
 }
 
 .bg-accent {

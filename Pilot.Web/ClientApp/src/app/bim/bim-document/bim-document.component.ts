@@ -8,6 +8,7 @@ import { BimModelService } from '../shared/bim-model.service';
 import { SceneFactoryService } from '../shared/scene-factory.service';
 import { IScene } from '../model/iscene.interface';
 import { Tools } from 'src/app/core/tools/tools';
+import { IIfcNode } from '../shared/bim-data.classes';
 
 @Component({
     selector: 'app-bim-document',
@@ -24,6 +25,8 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
   isLoading: boolean;
   progress: number;
   title: string;
+  nodes: IIfcNode[];
+  selectedNode: IIfcNode;
 
   /** bim-document ctor */
   constructor(
@@ -55,9 +58,9 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
             this.progress = this.progress + part;
             const tessellations = await this.bimModelService.getModelPartTessellationsAsync(modelPart, this.ngUnsubscribe);
             this.progress = this.progress + part;
-            const nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
+            this.nodes = await this.bimModelService.getModelPartIfcNodesAsync(modelPart, this.ngUnsubscribe);
             this.progress = this.progress + part;
-            this.scene.updateObjects(tessellations, nodes);
+            this.scene.updateObjects(tessellations, this.nodes);
             this.progress = this.progress + part;
           }
 
@@ -91,5 +94,9 @@ export class BimDocumentComponent implements OnInit, AfterContentChecked, AfterV
 
   close($event): void {
     this.location.back();
+  }
+
+  onSelectedChange(node: IIfcNode): void {
+    this.selectedNode = node;
   }
 }

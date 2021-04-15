@@ -1,0 +1,16 @@
+.form-check-label:hover {
+    background-color: var(--gray-light);
+    cursor: pointer;
+}
+
+.treeview-container {
+    overflow-x: hidden!important;
+}
+
+.selected {
+    background-color: var(--selected);
+}
+
+.selected:hover {
+    background-color: var(--selected);
+}
