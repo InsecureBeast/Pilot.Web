@@ -33,7 +33,7 @@ namespace Pilot.Web.Model
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                _logger.Debug(e.Message);
                 return null;
             }
         }
