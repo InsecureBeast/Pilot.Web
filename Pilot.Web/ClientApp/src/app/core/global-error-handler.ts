@@ -14,14 +14,29 @@ export class GlobalErrorHandler implements ErrorHandler {
   handleError(error: Error | HttpErrorResponse) {
     const notifier = this.injector.get(NotificationService);
     const errorHandlerService = this.injector.get(ErrorHandlerService);
-    const response = error as HttpErrorResponse;
-    if (response) {
+
+    if (error instanceof  HttpErrorResponse) {
+      const response = error as HttpErrorResponse;
       const err = errorHandlerService.handleErrorMessage(response);
-      notifier.showError(err);
+      if (err === null) {
+        return;
+      }
+
       console.error(err);
+      notifier.showError(err);
       return;
     }
 
+    if (error.rejection) {
+      const err = errorHandlerService.handleErrorMessage(error.rejection);
+      if (err === null) {
+        return;
+      }
+
+      console.error(err);
+      notifier.showError(err);
+      return;
+    }
 
     notifier.showError(error);
     console.error(error);

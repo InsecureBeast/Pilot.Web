@@ -4,7 +4,7 @@
     <app-documents-toolbar class="col-12 p-0"
                            *ngIf="checked != null && checked.length > 0"
                            [checkedNodes]="checked"
-                           (onShowDocumentCard)="onShowObjectCard(cardTemplate)"
+                           (showDocumentCard)="onShowObjectCard(cardTemplate)"
                            (downloadStarted)="onDownloadStarted(downloadTemplate)"
                            (downloadFinished)="onDownloadFinished($event)">
     </app-documents-toolbar>

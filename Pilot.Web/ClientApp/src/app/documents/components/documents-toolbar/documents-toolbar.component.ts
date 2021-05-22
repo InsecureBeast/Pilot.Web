@@ -14,7 +14,7 @@ import { INode } from '../../shared/node.interface';
 export class DocumentsToolbarComponent implements OnInit, OnDestroy {
 
   @Input() checkedNodes: INode[];
-  @Output() onShowDocumentCard = new EventEmitter<any>();
+  @Output() showDocumentCard = new EventEmitter<any>();
   @Output() downloadStarted = new EventEmitter<any>();
   @Output() downloadFinished = new EventEmitter<any>();
 
@@ -40,8 +40,12 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
 
     this.downloadStarted.emit();
     const selected = this.checkedNodes[0];
-    await this.downloadService.downloadFile(selected.source);
-    this.downloadFinished.emit();
+    try {
+      await this.downloadService.downloadFile(selected.source);
+    }
+    finally {
+      this.downloadFinished.emit();
+    }
   }
 
   async downloadArchive(): Promise<void> {
@@ -51,8 +55,12 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
 
     this.downloadStarted.emit();
     const selected = this.checkedNodes.map(n => n.id);
-    await this.downloadService.downloadFileArchive(selected);
-    this.downloadFinished.emit();
+    try {
+      await this.downloadService.downloadFileArchive(selected);
+    }
+    finally {
+      this.downloadFinished.emit();
+    }
   }
 
   isNodeChecked(): boolean {
@@ -76,6 +84,6 @@ export class DocumentsToolbarComponent implements OnInit, OnDestroy {
   }
 
   openDocumentCard(): void {
-    this.onShowDocumentCard.emit();
+    this.showDocumentCard.emit();
   }
 }

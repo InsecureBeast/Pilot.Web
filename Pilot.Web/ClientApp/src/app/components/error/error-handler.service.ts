@@ -29,7 +29,7 @@ export class ErrorHandlerService {
     if (e.status === 401) {
       this.authService.logout();
       this.router.navigate(['/login']);
-      return e.message;
+      return null;
     }
 
     if (e.status === 503) {
