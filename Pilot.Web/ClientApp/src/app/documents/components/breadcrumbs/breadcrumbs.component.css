@@ -39,11 +39,11 @@ li.breadcrumb-item a, li.breadcrumb-button a {
 
 @media (max-width: 765px) {
   .breadcrumb-item {
-    max-width: 280px;
+    max-width: 260px;
   }
 }
 
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .breadcrumb-item {
     max-width: 210px;
   }
@@ -65,7 +65,7 @@ li.breadcrumb-item a, li.breadcrumb-button a {
   .breadcrumb-item {
     max-width: 115px;
   }
-}
+} */
 
 /*--------------------------------  search block  -----------------------------------------*/
 .input-group-text {

@@ -1,11 +1,23 @@
 <nav class="navbar navbar-expand navbar-light bg-content justify-content-between">
   <ol class="breadcrumb navbar-nav noselect" #olRef>
+    <li class="breadcrumb-item" *ngIf="root">
+      <a click-stop-propagation 
+        click-prevent-default 
+        [routerLink]="" 
+        (click)="onSelect(root)" 
+        *ngIf="!root.isActive"
+        class="material-icons">home</a>
+      <span *ngIf="root.isActive" class="material-icons">home</span>
+    </li>
+    <li class="breadcrumb-item" *ngIf="hiddenBreadcrumbs && hiddenBreadcrumbs.length > 0">
+      <a click-stop-propagation 
+        click-prevent-default 
+        [routerLink]="" 
+        class="material-icons">more_horiz</a>
+    </li>
     <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs">
       <ng-container *ngIf="!bc.isRoot">
         <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
-      </ng-container>
-      <ng-container *ngIf="bc.isRoot">
-        <ng-container *ngTemplateOutlet="rootItemTemplate;context:{bcItem:bc}"></ng-container>
       </ng-container>
       <ng-container *ngIf="bc.isSearchItem">
         <ng-container *ngTemplateOutlet="searchItemTemplate;context:{bcItem:bc}"></ng-container>
@@ -13,7 +25,7 @@
     </li>
   </ol>
 
-  <ul class="navbar-nav breadcrumb noselect">
+  <ul class="navbar-nav breadcrumb noselect" #toolsPanel>
     <li class="breadcrumb-button search-input"
         [@.disabled]="isDisabledInputAnimation"
         @searchInputSlideInToggle
@@ -62,16 +74,6 @@
     </li>
   </ul>
 </nav>
-
-<ng-template #rootItemTemplate let-bc="bcItem">
-  <a click-stop-propagation 
-     click-prevent-default 
-     [routerLink]="" 
-     (click)="onSelect(bc)" 
-     *ngIf="!bc.isActive" 
-     class="material-icons">home</a>
-  <span *ngIf="bc.isActive" class="material-icons">home</span>
-</ng-template>
 
 <ng-template #itemTemplate let-bc="bcItem">
   <a click-stop-propagation 

@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DocumentsComponent } from './pages/documents/documents.component';
 import { DocumentComponent } from './pages/document/document.component';
 import { DocumentListComponent } from './components/document-list/document-list.component';
-import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
+import { BreadcrumbsComponent, WidthBreadcrumbDirective } from './components/breadcrumbs/breadcrumbs.component';
 import { DocumentToolbarComponent } from './components/document-toolbar/document-toolbar.component';
 import { DocumentsToolbarComponent } from './components/documents-toolbar/documents-toolbar.component';
 import { DocumentVersionsComponent } from './components/document-versions/document-versions.component';
@@ -59,7 +59,8 @@ import { FocusDirective } from '../core/directives/focus.directive';
     VersionsComponent,
     SignaturesComponent,
     DocumentsSearchComponent,
-    FocusDirective
+    FocusDirective,
+    WidthBreadcrumbDirective
   ],
   exports: [
     DocumentsComponent,

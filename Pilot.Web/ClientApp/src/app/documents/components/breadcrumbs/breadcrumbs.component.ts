@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener,
-  Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, AfterViewInit, 
+  Input, Output, OnChanges, SimpleChanges, EventEmitter, HostBinding, Directive } from '@angular/core';
 
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -30,6 +31,30 @@ export const SearchInputSlideInToggleAnimation = [
   ])
 ];
 
+@Directive({
+  selector: '[appWidthBreadcrumb]'
+})
+export class WidthBreadcrumbDirective implements AfterViewInit {
+
+  private _breadcrumb: BreadcrumbNode;
+  constructor(private el: ElementRef) {
+  }
+
+  @Input()
+  set appWidthBreadcrumb(value: BreadcrumbNode) {
+    this._breadcrumb = value;
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.ngAfterViewInit();
+  }
+
+  ngAfterViewInit(): void {
+    // this._breadcrumb.setWidth(this.el.nativeElement.offsetWidth);
+  }
+}
+
 export class BreadcrumbNode implements INode {
 
   id: string;
@@ -41,6 +66,7 @@ export class BreadcrumbNode implements INode {
   isChecked: boolean;
   isRoot: boolean;
   isSearchItem = false;
+  width: number;
 
   /** BreadcrumbNode ctor */
   constructor(public source: IObject, isActive: boolean) {
@@ -57,6 +83,15 @@ export class BreadcrumbNode implements INode {
     this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
     this.source = source;
     this.isRoot = source.id === SystemIds.rootId;
+    this.width = this.title.length * 10;
+
+    if (this.isRoot) {
+      this.width = 30;
+    }
+
+    if (this.width > 465) {
+      this.width = 465;
+    }
   }
 }
 
@@ -88,16 +123,16 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   private nodeStyleSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private allBreadcrumbNodes: BreadcrumbNode[];
+  private _toolsPanel: ElementRef;
 
   @ViewChild('olRef', { static: true })
   set setOl(v: ElementRef) {
-    if (!v) {
-      return;
-    }
-
     this.ol = v;
-    const width = v.nativeElement.offsetWidth;
-    this.setCountFromWidth(width);
+  }
+
+  @ViewChild('toolsPanel', { static: true })
+  set setToolsPanel(v: ElementRef) {
+    this._toolsPanel = v;
   }
 
   @Input() parent: ObjectNode;
@@ -111,6 +146,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   searchInputText: string;
   isDisabledInputAnimation = true;
   isSearchInputFocused: boolean;
+  root: BreadcrumbNode;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
@@ -119,6 +155,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly navigationService: DocumentsNavigationService,
     private readonly searchService: SearchService) {
 
+    this.allBreadcrumbNodes = new Array();
   }
 
   ngOnInit(): void {
@@ -147,7 +184,8 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    const width = this.ol.nativeElement.offsetWidth;
+    // const width = this.ol.nativeElement.offsetWidth;
+    const width = window.innerWidth;
     this.setCountFromWidth(width);
   }
 
@@ -209,12 +247,21 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
           }
 
           const isActive = node.id === parent.id && (node.isSource === TypeExtensions.isProjectFileOrFolder(parent.type));
+
+          if (parent.id === SystemIds.rootId) {
+            this.root = new BreadcrumbNode(parent, isActive);
+            continue;
+          }
+
           this.allBreadcrumbNodes.push(new BreadcrumbNode(parent, isActive));
         }
 
-        this.breadcrumbsCountSource.pipe(first()).subscribe(value => {
-          this.refillBreadcrumbs(value);
+        this.breadcrumbsCountSource.subscribe(value => {
+           this.refillBreadcrumbs(value);
         });
+
+        const width = window.innerWidth;
+        this.setCountFromWidth(width);
       });
   }
 
@@ -222,6 +269,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     const list = new Array<BreadcrumbNode>();
     const hiddenList = new Array<BreadcrumbNode>();
     const loadedBreadcrumbs = this.allBreadcrumbNodes;
+
     for (let i = 0; i < loadedBreadcrumbs.length; i++) {
       const breadcrumbNode = loadedBreadcrumbs[i];
       if (this.isAddSearchResultItem) {
@@ -250,24 +298,31 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private setCountFromWidth(width: number): void {
-    if (width <= 350) {
-      // this.itemWidth = 120;
-      this.breadcrumbsCountSource.next(2);
-      return;
-    }
+    const count = this.calculateCount(width);
+    this.breadcrumbsCountSource.next(count);
+  }
 
-    if (width <= 500) {
-      // this.itemWidth = 150;
-      this.breadcrumbsCountSource.next(2);
-      return;
-    }
+  private calculateCount(w: number): number {
+    // if (!this._toolsPanel) {
+    //   return 0;
+    // }
 
-    if (width < 765) {
-      this.breadcrumbsCountSource.next(2);
-      // this.itemWidth = 250;
-    } else {
-      this.breadcrumbsCountSource.next(3);
-      // this.itemWidth = 250;
-    }
+    const f = 58; // fixed witdth for home button
+    const a = 35; // fixed size for hidden breadcrumbs button
+    const s = 90; // this._toolsPanel.nativeElement.offsetWidth; // fixed size for search button and style button
+
+    let wa = 0; // available space for breadcrumbs
+    wa = w - f - s;
+
+    let count = 0;
+    let wb = this.allBreadcrumbNodes.length * 30; // cumulative width for breadcrumbs with separators
+    this.allBreadcrumbNodes.forEach(bc => {
+      wb += bc.width;
+      if (wa >= wb) {
+        count++;
+      }
+    });
+
+    return count;
   }
 }

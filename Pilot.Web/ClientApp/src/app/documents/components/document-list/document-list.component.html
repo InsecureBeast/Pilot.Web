@@ -19,6 +19,11 @@
       <ng-container *ngIf="nodeStyle === 1">
         <ng-container *ngTemplateOutlet="gridViewNodeTemplate"></ng-container>
       </ng-container>
+      
+      <div class="text-center" style="margin-top: 30vh;" *ngIf="nodes && nodes.length === 0">
+        <img [src]="emptyImage" class="error-image" />
+        <h4 class="font-weight-light mt-3">{{emptyCaption}}</h4>
+      </div>
 
       <div class="upload-info-area m-2 mt-3 p-4 text-center" style="z-index: 1000" *ngIf="canUploadFile && !isLoading" (click)="onUploadButtonClick()">
         <img src="assets/images/upload.svg" class="error-image text-secondary"/>
@@ -30,10 +35,6 @@
         </ul>
       </div>
 
-      <div class="text-center" style="margin-top: 30vh;" *ngIf="nodes && nodes.length === 0">
-        <img [src]="emptyImage" class="error-image" />
-        <h4 class="font-weight-light mt-3">{{emptyCaption}}</h4>
-      </div>
     </div>
   </div>
 
