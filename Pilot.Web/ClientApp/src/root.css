@@ -28,3 +28,15 @@
   --font-weight-normal: 100;
   --font-weight-bold: 500;
 }
+
+.z-index-context-menu {
+  z-index: 1010;
+}
+
+.z-index-drop-area {
+  z-index: 500;
+}
+
+.z-index-dialogs {
+  z-index: 1030;
+}

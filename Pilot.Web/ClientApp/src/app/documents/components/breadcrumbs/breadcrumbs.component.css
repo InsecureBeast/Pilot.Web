@@ -26,22 +26,22 @@ li.breadcrumb-item a, li.breadcrumb-button a {
   color: var(--gray);
 }
 
-  li.breadcrumb-item a:link, li.breadcrumb-button a:link {
-    color: var(--gray);
-  }
-  li.breadcrumb-item a:visited, li.breadcrumb-button a:visited {
-    color: var(--gray);
-  }
-  li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
-    color: var(--dark);
-    text-decoration: none;
-  }
+li.breadcrumb-item a:link, li.breadcrumb-button a:link {
+  color: var(--gray);
+}
+li.breadcrumb-item a:visited, li.breadcrumb-button a:visited {
+  color: var(--gray);
+}
+li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
+  color: var(--dark);
+  text-decoration: none;
+}
 
-  @media (max-width: 1200px) {
-    .breadcrumb-item {
-      max-width: 300px;
-    }
+@media (max-width: 1200px) {
+  .breadcrumb-item {
+    max-width: 300px;
   }
+}
 
 @media (max-width: 980px) {
   .breadcrumb-item {

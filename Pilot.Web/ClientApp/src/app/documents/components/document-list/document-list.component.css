@@ -106,7 +106,6 @@
   position: relative;
   border-radius: .25rem;
   border: 1px solid transparent;
-  z-index: 1000;
 }
 
 .drop-area {

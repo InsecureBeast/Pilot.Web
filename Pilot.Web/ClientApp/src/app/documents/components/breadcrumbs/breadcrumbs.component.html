@@ -9,11 +9,27 @@
         class="material-icons">home</a>
       <span *ngIf="root.isActive" class="material-icons">home</span>
     </li>
-    <li class="breadcrumb-item" *ngIf="hiddenBreadcrumbs && hiddenBreadcrumbs.length > 0">
+    <li class="breadcrumb-button btn-group" dropdown *ngIf="hiddenBreadcrumbs && hiddenBreadcrumbs.length > 0">
       <a click-stop-propagation 
         click-prevent-default 
+        id="button-basic"
         [routerLink]="" 
-        class="material-icons">more_horiz</a>
+        class="material-icons"
+        dropdownToggle 
+        aria-controls="dropdown-basic">more_horiz</a>
+      <ul id="dropdown-basic" 
+          *dropdownMenu 
+          class="dropdown-menu"
+          role="menu" 
+          aria-labelledby="button-basic">
+        <li role="breadcrumb-item menuitem" *ngFor="let bc of hiddenBreadcrumbs" >
+          <a class="dropdown-item"
+             click-stop-propagation 
+             click-prevent-default 
+             [routerLink]="" 
+             (click)="onSelect(bc)">{{bc.title}}</a>
+        </li>
+      </ul>
     </li>
     <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs" [appWidthBreadcrumb]="bc" [style.visibility]="bc.visibility">
       <ng-container *ngIf="!bc.isRoot">
