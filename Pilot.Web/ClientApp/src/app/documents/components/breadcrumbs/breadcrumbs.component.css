@@ -10,7 +10,7 @@
 }
 
 .breadcrumb-item {
-  max-width: 400px;
+  max-width: 450px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -37,35 +37,35 @@ li.breadcrumb-item a, li.breadcrumb-button a {
     text-decoration: none;
   }
 
-@media (max-width: 765px) {
+  @media (max-width: 1200px) {
+    .breadcrumb-item {
+      max-width: 300px;
+    }
+  }
+
+@media (max-width: 980px) {
   .breadcrumb-item {
-    max-width: 260px;
+    max-width: 290px;
   }
 }
 
-/* @media (max-width: 600px) {
+@media (max-width: 460px) {
   .breadcrumb-item {
-    max-width: 210px;
+    max-width: 190px;
   }
-}
+} 
 
-@media (max-width: 500px) {
+@media (max-width: 430px) {
   .breadcrumb-item {
     max-width: 170px;
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 350px) {
   .breadcrumb-item {
     max-width: 135px;
   }
 }
-
-@media (max-width: 350px) {
-  .breadcrumb-item {
-    max-width: 115px;
-  }
-} */
 
 /*--------------------------------  search block  -----------------------------------------*/
 .input-group-text {

@@ -15,7 +15,7 @@
         [routerLink]="" 
         class="material-icons">more_horiz</a>
     </li>
-    <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs">
+    <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs" [appWidthBreadcrumb]="bc" [style.visibility]="bc.visibility">
       <ng-container *ngIf="!bc.isRoot">
         <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
       </ng-container>
@@ -75,12 +75,23 @@
   </ul>
 </nav>
 
+<ol class="breadcrumb navbar-nav noselect" style="visibility: hidden; overflow: hidden; position: absolute;">
+  <li class="breadcrumb-item" *ngFor="let bc of allBreadcrumbNodes" [appWidthBreadcrumb]="bc">
+    <ng-container *ngIf="!bc.isRoot">
+      <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="bc.isSearchItem">
+      <ng-container *ngTemplateOutlet="searchItemTemplate;context:{bcItem:bc}"></ng-container>
+    </ng-container>
+  </li>
+</ol>
+
 <ng-template #itemTemplate let-bc="bcItem">
   <a click-stop-propagation 
-     click-prevent-default 
-     [routerLink]="" 
-     (click)="onSelect(bc)" 
-     *ngIf="!bc.isActive">{{bc.title}}</a>
+    click-prevent-default 
+    [routerLink]="" 
+    (click)="onSelect(bc)" 
+    *ngIf="!bc.isActive">{{bc.title}}</a>
   <span *ngIf="bc.isActive">{{bc.title}}</span>
 </ng-template>
 
