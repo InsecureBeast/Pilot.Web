@@ -57,13 +57,13 @@ li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
 
 @media (max-width: 430px) {
   .breadcrumb-item {
-    max-width: 170px;
+    max-width: 165px;
   }
 }
 
 @media (max-width: 350px) {
   .breadcrumb-item {
-    max-width: 135px;
+    max-width: 125px;
   }
 }
 

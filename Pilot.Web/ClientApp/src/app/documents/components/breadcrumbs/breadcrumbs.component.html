@@ -17,7 +17,7 @@
         class="material-icons"
         dropdownToggle 
         aria-controls="dropdown-basic">more_horiz</a>
-      <ul id="dropdown-basic" 
+      <ul id="dropdown-basic" style="max-width: 85vw;"
           *dropdownMenu 
           class="dropdown-menu"
           role="menu" 
@@ -27,7 +27,10 @@
              click-stop-propagation 
              click-prevent-default 
              [routerLink]="" 
-             (click)="onSelect(bc)">{{bc.title}}</a>
+             (click)="onSelect(bc)"
+             style="text-overflow: ellipsis;
+             white-space: nowrap;
+             overflow: hidden;">{{bc.title}}</a>
         </li>
       </ul>
     </li>
