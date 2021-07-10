@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Document Reader Class Library</Description>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>DocumentReader</AssemblyName>
     <PackageId></PackageId>
     <NetStandardImplicitPackageVersion>2.0</NetStandardImplicitPackageVersion>
