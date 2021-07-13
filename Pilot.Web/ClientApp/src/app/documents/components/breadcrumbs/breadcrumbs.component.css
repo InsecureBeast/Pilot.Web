@@ -14,12 +14,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  padding-left: 0;
 }
 
 .breadcrumb-item + .breadcrumb-item:before {
-  content: "›";
-  font-size: x-large;
-  margin-top: -7px;
+  content: "";
+}
+
+li.breadcrumb-item svg {
+  fill: var(--gray);
 }
 
 li.breadcrumb-item a, li.breadcrumb-button a {
