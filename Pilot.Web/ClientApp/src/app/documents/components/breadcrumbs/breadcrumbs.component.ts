@@ -1,10 +1,9 @@
 import {
-  Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, AfterViewInit, AfterViewChecked,
-  Input, Output, OnChanges, SimpleChanges, EventEmitter, Directive } from '@angular/core';
+  Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, 
+  Input, Output, EventEmitter } from '@angular/core';
 
 import { Subject, Subscription } from 'rxjs';
 
-import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
 import { RepositoryService } from '../../../core/repository.service';
@@ -17,6 +16,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { SearchService } from 'src/app/core/search/search.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { Tools } from 'src/app/core/tools/tools';
+import { BreadcrumbNode, SearchResultsBreadcrumbNode } from './breadcrumb.node';
 
 export const SearchInputSlideInToggleAnimation = [
   trigger('searchInputSlideInToggle', [
@@ -30,78 +30,6 @@ export const SearchInputSlideInToggleAnimation = [
   ])
 ];
 
-@Directive({
-  selector: '[appWidthBreadcrumb]'
-})
-export class WidthBreadcrumbDirective implements AfterViewInit {
-
-  private _breadcrumb: BreadcrumbNode;
-  constructor(private el: ElementRef) {
-  }
-
-  @Input()
-  set appWidthBreadcrumb(value: BreadcrumbNode) {
-    this._breadcrumb = value;
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.ngAfterViewInit();
-  }
-
-  ngAfterViewInit(): void {
-    this._breadcrumb.setWidth(this.el.nativeElement.offsetWidth);
-  }
-}
-
-export class BreadcrumbNode implements INode {
-  id: string;
-  parentId: string;
-  title: string;
-  isActive: boolean;
-  isSource: boolean;
-  isDocument: boolean;
-  isChecked: boolean;
-  isRoot: boolean;
-  isSearchItem = false;
-  width: number;
-
-  /** BreadcrumbNode ctor */
-  constructor(public source: IObject, isActive: boolean) {
-    this.update(source);
-    this.isActive = isActive;
-  }
-
-  update(source: IObject): void {
-    this.source = source;
-    this.id = source.id;
-    this.title = source.title;
-    this.isDocument = false;
-    this.parentId = source.parentId;
-    this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
-    this.source = source;
-    this.isRoot = source.id === SystemIds.rootId;
-  }
-
-  setWidth(offsetWidth: any) {
-    this.width = offsetWidth;
-  }
-}
-
-class SearchResultsBreadcrumbNode extends BreadcrumbNode {
-
-  isSearchItem = true;
-  isRoot = false;
-  isActive = true;
-
-  constructor() {
-    super(null, true);
-  }
-
-  update(source: IObject): void {
-  }
-}
-
 @Component({
     selector: 'app-breadcrumbs',
     templateUrl: './breadcrumbs.component.html',
@@ -109,12 +37,13 @@ class SearchResultsBreadcrumbNode extends BreadcrumbNode {
     animations: [SearchInputSlideInToggleAnimation]
 })
 /** breadcrumbs component*/
-export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
+export class BreadcrumbsComponent implements OnInit, OnDestroy {
 
   private ol: ElementRef;
   private nodeStyleSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private _toolsPanel: ElementRef;
+  private _parent: ObjectNode;
 
   @ViewChild('olRef', { static: true })
   set setOl(v: ElementRef) {
@@ -126,7 +55,15 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this._toolsPanel = v;
   }
 
-  @Input() parent: ObjectNode;
+  @Input()
+  set parent(value: ObjectNode) {
+    this._parent = value;
+    this.init(value);
+  }
+  get parent(): ObjectNode {
+    return this._parent;
+  }
+
   @Output() onSelected = new EventEmitter<INode>();
 
   breadcrumbs: BreadcrumbNode[];
@@ -161,14 +98,6 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
     this.nodeStyleSubscription.unsubscribe();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!this.parent) {
-      return;
-    }
-
-    this.init(this.parent);
   }
 
   @HostListener('window:resize', ['$event'])
