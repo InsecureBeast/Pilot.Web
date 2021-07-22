@@ -2,6 +2,7 @@
   <ol class="breadcrumb navbar-nav noselect" #olRef>
     <li class="breadcrumb-item" *ngIf="root">
       <a click-stop-propagation 
+        id="root-button"
         click-prevent-default 
         [routerLink]="" 
         (click)="onSelect(root)" 

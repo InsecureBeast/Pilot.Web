@@ -1,4 +1,4 @@
-import { ComponentFixture, ComponentFixtureAutoDetect, TestBed } from "@angular/core/testing";
+import { ComponentFixture, ComponentFixtureAutoDetect, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { BrowserModule, By } from "@angular/platform-browser";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TranslateModule } from "@ngx-translate/core";
@@ -102,6 +102,8 @@ describe('breadcrumbs component', () => {
         // then
         verify(nodeStyleServiceMock.setNodeStyle(NodeStyle.ListView)).never();
         verify(nodeStyleServiceMock.setNodeStyle(NodeStyle.GridView)).once();
+
+        expect().nothing();
     });
 
     it('should change search mode', async () => {
@@ -128,4 +130,117 @@ describe('breadcrumbs component', () => {
         const searchInput1 = fixture.debugElement.query(By.css('#search-input'));
         expect(searchInput1).toBeNull();
     });
+
+    it('should show hidden menu button', fakeAsync( () => {
+        // given
+        const iObj = randomIObject('some-guid-id-1');
+        const node1 = new BreadcrumbNode(iObj, false);
+        const iObj2 = randomIObject('some-guid-id-2');
+        const node2 = new BreadcrumbNode(iObj2, false);
+        
+        // when
+        component.hiddenBreadcrumbs = new Array();
+        component.hiddenBreadcrumbs.push(node1);
+        component.hiddenBreadcrumbs.push(node2);
+        
+        fixture.detectChanges();
+        tick();
+
+        // then
+        const menuButton = fixture.debugElement.query(By.css('#button-basic'));
+        expect(menuButton).not.toBeNull();
+    }));
+
+    it('should hide hidden menu button', fakeAsync( () => {
+        // given
+        const iObj = randomIObject('some-guid-id-1');
+        const node1 = new BreadcrumbNode(iObj, false);
+        const iObj2 = randomIObject('some-guid-id-2');
+        const node2 = new BreadcrumbNode(iObj2, false);
+        component.hiddenBreadcrumbs = new Array();
+        component.hiddenBreadcrumbs.push(node1);
+        component.hiddenBreadcrumbs.push(node2);
+
+        fixture.detectChanges();
+        tick();
+
+        let menuButton = fixture.debugElement.query(By.css('#button-basic'));
+        expect(menuButton).not.toBeNull();
+
+        // when
+        component.hiddenBreadcrumbs = new Array();
+        fixture.detectChanges();
+        tick();
+
+        // then
+        menuButton = fixture.debugElement.query(By.css('#button-basic'));
+        expect(menuButton).toBeNull();
+    }));
+
+    it('should navigate to root on home clicked', fakeAsync( () => {
+        // given
+        spyOn(component.onSelected, 'emit');
+
+        const iObj = randomIObject('some-guid-id-1');
+        const root = new BreadcrumbNode(iObj, false);
+        component.root = root;
+
+        fixture.detectChanges();
+        tick();
+
+        let homeButton = fixture.debugElement.query(By.css('#root-button'));
+        expect(homeButton).not.toBeNull();
+
+        // when
+        homeButton.nativeElement.click();
+        fixture.detectChanges();
+
+        // then
+        verify(repositoryMock.setRequestType(RequestType.New)).once();
+        verify(documentsServiceMock.changeClearChecked(true)).once();
+        expect(component.onSelected.emit).toHaveBeenCalledWith(root);
+    }));
+
+    it('should add breadcrumb item', fakeAsync( () => {
+        // given
+        const iObj = randomIObject('some-guid-id-1');
+        const node = new BreadcrumbNode(iObj, false);
+        node.title = 'Project for';
+        // when
+        component.breadcrumbs = new Array();
+        component.breadcrumbs.push(node);
+        fixture.detectChanges();
+        tick();
+
+        // then
+        var li = fixture.debugElement.queryAll(By.css('li.breadcrumb-item'));
+        const bc = li[0];
+        expect(bc).not.toBeNull();
+        expect(bc.children[1].nativeElement.textContent).toBe('Project for');
+    }));
+
+    it('should select breadcrumb', fakeAsync( () => {
+        // given
+        spyOn(component.onSelected, 'emit');
+        const iObj = randomIObject('some-guid-id-1');
+        const node = new BreadcrumbNode(iObj, false);
+        node.title = 'Project for';
+        
+        component.breadcrumbs = new Array();
+        component.breadcrumbs.push(node);
+        fixture.detectChanges();
+        tick();
+
+        // when
+        var li = fixture.debugElement.queryAll(By.css('li.breadcrumb-item'));
+        const bc = li[0];
+        const a = bc.children[1].nativeElement;
+        a.click();
+        fixture.detectChanges();
+
+        // then
+        verify(repositoryMock.setRequestType(RequestType.New)).once();
+        verify(documentsServiceMock.changeClearChecked(true)).once();
+        expect(component.onSelected.emit).toHaveBeenCalledWith(node);
+    }));
 });
