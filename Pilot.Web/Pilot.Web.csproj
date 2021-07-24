@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ascon.Pilot.Server.Api" Version="21.8.3-alpha" />
+    <PackageReference Include="Ascon.Pilot.Server.Api" Version="21.17.0" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00013" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00013" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />

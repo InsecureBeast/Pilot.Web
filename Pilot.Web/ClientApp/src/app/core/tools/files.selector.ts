@@ -52,6 +52,16 @@ export class FilesSelector {
     return signatures;
   }
 
+  static getRemarkFiles(files: IFile[]): IFile[] {
+    const remarks = new Array<IFile>();
+    for (const file of files) {
+      if (this.isRemarkFile(file)) {
+        remarks.push(file);
+      }
+    }
+    return remarks;
+  }
+
   static isXpsFile(file: IFile): boolean {
     return file.name.toLowerCase().endsWith(FileNames.XPS_FILE_NAME_POSTFIX);
   }
@@ -66,5 +76,9 @@ export class FilesSelector {
 
   static isSignatureFile(file: IFile): boolean {
     return file.name === FileNames.SIGNATURE_FILE_NAME;
+  }
+
+  static isRemarkFile(file: IFile): boolean {
+    return file.name.startsWith(FileNames.REMARK_FILE_NAME);
   }
 }

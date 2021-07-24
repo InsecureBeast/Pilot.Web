@@ -3,7 +3,7 @@ import { Component, Input, OnDestroy, Output, EventEmitter } from '@angular/core
 import { TranslateService } from '@ngx-translate/core';
 import { Guid } from 'guid-typescript';
 import { Subject, Subscription } from 'rxjs';
-import { IFile, IObject, IOrganizationUnit, IPerson, ISignature, IFileSnapshot } from 'src/app/core/data/data.classes';
+import { IFile, IObject, ISignature, IFileSnapshot } from 'src/app/core/data/data.classes';
 import { RequestType } from 'src/app/core/headers.provider';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { DateTools } from 'src/app/core/tools/date.tools';
@@ -12,41 +12,7 @@ import { StringUtils } from 'src/app/core/tools/tools';
 import { VersionsSelectorService } from '../document-versions/versions-selector.service';
 import { SystemTaskAttributes, SystemAttributes } from 'src/app/core/data/system.types';
 import { SystemStates } from 'src/app/core/data/system.states';
-
-class DigitalSignature {
-
-  person: string;
-  id: string;
-  isValid = false;
-  isCertificateValid = false;
-  signDate: string;
-  role: string;
-  canUserSign = false;
-  isSigned = false;
-  isChecked = false;
-  position: number;
-
-  constructor(id: string) {
-    this.id = id;
-  }
-
-  setPersonTitle (person: IPerson, position: IOrganizationUnit): void {
-    const personNameFunc = (param1, param2) => `${param1} (${param2})`;
-    let personName = '';
-    let positionTitle = '';
-
-    if (person) {
-      personName = person.displayName;
-    }
-
-    if (position) {
-      positionTitle = position.title;
-    }
-
-    this.person = personNameFunc(personName, positionTitle);
-    this.position = position.id;
-  }
-}
+import { DigitalSignature } from './digital.signature';
 
 @Component({
     selector: 'app-digital-signatures',
@@ -181,46 +147,38 @@ export class DigitalSignaturesComponent implements OnDestroy {
       this.isSignaturesLoading = true;
     }
 
-    try {
-      const signatures = await this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe);
-      this.isSignaturesLoading = false;
-
-      for (const sig of signatures) {
-        if (sig.isAdditional && !sig.isSigned) {
-          continue;
-        }
-
-        let sc = this.signatures.find(s => s.id === sig.id);
-        if (!sc) {
-          sc = new DigitalSignature(sig.id);
-          this.signatures.push(sc);
-        }
-
-        sc.person = sig.signer;
-        sc.isValid = sig.isValid;
-        sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
-        sc.role = sig.role;
-        sc.isCertificateValid = sig.isCertificateValid;
-        sc.canUserSign = await this.canSignWithSpotId(sig.id);
-        sc.isSigned = sig.isSigned;
-        sc.isChecked = sc.canUserSign && !sig.isSigned;
-      }
-
-      this.showSignButton = true;
-    } catch (e) {
+    const isConnected = await this.repository.isXpsServiceConnected(this.ngUnsubscribe);
+    if (!isConnected) {
       this.showSignButton = false;
       this.isSignaturesLoading = false;
-      if (e.status === 500) {
-        if (e.error.error === 'Command IXpsServiceApi_Pilot-XPS-Server handler is not registered') {
-          return;
-        }
-        if (e.error.error === 'Command IXpsServiceApi_Pilot-XPS-Server handler is not responding') {
-          return;
-        }
+      return;
+    }
+
+    const signatures = await this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe);
+    this.isSignaturesLoading = false;
+
+    for (const sig of signatures) {
+      if (sig.isAdditional && !sig.isSigned) {
+        continue;
       }
 
-      this.error.emit(e);
+      let sc = this.signatures.find(s => s.id === sig.id);
+      if (!sc) {
+        sc = new DigitalSignature(sig.id);
+        this.signatures.push(sc);
+      }
+
+      sc.person = sig.signer;
+      sc.isValid = sig.isValid;
+      sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
+      sc.role = sig.role;
+      sc.isCertificateValid = sig.isCertificateValid;
+      sc.canUserSign = await this.canSignWithSpotId(sig.id);
+      sc.isSigned = sig.isSigned;
+      sc.isChecked = sc.canUserSign && !sig.isSigned;
     }
+
+    this.showSignButton = true;
   }
 
   private cancelAllRequests(isCompleted: boolean): void {

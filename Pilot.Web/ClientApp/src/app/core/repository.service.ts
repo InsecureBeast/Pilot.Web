@@ -142,6 +142,18 @@ export class RepositoryService {
     });
   }
 
+  isXpsServiceConnected(cancel: Subject<any>): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = `api/Documents/IsXpsServiceConnected`;
+      this.http
+        .get<boolean>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((value) => resolve(value), e => reject(false));
+    });
+  }
+
   initialize(): Observable<boolean> {
     const init = new BehaviorSubject<boolean>(false);
     if (this.metadata) {

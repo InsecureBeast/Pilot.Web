@@ -55,5 +55,6 @@
   "attributeTokenAlias":"Attribute",
   "attributeTokenAliasHint": "specify an attribute value",
   "whitespace": "whitespace",
-  "noItemsToDisplay": "No items to display"
+  "noItemsToDisplay": "No items to display",
+  "remarks": "Remarks"
 }

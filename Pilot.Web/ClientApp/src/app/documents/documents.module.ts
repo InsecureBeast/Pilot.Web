@@ -28,6 +28,7 @@ import { FormsModule } from '@angular/forms';
 import { BottomSheetModule } from '../components/bottom-sheet/bottom-sheet.module';
 import { DocumentsSearchComponent } from './pages/documents-search/documents-search.component';
 import { FocusDirective } from '../core/directives/focus.directive';
+import { RemarksComponent } from './components/remarks/remarks.component';
 
 @NgModule({
   imports: [
@@ -61,7 +62,8 @@ import { FocusDirective } from '../core/directives/focus.directive';
     SignaturesComponent,
     DocumentsSearchComponent,
     FocusDirective,
-    WidthBreadcrumbDirective
+    WidthBreadcrumbDirective,
+    RemarksComponent
   ],
   exports: [
     DocumentsComponent,
