@@ -29,6 +29,10 @@ html, body {
   color: var(--second);
 }
 
+.text-gray {
+  color: var(--gray);
+}
+
 .container-fluid {
   height: 100%;
 }

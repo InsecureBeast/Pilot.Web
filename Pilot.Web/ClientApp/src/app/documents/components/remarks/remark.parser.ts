@@ -68,24 +68,7 @@ export class RemarkParser {
                 remark.person = this.getFirstOrDefaultChildText(child);
             } 
             else if (child.name === ':anb:Text') {
-                const base64 = this.getFirstOrDefaultChildText(child);
-                var parser = new XmlParser();
-                const text = parser.parse(atob(base64), '');
-                const root = <Element>text.rootNodes[0];
-                const paragraph = this.getElement(root, 'Paragraph');
-                let paragraphText = this.getFirstOrDefaultChildText(paragraph);
-                if (!paragraphText) {
-                    var runElements = paragraph.children.filter(p => p instanceof Element) as Element[];
-                    const runs = runElements.filter(r => r.name === 'Run') as Element[];
-                    for (const run of runs) {
-                        remark.text += this.getFirstOrDefaultChildText(run);
-                    }
-                } else {
-                    remark.text = paragraphText;
-                }
-
-                console.log(text);
-                //remark.text = atob(base64);
+                remark.text = this.getText(child);
             }
             else if (child.name === ':anb:Data') {
                 remark.data = this.getFirstOrDefaultChildText(child);
@@ -105,6 +88,38 @@ export class RemarkParser {
             else {
                 this.fill(child, remark);
             }
+        }
+    }
+
+    private static getText(element: Element) : string {
+        const base64 = this.getFirstOrDefaultChildText(element);
+        var parser = new XmlParser();
+        const text = parser.parse(atob(base64), '');
+        const root = <Element>text.rootNodes[0];
+        const paragraph = this.getElement(root, 'Paragraph');
+        if (paragraph != null) {
+            let paragraphText = this.getFirstOrDefaultChildText(paragraph);
+            if (paragraphText == null) {
+                var runElements = paragraph.children.filter(p => p instanceof Element) as Element[];
+                const runs = runElements.filter(r => r.name === 'Run') as Element[];
+                let remarkText = '';
+                for (const run of runs) {
+                    const toDecText = this.getFirstOrDefaultChildText(run);
+                    const text = decodeURIComponent(escape(toDecText));
+                    remarkText += text;
+                }
+                return remarkText;
+            } else {
+                const text = decodeURIComponent(escape(paragraphText));
+                if (text == null) {
+                    return '';
+                }
+                return text;
+            }
+        } else {
+            const textElement = this.getFirstOrDefaultChildText(root);
+            const text = decodeURIComponent(escape(textElement));
+            return text;
         }
     }
 }

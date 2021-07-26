@@ -56,5 +56,6 @@
   "attributeTokenAliasHint": "указать значение атрибута",
   "whitespace": "пробел",
   "noItemsToDisplay": "Нет данных для отображения",
-  "remarks": "Замечания"
+  "remarks": "Замечания",
+  "redPencilRemark": "<Графическое замечание>"
 }

@@ -15,7 +15,7 @@ export class Remark {
 }
 
 export class RemarkType {
-  public static RED_PENSIL = 'anb:RedPencil';
+  public static RED_PENCIL = 'anb:RedPencil';
   public static TEXT_NOTE = 'anb:TextNote';
   public static STICKY_NOTE = 'anb:TextStickyNote';
 }

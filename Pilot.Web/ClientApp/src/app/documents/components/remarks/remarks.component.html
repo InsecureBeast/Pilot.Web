@@ -9,25 +9,13 @@
     </div>
     <ul class="list-group list-group-flush mb-auto h-100 overflow-auto">
       <li class="list-group-item list-group-item-action pointer p-2" *ngFor="let remark of remarks">
-        <div class="d-flex flex-row">
-          <!-- <span class="material-icons m-2" style="color:green">check_circle</span> -->
-          <!-- <span *ngIf="!signature.isValid && !signature.signDate" class="material-icons m-2" style="color:gray">edit</span>
-          <span *ngIf="signature.isValid && !signature.isCertificateValid" class="material-icons m-2" style="color:green">warning</span>
-          <span *ngIf="!signature.isValid && !signature.isCertificateValid && signature.signDate" class="material-icons m-2" style="color: #c0392b">error</span>
-          -->
-          <div style="min-width: 0">
-            <div class="text-truncate text-muted">{{remark.person}}</div>
-            <div>{{remark.text}}</div>
-            <!-- <div *ngIf="!signature.signDate">
-              <span class="font-small text-secondary" translate="noSignature"></span>
-              <span *ngIf="remark.role" class="font-small text-secondary ml-1">"{{signature.role}}"</span>
-            </div> -->
-            <!-- <div *ngIf="signature.signDate">
-              <span *ngIf="!signature.role" class="font-small text-secondary" translate="signed"></span>
-              <span *ngIf="signature.role" class="font-small text-secondary">{{signature.role}}</span>
-              <span class="font-small text-secondary ml-1">{{signature.signDate}}</span>
-            </div> -->
+        <div class="font-smaller">
+          <div class="d-flex justify-content-between">
+            <div class="text-truncate text-gray">{{remark.person}}</div>
+            <div class="text-gray">{{remark.created | date:'short'}}</div>
           </div>
+          <div class="" *ngIf="remark.text">{{remark.text}}</div>
+          <div class="" *ngIf="isRedPencil(remark)" translate="redPencilRemark"></div>
         </div>
       </li>
     </ul>

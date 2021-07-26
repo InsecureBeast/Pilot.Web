@@ -1,12 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { XmlParser, Element } from '@angular/compiler';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { IObject } from 'src/app/core/data/data.classes';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
-import { Remark } from './remark';
+import { Remark, RemarkType } from './remark';
 import { RemarkParser } from './remark.parser';
 
 @Component({
@@ -40,6 +39,10 @@ export class RemarksComponent implements OnInit {
   @Output() error = new EventEmitter<HttpErrorResponse>();
 
   ngOnInit(): void {
+  }
+
+  isRedPencil(remark: Remark): boolean {
+    return remark.type === RemarkType.RED_PENCIL;
   }
 
   private loadRemarks(document: IObject) {
