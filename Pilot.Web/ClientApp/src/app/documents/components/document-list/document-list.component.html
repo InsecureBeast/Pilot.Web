@@ -115,8 +115,8 @@
         </div>
 
         <div class="card-checker" *ngIf="isAnyItemChecked" (click)="addChecked(node); $event.stopPropagation();">
-          <span class="material-icons mt-1 text-muted" *ngIf="!node.isChecked">radio_button_unchecked</span>
-          <span class="material-icons mt-1 text-primary" *ngIf="node.isChecked">check_circle</span>
+          <span class="material-icons-outline mt-1 text-muted" *ngIf="!node.isChecked">radio_button_unchecked</span>
+          <span class="material-icons-outline mt-1 text-primary" *ngIf="node.isChecked">check_circle</span>
         </div>
 
         <div class="card-children-count text-muted" *ngIf="node.childrenCount >= 0">{{node.childrenCount}}</div>

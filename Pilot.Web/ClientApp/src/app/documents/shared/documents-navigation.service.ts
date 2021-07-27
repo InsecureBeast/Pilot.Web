@@ -10,7 +10,6 @@ import { RequestType } from 'src/app/core/headers.provider';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentsNavigationService {
-
   currentUrl: string;
   previousUrl: any;
 
@@ -114,5 +113,10 @@ export class DocumentsNavigationService {
   navigateToSearchFiles(folderId: string, request: string): void {
     this.currentUrl = `/documents/${folderId}/files/search`;
     this.router.navigate([this.currentUrl], { queryParams: { q: request } });
+  }
+
+  navigateToDocumentRemarks(parentId: string, documentId: string, replaceUrl = true) {
+    this.currentUrl = `/documents/${parentId}/doc/${documentId}/remarks`;
+    this.router.navigate([this.currentUrl], { replaceUrl: replaceUrl });
   }
 }

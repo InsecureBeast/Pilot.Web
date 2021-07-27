@@ -7,6 +7,7 @@ import { VersionsComponent } from './pages/versions/versions.component';
 import { CanDeactivateVersionsGuard } from './components/document-versions/deactivate-versions.guard';
 import { SignaturesComponent } from './pages/signatures/signatures.component';
 import { DocumentsSearchComponent } from './pages/documents-search/documents-search.component';
+import { RemarksComponent } from './pages/remarks/remarks.component';
 
 const routes: Routes = [
   { path: '', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: ':fid/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
   { path: ':fid/doc/:id/versions', component: VersionsComponent, canActivate: [AuthGuard] },
   { path: ':fid/doc/:id/signatures', component: SignaturesComponent, canActivate: [AuthGuard] },
+  { path: ':fid/doc/:id/remarks', component: RemarksComponent, canActivate: [AuthGuard] },
   { path: ':fid/doc/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] },
 
   { path: ':fid/files/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },

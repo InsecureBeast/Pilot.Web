@@ -9,11 +9,11 @@ import { Remark, RemarkType } from './remark';
 import { RemarkParser } from './remark.parser';
 
 @Component({
-  selector: 'app-remarks',
-  templateUrl: './remarks.component.html',
-  styleUrls: ['./remarks.component.css']
+  selector: 'app-remark-list',
+  templateUrl: './remark-list.component.html',
+  styleUrls: ['./remark-list.component.css']
 })
-export class RemarksComponent implements OnInit {
+export class RemarkListComponent implements OnInit {
     
   private _document: IObject;
 

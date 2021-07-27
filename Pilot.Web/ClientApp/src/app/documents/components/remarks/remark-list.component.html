@@ -12,7 +12,7 @@
         <div class="font-smaller">
           <div class="d-flex justify-content-between">
             <div class="text-truncate text-gray">{{remark.person}}</div>
-            <div class="text-gray">{{remark.created | date:'short'}}</div>
+            <div class="text-gray" style="width: 140px; text-align: end;">{{remark.created | date:'short'}}</div>
           </div>
           <div class="" *ngIf="remark.text">{{remark.text}}</div>
           <div class="" *ngIf="isRedPencil(remark)" translate="redPencilRemark"></div>

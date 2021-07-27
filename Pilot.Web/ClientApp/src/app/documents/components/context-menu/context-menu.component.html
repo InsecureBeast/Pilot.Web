@@ -3,7 +3,7 @@
       [attr.id]="item.id">
       <div class="d-flex flex-row">
         <span class="mr-3" *ngIf="!item.icon"></span>
-        <span *ngIf="item.icon" class="material-icons">{{item.icon}}</span>
+        <span *ngIf="item.icon" class="material-icons-outline" style="width: 24px;">{{item.icon}}</span>
         <div class="ml-3">{{item.title}}</div>
       </div>
   </li>

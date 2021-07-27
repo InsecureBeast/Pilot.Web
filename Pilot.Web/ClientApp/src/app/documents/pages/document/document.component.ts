@@ -214,6 +214,9 @@ export class DocumentComponent implements OnInit, OnDestroy {
   private goToVersionsPage(): void {
     this.navigationService.navigateToDocumentVersions(this.document.parentId, this.document.id, false);
   }
+  private goToRemarksPage() : void {
+    this.navigationService.navigateToDocumentRemarks(this.document.parentId, this.document.id, false);
+  }
 
   private loadDocument(id: string, version?: string): void {
     this.error = null;
@@ -335,16 +338,16 @@ export class DocumentComponent implements OnInit, OnDestroy {
       this.contextMenu.addMenuItem(sourceFilesItem);
     }
 
-    if (!this.isSourceFile()) {
-      const versionsItem = MenuItem
-        .createItem('versionsId', this.translate.instant('versions'))
-        .withIcon('list_alt')
+    const versionsItem = MenuItem
+        .createItem('remarksId', this.translate.instant('remarks'))
+        .withIcon('textsms')
         .withAction(() => {
           this.bottomSheet.close();
-          this.goToVersionsPage();
+          this.goToRemarksPage();
         });
       this.contextMenu.addMenuItem(versionsItem);
 
+    if (!this.isSourceFile()) {
       const signaturesItem = MenuItem
         .createItem('signaturesId', this.translate.instant('signatures'))
         .withIcon('edit')
@@ -353,6 +356,15 @@ export class DocumentComponent implements OnInit, OnDestroy {
           this.navigationService.navigateToDocumentSignatures(this.document.parentId, this.document.id, false);
         });
       this.contextMenu.addMenuItem(signaturesItem);
+
+      const versionsItem = MenuItem
+        .createItem('versionsId', this.translate.instant('versions'))
+        .withIcon('list_alt')
+        .withAction(() => {
+          this.bottomSheet.close();
+          this.goToVersionsPage();
+        });
+      this.contextMenu.addMenuItem(versionsItem);
     }
     const cardItem = MenuItem
       .createItem('cardId', this.translate.instant('card'))

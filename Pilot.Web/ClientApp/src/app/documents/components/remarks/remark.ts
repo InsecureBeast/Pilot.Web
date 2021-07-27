@@ -4,7 +4,7 @@ export class Remark {
   id: string;
   text: string = '';
   created: string;
-  type: String;
+  type: string;
   data: string;
   position: Point;
   pageNumber: number;
