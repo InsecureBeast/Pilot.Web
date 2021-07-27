@@ -1,14 +1,59 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { BehaviorSubject, of } from 'rxjs';
+import { IObject } from 'src/app/core/data/data.classes';
+import { NotificationService } from 'src/app/core/notification.service';
+import { RepositoryService } from 'src/app/core/repository.service';
+import { instance, mock, when } from 'ts-mockito';
+import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 
 import { RemarksComponent } from './remarks.component';
 
 describe('RemarksComponent', () => {
+  let repositoryMock: RepositoryService;
+  let repository: RepositoryService;
+  let activatedRouteMock: ActivatedRoute;
+  let activatedRoute: ActivatedRoute;
+  let navigationServiceMock: DocumentsNavigationService;
+  let navigationService: DocumentsNavigationService;
+  let notificationServiceMock: NotificationService;
+  let notificationService: NotificationService;
+
+  let paramMapMock: ParamMap;
+
   let component: RemarksComponent;
   let fixture: ComponentFixture<RemarksComponent>;
 
   beforeEach(async () => {
+    navigationServiceMock = mock(DocumentsNavigationService);
+    navigationService = instance(navigationServiceMock);
+    repositoryMock = mock(RepositoryService);
+    repository = instance(repositoryMock);
+    activatedRouteMock = mock(ActivatedRoute);
+    activatedRoute = instance(activatedRouteMock);
+    notificationServiceMock = mock(NotificationService);
+    notificationService = instance(notificationServiceMock);
+
+    paramMapMock = mock<ParamMap>();
+    const paramMap = instance(paramMapMock);
+    const objectId = '151512b6-6d83-4512-8e81-adfd79394e3d';
+    when(paramMapMock.get('id')).thenReturn(objectId);
+    when(activatedRouteMock.paramMap).thenReturn(new BehaviorSubject<ParamMap>(paramMap));
+
+    const documentMock = mock<IObject>();
+    const document = instance(documentMock);
+    when(documentMock.id).thenReturn(objectId);
+
+    when(repositoryMock.getObjectAsync(objectId)).thenResolve(document);
+
     await TestBed.configureTestingModule({
-      declarations: [ RemarksComponent ]
+      declarations: [ RemarksComponent ],
+      providers: [
+        { provide: ActivatedRoute, useValue: activatedRoute, params: of({id: '151512b6-6d83-4512-8e81-adfd79394e3d'}) },
+        { provide: RepositoryService, useValue: repository },
+        { provide: DocumentsNavigationService, useValue: navigationService },
+        { provide: NotificationService, useValue: notificationService }
+      ]
     })
     .compileComponents();
   });
@@ -19,7 +64,7 @@ describe('RemarksComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  fit('should create', () => {
     expect(component).toBeTruthy();
   });
 });

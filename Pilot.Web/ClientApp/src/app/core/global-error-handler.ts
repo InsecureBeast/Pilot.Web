@@ -36,16 +36,6 @@ export class GlobalErrorHandler implements ErrorHandler {
       notifier.showError(error);
       return;
     }
-    // if (error.rejection) {
-    //   const err = errorHandlerService.handleErrorMessage(error.rejection);
-    //   if (err === null) {
-    //     return;
-    //   }
-
-    //   console.error(err);
-    //   notifier.showError(err);
-    //   return;
-    // }
 
     notifier.showError(error);
     console.error(error);

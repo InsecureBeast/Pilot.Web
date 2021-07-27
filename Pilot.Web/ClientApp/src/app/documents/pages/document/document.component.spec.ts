@@ -214,11 +214,12 @@ describe('document component', () => {
         // then
         const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
         const contextMenuComponent = contextMenuDebugElement.componentInstance;
-        expect(contextMenuComponent.items.length).toBe(4);
+        expect(contextMenuComponent.items.length).toBe(5);
         expect(contextMenuComponent.items[0].title).toBe('download');
-        expect(contextMenuComponent.items[1].title).toBe('versions');
+        expect(contextMenuComponent.items[1].title).toBe('remarks');
         expect(contextMenuComponent.items[2].title).toBe('signatures');
-        expect(contextMenuComponent.items[3].title).toBe('card');
+        expect(contextMenuComponent.items[3].title).toBe('versions');
+        expect(contextMenuComponent.items[4].title).toBe('card');
     })));
 
     it('should fill context menu for ECM document', (fakeAsync(() => {
@@ -243,12 +244,13 @@ describe('document component', () => {
         // then
         const contextMenuDebugElement = fixture.debugElement.query(By.directive(ContextMenuComponent));
         const contextMenuComponent = contextMenuDebugElement.componentInstance;
-        expect(contextMenuComponent.items.length).toBe(5);
+        expect(contextMenuComponent.items.length).toBe(6);
         expect(contextMenuComponent.items[0].title).toBe('download');
         expect(contextMenuComponent.items[1].title).toBe('sourceFiles');
-        expect(contextMenuComponent.items[2].title).toBe('versions');
+        expect(contextMenuComponent.items[2].title).toBe('remarks');
         expect(contextMenuComponent.items[3].title).toBe('signatures');
-        expect(contextMenuComponent.items[4].title).toBe('card');
+        expect(contextMenuComponent.items[4].title).toBe('versions');
+        expect(contextMenuComponent.items[5].title).toBe('card');
     })));
 
     it('should show document card', fakeAsync(() => {
