@@ -8,9 +8,10 @@ export class Remark {
   data: string;
   position: Point;
   pageNumber: number;
+  pointer: string;
 
   constructor() {
-    this.position = new Point();    
+    this.position = new Point(0, 0);    
   }
 }
 
@@ -21,6 +22,16 @@ export class RemarkType {
 }
 
 export class Point {
+  
+  /**
+   *
+   */
+  constructor(top: number, left: number) {
+    this.top = top;
+    this.left = left;    
+  }
+  
   top: number;
   left: number;
+
 }

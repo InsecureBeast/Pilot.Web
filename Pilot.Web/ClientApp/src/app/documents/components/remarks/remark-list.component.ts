@@ -5,6 +5,7 @@ import { IObject } from 'src/app/core/data/data.classes';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RepositoryService } from 'src/app/core/repository.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
+import { RemarksService } from '../../shared/remarks.service';
 import { Remark, RemarkType } from './remark';
 import { RemarkParser } from './remark.parser';
 
@@ -20,8 +21,10 @@ export class RemarkListComponent implements OnInit {
   remarks: Array<Remark>;
   isLoading: boolean;
 
-  constructor(private repository: RepositoryService,
-    private fileRepository: FilesRepositoryService) { 
+  constructor(
+    private readonly repository: RepositoryService,
+    private readonly fileRepository: FilesRepositoryService,
+    private readonly remarkService: RemarksService) { 
       this.remarks = new Array();
     }
 
@@ -37,6 +40,7 @@ export class RemarkListComponent implements OnInit {
   }
 
   @Output() error = new EventEmitter<HttpErrorResponse>();
+  @Output() loaded = new EventEmitter<Remark[]>();
 
   ngOnInit(): void {
   }
@@ -56,10 +60,11 @@ export class RemarkListComponent implements OnInit {
       this.fileRepository.getFile(remark.body.id, remark.body.size).pipe(first()).subscribe(b => {
         const remark = RemarkParser.parseFromArrayBuffer(b);
         this.remarks.push(remark);
-
       });
     });
     
     this.isLoading = false;
+    this.loaded.emit(this.remarks);
+    this.remarkService.changeRemarkList(this.remarks);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, ElementRef } from '@angular/core';
 import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
@@ -27,6 +27,7 @@ import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-she
 import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
 import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { Remark, Point } from '../../components/remarks/remark';
 
 @Component({
   selector: 'app-document',
@@ -41,11 +42,10 @@ export class DocumentComponent implements OnInit, OnDestroy {
   private objectCardChangeSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private cardModalRef: BsModalRef;
-  private selectedSnapshot: IFileSnapshot;
-
+  
+  selectedSnapshot: IFileSnapshot;
   document: IObject;
   node: ObjectNode;
-  images: SafeUrl[];
   isLoading: boolean;
   error: HttpErrorResponse;
 
@@ -62,7 +62,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly sourceFileService: SourceFileService,
     private readonly downloadService: DownloadService,
     private readonly navigationService: DocumentsNavigationService,
     private readonly repository: RepositoryService,
@@ -75,7 +74,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly notificationService: NotificationService) {
 
     this.isActualVersionSelected = true;
-    this.images = new Array();
   }
 
   ngOnInit(): void {
@@ -172,7 +170,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
     this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
     this.selectedSnapshot = snapshot;
-    this.loadSnapshot(snapshot);
   }
 
   showFiles(event: boolean): void {
@@ -245,65 +242,12 @@ export class DocumentComponent implements OnInit, OnDestroy {
           }
         }
 
-        this.loadSnapshot(snapshot);
+        this.selectedSnapshot = snapshot;
       })
       .catch(e => {
         this.isLoading = false;
         this.error = e;
       });
-  }
-
-  private loadSnapshot(snapshot: IFileSnapshot): void {
-    this.isLoading = true;
-    this.images = new Array<SafeUrl>();
-
-    if (this.sourceFileService.isXpsFile(snapshot)) {
-      const file = FilesSelector.getSourceFile(snapshot.files);
-      this.sourceFileService.fillXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
-        .then(_ => this.isLoading = false)
-        .catch(e => {
-          this.isLoading = false;
-          this.images = null;
-          this.error = e;
-        });
-      return;
-    }
-
-    if (this.sourceFileService.isImageFile(snapshot)) {
-      const file = FilesSelector.getSourceFile(snapshot.files);
-      if (!file) {
-        this.isLoading = false;
-        this.images = null;
-        return;
-      }
-
-      this.sourceFileService.getImageFileToShowAsync(file, this.ngUnsubscribe)
-        .then(url => {
-          this.images.push(url);
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.error = e;
-        });
-
-      return;
-    }
-
-    if (this.sourceFileService.isKnownFile(snapshot)) {
-      this.sourceFileService.openFileAsync(snapshot, this.ngUnsubscribe)
-        .then(() => {
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.error = e;
-        });
-      return;
-    }
-
-    this.images = null;
-    this.isLoading = false;
   }
 
   private cancelAllRequests(isComplete: boolean): void {

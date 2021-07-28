@@ -30,6 +30,8 @@ import { DocumentsSearchComponent } from './pages/documents-search/documents-sea
 import { FocusDirective } from '../core/directives/focus.directive';
 import { RemarkListComponent } from './components/remarks/remark-list.component';
 import { RemarksComponent } from './pages/remarks/remarks.component';
+import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
+import { ElementStretchDirective } from './components/document-viewer/element-stretch.directive';
 
 @NgModule({
   imports: [
@@ -65,7 +67,9 @@ import { RemarksComponent } from './pages/remarks/remarks.component';
     FocusDirective,
     WidthBreadcrumbDirective,
     RemarkListComponent,
-    RemarksComponent
+    RemarksComponent,
+    DocumentViewerComponent,
+    ElementStretchDirective
   ],
   exports: [
     DocumentsComponent,
