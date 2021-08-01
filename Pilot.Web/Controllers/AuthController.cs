@@ -50,7 +50,7 @@ namespace Pilot.Web.Controllers
         }
 
         [HttpGet("[action]")]
-        public new ActionResult SignOut()
+        public ActionResult SignOut()
         {
             try
             {
