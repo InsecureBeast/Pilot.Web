@@ -19,6 +19,11 @@
   bottom: 0;
 }
 
+.viewer-container {
+  overflow-y: auto; 
+  height: calc(100vh - 66px);
+}
+
 @media (max-width: 991px) {
   .doc-info {
     height: 60vh;
@@ -33,6 +38,10 @@
   :host ::ng-deep div.tab-content {
     height: 100%;
   }
+
+  .viewer-container {
+    height: 100%;
+  }
 }
 
 :host ::ng-deep div.tab-content {
@@ -40,3 +49,5 @@
   background-color: var(--bg);
   border-left: 1px solid var(--border);
 }
+
+
