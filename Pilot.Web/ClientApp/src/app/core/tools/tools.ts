@@ -29,6 +29,11 @@ export class Tools {
     return source;
   }
 
+  static getUnsafeImage(base64: string, type: string): string {
+    const imageSrc = 'data:image/' + type + ';base64,' + base64;
+    return imageSrc;
+  }
+
   static getSvgImage(base64: string, sanitizer: DomSanitizer): SafeUrl {
     return this.getImage(base64, 'svg+xml;charset=utf-8', sanitizer);
   }

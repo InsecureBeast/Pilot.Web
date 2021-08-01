@@ -34,6 +34,26 @@ export class SourceFileService {
     });
   }
 
+  fillUnsafeXpsDocumentPagesAsync(file: IFile, scale: number, cancel: Subject<any>, images: Array<string>): Promise<void> {
+    let that = this;
+    let id = file.body.id;
+    return new Promise((resolve, reject) => {
+      that.fileStorageService.getDocumentPagesCount(id, file.body.size, scale)
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe(async count => {
+            for (let i = 0; i < count; i++) {
+              const page = await that.getUnsafePageAsync(id, i, cancel);
+              images.push(page);
+              //resolve();
+            }
+
+            resolve();
+          },
+        e => reject(e));
+    });
+  }
+
   async getImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<SafeUrl> {
     return new Promise((resolve, reject) => {
       var imageType = this.getImageDataType(file.name);
@@ -43,6 +63,25 @@ export class SourceFileService {
           .subscribe(bytes => {
             var base64 = Tools.arrayBufferToBase64(bytes);
             var url = Tools.getImage(base64, imageType, this.sanitizer);
+            resolve(url);
+          }, err => reject(err));
+        
+        return;
+      }
+
+      resolve(null);
+    });
+  }
+
+  async getUnsafeImageFileToShowAsync(file: IFile, cancel: Subject<any>): Promise<string> {
+    return new Promise((resolve, reject) => {
+      var imageType = this.getImageDataType(file.name);
+      if (imageType) {
+        this.fileStorageService.getFile(file.body.id, file.body.size)
+          .pipe(takeUntil(cancel))
+          .subscribe(bytes => {
+            var base64 = Tools.arrayBufferToBase64(bytes);
+            var url = Tools.getUnsafeImage(base64, imageType);
             resolve(url);
           }, err => reject(err));
         
@@ -143,8 +182,23 @@ export class SourceFileService {
         .pipe(first())
         .pipe(takeUntil(cancel))
         .subscribe(page => {
-          var base64 = Tools.arrayBufferToBase64(page);
-          var image = Tools.getImage(base64, ".png", that.sanitizer);
+            var base64 = Tools.arrayBufferToBase64(page);
+            var image = Tools.getImage(base64, ".png", this.sanitizer);
+            resolve(image);
+          },
+          e => reject(e));
+    });
+  }
+
+  private async getUnsafePageAsync(fileId: string, page: number, cancel: Subject<any>): Promise<string> {
+    let that = this;
+    return new Promise((resolve, reject) => {
+      that.fileStorageService.getDocumentPageContent(fileId, page)
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe(page => {
+            var base64 = Tools.arrayBufferToBase64(page);
+            var image = Tools.getUnsafeImage(base64, ".png");
             resolve(image);
           },
           e => reject(e));

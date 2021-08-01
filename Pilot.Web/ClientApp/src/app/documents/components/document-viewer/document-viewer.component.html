@@ -1,14 +1,10 @@
-  <div class="text-center" *ngIf="images">
-    <div *ngFor="let page of images">
-      <img [src]="page" class="doc-page" #imgRef>
-      <!-- <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
-        <ng-container *ngFor="let remark of remarks">
-          <div style="position: sticky;" *ngIf="remark.position"
-              [style.top.px]="calcRemarkPosition(remark.position, imgRef).top"
-              [style.left.px]="calcRemarkPosition(remark.position, imgRef).left">{{remark.position.top}}  {{remark.position.left}}</div>
-        </ng-container>
-      </div> -->
-    </div>
+  <div class="text-center" *ngIf="images" style="overflow: hidden;" #viewerEl>
+    <div *ngFor="let page of images; index as i;">
+      <app-viewer-page [page]="page"
+                       [pageNumber]="i"                 
+                       [remarks]="remarks" 
+                       [selectedRemark]="selectedRemark">
+      </app-viewer-page>
   </div>
 
   <div class="text-center h-30" *ngIf="!images">
@@ -16,10 +12,6 @@
     <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
     <p class="mt-3" translate="cantPreviewDocument"></p>
     <button type="submit" class="btn btn-primary" (click)="download($event)" translate="download"></button>
-    <!-- <button class="btn btn-primary" type="button" disabled *ngIf="isDownloading">
-      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      <span class="ml-1" translate="downloading"></span>
-    </button> -->
   </div>
 
   <div class="text-center h-30" *ngIf="isLoading">

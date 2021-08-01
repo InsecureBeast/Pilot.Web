@@ -32,6 +32,7 @@ import { RemarkListComponent } from './components/remarks/remark-list.component'
 import { RemarksComponent } from './pages/remarks/remarks.component';
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
 import { ElementStretchDirective } from './components/document-viewer/element-stretch.directive';
+import { ViewerPageComponent } from './components/document-viewer/viewer-page/viewer-page.component';
 
 @NgModule({
   imports: [
@@ -69,7 +70,8 @@ import { ElementStretchDirective } from './components/document-viewer/element-st
     RemarkListComponent,
     RemarksComponent,
     DocumentViewerComponent,
-    ElementStretchDirective
+    ElementStretchDirective,
+    ViewerPageComponent
   ],
   exports: [
     DocumentsComponent,

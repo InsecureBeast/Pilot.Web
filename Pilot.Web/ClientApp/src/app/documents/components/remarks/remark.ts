@@ -7,7 +7,7 @@ export class Remark {
   type: string;
   data: string;
   position: Point;
-  pageNumber: number;
+  pageNumber: number = -1;
   pointer: string;
 
   constructor() {
@@ -26,7 +26,7 @@ export class Point {
   /**
    *
    */
-  constructor(top: number, left: number) {
+  constructor(left: number, top: number) {
     this.top = top;
     this.left = left;    
   }

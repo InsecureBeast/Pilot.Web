@@ -19,12 +19,12 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   private remarksSubscription: Subscription;
 
-  images: SafeUrl[];
+  images: string[];
   remarks: Remark[];
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
   position: Point;
-  
+  selectedRemark: Remark;
   
   @Input()
   set snapshot(value: IFileSnapshot) {
@@ -45,6 +45,10 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
       this.remarks = remarks;
+      if (remarks.length>0){
+        this.selectedRemark = remarks[0];
+
+      }
     });
   }
 
@@ -74,16 +78,16 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   calcRemarkPosition(position: Point, image: HTMLElement): Point {
     console.log(`${image.offsetWidth}  ${image.clientWidth}  ${image.scrollWidth}`);
     console.log(`${position.top}  ${position.left}`);
-    return new Point(position.top, position.left);
+    return new Point(position.left, position.top);
   }
 
   private loadSnapshot(snapshot: IFileSnapshot): void {
     this.isLoading = true;
-    this.images = new Array<SafeUrl>();
+    this.images = new Array<string>();
 
     if (this.sourceFileService.isXpsFile(snapshot)) {
       const file = FilesSelector.getSourceFile(snapshot.files);
-      this.sourceFileService.fillXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
+      this.sourceFileService.fillUnsafeXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
         .then(_ => this.isLoading = false)
         .catch(e => {
           this.isLoading = false;
@@ -101,7 +105,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.sourceFileService.getImageFileToShowAsync(file, this.ngUnsubscribe)
+      this.sourceFileService.getUnsafeImageFileToShowAsync(file, this.ngUnsubscribe)
         .then(url => {
           this.images.push(url);
           this.isLoading = false;

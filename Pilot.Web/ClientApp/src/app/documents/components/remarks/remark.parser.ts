@@ -76,14 +76,22 @@ export class RemarkParser {
             else if (child.name === ':anb:MetaData') {
                 const top = this.getAttribute(':anb:Top', child);
                 const left = this.getAttribute(':anb:Left', child);
-                remark.position.left = left;
-                remark.position.top = top;
-                const pageNumber = this.getAttribute(':anb:PageNumber', child);
-                remark.pageNumber = pageNumber;
+                remark.position.left = parseFloat(left);
+                remark.position.top = parseFloat(top);
+                
+                if (remark.pageNumber === -1) {
+                    const pageNumber = this.getAttribute(':anb:PageNumber', child);
+                    remark.pageNumber = parseInt(pageNumber);
+                }
+                
             }
-            else if (child.name == ':anc:Item') {
-                const pageNumber = this.getAttribute('Value', child);
-                remark.pageNumber = pageNumber;
+            else if (child.name == ':anb:PageNumber') {
+                if (remark.pageNumber === -1) {
+                    const element = this.getElement(child, ":anc:Item");
+                    const pageNumber = this.getAttribute('Value', element);
+                    remark.pageNumber = parseInt(pageNumber);
+                }
+                
             }
             else {
                 this.fill(child, remark);

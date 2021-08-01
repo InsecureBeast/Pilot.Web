@@ -30,26 +30,24 @@
         *ngIf="document && !isSourceFile()">
       <div class="h-100">
         <tabset #staticTabs >
-          <tab heading="{{ 'signatures' | translate }}" customClass="h-100" *ngIf="!isSourceFile()">
+          <tab heading="{{ 'signatures' | translate }}" customClass="h-100">
             <app-digital-signatures 
               [document]="document" 
               (error)="onError($event)">
             </app-digital-signatures>
           </tab>
-          <tab heading="{{ 'remarks' | translate }}" customClass="h-100" *ngIf="!isSourceFile()">
+          <tab heading="{{ 'remarks' | translate }}" customClass="h-100">
             <app-remark-list 
               [document]="document" 
               (error)="onError($event)">
             </app-remark-list>
           </tab>
-          <tab heading="{{ 'versions' | translate }}" *ngIf="isSourceFile() || !isSourceFile()">
-            <div class="">
-              <app-document-versions
+          <tab heading="{{ 'versions' | translate }}">
+            <app-document-versions
                 [document]="document"
                 (onClose)="closeDocumentVersions($event)"
                 (versionSelected)="onVersionSelected($event)">
               </app-document-versions>
-            </div>
           </tab>
         </tabset>
       </div>
