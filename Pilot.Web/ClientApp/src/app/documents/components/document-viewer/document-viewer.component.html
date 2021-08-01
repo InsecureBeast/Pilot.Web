@@ -1,14 +1,13 @@
   <div class="text-center" *ngIf="images">
     <div *ngFor="let page of images">
       <img [src]="page" class="doc-page" #imgRef>
-      <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+      <!-- <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
         <ng-container *ngFor="let remark of remarks">
           <div style="position: sticky;" *ngIf="remark.position"
               [style.top.px]="calcRemarkPosition(remark.position, imgRef).top"
               [style.left.px]="calcRemarkPosition(remark.position, imgRef).left">{{remark.position.top}}  {{remark.position.left}}</div>
         </ng-container>
-        <!-- <div *ngTemplateOutlet="textRemark;context:{item:remark}"></div> -->
-      </div>
+      </div> -->
     </div>
   </div>
 
