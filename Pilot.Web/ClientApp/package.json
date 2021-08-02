@@ -36,6 +36,7 @@
     "ngx-bootstrap": "^6.1.0",
     "popper.js": "^1.16.1",
     "rxjs": "^6.6.3",
+    "text-encoding": "^0.7.0",
     "ts-node": "~8.3.0",
     "tslib": "^2.0.1",
     "tslint": "~6.1.0",

@@ -6,7 +6,7 @@ img.doc-page {
 
 div.annotation-mark {
     position: relative; 
-    background-color: #FFD80080; 
+    background-color: rgba(255, 216, 0, 0.5);
     height: 16px; 
     margin-bottom: -16px;
     width: 16px;

@@ -1,4 +1,5 @@
-import { Element, XmlParser, Attribute, Text } from "@angular/compiler";
+import { Element, XmlParser, Text } from "@angular/compiler";
+import { TextDecoder } from 'text-encoding';
 import { Remark } from "./remark";
 
 export class RemarkParser {
