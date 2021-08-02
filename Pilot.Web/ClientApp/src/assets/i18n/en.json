@@ -57,5 +57,7 @@
   "whitespace": "whitespace",
   "noItemsToDisplay": "No items to display",
   "remarks": "Remarks",
-  "redPencilRemark": "<Graphic remark>"
+  "redPencilRemark": "<Graphic remark>",
+  "showRemarks":"Show annotations",
+  "hideRemarks":"Hide annotations"
 }

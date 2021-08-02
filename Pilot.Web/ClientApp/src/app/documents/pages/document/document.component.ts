@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, ElementRef } from '@angular/core';
-import { SafeUrl, Title } from '@angular/platform-browser';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 
@@ -7,11 +6,8 @@ import { Subscription, Subject } from 'rxjs';
 
 import { Tools } from '../../../core/tools/tools';
 import { IObjectNode } from '../../shared/node.interface';
-import { FilesSelector } from '../../../core/tools/files.selector';
-import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
 import { RepositoryService } from '../../../core/repository.service';
-import { Constants } from '../../../core/constants';
 import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
@@ -27,7 +23,6 @@ import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-she
 import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
 import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
-import { Remark, Point } from '../../components/remarks/remark';
 
 @Component({
   selector: 'app-document',

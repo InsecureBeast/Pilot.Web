@@ -57,5 +57,7 @@
   "whitespace": "пробел",
   "noItemsToDisplay": "Нет данных для отображения",
   "remarks": "Замечания",
-  "redPencilRemark": "<Графическое замечание>"
+  "redPencilRemark": "<Графическое замечание>",
+  "showRemarks":"Показать замечания",
+  "hideRemarks":"Скрыть замечания"
 }

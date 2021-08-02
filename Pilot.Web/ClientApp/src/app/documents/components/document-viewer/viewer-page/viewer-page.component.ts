@@ -1,5 +1,7 @@
-import { AfterViewInit, HostListener } from '@angular/core';
+import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point } from '../../remarks/remark';
 
 class DisplayRemark {
@@ -13,11 +15,13 @@ class DisplayRemark {
   templateUrl: './viewer-page.component.html',
   styleUrls: ['./viewer-page.component.css']
 })
-export class ViewerPageComponent implements OnInit, AfterViewInit {
+export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private _xRatio: number;
   private _yRatio: number;
   private _selectedRemark: Remark;
-  
+  private remarksSubscription: Subscription;
+  private _remarksVisible: boolean;
+
   displayRemarks: DisplayRemark[];
 
   @Input() 
@@ -39,7 +43,16 @@ export class ViewerPageComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef;
   @ViewChild('container') public container: ElementRef;
 
-  constructor() { }
+  constructor(private readonly remarksService: RemarksService) { 
+    this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
+      this._remarksVisible = v;
+      this.drawRemarks(v);
+    });
+  }
+  
+  ngOnDestroy(): void {
+    this.remarksSubscription.unsubscribe();
+  }
   
   ngAfterViewInit(): void {
     var canvasEl = this.canvas.nativeElement;
@@ -57,27 +70,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit {
 
       this._xRatio = img.width / newWidth;
       this._yRatio = img.height / newHeight;
-
-      this.displayRemarks = new Array();
-
-      for (const remark of this.remarks) {
-        
-        if (remark.pageNumber !== this.pageNumber) {
-          continue;
-        }
-
-        if (!remark.position) {
-          continue;
-        }
-                
-        const displayRemark = new DisplayRemark();
-        displayRemark.remark = remark;
-        const x = remark.position.left / this._xRatio;
-        const y = remark.position.top / this._yRatio;
-        displayRemark.position = new Point(x, y);
-        displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
-        this.displayRemarks.push(displayRemark); 
-      }
+      
+      this.drawRemarks(this._remarksVisible);
     };
     img.src = this.page;
   }
@@ -93,12 +87,45 @@ export class ViewerPageComponent implements OnInit, AfterViewInit {
   private calcRemarkPopupLeft(remark: DisplayRemark): number {
     var containerEl = this.container.nativeElement;
     const width = containerEl.offsetWidth;
-    const positionWithWidth = remark.position.left + 250; //width of remark. See css div.annotation-view class
+    const marginLeft = 10;
+    //width of remark. See css div.annotation-view class
+    const positionWithWidth = remark.position.left + 250 + marginLeft; 
     const diff = width - positionWithWidth;
     if (diff < 0) {
       return diff;
     }
 
     return 0;
+  }
+
+  private drawRemarks(isDraw: boolean): void {
+    this.displayRemarks = new Array();
+
+    if (!isDraw) {
+      return;
+    }
+
+    if (!this.remarks) {
+      return;
+    }
+    
+    for (const remark of this.remarks) {
+      
+      if (remark.pageNumber !== this.pageNumber) {
+        continue;
+      }
+
+      if (!remark.position) {
+        continue;
+      }
+              
+      const displayRemark = new DisplayRemark();
+      displayRemark.remark = remark;
+      const x = remark.position.left / this._xRatio;
+      const y = remark.position.top / this._yRatio;
+      displayRemark.position = new Point(x, y);
+      displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
+      this.displayRemarks.push(displayRemark); 
+    }
   }
 }
