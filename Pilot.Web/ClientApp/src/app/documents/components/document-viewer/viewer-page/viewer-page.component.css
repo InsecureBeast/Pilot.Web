@@ -4,3 +4,17 @@ img.doc-page {
     /* margin-top: 8px; */
     width: 100%;
 }
+
+div.annotation-mark {
+    position: relative; 
+    background-color: #FFD80080; 
+    height: 16px; 
+    margin-bottom: -16px;
+    width: 16px;
+    border-radius: 8px;
+    border: 2px solid var(--primary);
+}
+
+div.annotation-mark:hover {
+    border-color: var(--primary-darkness);
+  }

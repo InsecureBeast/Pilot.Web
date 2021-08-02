@@ -1,7 +1,7 @@
   <div class="text-center" *ngIf="images" style="overflow: hidden;" #viewerEl>
     <div *ngFor="let page of images; index as i;">
-      <app-viewer-page [page]="page"
-                       [pageNumber]="i"                 
+      <app-viewer-page [pageNumber]="i" 
+                       [page]="page"                
                        [remarks]="remarks" 
                        [selectedRemark]="selectedRemark">
       </app-viewer-page>

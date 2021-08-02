@@ -1,17 +1,9 @@
-<div #container class="mb-2">
-    <canvas #canvas class="border"></canvas>
-    <!-- <img [src]="page" class="doc-page"> -->
-    <!-- <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;"> -->
-        <!-- <ng-container *ngFor="let remark of remarks">
-          <div style="position: absolute;" *ngIf="remark.position"
-              [style.top.px]="remark.position.top"
-              [style.left.px]="remark.position.left">{{remark.position.top}}  {{remark.position.left}}</div>
-        </ng-container> -->
-        <!-- <div *ngTemplateOutlet="textRemark;context:{item:remark}"></div> -->
-      <!-- </div> -->
-</div>
+<ng-container *ngFor="let remark of displayRemarks">
+    <div class="annotation-mark"
+        [style.top.px]="remark.position.top"
+        [style.left.px]="remark.position.left">{{remark.remark.pointer}}</div>
+</ng-container>
 
-<div style="position: absolute;" *ngIf="selectedRemark"
-     [style.top.px]="calcPosition(selectedRemark).top"
-     [style.left.px]="calcPosition(selectedRemark).left">{{selectedRemark.position.left}} {{calcPosition(selectedRemark).left}}
+<div #container class="mb-2 mr-1">
+    <canvas #canvas class="border"></canvas>
 </div>

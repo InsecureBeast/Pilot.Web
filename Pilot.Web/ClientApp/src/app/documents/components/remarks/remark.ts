@@ -13,6 +13,20 @@ export class Remark {
   constructor() {
     this.position = new Point(0, 0);    
   }
+
+  clone(): Remark {
+    const clone = new Remark();
+    clone.person = this.person;
+    clone.id = this.id;
+    clone.text = this.id;
+    clone.created = this.created;
+    clone.type = this.type;
+    clone.data = this.data;
+    clone.position = this.position;
+    clone.pageNumber = this.pageNumber;
+    clone.pointer = this.pointer;
+    return clone;
+  }
 }
 
 export class RemarkType {
