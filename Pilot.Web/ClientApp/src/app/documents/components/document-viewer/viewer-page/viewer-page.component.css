@@ -1,7 +1,6 @@
 img.doc-page {
     border: 1px solid var(--border);
     margin-bottom: 8px;
-    /* margin-top: 8px; */
     width: 100%;
 }
 
@@ -12,9 +11,15 @@ div.annotation-mark {
     margin-bottom: -16px;
     width: 16px;
     border-radius: 8px;
-    border: 2px solid var(--primary);
+    border: 1px solid #E8B54F;
 }
 
 div.annotation-mark:hover {
-    border-color: var(--primary-darkness);
-  }
+    background-color: #fcd33f;
+}
+
+div.annotation-view {
+    background-color: #FFF5BA;
+    width: 250px;
+    border: 1px solid #E8B54F;
+}

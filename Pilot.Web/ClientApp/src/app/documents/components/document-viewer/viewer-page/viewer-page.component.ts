@@ -2,10 +2,10 @@ import { AfterViewInit, HostListener } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Remark, Point } from '../../remarks/remark';
 
-
 class DisplayRemark {
   remark: Remark;
   position: Point;
+  popupLeft: number;
 }
 
 @Component({
@@ -75,17 +75,9 @@ export class ViewerPageComponent implements OnInit, AfterViewInit {
         const x = remark.position.left / this._xRatio;
         const y = remark.position.top / this._yRatio;
         displayRemark.position = new Point(x, y);
+        displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
         this.displayRemarks.push(displayRemark); 
-
-        // const text_info = ctx.measureText(remark.text);
-        // ctx.fillStyle = "yellow";
-        // ctx.fillRect(x, y, text_info.width, 20);
-        // draw font in red
-        // ctx.fillStyle = "red";
-        // ctx.font = "8pt sans-serif";
-        // ctx.fillText(remark.text, x + 5, y + 16);  
       }
-      console.log(this.displayRemarks);
     };
     img.src = this.page;
   }
@@ -96,5 +88,17 @@ export class ViewerPageComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.ngAfterViewInit();
+  }
+
+  private calcRemarkPopupLeft(remark: DisplayRemark): number {
+    var containerEl = this.container.nativeElement;
+    const width = containerEl.offsetWidth;
+    const positionWithWidth = remark.position.left + 250; //width of remark. See css div.annotation-view class
+    const diff = width - positionWithWidth;
+    if (diff < 0) {
+      return diff;
+    }
+
+    return 0;
   }
 }
