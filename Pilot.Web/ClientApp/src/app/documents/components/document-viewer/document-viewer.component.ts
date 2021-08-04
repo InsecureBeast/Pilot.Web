@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, HostListener, ChangeDetectorRef, Directive, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { Constants } from 'src/app/core/constants';
 import { IFileSnapshot } from 'src/app/core/data/data.classes';
@@ -7,6 +7,7 @@ import { SourceFileService } from 'src/app/core/source-file.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { RemarksService } from '../../shared/remarks.service';
 import { Point, Remark } from '../remarks/remark';
+import { RemarksScrollPositionService } from './scroll.service';
 
 @Component({
   selector: 'app-document-viewer',
@@ -18,12 +19,14 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   private remarksSubscription: Subscription;
   private selectedRemarksSubscription: Subscription;
+  private scrollSubscription: Subscription;
 
   images: string[];
   remarks: Remark[];
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
   position: Point;
+  
   
   @Input()
   set snapshot(value: IFileSnapshot) {
@@ -34,10 +37,13 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
   @Output() downloaded = new EventEmitter<any>();
 
+  @ViewChild("viewer") viewer : ElementRef;
+
   constructor(
     private readonly sourceFileService: SourceFileService, 
     private changeDetectorRef: ChangeDetectorRef,
-    private readonly remarksService: RemarksService) {
+    private readonly remarksService: RemarksService, 
+    private readonly remarksScrollService: RemarksScrollPositionService) {
 
     this.images = new Array();
     this.remarks = new Array();
@@ -46,9 +52,16 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
       this.remarks = remarks;
     });
+
+    this.scrollSubscription = this.remarksScrollService.position.subscribe(position => {
+      if (this.viewer){
+        this.viewer.nativeElement.scrollTop = position - 200;
+      }
+    })
   }
 
   ngOnInit(): void {
+
   }
 
   ngOnDestroy(): void {
@@ -59,6 +72,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     this.remarksSubscription?.unsubscribe();
     this.selectedRemarksSubscription?.unsubscribe();
+    this.scrollSubscription?.unsubscribe();
   }
 
   download($event): void {

@@ -5,14 +5,14 @@
                       (documentCardOpened)="onShowDocumentCard(cardTemplate)"
                       (filesShown)="showFiles($event)">
 </app-document-toolbar>
-
+ 
 <div class="pt-6" *ngIf="!error">
   <div class="row">
-    <div class="col-12 viewer-container"
+    <div class="col-12 viewer-container pr-0"
         [class.col-lg-12]="isSourceFile()"
         [class.col-lg-8]="!isSourceFile()">
 
-      <div class="text-center" *ngIf="!isActualVersionSelected">
+      <div class="text-center col-lg-10" *ngIf="!isActualVersionSelected">
         <div class="alert alert-warning" role="alert">
           <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}
           <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
@@ -20,7 +20,7 @@
       </div>
 
       <app-document-viewer [snapshot]="selectedSnapshot"
-                            (downloaded)="download($event)">
+                           (downloaded)="download($event)">
       </app-document-viewer>
     </div>
 
@@ -31,14 +31,14 @@
       <div class="h-100">
         <tabset #staticTabs >
           <tab heading="{{ 'signatures' | translate }}" customClass="h-100">
-            <app-digital-signatures 
-              [document]="document" 
+            <app-digital-signatures
+              [document]="document"
               (error)="onError($event)">
             </app-digital-signatures>
           </tab>
           <tab heading="{{ 'remarks' | translate }}" customClass="h-100">
-            <app-remark-list 
-              [document]="document" 
+            <app-remark-list
+              [document]="document"
               (error)="onError($event)">
             </app-remark-list>
           </tab>

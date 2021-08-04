@@ -1,13 +1,23 @@
-import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
+import { AfterViewInit, Directive, HostListener, OnDestroy } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point } from '../../remarks/remark';
+import { RemarksScrollPositionService } from '../scroll.service';
 
 class DisplayRemark {
+  private element: ElementRef;
+
   remark: Remark;
   position: Point;
   popupLeft: number;
+  scrollTop: number;
+
+  setElement(element: ElementRef): void {
+    this.element = element;
+    let datas = element.nativeElement.getBoundingClientRect();
+    this.scrollTop = datas.top;
+  }
 }
 
 @Component({
@@ -24,6 +34,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private _remarksVisible: boolean;
 
   displayRemarks: DisplayRemark[];
+  //private viewer: HTMLElement;
   
   @Input() 
   set selectedRemark(value: Remark) {
@@ -44,7 +55,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvas') public canvas: ElementRef;
   @ViewChild('container') public container: ElementRef;
 
-  constructor(private readonly remarksService: RemarksService) { 
+  constructor(private readonly remarksService: RemarksService, private readonly scrollService: RemarksScrollPositionService) { 
     
     this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
@@ -57,6 +68,11 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       this.openPopup(selected);
+
+      var display = this.displayRemarks.find(r => r.remark.id === selected.id);
+      if (display) {
+        this.scrollService.change(display.scrollTop);
+      }
     });
   }
   
@@ -75,7 +91,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       var wrh = img.width / img.height;
       var newWidth = containerEl.offsetWidth;
       var newHeight = (newWidth / wrh);
-      canvasEl.width = newWidth;
+      canvasEl.width = newWidth - 20;
       canvasEl.height = newHeight;
       ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
@@ -88,6 +104,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    
   }
 
   @HostListener('window:resize', ['$event'])
@@ -105,13 +122,14 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('document:click', ['$event']) 
   private clickedOutside($event): void {
     this.closePopups();
-    console.log('clickedOutside')
   }
 
   private closePopups(): void {
-    this.remarks.forEach(r => {
+    if (this.remarks) {
+      this.remarks.forEach(r => {
         r.isOpen = false;
-    });
+      });
+    }
   }
 
   private openPopup(remark: Remark): void {
@@ -163,4 +181,25 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.displayRemarks.push(displayRemark); 
     }
   }
+}
+
+@Directive({
+  selector: '[appPosition]'
+})
+export class ElementPositionDirective implements AfterViewInit{
+
+  constructor(private el: ElementRef) {
+  
+  }
+
+  @Input() appPosition : DisplayRemark;
+
+  ngAfterViewInit(): void {
+    this.appPosition.setElement(this.el);
+  }
+
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   this.appPosition.setElement(this.el);
+  // }
 }

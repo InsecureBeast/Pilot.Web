@@ -31,7 +31,7 @@ import { FocusDirective } from '../core/directives/focus.directive';
 import { RemarkListComponent } from './components/remarks/remark-list.component';
 import { RemarksComponent } from './pages/remarks/remarks.component';
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
-import { ViewerPageComponent } from './components/document-viewer/viewer-page/viewer-page.component';
+import { ElementPositionDirective, ViewerPageComponent } from './components/document-viewer/viewer-page/viewer-page.component';
 
 @NgModule({
   imports: [
@@ -69,7 +69,8 @@ import { ViewerPageComponent } from './components/document-viewer/viewer-page/vi
     RemarkListComponent,
     RemarksComponent,
     DocumentViewerComponent,
-    ViewerPageComponent
+    ViewerPageComponent,
+    ElementPositionDirective
   ],
   exports: [
     DocumentsComponent,

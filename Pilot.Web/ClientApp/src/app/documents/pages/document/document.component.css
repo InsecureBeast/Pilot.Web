@@ -20,7 +20,7 @@
 }
 
 .viewer-container {
-  overflow-y: auto; 
+  overflow: hidden;
   height: calc(100vh - 66px);
 }
 

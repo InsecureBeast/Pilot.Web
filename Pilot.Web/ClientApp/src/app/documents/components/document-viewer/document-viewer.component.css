@@ -1,0 +1,4 @@
+.viewer {
+    overflow: auto; 
+    height: calc(100vh - 66px);
+  }
