@@ -8,7 +8,9 @@
       <h4 class="font-weight-light mt-3 text-secondary" translate="noItemsToDisplay"></h4>
     </div>
     <ul class="list-group list-group-flush mb-auto h-100 overflow-auto">
-      <li class="list-group-item list-group-item-action pointer p-2" *ngFor="let remark of remarks">
+      <li class="list-group-item list-group-item-action pointer p-2" 
+          *ngFor="let remark of remarks"
+          (click)="onClickRemark(remark, $event)">
         <div class="font-smaller">
           <div class="d-flex justify-content-between">
             <div class="text-truncate text-gray">{{remark.person}}</div>

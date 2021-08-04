@@ -1,22 +1,18 @@
 <ng-container *ngFor="let remark of displayRemarks">
     <div class="annotation-mark"
-        [style.top.px]="remark.position.top"
-        [style.left.px]="remark.position.left"
-        dropdownToggle
-        dropdown
-        aria-controls="dropdown-basic">
-        <div id="dropdown-basic"
-            *dropdownMenu 
-            [style.margin-left.px]="remark.popupLeft"
-            class="dropdown-menu shadow annotation-view p-2"
-            aria-labelledby="button-basic">
-            <div class="font-smaller">
-                <div class="d-flex justify-content-between">
-                  <div class="text-truncate text-gray">{{remark.remark.person}}</div>
-                </div>
-                <div class="text-truncate text-wrap mt-2" *ngIf="remark.remark.text">{{remark.remark.text}}</div>
-              </div>
-            </div>
+          [style.top.px]="remark.position.top"
+          [style.left.px]="remark.position.left"
+          (click)="annotationPopupOpen(remark.remark, $event)">
+      <div [class.show]="remark.remark.isOpen"
+           [style.margin-left.px]="remark.popupLeft"
+           class="dropdown-menu shadow annotation-view p-2">
+        <div class="font-smaller">
+            <div class="d-flex justify-content-between">
+            <div class="text-truncate text-gray">{{remark.remark.person}}</div>
+        </div>
+        <div class="text-truncate text-wrap mt-2" *ngIf="remark.remark.text">{{remark.remark.text}}</div>
+        </div>
+      </div>
     </div>
 </ng-container>
 

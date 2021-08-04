@@ -20,10 +20,11 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private _yRatio: number;
   private _selectedRemark: Remark;
   private remarksSubscription: Subscription;
+  private selectedRemarksSubscription: Subscription;
   private _remarksVisible: boolean;
 
   displayRemarks: DisplayRemark[];
-
+  
   @Input() 
   set selectedRemark(value: Remark) {
     if (value && value.pageNumber !== this.pageNumber) {
@@ -44,14 +45,24 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('container') public container: ElementRef;
 
   constructor(private readonly remarksService: RemarksService) { 
+    
     this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
       this.drawRemarks(v);
     });
+    
+    this.selectedRemarksSubscription = this.remarksService.selectedRemark.subscribe(selected => {
+      if (!selected) {
+        return;
+      }
+      
+      this.openPopup(selected);
+    });
   }
   
   ngOnDestroy(): void {
-    this.remarksSubscription.unsubscribe();
+    this.remarksSubscription?.unsubscribe();
+    this.selectedRemarksSubscription?.unsubscribe();
   }
   
   ngAfterViewInit(): void {
@@ -82,6 +93,30 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.ngAfterViewInit();
+  }
+
+  annotationPopupOpen(remark: Remark, $event: Event): void {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    this.openPopup(remark);
+  }
+
+  @HostListener('document:click', ['$event']) 
+  private clickedOutside($event): void {
+    this.closePopups();
+    console.log('clickedOutside')
+  }
+
+  private closePopups(): void {
+    this.remarks.forEach(r => {
+        r.isOpen = false;
+    });
+  }
+
+  private openPopup(remark: Remark): void {
+    this.closePopups();
+    remark.isOpen = true;
   }
 
   private calcRemarkPopupLeft(remark: DisplayRemark): number {

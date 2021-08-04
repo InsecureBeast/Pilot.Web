@@ -1,9 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, Input, OnDestroy, OnInit, Output, EventEmitter, HostListener, ChangeDetectorRef } from '@angular/core';
-import { SafeUrl } from '@angular/platform-browser';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, HostListener, ChangeDetectorRef } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { Constants } from 'src/app/core/constants';
-import { IFileSnapshot, IObject } from 'src/app/core/data/data.classes';
+import { IFileSnapshot } from 'src/app/core/data/data.classes';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { RemarksService } from '../../shared/remarks.service';
@@ -18,18 +17,19 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   
   private ngUnsubscribe = new Subject<void>();
   private remarksSubscription: Subscription;
+  private selectedRemarksSubscription: Subscription;
 
   images: string[];
   remarks: Remark[];
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
   position: Point;
-  selectedRemark: Remark;
   
   @Input()
   set snapshot(value: IFileSnapshot) {
-    if (value)
+    if (value) {
       this.loadSnapshot(value);
+    }
   }
 
   @Output() downloaded = new EventEmitter<any>();
@@ -45,10 +45,6 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
       this.remarks = remarks;
-      if (remarks.length>0){
-        this.selectedRemark = remarks[0];
-
-      }
     });
   }
 
@@ -61,9 +57,8 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
       this.ngUnsubscribe.complete();
     }
 
-    if (this.remarksSubscription){
-      this.remarksSubscription.unsubscribe();
-    }
+    this.remarksSubscription?.unsubscribe();
+    this.selectedRemarksSubscription?.unsubscribe();
   }
 
   download($event): void {

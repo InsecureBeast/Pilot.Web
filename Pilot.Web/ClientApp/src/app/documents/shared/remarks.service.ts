@@ -7,9 +7,11 @@ export class RemarksService {
 
   private _remarksSubject = new BehaviorSubject<Remark[]>(new Array());
   private _remarksVisibilitySubject = new BehaviorSubject<boolean>(false);
+  private _selectedRemark = new BehaviorSubject<Remark>(null); 
 
   remarks = this._remarksSubject.asObservable();
   remarksVisibility = this._remarksVisibilitySubject.asObservable();
+  selectedRemark = this._selectedRemark.asObservable();
 
   constructor() {
     
@@ -21,6 +23,10 @@ export class RemarksService {
 
   changeRemarksVisibility(value: boolean): void {
     this._remarksVisibilitySubject.next(value);
+  }
+
+  changeSelectedRemark(remark: Remark): void {
+    this._selectedRemark.next(remark);
   }
 
   getRemarksVisibility(): boolean {

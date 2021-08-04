@@ -9,6 +9,7 @@ export class Remark {
   position: Point;
   pageNumber: number = -1;
   pointer: string;
+  isOpen: boolean;
 
   constructor() {
     this.position = new Point(0, 0);    
@@ -25,6 +26,7 @@ export class Remark {
     clone.position = this.position;
     clone.pageNumber = this.pageNumber;
     clone.pointer = this.pointer;
+    clone.isOpen = this.isOpen;
     return clone;
   }
 }
@@ -37,9 +39,6 @@ export class RemarkType {
 
 export class Point {
   
-  /**
-   *
-   */
   constructor(left: number, top: number) {
     this.top = top;
     this.left = left;    

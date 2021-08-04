@@ -24,7 +24,7 @@ export class RemarkListComponent implements OnInit {
   constructor(
     private readonly repository: RepositoryService,
     private readonly fileRepository: FilesRepositoryService,
-    private readonly remarkService: RemarksService) { 
+    private readonly remarksService: RemarksService) { 
       this.remarks = new Array();
     }
 
@@ -49,6 +49,12 @@ export class RemarkListComponent implements OnInit {
     return remark.type === RemarkType.RED_PENCIL;
   }
 
+  onClickRemark(remark: Remark, $event:Event): void {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.remarksService.changeSelectedRemark(remark);
+  }
+
   private loadRemarks(document: IObject) {
     this.remarks = new Array<Remark>();
     this.isLoading = true;
@@ -65,6 +71,6 @@ export class RemarkListComponent implements OnInit {
     
     this.isLoading = false;
     this.loaded.emit(this.remarks);
-    this.remarkService.changeRemarkList(this.remarks);
+    this.remarksService.changeRemarkList(this.remarks);
   }
 }
