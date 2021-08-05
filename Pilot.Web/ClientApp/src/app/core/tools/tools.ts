@@ -24,7 +24,7 @@ export class Tools {
   }
 
   static getImage(base64: string, type: string, sanitizer: DomSanitizer): SafeUrl {
-    const imageSrc = 'data:image/' + type + ';base64,' + base64;
+    const imageSrc = this.getUnsafeImage(base64, type);
     const source = sanitizer.bypassSecurityTrustUrl(imageSrc);
     return source;
   }

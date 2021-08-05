@@ -1,5 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, HostListener, ChangeDetectorRef, Directive, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, 
+  Input, 
+  OnDestroy, 
+  OnInit, 
+  Output, 
+  EventEmitter, 
+  HostListener,
+  ChangeDetectorRef, 
+  ElementRef, 
+  ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { Constants } from 'src/app/core/constants';
 import { IFileSnapshot } from 'src/app/core/data/data.classes';
@@ -21,7 +30,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   private selectedRemarksSubscription: Subscription;
   private scrollSubscription: Subscription;
 
-  images: string[];
+  pages: string[];
   remarks: Remark[];
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
@@ -45,7 +54,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     private readonly remarksService: RemarksService, 
     private readonly remarksScrollService: RemarksScrollPositionService) {
 
-    this.images = new Array();
+    this.pages = new Array();
     this.remarks = new Array();
     this.position = new Point(0,0);
 
@@ -92,15 +101,15 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
   private loadSnapshot(snapshot: IFileSnapshot): void {
     this.isLoading = true;
-    this.images = new Array<string>();
+    this.pages = new Array<string>();
 
     if (this.sourceFileService.isXpsFile(snapshot)) {
       const file = FilesSelector.getSourceFile(snapshot.files);
-      this.sourceFileService.fillUnsafeXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
+      this.sourceFileService.fillUnsafeXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.pages)
         .then(_ => this.isLoading = false)
         .catch(e => {
           this.isLoading = false;
-          this.images = null;
+          this.pages = null;
           this.error = e;
         });
       return;
@@ -110,20 +119,19 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
       const file = FilesSelector.getSourceFile(snapshot.files);
       if (!file) {
         this.isLoading = false;
-        this.images = null;
+        this.pages = null;
         return;
       }
 
       this.sourceFileService.getUnsafeImageFileToShowAsync(file, this.ngUnsubscribe)
-        .then(url => {
-          this.images.push(url);
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.error = e;
-        });
-
+      .then(url => {
+        this.pages.push(url);
+        this.isLoading = false;
+      })
+      .catch(e => {
+        this.pages = null;
+        this.error = e;
+      });
       return;
     }
 
@@ -133,13 +141,13 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         })
         .catch(e => {
-          this.images = null;
+          this.pages = null;
           this.error = e;
         });
       return;
     }
 
-    this.images = null;
+    this.pages = null;
     this.isLoading = false;
   }
 }

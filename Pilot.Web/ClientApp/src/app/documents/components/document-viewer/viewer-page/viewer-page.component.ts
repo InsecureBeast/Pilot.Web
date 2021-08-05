@@ -1,5 +1,6 @@
 import { AfterViewInit, Directive, HostListener, OnDestroy } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point } from '../../remarks/remark';
@@ -34,7 +35,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private _remarksVisible: boolean;
 
   displayRemarks: DisplayRemark[];
-  //private viewer: HTMLElement;
+  image: SafeUrl;
   
   @Input() 
   set selectedRemark(value: Remark) {
@@ -48,14 +49,18 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._selectedRemark;
   }
 
+
   @Input() page: string;
   @Input() remarks: Remark[];
   @Input() pageNumber: number;
 
-  @ViewChild('canvas') public canvas: ElementRef;
+  //@ViewChild('canvas') public canvas: ElementRef;
   @ViewChild('container') public container: ElementRef;
 
-  constructor(private readonly remarksService: RemarksService, private readonly scrollService: RemarksScrollPositionService) { 
+  constructor(
+    private readonly remarksService: RemarksService, 
+    private readonly scrollService: RemarksScrollPositionService,
+    private readonly sanitizer: DomSanitizer) { 
     
     this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
@@ -82,8 +87,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   ngAfterViewInit(): void {
-    var canvasEl = this.canvas.nativeElement;
-    var ctx = canvasEl.getContext('2d');
     var containerEl = this.container.nativeElement;
 
     var img = new Image();
@@ -91,12 +94,9 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       var wrh = img.width / img.height;
       var newWidth = containerEl.offsetWidth;
       var newHeight = (newWidth / wrh);
-      canvasEl.width = newWidth - 20;
-      canvasEl.height = newHeight;
-      ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
       this._xRatio = img.width / newWidth;
       this._yRatio = img.height / newHeight;
+      this.image = this.sanitizer.bypassSecurityTrustUrl(this.page);
       
       this.drawRemarks(this._remarksVisible);
     };

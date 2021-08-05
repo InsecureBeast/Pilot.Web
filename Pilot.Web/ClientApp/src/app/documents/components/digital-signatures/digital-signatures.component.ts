@@ -143,42 +143,48 @@ export class DigitalSignaturesComponent implements OnDestroy {
   }
 
   private async updateSignaturesAsync(document: IObject, snapshot: IFileSnapshot): Promise<void> {
-    if (this.signatures.length === 0) {
-      this.isSignaturesLoading = true;
-    }
-
-    const isConnected = await this.repository.isXpsServiceConnected(this.ngUnsubscribe);
-    if (!isConnected) {
-      this.showSignButton = false;
+    try
+    { 
+      if (this.signatures.length === 0) {
+        this.isSignaturesLoading = true;
+      }
+  
+      const isConnected = await this.repository.isXpsServiceConnected(this.ngUnsubscribe);
+      if (!isConnected) {
+        this.showSignButton = false;
+        this.isSignaturesLoading = false;
+        return;
+      }
+  
+      const signatures = await this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe);
       this.isSignaturesLoading = false;
-      return;
-    }
-
-    const signatures = await this.repository.getDocumentSignaturesWithSnapshotAsync(document.id, snapshot.created, this.ngUnsubscribe);
-    this.isSignaturesLoading = false;
-
-    for (const sig of signatures) {
-      if (sig.isAdditional && !sig.isSigned) {
-        continue;
+  
+      for (const sig of signatures) {
+        if (sig.isAdditional && !sig.isSigned) {
+          continue;
+        }
+  
+        let sc = this.signatures.find(s => s.id === sig.id);
+        if (!sc) {
+          sc = new DigitalSignature(sig.id);
+          this.signatures.push(sc);
+        }
+  
+        sc.person = sig.signer;
+        sc.isValid = sig.isValid;
+        sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
+        sc.role = sig.role;
+        sc.isCertificateValid = sig.isCertificateValid;
+        sc.canUserSign = await this.canSignWithSpotId(sig.id);
+        sc.isSigned = sig.isSigned;
+        sc.isChecked = sc.canUserSign && !sig.isSigned;
       }
-
-      let sc = this.signatures.find(s => s.id === sig.id);
-      if (!sc) {
-        sc = new DigitalSignature(sig.id);
-        this.signatures.push(sc);
-      }
-
-      sc.person = sig.signer;
-      sc.isValid = sig.isValid;
-      sc.signDate = DateTools.dateToString(sig.signDate, this.translate.currentLang);
-      sc.role = sig.role;
-      sc.isCertificateValid = sig.isCertificateValid;
-      sc.canUserSign = await this.canSignWithSpotId(sig.id);
-      sc.isSigned = sig.isSigned;
-      sc.isChecked = sc.canUserSign && !sig.isSigned;
+  
+      this.showSignButton = true;
+      
+    } catch (err) {
+      this.isSignaturesLoading = false;
     }
-
-    this.showSignButton = true;
   }
 
   private cancelAllRequests(isCompleted: boolean): void {
