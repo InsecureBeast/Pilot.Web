@@ -12,8 +12,10 @@ import { Component,
 import { Subject, Subscription } from 'rxjs';
 import { Constants } from 'src/app/core/constants';
 import { IFileSnapshot } from 'src/app/core/data/data.classes';
+import { RepositoryService } from 'src/app/core/repository.service';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
+import { Tools } from 'src/app/core/tools/tools';
 import { RemarksService } from '../../shared/remarks.service';
 import { Point, Remark } from '../remarks/remark';
 import { RemarksScrollPositionService } from './scroll.service';
@@ -35,7 +37,9 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
   position: Point;
-  
+
+  selectedVersionCreated: string;
+  selectedVersionCreator: string;
   
   @Input()
   set snapshot(value: IFileSnapshot) {
@@ -44,11 +48,15 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     }
   }
 
+  @Input() isActualVersionSelected : boolean;
+
   @Output() downloaded = new EventEmitter<any>();
+  @Output() versionSelected = new EventEmitter<any>();
 
   @ViewChild("viewer") viewer : ElementRef;
 
   constructor(
+    private readonly repository: RepositoryService,
     private readonly sourceFileService: SourceFileService, 
     private changeDetectorRef: ChangeDetectorRef,
     private readonly remarksService: RemarksService, 
@@ -93,15 +101,15 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  calcRemarkPosition(position: Point, image: HTMLElement): Point {
-    console.log(`${image.offsetWidth}  ${image.clientWidth}  ${image.scrollWidth}`);
-    console.log(`${position.top}  ${position.left}`);
-    return new Point(position.left, position.top);
+  selectActualVersion() : void {
+    this.versionSelected.emit();
   }
 
   private loadSnapshot(snapshot: IFileSnapshot): void {
     this.isLoading = true;
     this.pages = new Array<string>();
+
+    this.checkActualVersion(snapshot);
 
     if (this.sourceFileService.isXpsFile(snapshot)) {
       const file = FilesSelector.getSourceFile(snapshot.files);
@@ -149,5 +157,16 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     this.pages = null;
     this.isLoading = false;
+  }
+
+  private checkActualVersion(snapshot: IFileSnapshot) {
+    if (snapshot) {
+      this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
+      this.selectedVersionCreator = '';
+      const creator = this.repository.getPerson(snapshot.creatorId);
+      if (creator) {
+        this.selectedVersionCreator = creator.displayName;
+      }
+    }
   }
 }

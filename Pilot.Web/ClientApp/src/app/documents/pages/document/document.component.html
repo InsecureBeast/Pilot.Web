@@ -12,14 +12,9 @@
         [class.col-lg-12]="isSourceFile()"
         [class.col-lg-8]="!isSourceFile()">
 
-      <div class="text-center col-lg-10" *ngIf="!isActualVersionSelected">
-        <div class="alert alert-warning" role="alert">
-          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}
-          <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
-        </div>
-      </div>
-
       <app-document-viewer [snapshot]="selectedSnapshot"
+                           [isActualVersionSelected]="isActualVersionSelected"
+                           (versionSelected)="selectActualVersion($event)"
                            (downloaded)="download($event)">
       </app-document-viewer>
     </div>

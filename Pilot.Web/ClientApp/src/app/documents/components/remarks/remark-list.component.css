@@ -2,3 +2,9 @@
     margin-top: 40vh; 
     text-align: center;
 }
+
+.list-group-item.active {
+    background-color: var(--gray-light);
+    color: #495057;;
+    border-color: var(--border);
+  }

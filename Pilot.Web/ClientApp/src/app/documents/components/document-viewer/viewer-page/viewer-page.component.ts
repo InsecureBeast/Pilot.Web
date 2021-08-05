@@ -54,7 +54,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() remarks: Remark[];
   @Input() pageNumber: number;
 
-  //@ViewChild('canvas') public canvas: ElementRef;
   @ViewChild('container') public container: ElementRef;
 
   constructor(
@@ -140,7 +139,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private calcRemarkPopupLeft(remark: DisplayRemark): number {
     var containerEl = this.container.nativeElement;
     const width = containerEl.offsetWidth;
-    const marginLeft = 10;
+    const marginLeft = 15;
     //width of remark. See css div.annotation-view class
     const positionWithWidth = remark.position.left + 250 + marginLeft; 
     const diff = width - positionWithWidth;
@@ -188,18 +187,11 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 })
 export class ElementPositionDirective implements AfterViewInit{
 
-  constructor(private el: ElementRef) {
-  
-  }
-
   @Input() appPosition : DisplayRemark;
+  constructor(private el: ElementRef) {
+  }
 
   ngAfterViewInit(): void {
     this.appPosition.setElement(this.el);
   }
-
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event) {
-  //   this.appPosition.setElement(this.el);
-  // }
 }

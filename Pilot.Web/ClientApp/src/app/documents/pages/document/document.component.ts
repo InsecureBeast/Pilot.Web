@@ -4,7 +4,6 @@ import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/rout
 
 import { Subscription, Subject } from 'rxjs';
 
-import { Tools } from '../../../core/tools/tools';
 import { IObjectNode } from '../../shared/node.interface';
 import { DownloadService } from '../../../core/download.service';
 import { RepositoryService } from '../../../core/repository.service';
@@ -45,8 +44,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
   error: HttpErrorResponse;
 
   isActualVersionSelected: boolean;
-  selectedVersionCreated: string;
-  selectedVersionCreator: string;
 
   @ViewChild('cardTemplate') private cardTemplate: TemplateRef<any>;
   @ViewChild('staticTabs', { static: false }) private staticTabs: TabsetComponent;
@@ -226,15 +223,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.isActualVersionSelected = !version;
         if (!this.isActualVersionSelected) {
           snapshot = source.previousFileSnapshots.find(f => f.created === version);
-        }
-
-        if (snapshot) {
-          this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
-          this.selectedVersionCreator = '';
-          const creator = this.repository.getPerson(snapshot.creatorId);
-          if (creator) {
-            this.selectedVersionCreator = creator.displayName;
-          }
         }
 
         this.selectedSnapshot = snapshot;
