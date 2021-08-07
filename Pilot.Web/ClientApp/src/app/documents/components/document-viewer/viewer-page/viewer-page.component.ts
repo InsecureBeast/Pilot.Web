@@ -22,9 +22,10 @@ class DisplayRemark {
 }
 
 class RedPencilRemarkDisplayParams {
-  viewBoxValue = '0 0 24 24';
-  viewBoxHeight = 24;
-  transform = 'scale(0)';
+  viewBoxValue = '0 0 1 1';
+  viewBoxHeight = 1;
+  viewBoxWidth = 1;
+  transform = 'scale(1)';
 }
 
 @Component({
@@ -56,7 +57,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._selectedRemark;
   }
 
-
   @Input() page: string;
   @Input() remarks: Remark[];
   @Input() pageNumber: number;
@@ -87,7 +87,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-  
+
   ngOnDestroy(): void {
     this.remarksSubscription?.unsubscribe();
     this.selectedRemarksSubscription?.unsubscribe();
@@ -95,7 +95,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   
   ngAfterViewInit(): void {
     var containerEl = this.container.nativeElement;
-
     var img = new Image();
     img.onload = () => {
       var wrh = img.width / img.height;
@@ -104,15 +103,14 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this._xRatio = img.width / newWidth;
       this._yRatio = img.height / newHeight;
       this.setupRedPencilDisplayParams(newWidth, newHeight);
-      this.image = this.sanitizer.bypassSecurityTrustUrl(this.page);
-      
       this.drawRemarks(this._remarksVisible);
+      img = null;
     };
     img.src = this.page;
   }
 
   ngOnInit(): void {
-    
+    this.image = this.sanitizer.bypassSecurityTrustUrl(this.page);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -167,9 +165,10 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return 0;
   }
 
-  private setupRedPencilDisplayParams(newWidth: any, newHeight: number) {
-    this.redParams.viewBoxValue = `${0} ${0} ${newWidth} ${newHeight}`;
+  private setupRedPencilDisplayParams(newWidth: number, newHeight: number) {
+    this.redParams.viewBoxWidth = newWidth;
     this.redParams.viewBoxHeight = newHeight;
+    this.redParams.viewBoxValue = `${0} ${0} ${newWidth - 1} ${newHeight}`;
     this.redParams.transform = `scale(${1 / this._xRatio})`;
   }
 

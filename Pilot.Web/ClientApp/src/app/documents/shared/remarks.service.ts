@@ -5,6 +5,7 @@ import { Remark } from '../components/remarks/remark';
 @Injectable({ providedIn: 'root'})
 export class RemarksService {
 
+  private _remarksVisibleName = "reamrks_visible";
   private _remarksSubject = new BehaviorSubject<Remark[]>(new Array());
   private _remarksVisibilitySubject = new BehaviorSubject<boolean>(false);
   private _selectedRemark = new BehaviorSubject<Remark>(null); 
@@ -14,7 +15,12 @@ export class RemarksService {
   selectedRemark = this._selectedRemark.asObservable();
 
   constructor() {
-    
+    const isRemarksVisible = localStorage.getItem(this._remarksVisibleName);
+    if (isRemarksVisible && isRemarksVisible === "1") {
+        this._remarksVisibilitySubject.next(true);
+    } else {
+      this._remarksVisibilitySubject.next(false);
+    }
   }
 
   changeRemarkList(remarks: Remark[]) : void {
@@ -23,6 +29,11 @@ export class RemarksService {
 
   changeRemarksVisibility(value: boolean): void {
     this._remarksVisibilitySubject.next(value);
+    if (value) {
+      localStorage.setItem(this._remarksVisibleName, "1");
+    } else {
+      localStorage.setItem(this._remarksVisibleName, "0");
+    }
   }
 
   changeSelectedRemark(remark: Remark): void {

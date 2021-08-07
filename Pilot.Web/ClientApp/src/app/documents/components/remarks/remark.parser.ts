@@ -70,7 +70,11 @@ export class RemarkParser {
                 remark.person = this.getFirstOrDefaultChildText(child);
             } 
             else if (child.name == ':anb:Text') {
-                remark.text = this.getText(child);
+                let text = this.getText(child);
+                if (text === null || text === 'null') {
+                    text = '';
+                } 
+                remark.text = text;
             }
             else if (child.name.startsWith(':anb:Data')) {
                 let data = this.getFirstOrDefaultChildText(child);

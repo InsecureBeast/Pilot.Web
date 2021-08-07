@@ -7,8 +7,8 @@
   </ng-container>
 </ng-container>
 
-<div #container class="mb-2">
-  <img [src]="image" class="doc-page"/>
+<div class="mb-2">
+  <img [src]="image" class="doc-page" #container/>
 </div>
 
 <ng-template #redPencilRemarkTemplate let-remark="remark">
@@ -17,7 +17,8 @@
         xmlns:xlink="http://www.w3.org/1999/xlink" 
         version="1.1"
         [attr.viewBox]="redParams.viewBoxValue"
-        [attr.height]="redParams.viewBoxHeight">
+        [attr.height]="redParams.viewBoxHeight"
+        [attr.width]="redParams.viewBoxWidth">
     <path [attr.d]="remark.remark.data" 
           fill="none" 
           stroke="red" 
@@ -26,15 +27,13 @@
   </div>
 
   <div class="annotation-mark" 
-      *ngIf="remark.remark.text !== '' && remark.remark.text !== null && remark.remark.text !== 'null'"
       [appPosition]="remark"
       [style.top.px]="remark.position.top"
       [style.left.px]="remark.position.left"
       (click)="annotationPopupOpen(remark.remark, $event)">
     <div [class.show]="remark.remark.isOpen"
           [style.margin-left.px]="remark.popupLeft"
-          class="dropdown-menu shadow annotation-view p-2"
-          *ngIf="remark.remark.text !== null">
+          class="dropdown-menu shadow annotation-view p-2" >
       <div class="font-smaller">
         <div class="text-truncate text-gray">{{remark.remark.person}}</div>
         <div class="text-truncate text-wrap mt-2" *ngIf="remark.remark.text">{{remark.remark.text}}</div>
