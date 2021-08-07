@@ -81,8 +81,6 @@ export class RemarkParser {
                 else {
                     data = Tools.replaceAll(data, ",", " ");
                 }
-                console.log(remark.type);
-                console.log(data);
                 remark.data = data;
             }
             else if (child.name === ':anb:MetaData') {

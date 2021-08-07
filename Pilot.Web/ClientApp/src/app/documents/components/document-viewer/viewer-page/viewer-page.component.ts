@@ -196,14 +196,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
               
       const displayRemark = new DisplayRemark();
       displayRemark.remark = remark;
-
-      let x = 0;
-      let y = 0;
-      if (remark.type !== RemarkType.RED_PENCIL) {
-        x = remark.position.left / this._xRatio;
-        y = remark.position.top / this._yRatio;
-      }
-
+      const  x = remark.position.left / this._xRatio;
+      const  y = remark.position.top / this._yRatio;
       displayRemark.position = new Point(x, y);
       displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
       this.displayRemarks.push(displayRemark);
