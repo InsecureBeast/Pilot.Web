@@ -3,7 +3,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
-import { Remark, Point } from '../../remarks/remark';
+import { Remark, Point, RemarkType } from '../../remarks/remark';
 import { RemarksScrollPositionService } from '../scroll.service';
 
 class DisplayRemark {
@@ -21,6 +21,12 @@ class DisplayRemark {
   }
 }
 
+class RedPencilRemarkDisplayParams {
+  viewBoxValue = '0 0 24 24';
+  viewBoxHeight = 24;
+  transform = 'scale(0)';
+}
+
 @Component({
   selector: 'app-viewer-page',
   templateUrl: './viewer-page.component.html',
@@ -36,6 +42,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   displayRemarks: DisplayRemark[];
   image: SafeUrl;
+  redParams: RedPencilRemarkDisplayParams;
   
   @Input() 
   set selectedRemark(value: Remark) {
@@ -61,6 +68,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly scrollService: RemarksScrollPositionService,
     private readonly sanitizer: DomSanitizer) { 
     
+    this.redParams = new RedPencilRemarkDisplayParams();
     this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
       this.drawRemarks(v);
@@ -95,6 +103,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       var newHeight = (newWidth / wrh);
       this._xRatio = img.width / newWidth;
       this._yRatio = img.height / newHeight;
+      this.setupRedPencilDisplayParams(newWidth, newHeight);
       this.image = this.sanitizer.bypassSecurityTrustUrl(this.page);
       
       this.drawRemarks(this._remarksVisible);
@@ -116,6 +125,14 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     $event.stopPropagation();
 
     this.openPopup(remark);
+  }
+
+  isTextNoteRemark(remark: DisplayRemark): boolean {
+    return remark.remark.type === RemarkType.TEXT_NOTE || remark.remark.type === RemarkType.STICKY_NOTE;
+  }
+
+  isRedPencil(remark: DisplayRemark): boolean {
+    return remark.remark.type === RemarkType.RED_PENCIL;
   }
 
   @HostListener('document:click', ['$event']) 
@@ -150,6 +167,12 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return 0;
   }
 
+  private setupRedPencilDisplayParams(newWidth: any, newHeight: number) {
+    this.redParams.viewBoxValue = `${0} ${0} ${newWidth} ${newHeight}`;
+    this.redParams.viewBoxHeight = newHeight;
+    this.redParams.transform = `scale(${1 / this._xRatio})`;
+  }
+
   private drawRemarks(isDraw: boolean): void {
     this.displayRemarks = new Array();
 
@@ -173,11 +196,17 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
               
       const displayRemark = new DisplayRemark();
       displayRemark.remark = remark;
-      const x = remark.position.left / this._xRatio;
-      const y = remark.position.top / this._yRatio;
+
+      let x = 0;
+      let y = 0;
+      if (remark.type !== RemarkType.RED_PENCIL) {
+        x = remark.position.left / this._xRatio;
+        y = remark.position.top / this._yRatio;
+      }
+
       displayRemark.position = new Point(x, y);
       displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
-      this.displayRemarks.push(displayRemark); 
+      this.displayRemarks.push(displayRemark);
     }
   }
 }

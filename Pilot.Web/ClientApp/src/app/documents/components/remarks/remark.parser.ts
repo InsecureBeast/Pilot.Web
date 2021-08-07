@@ -1,4 +1,5 @@
 import { Element, XmlParser, Text } from "@angular/compiler";
+import { Tools } from "src/app/core/tools/tools";
 import { TextDecoder } from 'text-encoding';
 import { Remark } from "./remark";
 
@@ -68,11 +69,21 @@ export class RemarkParser {
             if (child.name === ':anb:StringAuthor' && !remark.person) {
                 remark.person = this.getFirstOrDefaultChildText(child);
             } 
-            else if (child.name === ':anb:Text') {
+            else if (child.name == ':anb:Text') {
                 remark.text = this.getText(child);
             }
-            else if (child.name === ':anb:Data') {
-                remark.data = this.getFirstOrDefaultChildText(child);
+            else if (child.name.startsWith(':anb:Data')) {
+                let data = this.getFirstOrDefaultChildText(child);
+                if (data.includes(';')) {
+                    data = Tools.replaceAll(data, ";", " ");
+                    data = Tools.replaceAll(data, ",", ".");
+                }
+                else {
+                    data = Tools.replaceAll(data, ",", " ");
+                }
+                console.log(remark.type);
+                console.log(data);
+                remark.data = data;
             }
             else if (child.name === ':anb:MetaData') {
                 const top = this.getAttribute(':anb:Top', child);
@@ -132,3 +143,58 @@ export class RemarkParser {
         }
     }
 }
+
+// class GeometryToSvgPathConverter {
+//     private readonly _ratio;
+//     private Parts: string[];
+//     public Path: string;
+
+//     public CanvasGeometryToSvgPathReader() : this(Vector2.One)
+//     { }
+
+//     public CanvasGeometryToSvgPathReader(Vector2 ratio)
+//     {
+//         _ratio = ratio;
+//         Parts = new List<string>();
+//     }
+
+//     public void BeginFigure(Vector2 startPoint, CanvasFigureFill figureFill)
+//     {
+//         Parts.Add($"M{startPoint.X / _ratio.X} {startPoint.Y / _ratio.Y}");
+//     }
+
+//     public void AddArc(Vector2 endPoint, float radiusX, float radiusY, float rotationAngle, CanvasSweepDirection sweepDirection, CanvasArcSize arcSize)
+//     {
+      
+//     }
+
+//     public void AddCubicBezier(Vector2 controlPoint1, Vector2 controlPoint2, Vector2 endPoint)
+//     {
+//         Parts.Add($"C{controlPoint1.X / _ratio.X},{controlPoint1.Y / _ratio.Y} {controlPoint2.X / _ratio.X},{controlPoint2.Y / _ratio.Y} {endPoint.X / _ratio.X},{endPoint.Y / _ratio.Y}");
+//     }
+
+//     public void AddLine(Vector2 endPoint)
+//     {
+//         Parts.Add($"L {endPoint.X / _ratio.X} {endPoint.Y / _ratio.Y}");
+//     }
+
+//     public void AddQuadraticBezier(Vector2 controlPoint, Vector2 endPoint)
+//     {
+//         //
+//     }
+
+//     public void SetFilledRegionDetermination(CanvasFilledRegionDetermination filledRegionDetermination)
+//     {
+//        //
+//     }
+
+//     public void SetSegmentOptions(CanvasFigureSegmentOptions figureSegmentOptions)
+//     {
+//         //
+//     }
+
+//     public void EndFigure(CanvasFigureLoop figureLoop)
+//     {
+//         Parts.Add("Z");
+//     }
+// }

@@ -64,6 +64,10 @@ export class Tools {
   static async sleep(ms): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  static replaceAll(string: string, search: string, replace:string): string {
+    return string.split(search).join(replace);
+  }
 }
 
 export class StringUtils {

@@ -14,6 +14,13 @@ div.annotation-mark {
     border: 1px solid #E8B54F;
 }
 
+div.annotation-graphic-mark {
+    position: relative; 
+    height: 16px; 
+    margin-bottom: -16px;
+    width: 16px;
+}
+
 div.annotation-mark:hover {
     background-color: #fcd33f;
 }
