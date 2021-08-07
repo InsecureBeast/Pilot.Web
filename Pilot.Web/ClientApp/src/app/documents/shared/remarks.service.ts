@@ -43,4 +43,8 @@ export class RemarksService {
   getRemarksVisibility(): boolean {
     return this._remarksVisibilitySubject.value;
   }
+
+  getRemarks(): Remark[] {
+    return this._remarksSubject.value;
+  }
 }

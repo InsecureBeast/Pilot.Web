@@ -59,5 +59,6 @@
   "remarks": "Remarks",
   "redPencilRemark": "<Graphic remark>",
   "showRemarks":"Show annotations",
-  "hideRemarks":"Hide annotations"
+  "hideRemarks":"Hide annotations",
+  "browseAll": "Browse all"
 }

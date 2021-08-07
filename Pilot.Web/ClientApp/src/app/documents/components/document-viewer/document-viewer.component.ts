@@ -67,7 +67,8 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     this.position = new Point(0,0);
 
     this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
-      this.remarks = remarks;
+      if (this.remarks.length === 0)
+        this.remarks = remarks;
     });
 
     this.scrollSubscription = this.remarksScrollService.position.subscribe(position => {
@@ -101,8 +102,9 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  selectActualVersion() : void {
+  selectActualVersion() : boolean {
     this.versionSelected.emit();
+    return false;
   }
 
   private loadSnapshot(snapshot: IFileSnapshot): void {

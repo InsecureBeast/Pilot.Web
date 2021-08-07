@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { timeStamp } from 'console';
 import { first } from 'rxjs/operators';
 import { IObject } from 'src/app/core/data/data.classes';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
@@ -14,7 +15,7 @@ import { RemarkParser } from './remark.parser';
   templateUrl: './remark-list.component.html',
   styleUrls: ['./remark-list.component.css']
 })
-export class RemarkListComponent implements OnInit {
+export class RemarkListComponent implements OnInit, OnDestroy{
     
   private _document: IObject;
 
@@ -27,7 +28,7 @@ export class RemarkListComponent implements OnInit {
     private readonly remarksService: RemarksService) { 
       this.remarks = new Array();
     }
-
+  
   @Input()
   get document(): IObject {
     return this._document;
@@ -45,17 +46,28 @@ export class RemarkListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy(): void {
+  }
+
   isRedPencil(remark: Remark): boolean {
     return remark.type === RemarkType.RED_PENCIL;
   }
 
-  onClickRemark(remark: Remark, $event:Event): void {
+  onClickRemark(remark: Remark, $event:Event): boolean {
     $event.preventDefault();
     $event.stopPropagation();
+    remark.isOpen = true;
     this.remarksService.changeSelectedRemark(remark);
+    return false;
   }
 
   private loadRemarks(document: IObject) {
+    const loadedRemarks = this.remarksService.getRemarks();
+    if (loadedRemarks.length !== 0) {
+      this.remarks = loadedRemarks;
+      return;
+    }
+
     this.remarks = new Array<Remark>();
     this.isLoading = true;
     const snapshot = document.actualFileSnapshot;

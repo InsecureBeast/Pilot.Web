@@ -55,7 +55,7 @@
 </div>
 
 <app-bottom-sheet [options]="options" #bottomSheet>
-  <div class="">
+  <div class="" content>
     <ul class="list-group list-group-flush ">
       <li class="list-group-item list-group-item-action pointer border-0" *ngFor="let filter of commonFilters" (click)="onFilterSelected(filter)" 
           [attr.id]="'cmi' + filter.id">

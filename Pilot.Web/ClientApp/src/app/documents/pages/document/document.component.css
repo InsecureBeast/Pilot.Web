@@ -12,6 +12,10 @@
   margin-top: 30vh;
 }  
 
+.h-46v {
+  height: 44.5vh!important;
+}
+
 .versions-view {
   position: fixed;
   right: 0;

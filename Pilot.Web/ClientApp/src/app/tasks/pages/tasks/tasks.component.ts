@@ -73,7 +73,9 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.options = {
       closeButtonTitle: 'Close',
       enableCloseButton: false,
-      title: this.translate.instant('selectFilter')
+      title: this.translate.instant('selectFilter'),
+      isFullScreen: false,
+      isMiddleScreen: false
     };
   }
 

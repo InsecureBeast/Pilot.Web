@@ -3,15 +3,18 @@
     <div class="text-center mr-1" *ngIf="!isActualVersionSelected">
       <div class="alert alert-warning" role="alert">
         <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}
-        <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
+        <a href="#" 
+          (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
       </div>
     </div>
 
     <div *ngFor="let page of pages; index as i;" class="mr-1">
+      <ng-container *ngIf="pages">
       <app-viewer-page [pageNumber]="i" 
                        [page]="page"
                        [remarks]="remarks">
       </app-viewer-page>
+    </ng-container>
     </div>
   </div>
 

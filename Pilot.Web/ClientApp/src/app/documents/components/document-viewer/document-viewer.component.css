@@ -1,6 +1,7 @@
 .viewer {
   overflow: auto; 
-  height: calc(100vh - 66px);
+  height: 100%;
+  padding-right: 10px;
 }
 
 .vertical-center {

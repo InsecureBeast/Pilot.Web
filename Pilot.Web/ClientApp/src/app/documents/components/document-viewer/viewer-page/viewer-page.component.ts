@@ -183,6 +183,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     
+    console.log('load remarks');
     for (const remark of this.remarks) {
       
       if (remark.pageNumber !== this.pageNumber) {

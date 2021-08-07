@@ -59,5 +59,6 @@
   "remarks": "Замечания",
   "redPencilRemark": "<Графическое замечание>",
   "showRemarks":"Показать замечания",
-  "hideRemarks":"Скрыть замечания"
+  "hideRemarks":"Скрыть замечания",
+  "browseAll": "Показать все"
 }

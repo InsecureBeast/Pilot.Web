@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 
@@ -19,14 +19,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from 'src/app/core/notification.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
-import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { IBottomSheetConfig, BottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
 import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { RemarksService } from '../../shared/remarks.service';
+import { Remark } from '../../components/remarks/remark';
 
 @Component({
   selector: 'app-document',
   templateUrl: './document.component.html',
-  styleUrls: ['./document.component.css']
+  styleUrls: ['./document.component.css', '../../shared/toolbar.css']
 })
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy {
@@ -34,6 +36,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
+  private remarksServiceSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private cardModalRef: BsModalRef;
   
@@ -42,15 +45,16 @@ export class DocumentComponent implements OnInit, OnDestroy {
   node: ObjectNode;
   isLoading: boolean;
   error: HttpErrorResponse;
-
+  options: IBottomSheetConfig;
   isActualVersionSelected: boolean;
+  bottomSheetDialogState: BottomSheetDialogState;
 
   @ViewChild('cardTemplate') private cardTemplate: TemplateRef<any>;
   @ViewChild('staticTabs', { static: false }) private staticTabs: TabsetComponent;
   @ViewChild('contextMenu') private contextMenu: ContextMenuComponent;
   @ViewChild('bottomSheet') private bottomSheet: BottomSheetComponent;
-  options: IBottomSheetConfig;
-
+  @ViewChild('bottomSheetDialog') private bottomSheetDialog: BottomSheetComponent;
+  
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -63,9 +67,14 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly modalService: BsModalService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
-    private readonly notificationService: NotificationService) {
+    private readonly notificationService: NotificationService,
+    private readonly remarksService: RemarksService) {
 
     this.isActualVersionSelected = true;
+    this.options = new BottomSheetConfig();
+    this.options.isBackgroundEnabled = true;
+
+    this.bottomSheetDialogState = new BottomSheetDialogState();
   }
 
   ngOnInit(): void {
@@ -98,25 +107,14 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.document = object;
       });
     });
-
-    this.options = {
-    };
   }
 
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
-
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
-
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
-
-    if (this.objectCardChangeSubscription) {
-      this.objectCardChangeSubscription.unsubscribe();
-    }
+    this.routerSubscription?.unsubscribe();
+    this.navigationSubscription?.unsubscribe();
+    this.objectCardChangeSubscription?.unsubscribe();
+    this.remarksServiceSubscription?.unsubscribe();
   }
 
   close($event): void {
@@ -160,8 +158,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       version = snapshot.created;
     }
 
-    this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
-    this.selectedSnapshot = snapshot;
+    this.bottomSheetDialog.toggleToMiddle();
   }
 
   showFiles(event: boolean): void {
@@ -200,15 +197,29 @@ export class DocumentComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  private goToVersionsPage(): void {
-    this.navigationService.navigateToDocumentVersions(this.document.parentId, this.document.id, false);
+  closeBottomSheet(): void {
+    this.bottomSheetDialog.close();
+    this.bottomSheetDialogState = new BottomSheetDialogState();
+    this.remarksServiceSubscription?.unsubscribe();
+    this.remarksServiceSubscription = null;
   }
-  private goToRemarksPage() : void {
-    this.navigationService.navigateToDocumentRemarks(this.document.parentId, this.document.id, false);
+
+  openFullscreenBottomSheet(type: string): void { 
+    this.bottomSheetDialogState = new BottomSheetDialogState();
+    this.bottomSheetDialogState.dialog = this.bottomSheetDialog;
+    this.bottomSheetDialogState.type = type;
+    this.bottomSheetDialogState.title = this.translate.instant(type);
+    this.bottomSheetDialogState.options = BottomSheetConfig.newFullScreenConfig();
+    this.bottomSheetDialogState.options.backgroundColor = '#f5f6fc';
+    this.bottomSheetDialogState.isOpen = true;
+    this.bottomSheetDialog.open();
+    this.bottomSheet.close();
   }
 
   private loadDocument(id: string, version?: string): void {
     this.error = null;
+    this.remarksService.changeRemarkList(new Array<Remark>());
+    
     this.repository.getObjectAsync(id)
       .then(source => {
         if (!source) {
@@ -269,8 +280,17 @@ export class DocumentComponent implements OnInit, OnDestroy {
         .createItem('remarksId', this.translate.instant('remarks'))
         .withIcon('textsms')
         .withAction(() => {
-          this.bottomSheet.close();
-          this.goToRemarksPage();
+
+          this.remarksServiceSubscription = this.remarksService.selectedRemark.subscribe(selected => {
+            if (!selected) {
+              return;
+            }
+            this.bottomSheetDialog.toggleToMiddle();
+          });
+
+          
+          this.openFullscreenBottomSheet('remarks');
+
         });
       this.contextMenu.addMenuItem(versionsItem);
 
@@ -288,8 +308,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
         .createItem('versionsId', this.translate.instant('versions'))
         .withIcon('list_alt')
         .withAction(() => {
-          this.bottomSheet.close();
-          this.goToVersionsPage();
+          this.openFullscreenBottomSheet('versions');
         });
       this.contextMenu.addMenuItem(versionsItem);
     }
@@ -301,5 +320,19 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.onShowDocumentCard(this.cardTemplate);
       });
     this.contextMenu.addMenuItem(cardItem);
+  }
+}
+
+
+class BottomSheetDialogState {
+  options: BottomSheetConfig;
+  dialog: BottomSheetComponent;
+  type: string;
+  title: string;
+  isOpen: boolean;
+
+  constructor() {
+    this.options = new BottomSheetConfig();
+    
   }
 }
