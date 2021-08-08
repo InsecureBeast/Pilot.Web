@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { timeStamp } from 'console';
 import { first } from 'rxjs/operators';
 import { IObject } from 'src/app/core/data/data.classes';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';

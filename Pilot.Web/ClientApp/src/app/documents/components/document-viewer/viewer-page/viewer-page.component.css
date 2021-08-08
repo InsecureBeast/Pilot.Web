@@ -12,6 +12,7 @@ div.annotation-mark {
     width: 16px;
     border-radius: 8px;
     border: 1px solid #E8B54F;
+    z-index: 1;
 }
 
 div.annotation-graphic-layer {

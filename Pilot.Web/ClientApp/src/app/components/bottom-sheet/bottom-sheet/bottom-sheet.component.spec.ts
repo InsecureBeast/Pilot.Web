@@ -19,7 +19,9 @@ describe('BottomSheetComponent', () => {
     component.options = {
       title: 'Angular Bottom Sheet',
       backgroundColor: '#ffffff',
-      fontColor: '#363636'
+      fontColor: '#363636',
+      isFullScreen: false,
+      isMiddleScreen: false
     };
     fixture.detectChanges();
   });

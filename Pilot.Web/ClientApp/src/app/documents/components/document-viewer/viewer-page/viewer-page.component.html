@@ -1,9 +1,9 @@
 <ng-container *ngFor="let remark of displayRemarks">
-  <ng-container *ngIf="isTextNoteRemark(remark)">
-    <div *ngTemplateOutlet="textNoteRemarkTemplate;context:{remark:remark}"></div>
-  </ng-container>
   <ng-container *ngIf="isRedPencil(remark)">
     <div *ngTemplateOutlet="redPencilRemarkTemplate;context:{remark:remark}"></div>
+  </ng-container>
+  <ng-container *ngIf="isTextNoteRemark(remark)">
+    <div *ngTemplateOutlet="textNoteRemarkTemplate;context:{remark:remark}"></div>
   </ng-container>
 </ng-container>
 
