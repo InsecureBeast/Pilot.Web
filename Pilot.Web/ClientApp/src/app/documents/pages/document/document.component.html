@@ -6,8 +6,8 @@
                       (filesShown)="showFiles($event)">
 </app-document-toolbar>
  
-<div class="pt-6" *ngIf="!error">
-  <div class="row">
+<div class="pt-6 h-100" *ngIf="!error">
+  <div class="row h-100">
     <div class="col-12 viewer-container pr-0"
         [class.col-lg-12]="isSourceFile()"
         [class.col-lg-8]="!isSourceFile()"

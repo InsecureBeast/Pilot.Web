@@ -276,7 +276,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
       this.contextMenu.addMenuItem(sourceFilesItem);
     }
 
-    const versionsItem = MenuItem
+    if (!this.isSourceFile()) {
+      const remarksItem = MenuItem
         .createItem('remarksId', this.translate.instant('remarks'))
         .withIcon('textsms')
         .withAction(() => {
@@ -292,9 +293,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
           this.openFullscreenBottomSheet('remarks');
 
         });
-      this.contextMenu.addMenuItem(versionsItem);
+      this.contextMenu.addMenuItem(remarksItem);
 
-    if (!this.isSourceFile()) {
       const signaturesItem = MenuItem
         .createItem('signaturesId', this.translate.instant('signatures'))
         .withIcon('edit')

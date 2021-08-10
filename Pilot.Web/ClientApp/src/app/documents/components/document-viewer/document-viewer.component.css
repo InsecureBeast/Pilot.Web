@@ -4,10 +4,6 @@
   padding-right: 10px;
 }
 
-.vertical-center {
-  position: absolute;
-  margin-top: auto;
-  margin-bottom: auto;
-  top: 50%;
-  left: 50%;
+.content-center-absolute {
+  top: 40vh;
 }

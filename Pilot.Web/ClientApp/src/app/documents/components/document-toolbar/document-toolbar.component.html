@@ -10,12 +10,12 @@
 
   <ul class="navbar-nav noselect">
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="toggleRemarks($event)"
-      *ngIf="!isRemarksVisible">
+      *ngIf="!isRemarksVisible && !isSourceFile">
       <span class="navbar-text toolbar-text material-icons-outline nav-icon">speaker_notes</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="showRemarks"></span>
     </li>
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="toggleRemarks($event)"
-        *ngIf="isRemarksVisible">
+        *ngIf="isRemarksVisible && !isSourceFile">
       <span class="navbar-text toolbar-text material-icons-outline nav-icon">speaker_notes_off</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="hideRemarks"></span>
     </li>

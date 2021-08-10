@@ -24,7 +24,6 @@
 }
 
 .viewer-container {
-  overflow: hidden;
   height: calc(100vh - 66px);
 }
 
@@ -44,7 +43,7 @@
   }
 
   .viewer-container {
-    height: 100%;
+    height: auto;
   }
 }
 
