@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Pilot.Xps.Entities
 {
@@ -40,17 +42,38 @@ namespace Pilot.Xps.Entities
 
         public static IList<XpsDigitalSignature> Deserialize(byte[] buffer)
         {
-            using (var stream = new MemoryStream(buffer))
+            try
             {
-                return Deserialize(stream);
+                return DeserializeJson(buffer);
+            }
+            catch (Exception)
+            {
+                return DeserializeBinary(buffer);
             }
         }
 
-        public static IList<XpsDigitalSignature> Deserialize(Stream stream)
+        private static byte[] SerializeJson(IList<XpsDigitalSignature> ds)
         {
-            stream.Position = 0;
-            var res = new BinaryFormatter().Deserialize(stream);
-            return res as IList<XpsDigitalSignature>;
+            var jsonString = JsonConvert.SerializeObject(ds);
+            var bytes = Encoding.UTF8.GetBytes(jsonString);
+            return bytes;
+        }
+
+        private static IList<XpsDigitalSignature> DeserializeJson(byte[] buffer)
+        {
+            var bytesAsString = Encoding.UTF8.GetString(buffer);
+            var ds = JsonConvert.DeserializeObject<IList<XpsDigitalSignature>>(bytesAsString);
+            return ds;
+        }
+
+        private static IList<XpsDigitalSignature> DeserializeBinary(byte[] buffer)
+        {
+            using (var stream = new MemoryStream(buffer))
+            {
+                stream.Position = 0;
+                var res = new BinaryFormatter().Deserialize(stream);
+                return res as IList<XpsDigitalSignature>;
+            }
         }
     }
 }

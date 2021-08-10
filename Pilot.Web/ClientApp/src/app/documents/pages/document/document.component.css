@@ -13,7 +13,7 @@
 }  
 
 .h-46v {
-  height: 44.5vh!important;
+  height: calc(55vh - 66px)!important;
 }
 
 .versions-view {
