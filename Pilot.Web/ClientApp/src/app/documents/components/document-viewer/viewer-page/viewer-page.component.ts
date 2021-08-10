@@ -183,6 +183,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     
+    this.remarks = this.remarks.sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
     for (const remark of this.remarks) {
       
       if (remark.pageNumber !== this.pageNumber) {

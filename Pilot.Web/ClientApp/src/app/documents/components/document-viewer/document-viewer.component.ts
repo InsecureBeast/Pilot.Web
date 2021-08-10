@@ -73,7 +73,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
     this.scrollSubscription = this.remarksScrollService.position.subscribe(position => {
       if (this.viewer){
-        this.viewer.nativeElement.scrollTop = position - 200;
+        this.viewer.nativeElement.scrollTop = position - 150;
       }
     })
   }

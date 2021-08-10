@@ -78,27 +78,6 @@
     padding-top: 0px;
   }
   
-  /* width */
-  ::-webkit-scrollbar {
-    width: 4px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #bdbdbd;
-  }
-  
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(92, 92, 92);
-  }
-  
   @media (max-width: 992px) {
     .bottom-sheet-container {
       width: 100%;

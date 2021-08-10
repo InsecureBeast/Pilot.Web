@@ -71,9 +71,10 @@
   <nav class="navbar navbar-expand navbar-light bg-content justify-content-between" header>
     <ul class="navbar-nav">
       <li click-stop-propagation click-prevent-default 
+          *ngIf="bottomSheetDialogState.options.isMiddleScreen"
           class="nav-item nav-item-button" 
           (click)="openFullscreenBottomSheet(bottomSheetDialogState.type)" >
-        <span class="navbar-text toolbar-text noselect" translate="browseAll"></span>
+        <span class="navbar-text toolbar-text nav-icon material-icons">keyboard_arrow_up</span>
       </li>
     </ul>
     <ul class="navbar-nav">
