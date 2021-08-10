@@ -5,16 +5,21 @@
     [style.backgroundColor]="options?.backgroundColor" 
     [style.color]="options?.fontColor"
     [class.bottom-sheet-container-full]="options?.isFullScreen" 
+    [class.h-middle]="options?.isMiddleScreen"
+    [class.overflow-hidden]="options?.isMiddleScreen"
+    [class.h-open]="!options?.isMiddleScreen && !options?.isFullScreen"
     [@slideUpToggle]>
   <div>
     <div class="bottom-sheet-header" 
+        [class.fixed-top]="options?.isFullScreen"
         [ngClass]="{'bg-dark-header': options?.darkTheme}" >
       <h4 class="title" *ngIf="options?.title">{{options?.title}}</h4>
       <ng-content select="[header]"></ng-content>
     </div>
     <div [class.bottom-sheet-content]="!options?.isFullScreen"
          [class.bottom-sheet-content-full]="options?.isFullScreen"
-         [class.bottom-sheet-content-middle]="options?.isMiddleScreen">
+         [class.bottom-sheet-content-middle]="options?.isMiddleScreen"
+         class="pt-6">
       <ng-content select="[content]"></ng-content>
     </div>
     <div class="bottom-sheet-footer" 
