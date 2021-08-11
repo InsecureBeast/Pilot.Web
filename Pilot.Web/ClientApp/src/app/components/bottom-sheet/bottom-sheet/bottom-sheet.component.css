@@ -70,10 +70,6 @@
     overflow-y: auto;
   }
 
-  .bottom-sheet-content-full {
-    /* padding-top: 0px; */
-  }
-  
   @media (max-width: 992px) {
     .bottom-sheet-container {
       width: 100%;

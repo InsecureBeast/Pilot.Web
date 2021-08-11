@@ -1,13 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { first } from 'rxjs/operators';
-import { IObject } from 'src/app/core/data/data.classes';
-import { FilesRepositoryService } from 'src/app/core/files-repository.service';
-import { RepositoryService } from 'src/app/core/repository.service';
-import { FilesSelector } from 'src/app/core/tools/files.selector';
+import { Subscription } from 'rxjs';
+import { IFileSnapshot } from 'src/app/core/data/data.classes';
 import { RemarksService } from '../../shared/remarks.service';
 import { Remark, RemarkType } from './remark';
-import { RemarkParser } from './remark.parser';
 
 @Component({
   selector: 'app-remark-list',
@@ -16,36 +12,41 @@ import { RemarkParser } from './remark.parser';
 })
 export class RemarkListComponent implements OnInit, OnDestroy{
     
-  private _document: IObject;
+  private remarksSubscription: Subscription;
+  private _snapshot: IFileSnapshot;
 
   remarks: Array<Remark>;
   isLoading: boolean;
 
-  constructor(
-    private readonly repository: RepositoryService,
-    private readonly fileRepository: FilesRepositoryService,
-    private readonly remarksService: RemarksService) { 
+  constructor(private readonly remarksService: RemarksService) { 
       this.remarks = new Array();
     }
   
   @Input()
-  get document(): IObject {
-    return this._document;
+  get snapshot(): IFileSnapshot {
+    return this._snapshot;
   }
-  set document(newValue: IObject) {
-    this._document = newValue;
+  set snapshot(newValue: IFileSnapshot) {
+    this._snapshot = newValue;
     if (newValue) {
       this.loadRemarks(newValue);
     }
   }
+  @Input() needReload: boolean = true;
 
   @Output() error = new EventEmitter<HttpErrorResponse>();
   @Output() loaded = new EventEmitter<Remark[]>();
 
   ngOnInit(): void {
+    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
+      this.remarks = remarks;
+      this.isLoading = false;
+      this.loaded.emit(this.remarks);
+    })
   }
 
   ngOnDestroy(): void {
+    this.remarksSubscription?.unsubscribe();
   }
 
   isRedPencil(remark: Remark): boolean {
@@ -55,33 +56,18 @@ export class RemarkListComponent implements OnInit, OnDestroy{
   onClickRemark(remark: Remark, $event:Event): boolean {
     $event.preventDefault();
     $event.stopPropagation();
-    remark.isOpen = true;
     this.remarksService.changeSelectedRemark(remark);
     return false;
   }
 
-  private loadRemarks(document: IObject) {
-    const loadedRemarks = this.remarksService.getRemarks();
-    if (loadedRemarks.length !== 0) {
+  private loadRemarks(snapshot: IFileSnapshot) {
+    if (!this.needReload) {
+      const loadedRemarks = this.remarksService.getRemarks();
       this.remarks = loadedRemarks;
       return;
     }
 
-    this.remarks = new Array<Remark>();
     this.isLoading = true;
-    const snapshot = document.actualFileSnapshot;
-    
-    var remarkFiles = FilesSelector.getRemarkFiles(snapshot.files);
-    
-    remarkFiles.forEach(remark => {
-      this.fileRepository.getFile(remark.body.id, remark.body.size).pipe(first()).subscribe(b => {
-        const remark = RemarkParser.parseFromArrayBuffer(b);
-        this.remarks.push(remark);
-      });
-    });
-    
-    this.isLoading = false;
-    this.loaded.emit(this.remarks);
-    this.remarksService.changeRemarkList(this.remarks);
+    this.remarksService.loadRemarks(snapshot)
   }
 }

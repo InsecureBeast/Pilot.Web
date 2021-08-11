@@ -4,7 +4,6 @@
     *ngIf="flags.isBottomSheetEnabled"
     [style.backgroundColor]="options?.backgroundColor" 
     [style.color]="options?.fontColor"
-    [class.bottom-sheet-container-full]="options?.isFullScreen" 
     [class.h-middle]="options?.isMiddleScreen"
     [class.overflow-hidden]="options?.isMiddleScreen"
     [class.h-open]="!options?.isMiddleScreen && !options?.isFullScreen"
@@ -17,7 +16,6 @@
       <ng-content select="[header]"></ng-content>
     </div>
     <div [class.bottom-sheet-content]="!options?.isFullScreen"
-         [class.bottom-sheet-content-full]="options?.isFullScreen"
          [class.bottom-sheet-content-middle]="options?.isMiddleScreen"
          class="pt-6">
       <ng-content select="[content]"></ng-content>

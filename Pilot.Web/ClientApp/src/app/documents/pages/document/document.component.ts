@@ -133,6 +133,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   onShowMore($event): void {
     this.fillContextMenu();
+    this.bottomSheetDialog.close();
+    this.bottomSheet.close();
     this.bottomSheet.open();
   }
 
@@ -158,6 +160,7 @@ export class DocumentComponent implements OnInit, OnDestroy {
       version = snapshot.created;
     }
 
+    this.selectedSnapshot = snapshot;
     this.bottomSheetDialog.toggleToMiddle();
   }
 
