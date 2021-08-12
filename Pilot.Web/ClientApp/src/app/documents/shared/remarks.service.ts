@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { IFileSnapshot } from 'src/app/core/data/data.classes';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { DateTools } from 'src/app/core/tools/date.tools';
@@ -56,7 +57,7 @@ export class RemarksService {
 
   async loadRemarks(snapshot: IFileSnapshot): Promise<void> {
     let remarks = this.getRemarks();
-    remarks.length = 0;
+    remarks.splice(0, remarks.length);
     var remarkFiles = FilesSelector.getRemarkFiles(snapshot.files);
     
     for (const file of remarkFiles) {
@@ -64,7 +65,11 @@ export class RemarksService {
       const remark = RemarkParser.parseFromArrayBuffer(b);
       remarks.push(remark);
     }
-
+    
+    remarks.sort((a, b) => {
+      return (DateTools.toDate(a.created).getTime() < DateTools.toDate(b.created).getTime()) ? -1 : 1;
+    });
+    
     this.changeRemarkList(remarks);    
   }
 }

@@ -94,6 +94,10 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   ngAfterViewInit(): void {
+    if (this.remarks.length === 0) {
+      return;
+    }
+
     var containerEl = this.container.nativeElement;
     var img = new Image();
     img.onload = () => {
@@ -174,7 +178,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private drawRemarks(isDraw: boolean): void {
     this.displayRemarks = new Array();
-
     if (!isDraw) {
       return;
     }
@@ -183,8 +186,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     
-    this.remarks = this.remarks.sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
-    for (const remark of this.remarks) {
+    const sortedRemarks = [...this.remarks].sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
+    for (const remark of sortedRemarks) {
       
       if (remark.pageNumber !== this.pageNumber) {
         continue;
