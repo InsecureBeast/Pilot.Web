@@ -2,6 +2,7 @@ import { AfterViewInit, Directive, HostListener, OnDestroy } from '@angular/core
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point, RemarkType } from '../../remarks/remark';
 import { RemarksScrollPositionService } from '../scroll.service';
@@ -41,6 +42,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private selectedRemarksSubscription: Subscription;
   private _remarksVisible: boolean;
   private imageHtmlRef: HTMLImageElement;
+  private _displacementFactor = 1.248;
 
   displayRemarks: DisplayRemark[];
   image: SafeUrl;
@@ -67,8 +69,10 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly remarksService: RemarksService, 
     private readonly scrollService: RemarksScrollPositionService,
-    private readonly sanitizer: DomSanitizer) { 
+    private readonly sanitizer: DomSanitizer,
+    filesRepositoryService: FilesRepositoryService) { 
     
+    this._displacementFactor = filesRepositoryService.displacementFactor;
     this.redParams = new RedPencilRemarkDisplayParams();
     this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
@@ -133,15 +137,9 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    console.log("img naturalWidth = " + img.naturalWidth);
-    console.log("img naturalHeight = " + img.naturalHeight);
-    console.log("img width = " + img.offsetWidth);
-    console.log("img height = " + img.offsetHeight);
-
+    //console.log("img naturalWidth = " + img.naturalWidth);
     let wrh = img.offsetWidth / img.offsetHeight;
-    console.log("wrh = " + wrh);
     this._xRatio = img.naturalWidth / img.offsetWidth;
-    console.log("this._xRatio = " + this._xRatio);
     this._yRatio = img.naturalHeight / img.offsetHeight;
     this.setupRedPencilDisplayParams(img.offsetWidth, img.offsetHeight);
     this.drawRemarks(this._remarksVisible);
@@ -183,8 +181,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.redParams.viewBoxWidth = newWidth;
     this.redParams.viewBoxHeight = newHeight;
     this.redParams.viewBoxValue = `${0} ${0} ${newWidth} ${newHeight}`;
-    this.redParams.transform = `scale(${1 / this._xRatio})`;
-    console.log(this.redParams);
+    this.redParams.transform = `scale(${(1 / this._xRatio) * this._displacementFactor})`;
   }
 
   private drawRemarks(isDraw: boolean): void {
@@ -210,8 +207,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
               
       const displayRemark = new DisplayRemark();
       displayRemark.remark = remark;
-      const  x = remark.position.left / this._xRatio;
-      const  y = remark.position.top / this._yRatio;
+      const  x = (remark.position.left / this._xRatio ) * this._displacementFactor;
+      const  y = (remark.position.top / this._yRatio ) * this._displacementFactor;
       displayRemark.position = new Point(x, y);
       displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
       this.displayRemarks.push(displayRemark);

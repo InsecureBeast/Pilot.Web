@@ -20,7 +20,7 @@
       </app-document-viewer>
     </div>
 
-    <div class="versions-view col-12 doc-info overflow-auto p-0 pt-2 d-none d-lg-block"
+    <div class="versions-view col-12 overflow-auto p-0 pt-2 d-none d-lg-block"
         [class.col-lg-12]="isSourceFile()"
         [class.col-lg-4]="!isSourceFile()"
         *ngIf="document && !isSourceFile()">
@@ -68,7 +68,7 @@
 </app-bottom-sheet>
 
 <app-bottom-sheet [options]="bottomSheetDialogState.options" #bottomSheetDialog>
-  <nav class="navbar navbar-expand navbar-light justify-content-between" header>
+  <nav class="navbar navbar-expand navbar-light justify-content-between bg-white" header>
     <ul class="navbar-nav">
       <li click-stop-propagation click-prevent-default 
           class="nav-item nav-item-button" 

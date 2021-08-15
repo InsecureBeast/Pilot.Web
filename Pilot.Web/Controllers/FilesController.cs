@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using Ascon.Pilot.Common;
-using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.DataModifier;
 using DocumentRender;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Pilot.Web.Model;
-using Pilot.Web.Model.DataObjects;
 using Pilot.Web.Model.FileStorage;
-using Pilot.Web.Model.ModifyData;
 using Pilot.Web.Tools;
 
 namespace Pilot.Web.Controllers
@@ -25,6 +21,7 @@ namespace Pilot.Web.Controllers
         private readonly IContextService _contextService;
         private readonly IDocumentRender _documentRender;
         private readonly IFileStorageProvider _fileStorageProvider;
+        private readonly IOptions<AppSettings> _options;
         private readonly IFilesStorage _filesStorage;
         private readonly IFileSaver _fileSaver;
         private readonly IFilesOperationService _filesOperationService;
@@ -35,11 +32,13 @@ namespace Pilot.Web.Controllers
             IFilesStorage filesStorage, 
             IFileSaver fileSaver, 
             IFilesOperationService filesOperationService, 
-            IFileStorageProvider fileStorageProvider)
+            IFileStorageProvider fileStorageProvider,
+            IOptions<AppSettings> options)
         {
             _contextService = contextService;
             _documentRender = documentRender;
             _fileStorageProvider = fileStorageProvider;
+            _options = options;
             _filesStorage = filesStorage;
             _fileSaver = fileSaver;
             _filesOperationService = filesOperationService;
@@ -213,74 +212,13 @@ namespace Pilot.Web.Controllers
             }
         }
 
-        private static void AddObjectsToArchive(IServerApiService apiService, IFileLoader fileLoader, IEnumerable<PObject> objects, ZipArchive archive, string currentPath)
+        [HttpGet("[action]")]
+        public double GetDisplacementFactor()
         {
-            var stack = new Stack<PObject>();
-            foreach (var child in objects)
-            {
-                stack.Push(child);
-            }
-                
-            while (stack.Any())
-            {
-                var pObject = stack.Pop();
-                if (pObject.Children.Any())
-                {
-                    var childrenIds = pObject.Children.Select(c => c.ObjectId).ToArray();
-                    var children = apiService.GetObjects(childrenIds);
-                    foreach (var child in children)
-                    {
-                        stack.Push(child);
-                    }
-                }
-
-                if (pObject.Type.HasFiles)
-                {
-                    INFile dFile = null;
-                    var entryName = string.Empty;
-                    if (pObject.Type.Name == SystemTypes.PROJECT_FILE)
-                    {
-                        dFile = pObject.ActualFileSnapshot.Files.FirstOrDefault(f => !FileExtensionHelper.IsSystemFile(f.Name));
-                        if (dFile == null)
-                            continue;
-
-                        entryName = dFile.Name;
-                    }
-                    else
-                    {
-                        dFile = pObject.ActualFileSnapshot.Files.FirstOrDefault(f => FileExtensionHelper.IsXpsAlike(f.Name) || FileExtensionHelper.IsPdfAlike(f.Name));
-                        if (dFile == null)
-                            continue;
-
-                        entryName = $"{pObject.Title}{Path.GetExtension(dFile.Name)}";
-                    }
-
-                    var fileBody = fileLoader.Download(dFile.Id, dFile.Size);
-                    if (archive.Entries.Any(x => x.Name == entryName))
-                        entryName += " Conflicted";
-                    
-                    var zipEntry = archive.CreateEntry(Path.Combine(currentPath, entryName), CompressionLevel.NoCompression);
-
-                    //Get the stream of the attachment
-                    using (var originalFileStream = new MemoryStream(fileBody))
-                    using (var zipEntryStream = zipEntry.Open())
-                    {
-                        //Copy the attachment stream to the zip entry stream
-                        originalFileStream.CopyTo(zipEntryStream);
-                    }
-                }
-                //else
-                //{
-                //    var directoryPath = Path.Combine(currentPath, dir.Title);
-                //    if (archive.Entries.Any(x => x.Name == dir.Title))
-                //        directoryPath += " Conflicted";
-
-                //    var entry = archive.GetEntry(currentPath);
-                //    entry?.Archive?.CreateEntry(directoryPath);
-                //}
-            }
+            var factor = _options.Value.DisplacementFactor;
+            return factor;
         }
-        
+
         /// <summary>
         /// Проверка расширения документа на допустимое к загрузке и скачиванию
         /// </summary>

@@ -84,12 +84,13 @@ html, body {
 .list-group-item:hover {
   background-color: rgba(255, 160, 0, 0.1)!important;
 }
-
 .list-group-item-primary {
+  color: var(--primary-darkness);
   background-color: rgba(255, 160, 0, 0.3)!important;
   border-color: var(--primary)!important;
 }
 .list-group-item-primary:hover {
+  color: var(--primary-darkness)!important;
   background-color: rgba(255, 160, 0, 0.2)!important;
 }
 
