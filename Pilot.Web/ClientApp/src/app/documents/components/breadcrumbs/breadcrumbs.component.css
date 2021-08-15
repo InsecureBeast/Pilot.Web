@@ -82,6 +82,22 @@ li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
   right: 34px;
 }
 
+.rigth-search-button {
+  border-radius: .25rem;
+    border-top-left-radius: 0.0rem;
+    border-top-right-radius: 0.8rem;
+    border-bottom-right-radius: 0.8rem;
+    border-bottom-left-radius: 0.0rem;
+}
+
+.left-search-button{
+  border-radius: .25rem;
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.0rem;
+    border-bottom-right-radius: 0.0rem;
+    border-bottom-left-radius: 0.8rem;
+}
+
 /*-------------------------------  end search block  --------------------------------------*/
 
 .dropdown-item:active {

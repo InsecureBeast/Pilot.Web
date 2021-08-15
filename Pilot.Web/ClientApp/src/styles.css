@@ -4,6 +4,19 @@ html, body {
   background-color: var(--bg-content);
 }
 
+a {
+  color: var(--primary);
+}
+a:hover {
+  color: var(--primary-darkness);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgb(255 160 0 / 25%);
+}
+
 .content-center {
   position: fixed;
   left: 50%;
