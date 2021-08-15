@@ -35,8 +35,8 @@
   
   .bottom-sheet-header h4.title {
     display: inline-block;
-    font-weight: 600;
-    margin: 0;
+    font-weight: 500;
+    margin: 12px 0 0 0;
     font-size: 1rem;
   }
   

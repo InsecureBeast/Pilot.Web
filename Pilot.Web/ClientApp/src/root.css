@@ -6,11 +6,13 @@
   --primary: #ffa000;
   --primary-dark: #EC971F;
   --primary-darkness: #c77a0f;
-  --primary-light: #EED485;
+  --primary-light: #F8DCB0;
   --gray-light: #eaebef;
   --border: #dee2e6;
   --bg: #ffffff;
   --black: #000000;
+  --list-hover: #EFF0F3;
+  --list-hover-border: #D1D2D4;
 }
 
 .font-small {
@@ -46,23 +48,38 @@
   z-index: 1030;
 }
 
-  /* width */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #f2f2f2;
-  }
-  
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(168, 168, 168);
-  }
+.h-100vh {
+  height: 100vh;
+}
+.w-45 {
+  width: 45% !important;
+}
+
+.pt-6 {
+  padding-top: 4rem;
+}
+
+.pt-2h {
+  padding-top: .4rem;
+}
+
+.opacity-02 {
+  opacity: 0.2;
+}
+
+/**------font-weight------**/
+
+.font-weight-300 { 
+  font-weight: 300;
+}
+.font-weight-400 { 
+  font-weight: 400;
+}
+.font-weight-500 { 
+  font-weight: 500;
+}
+
+/**--------border-------------**/
+.border-card-radius { 
+  border-radius: 1rem !important;
+}

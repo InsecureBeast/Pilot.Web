@@ -83,3 +83,7 @@ li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
 }
 
 /*-------------------------------  end search block  --------------------------------------*/
+
+.dropdown-item:active {
+  background-color: var(--primary-light);
+}

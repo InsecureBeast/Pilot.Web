@@ -72,7 +72,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
     this.isActualVersionSelected = true;
     this.options = new BottomSheetConfig();
-    this.options.isBackgroundEnabled = true;
 
     this.bottomSheetDialogState = new BottomSheetDialogState();
   }
@@ -213,10 +212,14 @@ export class DocumentComponent implements OnInit, OnDestroy {
     this.bottomSheetDialogState.type = type;
     this.bottomSheetDialogState.title = this.translate.instant(type);
     this.bottomSheetDialogState.options = BottomSheetConfig.newFullScreenConfig();
-    this.bottomSheetDialogState.options.backgroundColor = '#f5f6fc';
+    this.bottomSheetDialogState.options.isBackgroundEnabled = false;
     this.bottomSheetDialogState.isOpen = true;
     this.bottomSheetDialog.open();
     this.bottomSheet.close();
+  }
+
+  toggelToMiddleScreen(type: string) : void {
+    this.bottomSheetDialog.toggleToMiddle();
   }
 
   private loadDocument(id: string, version?: string): void {
@@ -336,6 +339,6 @@ class BottomSheetDialogState {
 
   constructor() {
     this.options = new BottomSheetConfig();
-    
+    this.options.isBackgroundEnabled = false;
   }
 }

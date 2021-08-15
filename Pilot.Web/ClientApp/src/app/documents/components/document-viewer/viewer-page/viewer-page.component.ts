@@ -40,11 +40,12 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private remarksSubscription: Subscription;
   private selectedRemarksSubscription: Subscription;
   private _remarksVisible: boolean;
+  private imageHtmlRef: HTMLImageElement;
 
   displayRemarks: DisplayRemark[];
   image: SafeUrl;
   redParams: RedPencilRemarkDisplayParams;
-  
+    
   @Input() 
   set selectedRemark(value: Remark) {
     if (value && value.pageNumber !== this.pageNumber) {
@@ -94,23 +95,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   ngAfterViewInit(): void {
-    if (this.remarks.length === 0) {
-      return;
-    }
-
-    var containerEl = this.container.nativeElement;
-    var img = new Image();
-    img.onload = () => {
-      var wrh = img.width / img.height;
-      var newWidth = containerEl.offsetWidth;
-      var newHeight = (newWidth / wrh);
-      this._xRatio = img.width / newWidth;
-      this._yRatio = img.height / newHeight;
-      this.setupRedPencilDisplayParams(newWidth, newHeight);
-      this.drawRemarks(this._remarksVisible);
-      img = null;
-    };
-    img.src = this.page;
   }
 
   ngOnInit(): void {
@@ -119,7 +103,9 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.ngAfterViewInit();
+    if (this.imageHtmlRef) {
+      this.redraw(this.imageHtmlRef);
+    }
   }
 
   annotationPopupOpen(remark: Remark, $event: Event): void {
@@ -135,6 +121,30 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isRedPencil(remark: DisplayRemark): boolean {
     return remark.remark.type === RemarkType.RED_PENCIL;
+  }
+
+  imageLoaded(img: HTMLImageElement) : void {
+    this.imageHtmlRef = img;
+    this.redraw(img);
+  }
+
+  private redraw(img: HTMLImageElement): void {
+    if (this.remarks.length === 0) {
+      return;
+    }
+
+    console.log("img naturalWidth = " + img.naturalWidth);
+    console.log("img naturalHeight = " + img.naturalHeight);
+    console.log("img width = " + img.offsetWidth);
+    console.log("img height = " + img.offsetHeight);
+
+    let wrh = img.offsetWidth / img.offsetHeight;
+    console.log("wrh = " + wrh);
+    this._xRatio = img.naturalWidth / img.offsetWidth;
+    console.log("this._xRatio = " + this._xRatio);
+    this._yRatio = img.naturalHeight / img.offsetHeight;
+    this.setupRedPencilDisplayParams(img.offsetWidth, img.offsetHeight);
+    this.drawRemarks(this._remarksVisible);
   }
 
   @HostListener('document:click', ['$event']) 
@@ -172,8 +182,9 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupRedPencilDisplayParams(newWidth: number, newHeight: number) {
     this.redParams.viewBoxWidth = newWidth;
     this.redParams.viewBoxHeight = newHeight;
-    this.redParams.viewBoxValue = `${0} ${0} ${newWidth - 1} ${newHeight}`;
+    this.redParams.viewBoxValue = `${0} ${0} ${newWidth} ${newHeight}`;
     this.redParams.transform = `scale(${1 / this._xRatio})`;
+    console.log(this.redParams);
   }
 
   private drawRemarks(isDraw: boolean): void {

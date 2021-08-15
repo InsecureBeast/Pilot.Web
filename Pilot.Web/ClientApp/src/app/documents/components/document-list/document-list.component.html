@@ -61,8 +61,8 @@
 </ng-template>
 
 <ng-template #listViewNodeTemplate>
-  <ul class="list-group shadow-sm mt-2 mr-2 ml-2" *ngIf="!isLoading && nodes">
-    <li class="list-group-item list-group-item-action"
+  <ul class="list-group mt-2 mr-2 ml-2" *ngIf="!isLoading && nodes">
+    <li class="list-group-item list-group-item-action mb-2 shadow-sm border-card-radius"
         [class.list-group-item-primary]="node.isChecked"
         (click)="check(node, $event)"
         *ngFor="let node of nodes">
@@ -77,8 +77,8 @@
         <div class="mr-2 pointer checker-container"
              *ngIf="isAnyItemChecked"
              (click)="addChecked(node); $event.stopPropagation();">
-          <span class="material-icons mt-1 checker" style="color: transparent" *ngIf="!node.isChecked">radio_button_unchecked</span>
-          <span class="material-icons mt-1 text-primary checker" *ngIf="node.isChecked">check_circle</span>
+          <span class="material-icons-outline mt-1 checker" style="color: transparent" *ngIf="!node.isChecked">radio_button_unchecked</span>
+          <span class="material-icons-outline mt-1 text-primary checker" *ngIf="node.isChecked">check_circle</span>
         </div>
 
         <div class="mr-auto">
@@ -91,7 +91,7 @@
           </div>
         </div>
 
-        <small *ngIf="node.childrenCount >= 0">{{node?.childrenCount}}</small>
+        <small class="mr-1" *ngIf="node.childrenCount >= 0">{{node?.childrenCount}}</small>
       </div>
     </li>
   </ul>
@@ -102,7 +102,7 @@
     <div *ngFor="let node of nodes"
          class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 p-2">
 
-      <div class="card text-center shadow-sm"
+      <div class="card text-center shadow-sm border-card-radius"
            [class.list-group-item-primary]="node.isChecked"
            (click)="check(node, $event);$event.stopPropagation();"
            *ngIf="!isEmptyNode(node) else gridViewEmptyNodeTemplate">
@@ -140,7 +140,15 @@
 </ng-template>
 
 <ng-template #gridViewEmptyNodeTemplate>
-  <div class="card shadow-sm">
+  <div class="card shadow-sm border-card-radius">
+    <div class="load-wraper">
+      <div class="activity"></div>
+   </div>
+  </div>
+</ng-template>
+
+<ng-template #listViewEmptyNodeTemplate>
+  <div class="card shadow-sm border-card-radius">
     <div class="load-wraper">
       <div class="activity"></div>
    </div>

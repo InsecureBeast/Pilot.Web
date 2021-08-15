@@ -11,13 +11,13 @@
       <li class="list-group-item list-group-item-action pointer p-2" 
           *ngFor="let remark of remarks"
           (click)="onClickRemark(remark, $event)"
-          [class.active]="remark.isOpen">
+          [class.list-group-item-primary]="remark.isOpen">
         <div class="font-smaller">
           <div class="d-flex justify-content-between">
             <div class="text-truncate text-gray">{{remark.person}}</div>
             <div class="text-gray" style="width: 140px; text-align: end;">{{remark.created | date:'short'}}</div>
           </div>
-          <div class="text-truncate text-wrap" *ngIf="remark.text">{{remark.text}}</div>
+          <div class="text-truncate text-wrap" style="max-height: 4rem;" *ngIf="remark.text">{{remark.text}}</div>
           <div class="" *ngIf="isRedPencil(remark)" translate="redPencilRemark"></div>
         </div>
       </li>

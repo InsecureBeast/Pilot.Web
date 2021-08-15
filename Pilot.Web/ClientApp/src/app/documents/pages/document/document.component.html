@@ -68,18 +68,24 @@
 </app-bottom-sheet>
 
 <app-bottom-sheet [options]="bottomSheetDialogState.options" #bottomSheetDialog>
-  <nav class="navbar navbar-expand navbar-light bg-content justify-content-between" header>
+  <nav class="navbar navbar-expand navbar-light justify-content-between" header>
     <ul class="navbar-nav">
       <li click-stop-propagation click-prevent-default 
-          *ngIf="bottomSheetDialogState.options.isMiddleScreen"
           class="nav-item nav-item-button" 
-          (click)="openFullscreenBottomSheet(bottomSheetDialogState.type)" >
+          (click)="openFullscreenBottomSheet(bottomSheetDialogState.type)" 
+          *ngIf="bottomSheetDialogState.options.isMiddleScreen">
         <span class="navbar-text toolbar-text nav-icon material-icons">keyboard_arrow_up</span>
+      </li>
+      <li click-stop-propagation click-prevent-default 
+          class="nav-item nav-item-button" 
+          (click)="toggelToMiddleScreen(bottomSheetDialogState.type)"
+          *ngIf="bottomSheetDialogState.options.isFullScreen">
+        <span class="navbar-text toolbar-text nav-icon material-icons">keyboard_arrow_down</span>
       </li>
     </ul>
     <ul class="navbar-nav">
       <li class="nav-item">
-        <span class="navbar-text toolbar-text">{{bottomSheetDialogState.title}}</span>
+        <span class="navbar-text font-weight-500 text-black">{{bottomSheetDialogState.title}}</span>
       </li>
     </ul>
     <ul class="navbar-nav">
@@ -90,7 +96,7 @@
       </li>
     </ul>
   </nav>
-  <div class="mr-3 ml-3" #bottomSheetContent content>
+  <div class="mr-3 ml-3 mb-3" #bottomSheetContent content>
     <ng-container *ngIf="bottomSheetDialogState.type === 'remarks'" >
       <ng-container *ngTemplateOutlet="remarksTemplate"></ng-container>
     </ng-container>

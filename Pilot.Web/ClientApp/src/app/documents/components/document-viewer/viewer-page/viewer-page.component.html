@@ -8,7 +8,7 @@
 </ng-container>
 
 <div class="mb-2">
-  <img [src]="image" class="doc-page" #container/>
+  <img [src]="image" class="doc-page" #container (load)="imageLoaded(container)"/>
 </div>
 
 <ng-template #redPencilRemarkTemplate let-remark="remark">

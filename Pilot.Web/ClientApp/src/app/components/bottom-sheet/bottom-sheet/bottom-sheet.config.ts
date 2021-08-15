@@ -22,6 +22,12 @@ export class BottomSheetConfig implements IBottomSheetConfig {
     darkTheme?: boolean;
     isFullScreen: boolean;
     isMiddleScreen: boolean;
+
+    constructor() {
+        this.isBackgroundEnabled = true;
+        this.isFullScreen = false,
+        this.isMiddleScreen = false
+    }
     
     public static newMiddleScreenConfig(): IBottomSheetConfig {
         const options = new BottomSheetConfig();

@@ -48,7 +48,9 @@ export class BottomSheetComponent implements OnInit {
     this.flags.isBottomSheetEnabled = !this.flags.isBottomSheetEnabled;
     this.changeDetector.detectChanges();
   }
-
+  /**
+   *  Toggles to middle position
+   */
   toggleToMiddle() {
     if (this.options) {
       this.options.isMiddleScreen = true;
