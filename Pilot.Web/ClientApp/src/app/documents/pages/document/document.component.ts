@@ -224,8 +224,6 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   private loadDocument(id: string, version?: string): void {
     this.error = null;
-    this.remarksService.changeRemarkList(new Array<Remark>());
-    
     this.repository.getObjectAsync(id)
       .then(source => {
         if (!source) {

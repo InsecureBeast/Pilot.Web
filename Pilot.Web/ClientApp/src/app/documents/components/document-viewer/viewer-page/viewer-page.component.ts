@@ -38,16 +38,18 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private _xRatio: number;
   private _yRatio: number;
   private _selectedRemark: Remark;
-  private remarksSubscription: Subscription;
+  private remarkVisibilitySubscription: Subscription;
   private selectedRemarksSubscription: Subscription;
+  private remarksSubscription: Subscription;
   private _remarksVisible: boolean;
   private imageHtmlRef: HTMLImageElement;
   private _displacementFactor = 1.248;
+  private _remarks: Remark[];
 
   displayRemarks: DisplayRemark[];
   image: SafeUrl;
   redParams: RedPencilRemarkDisplayParams;
-    
+      
   @Input() 
   set selectedRemark(value: Remark) {
     if (value && value.pageNumber !== this.pageNumber) {
@@ -61,7 +63,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input() page: string;
-  @Input() remarks: Remark[];
   @Input() pageNumber: number;
 
   @ViewChild('container') public container: ElementRef;
@@ -74,7 +75,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this._displacementFactor = filesRepositoryService.displacementFactor;
     this.redParams = new RedPencilRemarkDisplayParams();
-    this.remarksSubscription = this.remarksService.remarksVisibility.subscribe(v => {
+    this.remarkVisibilitySubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
       this.drawRemarks(v);
     });
@@ -91,10 +92,16 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scrollService.change(display.scrollTop);
       }
     });
+
+    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
+      this._remarks = remarks;
+      this.redraw();
+    })
   }
 
   ngOnDestroy(): void {
     this.remarksSubscription?.unsubscribe();
+    this.remarkVisibilitySubscription?.unsubscribe();
     this.selectedRemarksSubscription?.unsubscribe();
   }
   
@@ -107,9 +114,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    if (this.imageHtmlRef) {
-      this.redraw(this.imageHtmlRef);
-    }
+    this.redraw();
   }
 
   annotationPopupOpen(remark: Remark, $event: Event): void {
@@ -120,23 +125,28 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isTextNoteRemark(remark: DisplayRemark): boolean {
-    return remark.remark.type === RemarkType.TEXT_NOTE || remark.remark.type === RemarkType.STICKY_NOTE;
+    return RemarkType.isTextNote(remark.remark.type) || RemarkType.isStikyTextNote(remark.remark.type);
   }
 
   isRedPencil(remark: DisplayRemark): boolean {
-    return remark.remark.type === RemarkType.RED_PENCIL;
+    return RemarkType.isRedPensil(remark.remark.type);
   }
 
   imageLoaded(img: HTMLImageElement) : void {
     this.imageHtmlRef = img;
-    this.redraw(img);
+    this.redraw();
   }
 
-  private redraw(img: HTMLImageElement): void {
-    if (this.remarks.length === 0) {
+  private redraw(): void {
+    if (this._remarks.length === 0) {
       return;
     }
 
+    if (!this.imageHtmlRef) {
+      return;
+    }
+
+    const img = this.imageHtmlRef;
     //console.log("img naturalWidth = " + img.naturalWidth);
     let wrh = img.offsetWidth / img.offsetHeight;
     this._xRatio = img.naturalWidth / img.offsetWidth;
@@ -151,8 +161,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private closePopups(): void {
-    if (this.remarks) {
-      this.remarks.forEach(r => {
+    if (this._remarks) {
+      this._remarks.forEach(r => {
         r.isOpen = false;
       });
     }
@@ -190,11 +200,11 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    if (!this.remarks) {
+    if (!this._remarks) {
       return;
     }
     
-    const sortedRemarks = [...this.remarks].sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
+    const sortedRemarks = [...this._remarks].sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
     for (const remark of sortedRemarks) {
       
       if (remark.pageNumber !== this.pageNumber) {

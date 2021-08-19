@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { IFileSnapshot } from 'src/app/core/data/data.classes';
+import { IFileSnapshot, IObject } from 'src/app/core/data/data.classes';
 import { RemarksService } from '../../shared/remarks.service';
 import { Remark, RemarkType } from './remark';
 
@@ -22,6 +22,7 @@ export class RemarkListComponent implements OnInit, OnDestroy{
       this.remarks = new Array();
     }
   
+  @Input() document: IObject;
   @Input()
   get snapshot(): IFileSnapshot {
     return this._snapshot;
@@ -50,7 +51,7 @@ export class RemarkListComponent implements OnInit, OnDestroy{
   }
 
   isRedPencil(remark: Remark): boolean {
-    return remark.type === RemarkType.RED_PENCIL;
+    return RemarkType.isRedPensil(remark.type);
   }
 
   onClickRemark(remark: Remark, $event:Event): boolean {
@@ -68,6 +69,6 @@ export class RemarkListComponent implements OnInit, OnDestroy{
     }
 
     this.isLoading = true;
-    this.remarksService.loadRemarks(snapshot)
+    this.remarksService.loadRemarks(this.document, snapshot)
   }
 }

@@ -34,6 +34,7 @@
           </tab>
           <tab heading="{{ 'remarks' | translate }}" customClass="h-100">
             <app-remark-list
+              [document]="document"
               [snapshot]="selectedSnapshot"
               (error)="onError($event)">
             </app-remark-list>
@@ -108,6 +109,7 @@
 
 <ng-template #remarksTemplate>
   <app-remark-list 
+      [document]="document"
       [needReload]="false"    
       [snapshot]="selectedSnapshot"
       (error)="onError($event)">

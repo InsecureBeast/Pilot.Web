@@ -32,9 +32,24 @@ export class Remark {
 }
 
 export class RemarkType {
-  public static RED_PENCIL = 'anb:RedPencil';
-  public static TEXT_NOTE = 'anb:TextNote';
-  public static STICKY_NOTE = 'anb:TextStickyNote';
+  public static RED_PENCIL_OLD = 'anb:RedPencil';
+  public static RED_PENCIL = 'RedPencil';
+  public static TEXT_NOTE_OLD = 'anb:TextNote';
+  public static TEXT_NOTE = 'TextNote';
+  public static STICKY_NOTE_OLD = 'anb:TextStickyNote';
+  public static STICKY_NOTE = 'TextStickyNote';
+
+  public static isRedPensil(kind: string): boolean {
+    return kind == this.RED_PENCIL || kind === this.RED_PENCIL_OLD;
+  }
+
+  public static isTextNote(kind: string): boolean {
+    return kind == this.TEXT_NOTE || kind === this.RED_PENCIL_OLD;
+  }
+
+  public static isStikyTextNote(kind: string): boolean {
+    return kind == this.STICKY_NOTE || kind === this.STICKY_NOTE_OLD;
+  }
 }
 
 export class Point {

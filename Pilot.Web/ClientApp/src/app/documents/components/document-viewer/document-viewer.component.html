@@ -11,8 +11,7 @@
   <div *ngFor="let page of pages; index as i;" class="mr-1">
     <ng-container *ngIf="pages">
     <app-viewer-page [pageNumber]="i" 
-                      [page]="page"
-                      [remarks]="remarks">
+                     [page]="page">
     </app-viewer-page>
   </ng-container>
   </div>

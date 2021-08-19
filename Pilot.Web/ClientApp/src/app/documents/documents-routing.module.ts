@@ -3,11 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { DocumentsComponent } from './pages/documents/documents.component';
 import { DocumentComponent } from './pages/document/document.component';
 import { AuthGuard } from '../auth/auth.guard';
-import { VersionsComponent } from './pages/versions/versions.component';
-import { CanDeactivateVersionsGuard } from './components/document-versions/deactivate-versions.guard';
+// import { CanDeactivateVersionsGuard } from './components/document-versions/deactivate-versions.guard';
 import { SignaturesComponent } from './pages/signatures/signatures.component';
 import { DocumentsSearchComponent } from './pages/documents-search/documents-search.component';
-import { RemarksComponent } from './pages/remarks/remarks.component';
 
 const routes: Routes = [
   { path: '', component: DocumentsComponent, canActivate: [AuthGuard], data: { reuse: false }},
@@ -17,9 +15,7 @@ const routes: Routes = [
   { path: ':id/files/search', component: DocumentsSearchComponent, canActivate: [AuthGuard], data: { reuse: false }},
 
   { path: ':fid/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
-  { path: ':fid/doc/:id/versions', component: VersionsComponent, canActivate: [AuthGuard] },
   { path: ':fid/doc/:id/signatures', component: SignaturesComponent, canActivate: [AuthGuard] },
-  { path: ':fid/doc/:id/remarks', component: RemarksComponent, canActivate: [AuthGuard] },
   { path: ':fid/doc/:id/:v', component: DocumentComponent, canActivate: [AuthGuard] },
 
   { path: ':fid/files/doc/:id', component: DocumentComponent, canActivate: [AuthGuard] },
@@ -32,6 +28,6 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
   declarations: [],
-  providers: [CanDeactivateVersionsGuard]
+  // providers: [CanDeactivateVersionsGuard]
 })
 export class DocumentsRoutingModule {}

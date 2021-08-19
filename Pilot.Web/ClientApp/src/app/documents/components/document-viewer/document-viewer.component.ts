@@ -63,12 +63,13 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     private readonly remarksScrollService: RemarksScrollPositionService) {
 
     this.pages = new Array();
-    this.remarks = new Array();
+    this.remarks = new Array<Remark>();
     this.position = new Point(0,0);
 
+    var that = this;
     this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
-      if (this.remarks.length === 0)
-        this.remarks = remarks;
+      if (that.remarks.length === 0)
+        that.remarks = remarks;
     });
 
     this.scrollSubscription = this.remarksScrollService.position.subscribe(position => {
