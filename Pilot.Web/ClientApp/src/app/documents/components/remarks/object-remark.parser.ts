@@ -90,13 +90,7 @@ class PencilDataParser extends XmlParserBase {
         for (const child of children) {
             if (child.name === 'Geometry') {
                 let data = this.getFirstOrDefaultChildText(child);
-                if (data.includes(';')) {
-                    data = Tools.replaceAll(data, ";", " ");
-                    data = Tools.replaceAll(data, ",", ".");
-                }
-                else {
-                    data = Tools.replaceAll(data, ",", " ");
-                }
+                data = this.replaceInvalidCharactersForGeometryData(data);
                 pencilData.geometry = data;
             } 
             if (child.name === 'Color') {

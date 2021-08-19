@@ -41,6 +41,19 @@ export class XmlParserBase {
 
         return null;
     }
+
+    protected replaceInvalidCharactersForGeometryData(data: string): string {
+        if (data.includes(';')) {
+            data = Tools.replaceAll(data, ';', ' ');
+            data = Tools.replaceAll(data, ',', '.');
+            data = Tools.replaceAll(data, 'F1', 'M');
+        }
+        else {
+            data = Tools.replaceAll(data, ',', ' ');
+            data = Tools.replaceAll(data, 'F1', '');
+        }
+        return data;
+    }
 }
 
 export class RemarkParser extends XmlParserBase {
@@ -80,13 +93,7 @@ export class RemarkParser extends XmlParserBase {
             }
             else if (child.name.startsWith(':anb:Data')) {
                 let data = this.getFirstOrDefaultChildText(child);
-                if (data.includes(';')) {
-                    data = Tools.replaceAll(data, ";", " ");
-                    data = Tools.replaceAll(data, ",", ".");
-                }
-                else {
-                    data = Tools.replaceAll(data, ",", " ");
-                }
+                data = this.replaceInvalidCharactersForGeometryData(data);
                 remark.data = data;
             }
             else if (child.name === ':anb:MetaData') {
