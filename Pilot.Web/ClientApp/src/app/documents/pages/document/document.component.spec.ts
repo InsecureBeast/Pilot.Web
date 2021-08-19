@@ -22,6 +22,7 @@ import { DocumentToolbarComponent } from '../../components/document-toolbar/docu
 import { ContextMenuComponent } from '../../components/context-menu/context-menu.component';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RemarksService } from '../../shared/remarks.service';
 
 describe('document component', () => {
     let component: DocumentComponent;
@@ -48,6 +49,8 @@ describe('document component', () => {
     let typeIconService: TypeIconService;
     let translate: TranslateService;
     let paramMapMock: ParamMap;
+    let remarksServiceMock: RemarksService;
+    let remarksService: RemarksService;
     let _document: IObject;
 
     const getIObjectStub = function(id: string): IObject {
@@ -109,6 +112,8 @@ describe('document component', () => {
         versionSelector = instance(versionSelectorMock);
         typeIconServiceMock = mock(TypeIconService);
         typeIconService = mock(typeIconServiceMock);
+        remarksServiceMock = mock(RemarksService);
+        remarksService = instance(remarksServiceMock);
 
         // setup mocks
         paramMapMock = mock<ParamMap>();
@@ -140,7 +145,8 @@ describe('document component', () => {
                 { provide: VersionsSelectorService, useValue: versionSelector },
                 { provide: DocumentsService, useValue: documentsService },
                 { provide: BsModalService, useValue: modalService },
-                { provide: TypeIconService, useValue: typeIconService }
+                { provide: TypeIconService, useValue: typeIconService },
+                { provide: RemarksService, useValue: remarksService },
             ]
         });
 

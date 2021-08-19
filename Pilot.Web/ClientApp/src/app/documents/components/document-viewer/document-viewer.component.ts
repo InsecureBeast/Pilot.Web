@@ -5,8 +5,6 @@ import { Component,
   OnInit, 
   Output, 
   EventEmitter, 
-  HostListener,
-  ChangeDetectorRef, 
   ElementRef, 
   ViewChild } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
@@ -16,8 +14,7 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { Tools } from 'src/app/core/tools/tools';
-import { RemarksService } from '../../shared/remarks.service';
-import { Point, Remark } from '../remarks/remark';
+import { Point } from '../remarks/remark';
 import { RemarksScrollPositionService } from './scroll.service';
 
 @Component({
@@ -33,7 +30,6 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   private scrollSubscription: Subscription;
 
   pages: string[];
-  remarks: Remark[];
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
   position: Point;
@@ -58,19 +54,10 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   constructor(
     private readonly repository: RepositoryService,
     private readonly sourceFileService: SourceFileService, 
-    private changeDetectorRef: ChangeDetectorRef,
-    private readonly remarksService: RemarksService, 
     private readonly remarksScrollService: RemarksScrollPositionService) {
 
     this.pages = new Array();
-    this.remarks = new Array<Remark>();
     this.position = new Point(0,0);
-
-    var that = this;
-    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
-      if (that.remarks.length === 0)
-        that.remarks = remarks;
-    });
 
     this.scrollSubscription = this.remarksScrollService.position.subscribe(position => {
       if (this.viewer){
@@ -96,11 +83,6 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
 
   download($event): void {
     this.downloaded.emit($event);
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.changeDetectorRef.detectChanges();
   }
 
   selectActualVersion() : boolean {

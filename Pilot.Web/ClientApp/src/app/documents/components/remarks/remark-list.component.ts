@@ -19,8 +19,8 @@ export class RemarkListComponent implements OnInit, OnDestroy{
   isLoading: boolean;
 
   constructor(private readonly remarksService: RemarksService) { 
-      this.remarks = new Array();
-    }
+    this.remarks = new Array();
+  }
   
   @Input() document: IObject;
   @Input()

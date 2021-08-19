@@ -23,7 +23,6 @@ import { IBottomSheetConfig, BottomSheetConfig } from 'src/app/components/bottom
 import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
 import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { RemarksService } from '../../shared/remarks.service';
-import { Remark } from '../../components/remarks/remark';
 
 @Component({
   selector: 'app-document',
