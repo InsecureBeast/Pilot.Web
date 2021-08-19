@@ -4,8 +4,9 @@ import { FilesRepositoryService } from "src/app/core/files-repository.service";
 import { RepositoryService } from "src/app/core/repository.service";
 import { DateTools } from "src/app/core/tools/date.tools";
 import { FilesSelector } from "src/app/core/tools/files.selector";
-import { Remark } from "../components/remarks/remark";
-import { ObjectRemarkParser, RemarkParser, RemarkParserBase } from "../components/remarks/remark.parser";
+import { ObjectRemarkParser } from "./object-remark.parser";
+import { Remark } from "./remark";
+import { RemarkParser } from "./remark.parser";
 
 export interface IRemarksLoader {
     loadRemarks(document: IObject, snapshot: IFileSnapshot, remarks: Remark[]): Promise<void>;
@@ -55,6 +56,10 @@ export class ObjectRemarksLoader implements IRemarksLoader {
                 remarks.push(remark);
             }
         }
+
+        remarks.sort((a, b) => {
+            return (DateTools.toDate(a.created).getTime() < DateTools.toDate(b.created).getTime()) ? -1 : 1;
+        });
     }
 
     async processFolderAsync(folderObj: IObject, snapshot: IFileSnapshot): Promise<Remark[]> {

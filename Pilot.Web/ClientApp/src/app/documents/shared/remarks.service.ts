@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IFileSnapshot, IObject } from 'src/app/core/data/data.classes';
 import { Remark } from '../components/remarks/remark';
-import { RemarksLoaderFactory } from './remarks-loader.factory';
+import { RemarksLoaderFactory } from '../components/remarks/remarks-loader.factory';
 
 @Injectable({ providedIn: 'root'})
 export class RemarksService {

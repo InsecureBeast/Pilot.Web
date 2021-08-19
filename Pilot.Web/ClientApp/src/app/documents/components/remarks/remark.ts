@@ -10,6 +10,7 @@ export class Remark {
   pageNumber: number = -1;
   pointer: string;
   isOpen: boolean;
+  data2: any;
 
   constructor() {
     this.position = new Point(0, 0);    
@@ -32,23 +33,27 @@ export class Remark {
 }
 
 export class RemarkType {
-  public static RED_PENCIL_OLD = 'anb:RedPencil';
-  public static RED_PENCIL = 'RedPencil';
-  public static TEXT_NOTE_OLD = 'anb:TextNote';
-  public static TEXT_NOTE = 'TextNote';
-  public static STICKY_NOTE_OLD = 'anb:TextStickyNote';
-  public static STICKY_NOTE = 'TextStickyNote';
+  static RED_PENCIL_OLD = 'anb:RedPencil';
+  static RED_PENCIL = 'RedPencil';
+  static TEXT_NOTE_OLD = 'anb:TextNote';
+  static TEXT_NOTE = 'TextNote';
+  static STICKY_NOTE_OLD = 'anb:TextStickyNote';
+  static STICKY_NOTE = 'TextStickyNote';
 
-  public static isRedPensil(kind: string): boolean {
-    return kind == this.RED_PENCIL || kind === this.RED_PENCIL_OLD;
+  static isRedPensil(kind: string): boolean {
+    return kind === this.RED_PENCIL || kind === this.RED_PENCIL_OLD;
   }
 
-  public static isTextNote(kind: string): boolean {
-    return kind == this.TEXT_NOTE || kind === this.RED_PENCIL_OLD;
+  static isTextNote(kind: string): boolean {
+    return kind === this.TEXT_NOTE || kind === this.RED_PENCIL_OLD;
   }
 
-  public static isStikyTextNote(kind: string): boolean {
-    return kind == this.STICKY_NOTE || kind === this.STICKY_NOTE_OLD;
+  static isStikyTextNote(kind: string): boolean {
+    return kind === this.STICKY_NOTE || kind === this.STICKY_NOTE_OLD;
+  }
+
+  static isOldRemark(kind: string): boolean {
+    return kind === this.RED_PENCIL_OLD || kind === this.STICKY_NOTE_OLD || kind === this.TEXT_NOTE_OLD;
   }
 }
 

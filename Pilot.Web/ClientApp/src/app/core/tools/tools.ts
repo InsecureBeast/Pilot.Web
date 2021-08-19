@@ -79,3 +79,18 @@ export class StringUtils {
     return true;
   }
 }
+
+export function parseBoolean(value): boolean {
+  switch(value){
+      case true:
+      case "true":
+      case "True":
+      case 1:
+      case "1":
+      case "on":
+      case "yes":
+          return true;
+      default: 
+          return false;
+  }
+}

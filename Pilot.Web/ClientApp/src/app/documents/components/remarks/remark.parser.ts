@@ -3,7 +3,7 @@ import { Tools } from "src/app/core/tools/tools";
 import { TextDecoder } from 'text-encoding';
 import { Remark } from "./remark";
 
-export class RemarkParserBase {
+export class XmlParserBase {
     protected getAttribute(name: string, element: Element): any {
         const attr = element.attrs.find(a => a.name === name)
         if (attr) {
@@ -43,7 +43,7 @@ export class RemarkParserBase {
     }
 }
 
-export class RemarkParser extends RemarkParserBase {
+export class RemarkParser extends XmlParserBase {
 
     parseFromXml(xml: string) : Remark {
 
@@ -144,68 +144,6 @@ export class RemarkParser extends RemarkParserBase {
             const textElement = this.getFirstOrDefaultChildText(root);
             const text = decodeURIComponent(escape(textElement));
             return text;
-        }
-    }
-}
-
-export class ObjectRemarkParser extends RemarkParserBase {
-    
-    parseFromXml(xml: string) : Remark {
-
-        let remark = new Remark();
-
-        const pr = new XmlParser().parse(xml, '');
-        const container = <Element>pr.rootNodes[1];
-        if (!container){
-            return remark;
-        }
-
-        this.fill(container, remark);
-        return remark;
-    }
-
-    fill(container: Element, remark: Remark) {
-        let children = container.children.filter(a => a instanceof Element) as Element[];
-        for (const child of children) {
-            if (child.name === 'AnnotationId') {
-                remark.id = this.getFirstOrDefaultChildText(child);
-            } 
-            if (child.name === 'PositionX') {
-                const left = this.getFirstOrDefaultChildText(child);
-                remark.position.left = parseFloat(left);
-            }
-            if (child.name === 'PositionY') {
-                const top = this.getFirstOrDefaultChildText(child);
-                remark.position.top = parseFloat(top);
-            } 
-            if (child.name === 'PageNumber') {
-                const pageNumber = this.getFirstOrDefaultChildText(child);
-                remark.pageNumber =  parseInt(pageNumber);
-            } 
-            if (child.name === 'Author') {
-                remark.person = this.getFirstOrDefaultChildText(child);
-            } 
-            if (child.name === 'AuthorId') {
-                //const personId = this.getFirstOrDefaultChildText(child);
-                //remark.personId =  parseInt(personId);
-            }
-            if (child.name === 'Kind') {
-                const kind = this.getFirstOrDefaultChildText(child);
-                remark.type =  kind;
-            }  
-            // TODO deserialize remark data
-            if (child.name === 'Data') {
-                const data = this.getFirstOrDefaultChildText(child);
-                remark.data =  data;
-            }  
-            if (child.name === 'Mark') {
-                const mark = this.getFirstOrDefaultChildText(child);
-                remark.pointer =  mark;
-            } 
-            if (child.name === 'StatusName') {
-                //const statusName = this.getFirstOrDefaultChildText(child);
-                //remark.statusName =  statusName;
-            }  
         }
     }
 }

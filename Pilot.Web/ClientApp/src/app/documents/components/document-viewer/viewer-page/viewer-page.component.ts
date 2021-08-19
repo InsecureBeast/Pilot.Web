@@ -43,7 +43,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private remarksSubscription: Subscription;
   private _remarksVisible: boolean;
   private imageHtmlRef: HTMLImageElement;
-  private _displacementFactor = 1.248;
+  private _displacementFactor = 1;
   private _remarks: Remark[];
 
   displayRemarks: DisplayRemark[];
@@ -92,11 +92,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scrollService.change(display.scrollTop);
       }
     });
-
-    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
-      this._remarks = remarks;
-      this.redraw();
-    })
   }
 
   ngOnDestroy(): void {
@@ -132,9 +127,16 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return RemarkType.isRedPensil(remark.remark.type);
   }
 
+  isRedOldPencil(remark: DisplayRemark): boolean {
+    return RemarkType.isOldRemark(remark.remark.type) && RemarkType.isRedPensil(remark.remark.type);
+  }
+
   imageLoaded(img: HTMLImageElement) : void {
     this.imageHtmlRef = img;
-    this.redraw();
+    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
+      this._remarks = remarks;
+      this.redraw();
+    })
   }
 
   private redraw(): void {
