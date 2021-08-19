@@ -1,6 +1,7 @@
 import { Element, XmlParser, Text } from "@angular/compiler";
-import { Tools } from "src/app/core/tools/tools";
+import { parseBoolean, Tools } from "src/app/core/tools/tools";
 import { TextDecoder } from 'text-encoding';
+import { PencilData } from "./object-remark.parser";
 import { Remark } from "./remark";
 
 export class XmlParserBase {
@@ -90,11 +91,19 @@ export class RemarkParser extends XmlParserBase {
                     text = '';
                 } 
                 remark.text = text;
+
+                let color = this.getAttribute(':anb:Visibility', child);
             }
             else if (child.name.startsWith(':anb:Data')) {
+                let pencilData = new PencilData();
                 let data = this.getFirstOrDefaultChildText(child);
                 data = this.replaceInvalidCharactersForGeometryData(data);
-                remark.data = data;
+                pencilData.geometry = data;
+                let color = this.getAttribute(':anb:Color', child);
+                pencilData.color = color.replace('#FF', '#');
+                let isStraightLine = this.getAttribute(':anb:IsStraightLine', child);
+                pencilData.isStraightLine = parseBoolean(isStraightLine);
+                remark.data2 = pencilData;
             }
             else if (child.name === ':anb:MetaData') {
                 const top = this.getAttribute(':anb:Top', child);

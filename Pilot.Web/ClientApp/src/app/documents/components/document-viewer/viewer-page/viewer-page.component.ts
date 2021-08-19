@@ -119,16 +119,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openPopup(remark);
   }
 
-  isTextNoteRemark(remark: DisplayRemark): boolean {
-    return RemarkType.isTextNote(remark.remark.type) || RemarkType.isStikyTextNote(remark.remark.type);
-  }
-
-  isRedPencil(remark: DisplayRemark): boolean {
+  isPencil(remark: DisplayRemark): boolean {
     return RemarkType.isRedPensil(remark.remark.type);
-  }
-
-  isRedOldPencil(remark: DisplayRemark): boolean {
-    return RemarkType.isOldRemark(remark.remark.type) && RemarkType.isRedPensil(remark.remark.type);
   }
 
   imageLoaded(img: HTMLImageElement) : void {

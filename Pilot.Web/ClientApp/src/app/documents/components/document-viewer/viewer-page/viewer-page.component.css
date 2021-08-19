@@ -15,6 +15,14 @@ div.annotation-mark {
     z-index: 1;
 }
 
+.annotation-mark-graphic {
+    position: relative; 
+    height: 10px; 
+    margin-bottom: -10px;
+    width: 10px;
+    z-index: 1;
+}
+
 div.annotation-graphic-layer {
     position: relative; 
     height: 1px; 

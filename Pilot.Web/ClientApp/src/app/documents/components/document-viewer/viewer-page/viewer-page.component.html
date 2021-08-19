@@ -1,12 +1,9 @@
 <ng-container *ngFor="let remark of displayRemarks">
-  <ng-container *ngIf="isRedOldPencil(remark)">
-    <div *ngTemplateOutlet="redPencilRemarkTemplateOld;context:{remark:remark}"></div>
-  </ng-container>
-  <ng-container *ngIf="isTextNoteRemark(remark)">
+  <ng-container *ngIf="!isPencil(remark)">
     <div *ngTemplateOutlet="textNoteRemarkTemplate;context:{remark:remark}"></div>
   </ng-container>
-  <ng-container *ngIf="isRedPencil(remark)">
-    <div *ngTemplateOutlet="redPencilRemarkTemplate;context:{remark:remark}"></div>
+  <ng-container *ngIf="isPencil(remark)">
+    <div *ngTemplateOutlet="pencilRemarkTemplate;context:{remark:remark}"></div>
   </ng-container>
 </ng-container>
 
@@ -14,7 +11,7 @@
   <img [src]="image" class="doc-page" #container (load)="imageLoaded(container)"/>
 </div>
 
-<ng-template #redPencilRemarkTemplate let-remark="remark">
+<ng-template #pencilRemarkTemplate let-remark="remark">
   <div class="annotation-graphic-layer">
     <svg xmlns="http://www.w3.org/2000/svg" 
         xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -22,50 +19,21 @@
         [attr.viewBox]="redParams.viewBoxValue"
         [attr.height]="redParams.viewBoxHeight"
         [attr.width]="redParams.viewBoxWidth">
-    <path [attr.d]="remark.remark.data2.geometry" 
-          fill="none" 
-          [attr.stroke]="remark.remark.data2.color" 
-          [attr.transform]="redParams.transform"/>
+      <path [attr.d]="remark.remark.data2.geometry" 
+            fill="none" 
+            [attr.stroke-width]="remark.remark.isOpen ? 5 : 1"
+            [attr.stroke]="remark.remark.data2.color" 
+            [attr.transform]="redParams.transform"/>
     </svg>
   </div>
 
-  <div class="annotation-mark" 
+  <div class="annotation-mark-graphic" 
+      [class.annotation-mark]="remark.remark.text"
       [appPosition]="remark"
       [style.top.px]="remark.position.top"
       [style.left.px]="remark.position.left"
       (click)="annotationPopupOpen(remark.remark, $event)">
-    <div [class.show]="remark.remark.isOpen"
-          [style.margin-left.px]="remark.popupLeft"
-          class="dropdown-menu shadow annotation-view p-2" >
-      <div class="font-smaller">
-        <div class="text-truncate text-gray">{{remark.remark.person}}</div>
-        <div class="text-truncate text-wrap mt-2" *ngIf="remark.remark.text">{{remark.remark.text}}</div>
-      </div>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #redPencilRemarkTemplateOld let-remark="remark">
-  <div class="annotation-graphic-layer">
-    <svg xmlns="http://www.w3.org/2000/svg" 
-        xmlns:xlink="http://www.w3.org/1999/xlink" 
-        version="1.1"
-        [attr.viewBox]="redParams.viewBoxValue"
-        [attr.height]="redParams.viewBoxHeight"
-        [attr.width]="redParams.viewBoxWidth">
-    <path [attr.d]="remark.remark.data" 
-          fill="none" 
-          stroke="red" 
-          [attr.transform]="redParams.transform"/>
-    </svg>
-  </div>
-
-  <div class="annotation-mark" 
-      [appPosition]="remark"
-      [style.top.px]="remark.position.top"
-      [style.left.px]="remark.position.left"
-      (click)="annotationPopupOpen(remark.remark, $event)">
-    <div [class.show]="remark.remark.isOpen"
+    <div [class.show]="remark.remark.isOpen && remark.remark.text"
           [style.margin-left.px]="remark.popupLeft"
           class="dropdown-menu shadow annotation-view p-2" >
       <div class="font-smaller">

@@ -137,18 +137,18 @@ class TextStickiNoteParser extends XmlParserBase {
     }
 }
 
-class PencilData {
+export class PencilData {
     geometry: string;
     color: string = '#FF0000';
     isStraightLine: boolean;
     isTextNoteVisible: boolean;
 }
 
-class TextStickyNoteData {
+export class TextStickyNoteData {
     fixedTextRange: Rect;
 }
 
-class Rect {
+export class Rect {
     top: number;
     left: number;
     bottom: number;
