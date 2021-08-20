@@ -1,17 +1,20 @@
-import { AfterViewInit, Directive, HostListener, OnDestroy } from '@angular/core';
+import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point, RemarkType } from '../../remarks/remark';
-import { RemarksScrollPositionService } from '../scroll.service';
 
-class DisplayRemark {
+export class DisplayRemark {
   remark: Remark;
   position: Point;
   popupLeft: number;
-  scrollTop: number;
+  boundRect: DOMRect;
+
+  constructor() {
+    this.boundRect = new DOMRect();
+  }
 }
 
 class RedPencilRemarkDisplayParams {
@@ -61,7 +64,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private readonly remarksService: RemarksService, 
-    private readonly scrollService: RemarksScrollPositionService,
     private readonly sanitizer: DomSanitizer,
     filesRepositoryService: FilesRepositoryService) { 
     
@@ -78,6 +80,14 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       this.openPopup(selected);
+
+      if (RemarkType.isRedPensil(selected.type)) {
+        var display = this.displayRemarks.find(r => r.remark.id === selected.id);
+        if (display) {
+          let path = document.getElementById(selected.id + 'path');
+          display.boundRect = path.getBoundingClientRect();
+        }
+      }
     });
   }
 
@@ -119,7 +129,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private redraw(): void {
-    if (this._remarks.length === 0) {
+    if (!this._remarks || this._remarks.length === 0) {
       return;
     }
 

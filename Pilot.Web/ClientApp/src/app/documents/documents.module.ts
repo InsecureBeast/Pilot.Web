@@ -30,6 +30,7 @@ import { FocusDirective } from '../core/directives/focus.directive';
 import { RemarkListComponent } from './components/remarks/remark-list.component';
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
 import { ViewerPageComponent } from './components/document-viewer/viewer-page/viewer-page.component';
+import { RemarkLoadedDirective } from './components/document-viewer/viewer-page/remark-loaded.directive';
 
 @NgModule({
   imports: [
@@ -65,7 +66,8 @@ import { ViewerPageComponent } from './components/document-viewer/viewer-page/vi
     WidthBreadcrumbDirective,
     RemarkListComponent,
     DocumentViewerComponent,
-    ViewerPageComponent
+    ViewerPageComponent,
+    RemarkLoadedDirective
   ],
   exports: [
     DocumentsComponent,

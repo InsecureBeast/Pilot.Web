@@ -9,6 +9,7 @@
     </div>
     <ul class="list-group list-group-flush mb-auto h-100 overflow-auto">
       <li class="list-group-item list-group-item-action pointer p-2" 
+          [id]="remark.id"
           *ngFor="let remark of remarks"
           (click)="onClickRemark(remark, $event)"
           [class.list-group-item-primary]="remark.isOpen">

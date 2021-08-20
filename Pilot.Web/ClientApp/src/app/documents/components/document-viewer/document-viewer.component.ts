@@ -57,7 +57,7 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
     this.pages = new Array();
     this.scrollSubscription = this.remarksService.selectedRemark.subscribe(remark => {
       if (this.viewer && remark) {
-        let el = document.getElementById(remark.id);
+        let el = document.getElementById(remark.id + '-clickArea');
         el.scrollIntoView({
           block: "start",
           inline: "center"
