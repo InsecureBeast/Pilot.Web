@@ -8,18 +8,10 @@ import { Remark, Point, RemarkType } from '../../remarks/remark';
 import { RemarksScrollPositionService } from '../scroll.service';
 
 class DisplayRemark {
-  private element: ElementRef;
-
   remark: Remark;
   position: Point;
   popupLeft: number;
   scrollTop: number;
-
-  setElement(element: ElementRef): void {
-    this.element = element;
-    let datas = element.nativeElement.getBoundingClientRect();
-    this.scrollTop = datas.top;
-  }
 }
 
 class RedPencilRemarkDisplayParams {
@@ -86,11 +78,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       this.openPopup(selected);
-
-      var display = this.displayRemarks.find(r => r.remark.id === selected.id);
-      if (display) {
-        this.scrollService.change(display.scrollTop);
-      }
     });
   }
 
@@ -141,7 +128,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const img = this.imageHtmlRef;
-    //console.log("img naturalWidth = " + img.naturalWidth);
     let wrh = img.offsetWidth / img.offsetHeight;
     this._xRatio = img.naturalWidth / img.offsetWidth;
     this._yRatio = img.naturalHeight / img.offsetHeight;
@@ -150,7 +136,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @HostListener('document:click', ['$event']) 
-  private clickedOutside($event): void {
+  clickedOutside($event): void {
     this.closePopups();
   }
 
@@ -217,19 +203,5 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       displayRemark.popupLeft = this.calcRemarkPopupLeft(displayRemark);
       this.displayRemarks.push(displayRemark);
     }
-  }
-}
-
-@Directive({
-  selector: '[appPosition]'
-})
-export class ElementPositionDirective implements AfterViewInit{
-
-  @Input() appPosition : DisplayRemark;
-  constructor(private el: ElementRef) {
-  }
-
-  ngAfterViewInit(): void {
-    this.appPosition.setElement(this.el);
   }
 }

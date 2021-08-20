@@ -279,7 +279,6 @@ export class DocumentListComponent implements OnInit, OnDestroy, AfterViewChecke
 
   private async uploadHandler(fileList: FileList) {
     try {
-      console.log('fileList', fileList);
       await this.uploadFiles(fileList);
     } catch (e) {
       this.error.emit(e);

@@ -21,7 +21,7 @@
         [attr.width]="redParams.viewBoxWidth">
       <path [attr.d]="remark.remark.data2.geometry" 
             fill="none" 
-            [attr.stroke-width]="remark.remark.isOpen ? 5 : 1"
+            [attr.stroke-width]="remark.remark.isOpen ? 3 : 1"
             [attr.stroke]="remark.remark.data2.color" 
             [attr.transform]="redParams.transform"/>
     </svg>
@@ -29,7 +29,7 @@
 
   <div class="annotation-mark-graphic" 
       [class.annotation-mark]="remark.remark.text"
-      [appPosition]="remark"
+      [id]="remark.remark.id"
       [style.top.px]="remark.position.top"
       [style.left.px]="remark.position.left"
       (click)="annotationPopupOpen(remark.remark, $event)">
@@ -46,7 +46,7 @@
 
 <ng-template #textNoteRemarkTemplate let-remark="remark"> 
   <div class="annotation-mark" 
-        [appPosition]="remark"
+        [id]="remark.remark.id"
         [style.top.px]="remark.position.top"
         [style.left.px]="remark.position.left"
         (click)="annotationPopupOpen(remark.remark, $event)">

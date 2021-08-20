@@ -14,8 +14,7 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { FilesSelector } from 'src/app/core/tools/files.selector';
 import { Tools } from 'src/app/core/tools/tools';
-import { Point } from '../remarks/remark';
-import { RemarksScrollPositionService } from './scroll.service';
+import { RemarksService } from '../../shared/remarks.service';
 
 @Component({
   selector: 'app-document-viewer',
@@ -32,7 +31,6 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   pages: string[];
   isLoading: boolean;
   error: HttpErrorResponse; //TODO event
-  position: Point;
 
   selectedVersionCreated: string;
   selectedVersionCreator: string;
@@ -52,16 +50,19 @@ export class DocumentViewerComponent implements OnInit, OnDestroy {
   @ViewChild("viewer") viewer : ElementRef;
 
   constructor(
+    private readonly remarksService: RemarksService,
     private readonly repository: RepositoryService,
-    private readonly sourceFileService: SourceFileService, 
-    private readonly remarksScrollService: RemarksScrollPositionService) {
+    private readonly sourceFileService: SourceFileService) {
 
     this.pages = new Array();
-    this.position = new Point(0,0);
-
-    this.scrollSubscription = this.remarksScrollService.position.subscribe(position => {
-      if (this.viewer){
-        this.viewer.nativeElement.scrollTop = position - 150;
+    this.scrollSubscription = this.remarksService.selectedRemark.subscribe(remark => {
+      if (this.viewer && remark) {
+        let el = document.getElementById(remark.id);
+        el.scrollIntoView({
+          block: "start",
+          inline: "center"
+        });
+        this.viewer.nativeElement.scrollTop -= 50;
       }
     })
   }

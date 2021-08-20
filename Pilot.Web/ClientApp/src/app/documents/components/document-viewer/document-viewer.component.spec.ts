@@ -4,6 +4,7 @@ import { RepositoryService } from 'src/app/core/repository.service';
 import { SourceFileService } from 'src/app/core/source-file.service';
 import { instance, mock, when } from 'ts-mockito';
 import { RemarksService } from '../../shared/remarks.service';
+import { Remark } from '../remarks/remark';
 
 import { DocumentViewerComponent } from './document-viewer.component';
 import { RemarksScrollPositionService } from './scroll.service';
@@ -18,8 +19,6 @@ describe('DocumentViewerComponent', () => {
   let sourceFileService: SourceFileService;
   let remarksServiceMock: RemarksService;
   let remarksService: RemarksService;
-  let remarksScrollMock: RemarksScrollPositionService;
-  let remarksScroll: RemarksScrollPositionService;
 
   beforeEach(async () => {
     repositoryMock = mock(RepositoryService);
@@ -28,17 +27,14 @@ describe('DocumentViewerComponent', () => {
     sourceFileService = instance(sourceFileServiceMock);
     remarksServiceMock = mock(RemarksService);
     remarksService = instance(remarksServiceMock);
-    remarksScrollMock = mock(RemarksScrollPositionService);
-    remarksScroll = instance(remarksScrollMock);
-    when(remarksScrollMock.position).thenReturn(new Subject<number>());
+    when(remarksServiceMock.selectedRemark).thenReturn(new Subject<Remark>());
 
     await TestBed.configureTestingModule({
       declarations: [ DocumentViewerComponent ],
       providers: [
         { provide: SourceFileService, useValue: sourceFileService },
         { provide: RepositoryService, useValue: repository },
-        { provide: RemarksService, useValue: remarksService },
-        { provide: RemarksScrollPositionService, useValue: remarksScroll }
+        { provide: RemarksService, useValue: remarksService }
       ]
     })
     .compileComponents();

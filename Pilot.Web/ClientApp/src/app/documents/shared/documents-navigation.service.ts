@@ -28,7 +28,6 @@ export class DocumentsNavigationService {
           pairwise()
       ).subscribe((e: any) => {
         this.previousUrl = e[0].urlAfterRedirects;
-        // console.log(e[0].urlAfterRedirects); // previous url
       });
   }
 

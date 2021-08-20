@@ -29,7 +29,7 @@ import { DocumentsSearchComponent } from './pages/documents-search/documents-sea
 import { FocusDirective } from '../core/directives/focus.directive';
 import { RemarkListComponent } from './components/remarks/remark-list.component';
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
-import { ElementPositionDirective, ViewerPageComponent } from './components/document-viewer/viewer-page/viewer-page.component';
+import { ViewerPageComponent } from './components/document-viewer/viewer-page/viewer-page.component';
 
 @NgModule({
   imports: [
@@ -65,8 +65,7 @@ import { ElementPositionDirective, ViewerPageComponent } from './components/docu
     WidthBreadcrumbDirective,
     RemarkListComponent,
     DocumentViewerComponent,
-    ViewerPageComponent,
-    ElementPositionDirective
+    ViewerPageComponent
   ],
   exports: [
     DocumentsComponent,

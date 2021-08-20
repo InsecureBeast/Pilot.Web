@@ -1,7 +1,6 @@
 import { Element, XmlParser, Text } from "@angular/compiler";
 import { parseBoolean, Tools } from "src/app/core/tools/tools";
 import { TextDecoder } from 'text-encoding';
-import { PencilData } from "./object-remark.parser";
 import { Remark } from "./remark";
 
 export class XmlParserBase {
@@ -162,4 +161,22 @@ export class RemarkParser extends XmlParserBase {
             return text;
         }
     }
+}
+
+export class PencilData {
+    geometry: string;
+    color: string = '#FF0000';
+    isStraightLine: boolean;
+    isTextNoteVisible: boolean;
+}
+
+export class TextStickyNoteData {
+    fixedTextRange: Rect;
+}
+
+export class Rect {
+    top: number;
+    left: number;
+    bottom: number;
+    right: number;
 }
