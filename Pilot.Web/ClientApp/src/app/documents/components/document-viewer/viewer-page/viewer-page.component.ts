@@ -80,14 +80,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       this.openPopup(selected);
-
-      if (RemarkType.isRedPensil(selected.type)) {
-        var display = this.displayRemarks.find(r => r.remark.id === selected.id);
-        if (display) {
-          let path = document.getElementById(selected.id + 'path');
-          display.boundRect = path.getBoundingClientRect();
-        }
-      }
     });
   }
 
