@@ -20,24 +20,26 @@
           [attr.viewBox]="redParams.viewBoxValue"
           [attr.height]="redParams.viewBoxHeight"
           [attr.width]="redParams.viewBoxWidth">
-        <!-- <rect [attr.x]="remark.position.left - 5" 
-              [attr.y]="remark.position.top - 5" 
-              [attr.width]="remark.boundRect.width + 10"
-              [attr.height]="remark.boundRect.height + 10" 
-              fill="none"
-              stroke="#ffa000"
-              *ngIf="remark.boundRect && remark.remark.isOpen && !remark.remark.text"/>   -->
         <path [attr.d]="remark.remark.data2.geometry" 
               fill="none" 
               [id]="remark.remark.id + 'path'"
-              [attr.stroke-width]="remark.remark.isOpen ? 3 : 1"
               [attr.stroke]="remark.remark.data2.color" 
               [attr.transform]="redParams.transform"/>
       </svg>
     </div>
 
+    <div class="annotation-mark-click-area" 
+        [id]="remark.remark.id + '-clickArea'"
+        [class.annotation-border]="remark.boundRect && remark.remark.isOpen && !remark.remark.text"
+        [style.left.px]="remark.position.left - 5" 
+        [style.top.px]="remark.position.top - 5" 
+        
+        (click)="annotationPopupOpen(remark.remark, $event)">
+    </div>
+
     <div class="annotation-mark" 
         *ngIf="remark.remark.text"
+        [class.annotation-border]="remark.remark.isOpen"
         [style.top.px]="remark.position.top"
         [style.left.px]="remark.position.left"
         (click)="annotationPopupOpen(remark.remark, $event)">
@@ -50,17 +52,12 @@
         </div>
       </div>
     </div>
-
-    <div class="annotation-mark-click-area" 
-         [id]="remark.remark.id + '-clickArea'"
-         [class.annotation-border]="remark.boundRect && remark.remark.isOpen && !remark.remark.text"
-         (click)="annotationPopupOpen(remark.remark, $event)">
-    </div>
   </div>
 </ng-template>
 
 <ng-template #textNoteRemarkTemplate let-remark="remark"> 
   <div class="annotation-mark" 
+        [class.annotation-border]="remark.remark.isOpen"
         [id]="remark.remark.id + '-clickArea'"
         [style.top.px]="remark.position.top"
         [style.left.px]="remark.position.left"

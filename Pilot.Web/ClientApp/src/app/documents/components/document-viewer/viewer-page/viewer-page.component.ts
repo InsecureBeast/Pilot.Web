@@ -2,6 +2,7 @@ import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point, RemarkType } from '../../remarks/remark';
@@ -71,7 +72,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.redParams = new RedPencilRemarkDisplayParams();
     this.remarkVisibilitySubscription = this.remarksService.remarksVisibility.subscribe(v => {
       this._remarksVisible = v;
-      this.drawRemarks(v);
+      this.drawRemarks();
     });
     
     this.selectedRemarksSubscription = this.remarksService.selectedRemark.subscribe(selected => {
@@ -98,7 +99,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.redraw();
+    this.drawRemarks();
   }
 
   annotationPopupOpen(remark: Remark, $event: Event): void {
@@ -114,27 +115,14 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   imageLoaded(img: HTMLImageElement) : void {
     this.imageHtmlRef = img;
-    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
-      this._remarks = remarks;
-      this.redraw();
+    this._remarks = new Array();
+    this.remarksSubscription = this.remarksService.remarks.pipe(first()).subscribe(remarks => {
+      for (const r of remarks) {
+        if (this.pageNumber === r.pageNumber)
+          this._remarks.push(r);
+      }
+      this.drawRemarks();
     })
-  }
-
-  private redraw(): void {
-    if (!this._remarks || this._remarks.length === 0) {
-      return;
-    }
-
-    if (!this.imageHtmlRef) {
-      return;
-    }
-
-    const img = this.imageHtmlRef;
-    let wrh = img.offsetWidth / img.offsetHeight;
-    this._xRatio = img.naturalWidth / img.offsetWidth;
-    this._yRatio = img.naturalHeight / img.offsetHeight;
-    this.setupRedPencilDisplayParams(img.offsetWidth, img.offsetHeight);
-    this.drawRemarks(this._remarksVisible);
   }
 
   @HostListener('document:click', ['$event']) 
@@ -176,23 +164,24 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.redParams.transform = `scale(${(1 / this._xRatio) * this._displacementFactor})`;
   }
 
-  private drawRemarks(isDraw: boolean): void {
-    this.displayRemarks = new Array();
-    if (!isDraw) {
+  private drawRemarks(): void {
+    if (!this._remarks || this._remarks.length === 0) {
       return;
     }
 
-    if (!this._remarks) {
+    if (!this.imageHtmlRef || !this._remarksVisible) {
       return;
     }
+
+    const img = this.imageHtmlRef;
+    this._xRatio = img.naturalWidth / img.offsetWidth;
+    this._yRatio = img.naturalHeight / img.offsetHeight;
+    this.setupRedPencilDisplayParams(img.offsetWidth, img.offsetHeight);
     
+    this.displayRemarks = new Array();
     const sortedRemarks = [...this._remarks].sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
     for (const remark of sortedRemarks) {
       
-      if (remark.pageNumber !== this.pageNumber) {
-        continue;
-      }
-
       if (!remark.position) {
         continue;
       }
