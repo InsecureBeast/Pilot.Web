@@ -20,10 +20,10 @@
           [attr.viewBox]="redParams.viewBoxValue"
           [attr.height]="redParams.viewBoxHeight"
           [attr.width]="redParams.viewBoxWidth">
-        <path [attr.d]="remark.remark.data2.geometry" 
+        <path [attr.d]="remark.remark.data.geometry" 
               fill="none" 
               [id]="remark.remark.id + 'path'"
-              [attr.stroke]="remark.remark.data2.color" 
+              [attr.stroke]="remark.remark.data.color" 
               [attr.transform]="redParams.transform"/>
       </svg>
     </div>

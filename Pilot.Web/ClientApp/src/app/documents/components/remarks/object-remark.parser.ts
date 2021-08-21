@@ -57,7 +57,7 @@ export class ObjectRemarkParser extends XmlParserBase {
                 }
 
                 let data = parser.parse();
-                remark.data2 =  data;
+                remark.data =  data;
                 if (data instanceof TextStickyNoteData){
                     remark.position.left = data.fixedTextRange.left;
                     remark.position.top = data.fixedTextRange.top;

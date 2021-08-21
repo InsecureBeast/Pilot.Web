@@ -5,12 +5,11 @@ export class Remark {
   text: string = '';
   created: string;
   type: string;
-  data: string;
   position: Point;
   pageNumber: number = -1;
   pointer: string;
   isOpen: boolean;
-  data2: any;
+  data: any;
 
   constructor() {
     this.position = new Point(0, 0);    

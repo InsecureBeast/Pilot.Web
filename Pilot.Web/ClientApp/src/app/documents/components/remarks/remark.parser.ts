@@ -102,7 +102,7 @@ export class RemarkParser extends XmlParserBase {
                 pencilData.color = color.replace('#FF', '#');
                 let isStraightLine = this.getAttribute(':anb:IsStraightLine', child);
                 pencilData.isStraightLine = parseBoolean(isStraightLine);
-                remark.data2 = pencilData;
+                remark.data = pencilData;
             }
             else if (child.name === ':anb:MetaData') {
                 const top = this.getAttribute(':anb:Top', child);
