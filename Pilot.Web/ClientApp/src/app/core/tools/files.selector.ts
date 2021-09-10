@@ -79,6 +79,6 @@ export class FilesSelector {
   }
 
   static isRemarkFile(file: IFile): boolean {
-    return file.name.startsWith(FileNames.REMARK_FILE_NAME);
+    return file.name.includes(FileNames.REMARK_FILE_NAME);
   }
 }

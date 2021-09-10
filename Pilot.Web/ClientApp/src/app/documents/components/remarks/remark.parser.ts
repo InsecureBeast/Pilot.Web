@@ -46,11 +46,13 @@ export class XmlParserBase {
         if (data.includes(';')) {
             data = Tools.replaceAll(data, ';', ' ');
             data = Tools.replaceAll(data, ',', '.');
-            data = Tools.replaceAll(data, 'F1', 'M');
+            data = Tools.replaceAll(data, 'F1', '');
+            data = Tools.replaceAll(data, 'F0', '');
         }
         else {
             data = Tools.replaceAll(data, ',', ' ');
             data = Tools.replaceAll(data, 'F1', '');
+            data = Tools.replaceAll(data, 'F0', '');
         }
         return data;
     }
@@ -78,7 +80,7 @@ export class RemarkParser extends XmlParserBase {
         return this.parseFromXml(s);
     }
 
-    private fill(element: Element, remark: Remark): void {
+  private fill(element: Element, remark: Remark): void {
         let children = element.children.filter(a => a instanceof Element) as Element[];
         for (const child of children) {
             if (child.name === ':anb:StringAuthor' && !remark.person) {
@@ -91,7 +93,7 @@ export class RemarkParser extends XmlParserBase {
                 } 
                 remark.text = text;
 
-                let color = this.getAttribute(':anb:Visibility', child);
+                let visibility = this.getAttribute(':anb:Visibility', child);
             }
             else if (child.name.startsWith(':anb:Data')) {
                 let pencilData = new PencilData();
@@ -99,16 +101,18 @@ export class RemarkParser extends XmlParserBase {
                 data = this.replaceInvalidCharactersForGeometryData(data);
                 pencilData.geometry = data;
                 let color = this.getAttribute(':anb:Color', child);
-                pencilData.color = color.replace('#FF', '#');
+                if (color !== null) {
+                    pencilData.color = color.replace('#FF', '#');
+                }
                 let isStraightLine = this.getAttribute(':anb:IsStraightLine', child);
                 pencilData.isStraightLine = parseBoolean(isStraightLine);
                 remark.data = pencilData;
             }
             else if (child.name === ':anb:MetaData') {
-                const top = this.getAttribute(':anb:Top', child);
+                const t = this.getAttribute(':anb:Top', child);
                 const left = this.getAttribute(':anb:Left', child);
                 remark.position.left = parseFloat(left);
-                remark.position.top = parseFloat(top);
+                remark.position.top = parseFloat(t);
                 
                 if (remark.pageNumber === -1) {
                     const pageNumber = this.getAttribute(':anb:PageNumber', child);
