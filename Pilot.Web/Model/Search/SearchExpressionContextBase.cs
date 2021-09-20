@@ -430,8 +430,8 @@ namespace Pilot.Web.Model.Search
                 intersect: specifiedTypesNames.Count > 1,
                 buildItemsForElement: attributeTypePair =>
                 {
-                    var stateMachineId = attributeTypePair.Item1.ParsedConfiguration().StateMachineId;
-                    if (stateMachineId == null)
+                    var stateMachineId = attributeTypePair.Item1.ParsedConfiguration().UserStateConfiguration.StateMachineId;
+                    if (stateMachineId == Guid.Empty)
                         return new Dictionary<string, UserStateSearchItem>();
 
                     var stateMachine = _context.GetStateMachine((Guid)stateMachineId);

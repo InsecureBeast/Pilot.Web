@@ -5,14 +5,14 @@ import { Directive, HostListener } from "@angular/core";
 })
 export class ClickStopPropagationDirective {
   @HostListener("click", ["$event"])
-  public onClick(event: any): void {
-    event.stopPropagation();
-    event.preventDefault();
+  public onClick($event: Event): void {
+    $event.stopPropagation();
+    $event.preventDefault();
   }
 
   @HostListener("mousedown", ["$event"])
-  public onMousedown(event: any): void {
-    event.stopPropagation();
+  public onMousedown($event: Event): void {
+    $event.stopPropagation();
   }
 }
 
@@ -21,12 +21,12 @@ export class ClickStopPropagationDirective {
 })
 export class ClickPreventDefaultDirective {
   @HostListener("click", ["$event"])
-  public onClick(event: any): void {
-    event.preventDefault();
+  public onClick($event: Event): void {
+    $event.preventDefault();
   }
 
   @HostListener("mousedown", ["$event"])
-  public onMousedown(event: any): void {
-    event.preventDefault();
+  public onMousedown($event: Event): void {
+    $event.preventDefault();
   }
 }

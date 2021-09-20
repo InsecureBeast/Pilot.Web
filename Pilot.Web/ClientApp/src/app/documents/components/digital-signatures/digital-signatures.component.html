@@ -1,10 +1,10 @@
 ﻿<div class="d-flex flex-column h-100">
-  <div class="signatures-content-align-center" *ngIf="isSignaturesLoading">
+  <div class="content-center-absolute" *ngIf="isSignaturesLoading">
     <div class="spinner-border text-secondary" role="status">
       <span class="sr-only" translate="loading"></span>
     </div>
   </div>    
-  <div class="signatures-content-align-center" *ngIf="signatures && signatures.length == 0 && !isSignaturesLoading">
+  <div class="content-center-absolute" *ngIf="signatures && signatures.length == 0 && !isSignaturesLoading">
     <h4 class="font-weight-light mt-3 text-secondary" translate="noItemsToDisplay"></h4>
   </div>
   <ul class="list-group list-group-flush mb-auto h-100 overflow-auto">

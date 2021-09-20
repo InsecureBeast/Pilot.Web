@@ -50,7 +50,6 @@ namespace Pilot.Web.Controllers
         }
 
         [HttpGet("[action]")]
-        //[Authorize]
         public ActionResult SignOut()
         {
             try

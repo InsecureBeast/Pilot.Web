@@ -1,13 +1,16 @@
 
 export class SystemTypes {
-  public static PROJECT_FOLDER = 'Project_folder';
-  public static PROJECT_FILE = 'File';
-
+  static PROJECT_FOLDER = 'Project_folder';
+  static PROJECT_FILE = 'File';
+  static DOCUMENT_REMARK = 'document_remark';
+  static DOCUMENT_REMARKS_FOLDER = 'document_remarks_folder';
 }
 
 export class SystemAttributes {
-  public static PROJECT_ITEM_NAME = 'Title 4C281306-E329-423A-AF45-7B39EC30273F';
-  public static ALLOW_SIGNING_AT_NONE_STATE_NAME = 'AllowSigningAtNoneState';
+  static PROJECT_ITEM_NAME = 'Title 4C281306-E329-423A-AF45-7B39EC30273F';
+  static ALLOW_SIGNING_AT_NONE_STATE_NAME = 'AllowSigningAtNoneState';
+  static DOCUMENT_REMARK_VERSION = 'annotation_version';
+  static DOCUMENT_REMARK_ANNOTATION = 'annotation';
 }
 
 export class SystemTaskAttributes {

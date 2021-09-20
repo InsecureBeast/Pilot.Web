@@ -1,22 +1,15 @@
-img.doc-page {
-  border: 1px solid var(--border);
-  margin-bottom: 8px;
-  margin-top: 8px;
-  max-width: 90%;
-}
-
 .vertical-center {
   position: absolute;
   margin-top: auto;
   margin-bottom: auto;
 }
 
-.doc-info {
-  background: var(--bg-content);
-}
-
 .h-30 {
   margin-top: 30vh;
+}  
+
+.h-46v {
+  height: calc(55vh - 66px)!important;
 }
 
 .versions-view {
@@ -24,6 +17,10 @@ img.doc-page {
   right: 0;
   top: 3.5rem;
   bottom: 0;
+}
+
+.viewer-container {
+  height: calc(100vh - 66px);
 }
 
 @media (max-width: 991px) {
@@ -39,6 +36,10 @@ img.doc-page {
 
   :host ::ng-deep div.tab-content {
     height: 100%;
+  }
+
+  .viewer-container {
+    height: auto;
   }
 }
 

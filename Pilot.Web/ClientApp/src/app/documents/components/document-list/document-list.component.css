@@ -3,19 +3,13 @@
   line-height: 1.1;
   padding-left: .7rem;
   padding-right: .7rem;
-  /*border: 0;
-  border-bottom-left-radius: .25rem;
-  border-bottom-right-radius: .25rem;
-  border-top-left-radius: .25rem;
-  border-top-right-radius: .25rem;*/
   min-height: 4rem;
-  margin-bottom: -2px;
-  border: none;
+  border-color: var(--border);
+  border-top-width: 1px;
 }
 
 .card-img-center {
   max-height: 100%;
-  /* width: 100%; */
 }
 
 .card-img {
@@ -33,13 +27,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: 2.8em;
-  /* line-height: 1.3rem; */
 }
 
 .card {
   height: 13rem;
   overflow: hidden;
-  border-color: #f2f2f2;
+  border-color: var(--border);
 }
 
 .card-body {
@@ -48,15 +41,15 @@
 
 .card-children-count {
   position: absolute;
-  top: 0.1rem;
-  right: 0.5rem;
+  top: 0.5rem;
+  right: 0.9rem;
   font-size: 80%
 }
 
 .card-checker {
-  top: 0;
+  top: 0.2rem;
+  left: 0.5rem;
   position: absolute;
-  margin-left: .25rem;
   cursor: pointer;
 }
 
@@ -92,9 +85,8 @@
 
 .checker-container {
   position: absolute;
-  top: -0.01rem;
-  left: -0.01rem;
-  padding: 0.93rem;
+  top: .9em;
+  left: 1.1rem;
 }
 
 /* ------------------------------Drop area -------------------------------------------------*/
@@ -106,7 +98,6 @@
   position: relative;
   border-radius: .25rem;
   border: 1px solid transparent;
-  z-index: 1000;
 }
 
 .drop-area {
@@ -161,7 +152,7 @@
   visibility: visible;
   border: 1px dashed var(--second);
   box-sizing: border-box;
-  border-radius: .25rem;
+  border-radius: 1.25rem;
 }
 
 /* ---- ----*/

@@ -9,6 +9,16 @@
   </ul>
 
   <ul class="navbar-nav noselect">
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="toggleRemarks($event)"
+      *ngIf="!isRemarksVisible && !isSourceFile">
+      <span class="navbar-text toolbar-text material-icons-outline nav-icon">speaker_notes</span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="showRemarks"></span>
+    </li>
+    <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="toggleRemarks($event)"
+        *ngIf="isRemarksVisible && !isSourceFile">
+      <span class="navbar-text toolbar-text material-icons-outline nav-icon">speaker_notes_off</span>
+      <span class="navbar-text toolbar-text hidden-phone noselect" translate="hideRemarks"></span>
+    </li>
     <li click-stop-propagation click-prevent-default class="nav-item nav-item-button" (click)="download($event)">
       <span class="navbar-text toolbar-text material-icons nav-icon">save_alt</span>
       <span class="navbar-text toolbar-text hidden-phone noselect" translate="download"></span>

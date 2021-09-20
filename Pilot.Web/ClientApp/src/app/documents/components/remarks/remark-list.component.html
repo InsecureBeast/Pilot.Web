@@ -1,0 +1,26 @@
+<div class="d-flex flex-column h-100">
+    <div class="content-center-absolute" *ngIf="isLoading">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="sr-only" translate="loading"></span>
+      </div>
+    </div>    
+    <div class="content-center-absolute" *ngIf="remarks && remarks.length == 0 && !isLoading">
+      <h4 class="font-weight-light mt-3 text-secondary" translate="noItemsToDisplay"></h4>
+    </div>
+    <ul class="list-group list-group-flush mb-auto h-100 overflow-auto">
+      <li class="list-group-item list-group-item-action pointer p-2" 
+          [id]="remark.id"
+          *ngFor="let remark of remarks"
+          (click)="onClickRemark(remark, $event)"
+          [class.list-group-item-primary]="remark.isOpen">
+        <div class="font-smaller">
+          <div class="d-flex justify-content-between">
+            <div class="text-truncate text-gray">{{remark.person}}</div>
+            <div class="text-gray" style="width: 140px; text-align: end;">{{remark.created | date:'short'}}</div>
+          </div>
+          <div class="text-truncate text-wrap" style="max-height: 3.7rem;" *ngIf="remark.text">{{remark.text}}</div>
+          <div class="" *ngIf="isRedPencil(remark)" translate="redPencilRemark"></div>
+        </div>
+      </li>
+    </ul>
+  </div>

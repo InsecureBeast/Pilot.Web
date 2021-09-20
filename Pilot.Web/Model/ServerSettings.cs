@@ -10,5 +10,6 @@
     public class AppSettings
     {
         public string FilesStorageDirectory { get; set; }
+        public double DisplacementFactor { get; set; }
     }
 }

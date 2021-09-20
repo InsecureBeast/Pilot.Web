@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener,
-  Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, 
+  Input, Output, EventEmitter } from '@angular/core';
 
-import { Subject, BehaviorSubject, Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
 
-import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
 import { ObjectNode } from '../../shared/object.node';
 import { RepositoryService } from '../../../core/repository.service';
@@ -17,6 +16,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { SearchService } from 'src/app/core/search/search.service';
 import { DocumentsNavigationService } from '../../shared/documents-navigation.service';
 import { Tools } from 'src/app/core/tools/tools';
+import { BreadcrumbNode, SearchResultsBreadcrumbNode } from './breadcrumb.node';
 
 export const SearchInputSlideInToggleAnimation = [
   trigger('searchInputSlideInToggle', [
@@ -30,50 +30,6 @@ export const SearchInputSlideInToggleAnimation = [
   ])
 ];
 
-export class BreadcrumbNode implements INode {
-
-  id: string;
-  parentId: string;
-  title: string;
-  isActive: boolean;
-  isSource: boolean;
-  isDocument: boolean;
-  isChecked: boolean;
-  isRoot: boolean;
-  isSearchItem = false;
-
-  /** BreadcrumbNode ctor */
-  constructor(public source: IObject, isActive: boolean) {
-    this.update(source);
-    this.isActive = isActive;
-  }
-
-  update(source: IObject): void {
-    this.source = source;
-    this.id = source.id;
-    this.title = source.title;
-    this.isDocument = false;
-    this.parentId = source.parentId;
-    this.isSource = TypeExtensions.isProjectFileOrFolder(source.type);
-    this.source = source;
-    this.isRoot = source.id === SystemIds.rootId;
-  }
-}
-
-class SearchResultsBreadcrumbNode extends BreadcrumbNode {
-
-  isSearchItem = true;
-  isRoot = false;
-  isActive = true;
-
-  constructor() {
-    super(null, true);
-  }
-
-  update(source: IObject): void {
-  }
-}
-
 @Component({
     selector: 'app-breadcrumbs',
     templateUrl: './breadcrumbs.component.html',
@@ -81,36 +37,45 @@ class SearchResultsBreadcrumbNode extends BreadcrumbNode {
     animations: [SearchInputSlideInToggleAnimation]
 })
 /** breadcrumbs component*/
-export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
+export class BreadcrumbsComponent implements OnInit, OnDestroy {
 
   private ol: ElementRef;
-  private breadcrumbsCountSource = new BehaviorSubject<number>(2);
   private nodeStyleSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
-  private allBreadcrumbNodes: BreadcrumbNode[];
+  private _toolsPanel: ElementRef;
+  private _parent: ObjectNode;
 
   @ViewChild('olRef', { static: true })
   set setOl(v: ElementRef) {
-    if (!v) {
-      return;
-    }
-
     this.ol = v;
-    const width = v.nativeElement.offsetWidth;
-    this.setCountFromWidth(width);
   }
 
-  @Input() parent: ObjectNode;
+  @ViewChild('toolsPanel', { static: true })
+  set setToolsPanel(v: ElementRef) {
+    this._toolsPanel = v;
+  }
+
+  @Input()
+  set parent(value: ObjectNode) {
+    this._parent = value;
+    this.init(value);
+  }
+  get parent(): ObjectNode {
+    return this._parent;
+  }
+
   @Output() onSelected = new EventEmitter<INode>();
 
   breadcrumbs: BreadcrumbNode[];
   hiddenBreadcrumbs: BreadcrumbNode[];
+  allBreadcrumbNodes: BreadcrumbNode[];
   itemWidth: number;
   nodeStyle: NodeStyle;
   isAddSearchResultItem: boolean;
   searchInputText: string;
   isDisabledInputAnimation = true;
   isSearchInputFocused: boolean;
+  root: BreadcrumbNode;
 
   /** breadcrumbs ctor */
   constructor(private repository: RepositoryService,
@@ -119,8 +84,10 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly navigationService: DocumentsNavigationService,
     private readonly searchService: SearchService) {
 
+    this.allBreadcrumbNodes = new Array<BreadcrumbNode>();
+    this.hiddenBreadcrumbs = new Array<BreadcrumbNode>();
   }
-
+  
   ngOnInit(): void {
     this.nodeStyleSubscription = this.nodeStyleService.getNodeStyle().subscribe(nodeStyle => {
       this.nodeStyle = nodeStyle;
@@ -133,22 +100,15 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.nodeStyleSubscription.unsubscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!this.parent) {
-      return;
-    }
-
-    this.init(this.parent);
-  }
-
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     if (!this.ol) {
       return;
     }
 
-    const width = this.ol.nativeElement.offsetWidth;
-    this.setCountFromWidth(width);
+    Tools.sleep(0).then(() => {
+      this.reorder();
+    });
   }
 
   onSelect(bc: BreadcrumbNode): void {
@@ -191,46 +151,31 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     return true;
   }
 
-  private init(item: ObjectNode) {
-    if (!item) {
-      return;
-    }
-
-    this.loadBreadcrumbs(item);
-  }
-
-  private loadBreadcrumbs(node: IObjectNode) {
-    this.repository.getObjectParentsAsync(node.id, this.ngUnsubscribe)
-      .then(parents => {
-        this.allBreadcrumbNodes = new Array<BreadcrumbNode>();
-        for (const parent of parents) {
-          if (parent.title === 'Source files') {
-            continue;
-          }
-
-          const isActive = node.id === parent.id && (node.isSource === TypeExtensions.isProjectFileOrFolder(parent.type));
-          this.allBreadcrumbNodes.push(new BreadcrumbNode(parent, isActive));
-        }
-
-        this.breadcrumbsCountSource.pipe(first()).subscribe(value => {
-          this.refillBreadcrumbs(value);
-        });
-      });
-  }
-
-  private refillBreadcrumbs(count: number): void {
+  private reorder() {
     const list = new Array<BreadcrumbNode>();
     const hiddenList = new Array<BreadcrumbNode>();
     const loadedBreadcrumbs = this.allBreadcrumbNodes;
+
+    let wb = 0; // this.breadcrumbs.length; // cumulative width for breadcrumbs with separators
+    const w = window.innerWidth;
+    const f = 40; // fixed witdth for home button
+    const a = 56; // fixed size for hidden breadcrumbs button
+    const s = this._toolsPanel.nativeElement.offsetWidth + 40; // fixed size for search button and style button
+
+    let wa = 0; // available space for breadcrumbs
+    wa = w - f - s - a;
+
     for (let i = 0; i < loadedBreadcrumbs.length; i++) {
       const breadcrumbNode = loadedBreadcrumbs[i];
       if (this.isAddSearchResultItem) {
         breadcrumbNode.isActive = false;
       }
-      if (i < loadedBreadcrumbs.length - count) {
-        hiddenList.push(breadcrumbNode);
+
+      wb += breadcrumbNode.width;
+      if (wb < wa) {
+        list.splice(0, 0, breadcrumbNode);
       } else {
-        list.push(breadcrumbNode);
+        hiddenList.splice(0, 0, breadcrumbNode);
       }
     }
 
@@ -249,25 +194,38 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy, OnChanges {
     this.hiddenBreadcrumbs = hiddenList;
   }
 
-  private setCountFromWidth(width: number): void {
-    if (width <= 350) {
-      // this.itemWidth = 120;
-      this.breadcrumbsCountSource.next(2);
+  private init(item: ObjectNode) {
+    if (!item) {
       return;
     }
 
-    if (width <= 500) {
-      // this.itemWidth = 150;
-      this.breadcrumbsCountSource.next(2);
-      return;
-    }
+    this.loadBreadcrumbs(item);
+  }
 
-    if (width < 765) {
-      this.breadcrumbsCountSource.next(2);
-      // this.itemWidth = 250;
-    } else {
-      this.breadcrumbsCountSource.next(3);
-      // this.itemWidth = 250;
-    }
+  private loadBreadcrumbs(node: IObjectNode) {
+    this.repository.getObjectParentsAsync(node.id, this.ngUnsubscribe)
+      .then(parents => {
+        this.allBreadcrumbNodes = new Array<BreadcrumbNode>();
+        for (const parent of parents) {
+          if (parent.title === 'Source files') {
+            continue;
+          }
+
+          const isActive = node.id === parent.id && (node.isSource === TypeExtensions.isProjectFileOrFolder(parent.type));
+
+          if (parent.id === SystemIds.rootId) {
+            this.root = new BreadcrumbNode(parent, isActive);
+            continue;
+          }
+
+          this.allBreadcrumbNodes.push(new BreadcrumbNode(parent, isActive));
+        }
+
+        this.allBreadcrumbNodes.reverse();
+
+        Tools.sleep(0).then(() => {
+          this.reorder();
+        });
+      });
   }
 }

@@ -4,10 +4,34 @@ html, body {
   background-color: var(--bg-content);
 }
 
+a {
+  color: var(--primary);
+}
+a:hover {
+  color: var(--primary-darkness);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgb(255 160 0 / 25%);
+}
+
 .content-center {
   position: fixed;
   left: 50%;
   top: 50%;
+  -ms-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  text-align: center;
+}
+
+.content-center-absolute {
+  position: absolute;
+  margin-top: auto;
+  margin-bottom: auto;
+  top: 50%;
+  left: 50%;
   -ms-transform: translate(-50%,-50%);
   transform: translate(-50%,-50%);
   text-align: center;
@@ -29,19 +53,20 @@ html, body {
   color: var(--second);
 }
 
+.text-gray {
+  color: var(--gray);
+}
+
+.text-black {
+  color: var(--black) !important;
+}
+
 .container-fluid {
   height: 100%;
 }
 
 .container-xl {
   height: 100%;
-}
-
-.h-100vh {
-  height: 100vh;
-}
-.w-45 {
-  width: 45% !important;
 }
 
 @media (max-width: 800px) {
@@ -59,18 +84,6 @@ html, body {
   cursor: pointer
 }
 
-.pt-6 {
-  padding-top: 4rem;
-}
-
-.pt-2h {
-  padding-top: .4rem;
-}
-
-.opacity-02 {
-  opacity: 0.2;
-}
-
 .tb-btn {
   color: var(--gray);
   font-size: 20px;
@@ -81,16 +94,64 @@ html, body {
   color: var(--dark);
 }
 
+.list-group-item:hover {
+  background-color: rgba(255, 160, 0, 0.1)!important;
+}
+.list-group-item-primary {
+  color: var(--primary-darkness);
+  background-color: rgba(255, 160, 0, 0.3)!important;
+  border-color: var(--primary)!important;
+}
+.list-group-item-primary:hover {
+  color: var(--primary-darkness)!important;
+  background-color: rgba(255, 160, 0, 0.2)!important;
+}
+
+.text-primary {
+  color: var(--primary-dark)!important;
+}
+
+@font-face {
+  font-family: 'Material Icons Outline';
+  font-style: normal;
+  font-weight: 400;
+  src: url(assets/fonts/material_outline.woff2) format('woff2');
+}
+
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  /* src: url(assets/fonts/outline.woff2) format('woff2'); */
-  src: url(assets/fonts/regular.woff2) format('woff2');
+  src: url(assets/fonts/material.woff2) format('woff2');
 }
 
 .material-icons {
   font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+.material-icons-outline {
+  font-family: 'Material Icons Outline';
   font-weight: normal;
   font-style: normal;
   font-size: 24px;  /* Preferred icon size */
@@ -172,3 +233,24 @@ html, body {
     transform: scale(1);
   }
 }
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f2f2f2;
+  }
+  
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(168, 168, 168);
+  }

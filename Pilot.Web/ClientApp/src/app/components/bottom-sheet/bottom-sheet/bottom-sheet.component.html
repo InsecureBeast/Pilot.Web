@@ -1,18 +1,29 @@
-<div class="bottom-sheet-bg-overlay" *ngIf="flags.isBottomSheetEnabled" (click)="close()"></div>
+<div class="bottom-sheet-bg-overlay" *ngIf="flags.isBottomSheetEnabled && options?.isBackgroundEnabled" (click)="close()"></div>
 <div class="bottom-sheet-container" 
     [ngClass]="{'bg-dark': options?.darkTheme}" 
     *ngIf="flags.isBottomSheetEnabled"
     [style.backgroundColor]="options?.backgroundColor" 
-    [style.color]="options?.fontColor" 
+    [style.color]="options?.fontColor"
+    [class.h-middle]="options?.isMiddleScreen"
+    [class.overflow-hidden]="options?.isMiddleScreen"
+    [class.h-open]="!options?.isMiddleScreen && !options?.isFullScreen"
     [@slideUpToggle]>
   <div>
-    <div class="bottom-sheet-header" [ngClass]="{'bg-dark-header': options?.darkTheme}" *ngIf="options?.title">
-      <h4 class="title">{{options?.title}}</h4>
+    <div class="bottom-sheet-header" 
+        [class.fixed-top]="options?.isFullScreen"
+        [ngClass]="{'bg-dark-header': options?.darkTheme}" >
+      <h4 class="title" *ngIf="options?.title">{{options?.title}}</h4>
+      <ng-content select="[header]"></ng-content>
     </div>
-    <div class="bottom-sheet-content">
-      <ng-content></ng-content>
+    <div [class.bottom-sheet-content]="!options?.isFullScreen"
+         [class.bottom-sheet-content-middle]="options?.isMiddleScreen"
+         class="pt-6">
+      <ng-content select="[content]"></ng-content>
     </div>
-    <div class="bottom-sheet-footer" [ngClass]="{'bg-dark-footer': options?.darkTheme}" (click)="close()" *ngIf="flags.isCloseButtonEnabled">
+    <div class="bottom-sheet-footer" 
+        [ngClass]="{'bg-dark-footer': options?.darkTheme}" 
+        (click)="close()" 
+        *ngIf="flags.isCloseButtonEnabled">
       {{options.closeButtonTitle}}
     </div>
   </div>

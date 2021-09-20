@@ -41,4 +41,9 @@ export class DateTools {
 
         return true;
     }
+
+    static toDate(dateString: string): Date {
+        let newDate = new Date(dateString);
+        return newDate;
+    }
 }

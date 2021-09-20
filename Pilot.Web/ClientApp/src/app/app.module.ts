@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule} from '@angular/core';
+import { ErrorHandler, LOCALE_ID, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS  } from '@angular/common/http';
 import { RouteReuseStrategy, UrlSerializer } from '@angular/router';
@@ -58,7 +58,8 @@ export function createTranslateLoader(http: HttpClient) {
     { provide: RouteReuseStrategy, useClass: RouteReuseService },
     { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ImagesCacheInterceptor, multi: true },
-    { provide: UrlSerializer, useClass: CustomUrlSerializer }
+    { provide: UrlSerializer, useClass: CustomUrlSerializer },
+    { provide: LOCALE_ID, useValue: "ru-RU" }, //replace "de-at" with your locale
   ],
   bootstrap: [AppComponent]
 })

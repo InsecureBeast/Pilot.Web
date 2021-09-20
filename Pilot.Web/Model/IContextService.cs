@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Pilot.Web.Model.Auth;
+using Pilot.Web.Model.ExternalServices;
 using Pilot.Web.Tools;
+using Pilot.Xps.Entities;
 
 namespace Pilot.Web.Model
 {
@@ -17,6 +19,8 @@ namespace Pilot.Web.Model
         void RemoveContext(string actor);
 
         string GetTokenActor(HttpContext httpContext);
+
+        IXpsServiceApi GetExternalXpsServiceApi(IServerApiService serverApi);
     }
 
     class ContextService : IContextService
@@ -78,6 +82,11 @@ namespace Pilot.Web.Model
         public string GetTokenActor(HttpContext httpContext)
         {
             return httpContext.GetTokenActor();
+        }
+
+        public IXpsServiceApi GetExternalXpsServiceApi(IServerApiService serverApi)
+        {
+            return new XpsServiceSafe(serverApi);
         }
 
         private IRemoteService GetRemoteService(string actor)

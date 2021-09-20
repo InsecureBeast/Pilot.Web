@@ -10,7 +10,7 @@ import { TaskNode } from '../../shared/task.node';
 import { TasksSyncService as TasksService } from '../../shared/tasks.service';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
-import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { BottomSheetConfig, IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -70,11 +70,10 @@ export class TasksComponent implements OnInit, OnDestroy {
       this.processBackEvent(event);
     });
 
-    this.options = {
-      closeButtonTitle: 'Close',
-      enableCloseButton: false,
-      title: this.translate.instant('selectFilter')
-    };
+    this.options = new BottomSheetConfig();
+    this.options.closeButtonTitle = 'Close';
+    this.options.enableCloseButton = false;
+    this.options.title = this.translate.instant('selectFilter');
   }
 
   ngOnDestroy(): void {

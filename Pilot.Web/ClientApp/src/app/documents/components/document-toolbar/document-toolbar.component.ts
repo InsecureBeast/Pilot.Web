@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 
 import { IObject } from '../../../core/data/data.classes';
 import { TypeExtensions } from 'src/app/core/tools/type.extensions';
+import { RemarksService } from '../../shared/remarks.service';
 
 @Component({
     selector: 'app-document-toolbar',
@@ -22,6 +23,7 @@ export class DocumentToolbarComponent implements OnDestroy {
   isVersionsChecked: boolean;
   showFilesMode = false;
   isSourceFile = false;
+  isRemarksVisible: boolean;
 
   @Input()
   set document(value: IObject) {
@@ -35,8 +37,8 @@ export class DocumentToolbarComponent implements OnDestroy {
   @Output() filesShown = new EventEmitter<boolean>();
 
   /** document-toolbar ctor */
-  constructor() {
-
+  constructor(private remarksService: RemarksService) {
+    this.isRemarksVisible = this.remarksService.getRemarksVisibility();
   }
 
   ngOnDestroy(): void {
@@ -64,6 +66,11 @@ export class DocumentToolbarComponent implements OnDestroy {
   showFiles(): void {
     this.showFilesMode = !this.showFilesMode;
     this.filesShown.emit(this.showFilesMode);
+  }
+
+  toggleRemarks($event): void {
+    this.isRemarksVisible = !this.isRemarksVisible; 
+    this.remarksService.changeRemarksVisibility(this.isRemarksVisible);
   }
 
   private documentChanged(document: IObject): void {

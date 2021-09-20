@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.Server.Api.Contracts;
+using Ascon.Pilot.Transport;
 
 namespace Pilot.Web.Model
 {
@@ -51,6 +52,15 @@ namespace Pilot.Web.Model
         public void NotifyCommandResult(Guid requestId, byte[] data, ServerCommandResult result)
         {
             _listener.UpdateCommandResult(requestId, data, result);
+        }
+
+        public void NotifyChangeAsyncCompleted(DChangeset changeset)
+        {
+            
+        }
+
+        public void NotifyChangeAsyncError(Guid identity, ProtoExceptionInfo exception)
+        {
         }
 
         public void NotifyGeometrySearchResult(DGeometrySearchResult searchResult)

@@ -1,0 +1,41 @@
+img.doc-page {
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+div.annotation-mark {
+    position: relative; 
+    background-color: rgba(255, 216, 0, 0.5);
+    height: 16px; 
+    margin-bottom: -16px;
+    width: 16px;
+    border-radius: 8px;
+    border: 1px solid #E8B54F;
+    z-index: 1;
+}
+
+.annotation-mark-click-area {
+    position: relative; 
+    z-index: 1;
+}
+
+.annotation-border {
+    border: 3px solid var(--primary)!important;
+}
+
+div.annotation-graphic-layer {
+    position: relative; 
+    height: 1px; 
+    margin-bottom: -1px;
+}
+
+div.annotation-mark:hover {
+    background-color: #fcd33f;
+}
+
+div.annotation-view {
+    background-color: #FFF5BA;
+    width: 250px;
+    border: 1px solid #E8B54F;
+}

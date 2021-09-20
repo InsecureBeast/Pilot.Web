@@ -40,7 +40,8 @@
     </div>
   </div>
 
-  <div class="fixed-bottom col-12 d-sm-none noselect bg-white border-top text-center shadow" 
+  <div class="col-12 d-sm-none noselect bg-white border-top text-center shadow fixed-bottom fixed"
+    style="z-index: 1029;" 
       *ngIf="selectedFilter" >
     <div class="bt-button pointer p-2" 
         (click)="showFilters();$event.stopPropagation()">
@@ -54,7 +55,7 @@
 </div>
 
 <app-bottom-sheet [options]="options" #bottomSheet>
-  <div class="">
+  <div class="" content>
     <ul class="list-group list-group-flush ">
       <li class="list-group-item list-group-item-action pointer border-0" *ngFor="let filter of commonFilters" (click)="onFilterSelected(filter)" 
           [attr.id]="'cmi' + filter.id">

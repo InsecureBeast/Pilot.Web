@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { BottomSheetConfig, IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { SlideUpToggleAnimation } from './bottom-sheet.animation';
 
 @Component({
@@ -48,7 +48,18 @@ export class BottomSheetComponent implements OnInit {
     this.flags.isBottomSheetEnabled = !this.flags.isBottomSheetEnabled;
     this.changeDetector.detectChanges();
   }
-
+  /**
+   *  Toggles to middle position
+   */
+  toggleToMiddle() {
+    if (this.options) {
+      this.options.isMiddleScreen = true;
+      this.options.isFullScreen = false;
+    } else {
+      this.options = BottomSheetConfig.newMiddleScreenConfig();
+    }
+    this.changeDetector.detectChanges();
+  }
   /**
   * Toggles close button
   */

@@ -14,6 +14,7 @@ export class RepositoryService {
   private metadata: IMetadata;
   private databaseInfo: IDatabaseInfo;
   private types: Map<number, IType>;
+  private typesByName: Map<string, IType>;
   private people: Map<number, IPerson>;
   private organizationUnits: Map<number, IOrganizationUnit>;
   private userStates: Map<string, IUserState>;
@@ -27,6 +28,7 @@ export class RepositoryService {
               private readonly headersProvider: HeadersProvider) {
 
     this.types = new Map<number, IType>();
+    this.typesByName = new Map<string, IType>();
     this.people = new Map<number, IPerson>();
     this.organizationUnits = new Map<number, IOrganizationUnit>();
     this.userStates = new Map<string, IUserState>();
@@ -43,6 +45,10 @@ export class RepositoryService {
 
   getType(id: number): IType {
     return this.types.get(id);
+  }
+
+  getTypeByName(name: string): IType {
+    return this.typesByName.get(name);
   }
 
   getTypes(): IType[] {
@@ -142,6 +148,18 @@ export class RepositoryService {
     });
   }
 
+  isXpsServiceConnected(cancel: Subject<any>): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const url = `api/Documents/IsXpsServiceConnected`;
+      this.http
+        .get<boolean>(this.baseUrl + url, { headers: headers })
+        .pipe(first())
+        .pipe(takeUntil(cancel))
+        .subscribe((value) => resolve(value), e => reject(false));
+    });
+  }
+
   initialize(): Observable<boolean> {
     const init = new BehaviorSubject<boolean>(false);
     if (this.metadata) {
@@ -160,8 +178,9 @@ export class RepositoryService {
       ([metadata, people, organizationUnits, currentPerson, states, databaseInfo]) => {
         this.metadata = metadata;
         this.types = new Map<number, IType>();
-        for (const attr of this.metadata.types) {
-          this.types.set(attr.id, attr);
+        for (const type of this.metadata.types) {
+          this.types.set(type.id, type);
+          this.typesByName.set(type.name, type);
         }
 
         this.people = new Map<number, IPerson>();

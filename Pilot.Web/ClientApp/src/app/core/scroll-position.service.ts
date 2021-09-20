@@ -14,7 +14,6 @@ export class ScrollPositionService {
     Tools.sleep(100).then(() => {
       const pos = this.getPosition(id);
       window.scrollTo(0, pos);
-      // console.log(pos);
     });
   }
 

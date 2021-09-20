@@ -1,11 +1,44 @@
 <nav class="navbar navbar-expand navbar-light bg-content justify-content-between">
   <ol class="breadcrumb navbar-nav noselect" #olRef>
-    <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs">
+    <li class="breadcrumb-item" *ngIf="root">
+      <a click-stop-propagation 
+        id="root-button"
+        click-prevent-default 
+        [routerLink]="" 
+        (click)="onSelect(root)" 
+        *ngIf="!root.isActive"
+        class="material-icons">home</a>
+      <span *ngIf="root.isActive" class="material-icons">home</span>
+    </li>
+    <li class="breadcrumb-button btn-group" dropdown *ngIf="hiddenBreadcrumbs && hiddenBreadcrumbs.length > 0">
+      <a click-stop-propagation 
+        click-prevent-default 
+        id="button-basic"
+        [routerLink]="" 
+        class="material-icons"
+        dropdownToggle 
+        aria-controls="dropdown-basic">more_horiz</a>
+      <ul id="dropdown-basic" 
+          style="max-width: 85vw;"
+          *dropdownMenu 
+          class="dropdown-menu shadow pt-3 pb-3 border-card-radius"
+          role="menu" 
+          aria-labelledby="button-basic">
+        <li role="breadcrumb-item menuitem" *ngFor="let bc of hiddenBreadcrumbs" >
+          <a class="dropdown-item"
+             click-stop-propagation 
+             click-prevent-default 
+             [routerLink]="" 
+             (click)="onSelect(bc)"
+             style="text-overflow: ellipsis;
+             white-space: nowrap;
+             overflow: hidden;">{{bc.title}}</a>
+        </li>
+      </ul>
+    </li>
+    <li class="breadcrumb-item" *ngFor="let bc of breadcrumbs" [appWidthBreadcrumb]="bc" [style.visibility]="bc.visibility">
       <ng-container *ngIf="!bc.isRoot">
         <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
-      </ng-container>
-      <ng-container *ngIf="bc.isRoot">
-        <ng-container *ngTemplateOutlet="rootItemTemplate;context:{bcItem:bc}"></ng-container>
       </ng-container>
       <ng-container *ngIf="bc.isSearchItem">
         <ng-container *ngTemplateOutlet="searchItemTemplate;context:{bcItem:bc}"></ng-container>
@@ -13,7 +46,7 @@
     </li>
   </ol>
 
-  <ul class="navbar-nav breadcrumb noselect">
+  <ul class="navbar-nav breadcrumb noselect" #toolsPanel>
     <li class="breadcrumb-button search-input"
         [@.disabled]="isDisabledInputAnimation"
         @searchInputSlideInToggle
@@ -22,11 +55,12 @@
         <div class="input-group-prepend">
           <a queryParamsHandling="preserve"
              [routerLink]="" 
-             class="material-icons nav-icon input-group-text" 
+             class="material-icons nav-icon input-group-text left-search-button" 
              id="close-search-button" 
              (click)="toggleSearchInput(false)">chevron_right</a>
         </div>
         <input type="search" 
+               id="search-input"
                class="form-control" 
                [appFocus]="isSearchInputFocused"
                placeholder="{{ 'search' | translate }}" 
@@ -35,7 +69,7 @@
         <div class="input-group-append">
           <a queryParamsHandling="preserve"
              [routerLink]="" 
-             class="material-icons nav-icon input-group-text" 
+             class="material-icons nav-icon input-group-text rigth-search-button" 
              id="search-button" 
              (click)="search()">search</a>
         </div>
@@ -63,22 +97,31 @@
   </ul>
 </nav>
 
-<ng-template #rootItemTemplate let-bc="bcItem">
-  <a click-stop-propagation 
-     click-prevent-default 
-     [routerLink]="" 
-     (click)="onSelect(bc)" 
-     *ngIf="!bc.isActive" 
-     class="material-icons">home</a>
-  <span *ngIf="bc.isActive" class="material-icons">home</span>
-</ng-template>
+<ol class="breadcrumb navbar-nav noselect" style="visibility: hidden; overflow: hidden; position: absolute;">
+  <li class="breadcrumb-item" *ngFor="let bc of allBreadcrumbNodes" [appWidthBreadcrumb]="bc">
+    <ng-container *ngIf="!bc.isRoot">
+      <ng-container *ngTemplateOutlet="itemTemplate;context:{bcItem:bc}"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="bc.isSearchItem">
+      <ng-container *ngTemplateOutlet="searchItemTemplate;context:{bcItem:bc}"></ng-container>
+    </ng-container>
+  </li>
+</ol>
 
 <ng-template #itemTemplate let-bc="bcItem">
+  <svg class="" 
+       width="24px" 
+       height="24px" 
+       viewBox="0 0 24 24" 
+       focusable="false"
+       style="padding-bottom: 2px; margin-right: 4px;">
+       <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+  </svg>
   <a click-stop-propagation 
-     click-prevent-default 
-     [routerLink]="" 
-     (click)="onSelect(bc)" 
-     *ngIf="!bc.isActive">{{bc.title}}</a>
+    click-prevent-default 
+    [routerLink]="" 
+    (click)="onSelect(bc)" 
+    *ngIf="!bc.isActive">{{bc.title}}</a>
   <span *ngIf="bc.isActive">{{bc.title}}</span>
 </ng-template>
 

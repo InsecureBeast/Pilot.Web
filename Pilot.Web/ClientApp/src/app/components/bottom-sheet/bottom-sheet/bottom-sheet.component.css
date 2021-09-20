@@ -10,18 +10,22 @@
   
   .bottom-sheet-container {
     background: var(--bg);
-    width: 100%;
     position: fixed;
     bottom: 0;
     border-radius: 10px 10px 0px 0;
     left: 50%;
     margin-left: -35%;
     width: 75%;
-    z-index: 4;
     /* color: #363636; */
     box-shadow: 0 8px 10px -5px rgba(0, 0, 0, .2), 0 16px 24px 2px rgba(0, 0, 0, .14), 0 6px 30px 5px rgba(0, 0, 0, .12);
     /* font-family: 'Roboto',sans-serif; */
     z-index: 1050;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .bottom-sheet-container-full {
+    border-radius: 0;
   }
   
   .bg-dark{
@@ -31,13 +35,12 @@
   
   .bottom-sheet-header h4.title {
     display: inline-block;
-    font-weight: 600;
-    margin: 0;
+    font-weight: 500;
+    margin: 12px 0 0 0;
     font-size: 1rem;
   }
   
   .bottom-sheet-header {
-    padding: 16px;
     text-align: center;
   }
   
@@ -58,40 +61,29 @@
   }
   
   .bottom-sheet-content {
-    max-height: 80vh;
-    overflow-y: auto;
     padding-top: 16px;
   }
-  
-  /* width */
-  ::-webkit-scrollbar {
-    width: 4px;
+
+  .bottom-sheet-content-middle {
+    padding-top: 0px;
+    height: 40vh;
+    overflow-y: auto;
   }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #bdbdbd;
-  }
-  
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(92, 92, 92);
-  }
-  
+
   @media (max-width: 992px) {
     .bottom-sheet-container {
       width: 100%;
-      position: fixed;
-      bottom: 0;
       left: 0;
       right: 0;
       margin-left: 0;
-      z-index: 1050;
     }
+  }
+
+  .h-middle {
+    height: auto;
+  }
+
+  .h-open {
+    max-height: 80vh;
+    height: auto;
   }

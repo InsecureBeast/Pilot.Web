@@ -1,17 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
-import { SafeUrl, Title } from '@angular/platform-browser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, NavigationStart, Router } from '@angular/router';
 
 import { Subscription, Subject } from 'rxjs';
 
-import { Tools } from '../../../core/tools/tools';
 import { IObjectNode } from '../../shared/node.interface';
-import { FilesSelector } from '../../../core/tools/files.selector';
-import { SourceFileService } from '../../../core/source-file.service';
 import { DownloadService } from '../../../core/download.service';
 import { RepositoryService } from '../../../core/repository.service';
-import { Constants } from '../../../core/constants';
 import { IFileSnapshot, IObject } from '../../../core/data/data.classes';
 import { VersionsSelectorService } from '../../components/document-versions/versions-selector.service';
 import { TypeExtensions } from '../../../core/tools/type.extensions';
@@ -24,14 +19,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from 'src/app/core/notification.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.component';
-import { IBottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
+import { IBottomSheetConfig, BottomSheetConfig } from 'src/app/components/bottom-sheet/bottom-sheet/bottom-sheet.config';
 import { ContextMenuComponent, MenuItem } from '../../components/context-menu/context-menu.component';
 import { DocumentsNavigationService as DocumentsNavigationService } from '../../shared/documents-navigation.service';
+import { RemarksService } from '../../shared/remarks.service';
 
 @Component({
   selector: 'app-document',
   templateUrl: './document.component.html',
-  styleUrls: ['./document.component.css']
+  styleUrls: ['./document.component.css', '../../shared/toolbar.css']
 })
 /** document component*/
 export class DocumentComponent implements OnInit, OnDestroy {
@@ -39,30 +35,28 @@ export class DocumentComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   private navigationSubscription: Subscription;
   private objectCardChangeSubscription: Subscription;
+  private remarksServiceSubscription: Subscription;
   private ngUnsubscribe = new Subject<void>();
   private cardModalRef: BsModalRef;
-  private selectedSnapshot: IFileSnapshot;
-
+  
+  selectedSnapshot: IFileSnapshot;
   document: IObject;
   node: ObjectNode;
-  images: SafeUrl[];
   isLoading: boolean;
   error: HttpErrorResponse;
-
+  options: IBottomSheetConfig;
   isActualVersionSelected: boolean;
-  selectedVersionCreated: string;
-  selectedVersionCreator: string;
+  bottomSheetDialogState: BottomSheetDialogState;
 
   @ViewChild('cardTemplate') private cardTemplate: TemplateRef<any>;
   @ViewChild('staticTabs', { static: false }) private staticTabs: TabsetComponent;
   @ViewChild('contextMenu') private contextMenu: ContextMenuComponent;
   @ViewChild('bottomSheet') private bottomSheet: BottomSheetComponent;
-  options: IBottomSheetConfig;
-
+  @ViewChild('bottomSheetDialog') private bottomSheetDialog: BottomSheetComponent;
+  
   /** document-details ctor */
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly sourceFileService: SourceFileService,
     private readonly downloadService: DownloadService,
     private readonly navigationService: DocumentsNavigationService,
     private readonly repository: RepositoryService,
@@ -72,10 +66,13 @@ export class DocumentComponent implements OnInit, OnDestroy {
     private readonly modalService: BsModalService,
     private readonly typeIconService: TypeIconService,
     private readonly translate: TranslateService,
-    private readonly notificationService: NotificationService) {
+    private readonly notificationService: NotificationService,
+    private readonly remarksService: RemarksService) {
 
     this.isActualVersionSelected = true;
-    this.images = new Array();
+    this.options = new BottomSheetConfig();
+
+    this.bottomSheetDialogState = new BottomSheetDialogState();
   }
 
   ngOnInit(): void {
@@ -108,25 +105,14 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.document = object;
       });
     });
-
-    this.options = {
-    };
   }
 
   ngOnDestroy(): void {
     this.cancelAllRequests(true);
-
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
-
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
-
-    if (this.objectCardChangeSubscription) {
-      this.objectCardChangeSubscription.unsubscribe();
-    }
+    this.routerSubscription?.unsubscribe();
+    this.navigationSubscription?.unsubscribe();
+    this.objectCardChangeSubscription?.unsubscribe();
+    this.remarksServiceSubscription?.unsubscribe();
   }
 
   close($event): void {
@@ -145,6 +131,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
 
   onShowMore($event): void {
     this.fillContextMenu();
+    this.bottomSheetDialog.close();
+    this.bottomSheet.close();
     this.bottomSheet.open();
   }
 
@@ -170,9 +158,8 @@ export class DocumentComponent implements OnInit, OnDestroy {
       version = snapshot.created;
     }
 
-    this.navigationService.updateLocation(this.document.parentId, this.document.id, version);
     this.selectedSnapshot = snapshot;
-    this.loadSnapshot(snapshot);
+    this.bottomSheetDialog.toggleToMiddle();
   }
 
   showFiles(event: boolean): void {
@@ -211,8 +198,27 @@ export class DocumentComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  private goToVersionsPage(): void {
-    this.navigationService.navigateToDocumentVersions(this.document.parentId, this.document.id, false);
+  closeBottomSheet(): void {
+    this.bottomSheetDialog.close();
+    this.bottomSheetDialogState = new BottomSheetDialogState();
+    this.remarksServiceSubscription?.unsubscribe();
+    this.remarksServiceSubscription = null;
+  }
+
+  openFullscreenBottomSheet(type: string): void { 
+    this.bottomSheetDialogState = new BottomSheetDialogState();
+    this.bottomSheetDialogState.dialog = this.bottomSheetDialog;
+    this.bottomSheetDialogState.type = type;
+    this.bottomSheetDialogState.title = this.translate.instant(type);
+    this.bottomSheetDialogState.options = BottomSheetConfig.newFullScreenConfig();
+    this.bottomSheetDialogState.options.isBackgroundEnabled = false;
+    this.bottomSheetDialogState.isOpen = true;
+    this.bottomSheetDialog.open();
+    this.bottomSheet.close();
+  }
+
+  toggelToMiddleScreen(type: string) : void {
+    this.bottomSheetDialog.toggleToMiddle();
   }
 
   private loadDocument(id: string, version?: string): void {
@@ -233,74 +239,12 @@ export class DocumentComponent implements OnInit, OnDestroy {
           snapshot = source.previousFileSnapshots.find(f => f.created === version);
         }
 
-        if (snapshot) {
-          this.selectedVersionCreated = Tools.toUtcCsDateTime(snapshot.created).toLocaleString();
-          this.selectedVersionCreator = '';
-          const creator = this.repository.getPerson(snapshot.creatorId);
-          if (creator) {
-            this.selectedVersionCreator = creator.displayName;
-          }
-        }
-
-        this.loadSnapshot(snapshot);
+        this.selectedSnapshot = snapshot;
       })
       .catch(e => {
         this.isLoading = false;
         this.error = e;
       });
-  }
-
-  private loadSnapshot(snapshot: IFileSnapshot): void {
-    this.isLoading = true;
-    this.images = new Array<SafeUrl>();
-
-    if (this.sourceFileService.isXpsFile(snapshot)) {
-      const file = FilesSelector.getSourceFile(snapshot.files);
-      this.sourceFileService.fillXpsDocumentPagesAsync(file, Constants.defaultDocumentScale, this.ngUnsubscribe, this.images)
-        .then(_ => this.isLoading = false)
-        .catch(e => {
-          this.isLoading = false;
-          this.images = null;
-          this.error = e;
-        });
-      return;
-    }
-
-    if (this.sourceFileService.isImageFile(snapshot)) {
-      const file = FilesSelector.getSourceFile(snapshot.files);
-      if (!file) {
-        this.isLoading = false;
-        this.images = null;
-        return;
-      }
-
-      this.sourceFileService.getImageFileToShowAsync(file, this.ngUnsubscribe)
-        .then(url => {
-          this.images.push(url);
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.error = e;
-        });
-
-      return;
-    }
-
-    if (this.sourceFileService.isKnownFile(snapshot)) {
-      this.sourceFileService.openFileAsync(snapshot, this.ngUnsubscribe)
-        .then(() => {
-          this.isLoading = false;
-        })
-        .catch(e => {
-          this.images = null;
-          this.error = e;
-        });
-      return;
-    }
-
-    this.images = null;
-    this.isLoading = false;
   }
 
   private cancelAllRequests(isComplete: boolean): void {
@@ -336,14 +280,23 @@ export class DocumentComponent implements OnInit, OnDestroy {
     }
 
     if (!this.isSourceFile()) {
-      const versionsItem = MenuItem
-        .createItem('versionsId', this.translate.instant('versions'))
-        .withIcon('list_alt')
+      const remarksItem = MenuItem
+        .createItem('remarksId', this.translate.instant('remarks'))
+        .withIcon('textsms')
         .withAction(() => {
-          this.bottomSheet.close();
-          this.goToVersionsPage();
+
+          this.remarksServiceSubscription = this.remarksService.selectedRemark.subscribe(selected => {
+            if (!selected) {
+              return;
+            }
+            this.bottomSheetDialog.toggleToMiddle();
+          });
+
+          
+          this.openFullscreenBottomSheet('remarks');
+
         });
-      this.contextMenu.addMenuItem(versionsItem);
+      this.contextMenu.addMenuItem(remarksItem);
 
       const signaturesItem = MenuItem
         .createItem('signaturesId', this.translate.instant('signatures'))
@@ -353,6 +306,14 @@ export class DocumentComponent implements OnInit, OnDestroy {
           this.navigationService.navigateToDocumentSignatures(this.document.parentId, this.document.id, false);
         });
       this.contextMenu.addMenuItem(signaturesItem);
+
+      const versionsItem = MenuItem
+        .createItem('versionsId', this.translate.instant('versions'))
+        .withIcon('list_alt')
+        .withAction(() => {
+          this.openFullscreenBottomSheet('versions');
+        });
+      this.contextMenu.addMenuItem(versionsItem);
     }
     const cardItem = MenuItem
       .createItem('cardId', this.translate.instant('card'))
@@ -362,5 +323,19 @@ export class DocumentComponent implements OnInit, OnDestroy {
         this.onShowDocumentCard(this.cardTemplate);
       });
     this.contextMenu.addMenuItem(cardItem);
+  }
+}
+
+
+class BottomSheetDialogState {
+  options: BottomSheetConfig;
+  dialog: BottomSheetComponent;
+  type: string;
+  title: string;
+  isOpen: boolean;
+
+  constructor() {
+    this.options = new BottomSheetConfig();
+    this.options.isBackgroundEnabled = false;
   }
 }

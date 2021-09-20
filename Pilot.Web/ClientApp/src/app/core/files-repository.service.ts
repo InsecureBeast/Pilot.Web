@@ -1,13 +1,15 @@
 import { Injectable, Inject } from '@angular/core';
-import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpRequest} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { HeadersProvider } from './headers.provider';
-import {environment} from '../../environments/environment';
-import {TranslateService} from '@ngx-translate/core';
+import { environment } from '../../environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class FilesRepositoryService {
+  
+  displacementFactor: number;
 
   constructor(
     private http: HttpClient,
@@ -16,6 +18,7 @@ export class FilesRepositoryService {
     private readonly headersProvider: HeadersProvider,
     private translate: TranslateService) {
 
+      this.GetDisplacementFactor().then(factor => this.displacementFactor = factor);
   }
 
   getDocumentPagesCount(id: string, size: number, scale: number): Observable<number> {
@@ -40,6 +43,12 @@ export class FilesRepositoryService {
     const headers = this.headersProvider.getStreamHeaders();
     const path = this.baseUrl + 'api/Files/GetFile?fileId=' + id + '&size=' + size;
     return this.http.get(path, { responseType: 'arraybuffer', headers: headers }).pipe(first());
+  }
+
+  getFileAsync(id: string, size: number): Promise<ArrayBuffer> {
+    return new Promise((resolve, reject) => {
+      this.getFile(id, size).subscribe(buffer => resolve(buffer), er => reject(er));
+    });
   }
 
   getThumbnail(id: string, size: number): Observable<ArrayBuffer> {
@@ -87,4 +96,15 @@ export class FilesRepositoryService {
       error => reject(error)
     ));
   }
+  
+  private GetDisplacementFactor(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const headers = this.headersProvider.getHeaders();
+      const path = this.baseUrl + 'api/Files/GetDisplacementFactor';
+      this.http.get<number>(path, { headers: headers })
+        .pipe(first())
+        .subscribe(factor => resolve(factor), err => reject(err));
+    });
+  }
+
 }

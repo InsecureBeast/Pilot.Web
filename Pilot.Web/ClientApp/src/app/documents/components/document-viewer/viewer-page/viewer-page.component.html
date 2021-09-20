@@ -1,0 +1,75 @@
+<ng-container *ngFor="let remark of displayRemarks">
+  <ng-container *ngIf="!isPencil(remark)">
+    <div *ngTemplateOutlet="textNoteRemarkTemplate;context:{remark:remark}"></div>
+  </ng-container>
+  <ng-container *ngIf="isPencil(remark)">
+    <div *ngTemplateOutlet="pencilRemarkTemplate;context:{remark:remark}"></div>
+  </ng-container>
+</ng-container>
+
+<div class="mb-2">
+  <img [src]="image" class="doc-page" #container (load)="imageLoaded(container)"/>
+</div>
+
+<ng-template #pencilRemarkTemplate let-remark="remark">
+  <div [appRemarkLoaded]="remark">
+    <div class="annotation-graphic-layer">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+          xmlns:xlink="http://www.w3.org/1999/xlink" 
+          version="1.1"
+          [attr.viewBox]="redParams.viewBoxValue"
+          [attr.height]="redParams.viewBoxHeight"
+          [attr.width]="redParams.viewBoxWidth">
+        <path [attr.d]="remark.remark.data.geometry" 
+              fill="none" 
+              [id]="remark.remark.id + 'path'"
+              [attr.stroke]="remark.remark.data.color" 
+              [attr.stroke-width]="redParams.strokeWidth"
+              [attr.transform]="redParams.transform"/>
+      </svg>
+    </div>
+
+    <div class="annotation-mark-click-area" 
+        [id]="remark.remark.id + '-clickArea'"
+        [class.annotation-border]="remark.boundRect && remark.remark.isOpen && !remark.remark.text"
+        [style.left.px]="remark.position.left - 5" 
+        [style.top.px]="remark.position.top - 5" 
+        
+        (click)="annotationPopupOpen(remark.remark, $event)">
+    </div>
+
+    <div class="annotation-mark" 
+        *ngIf="remark.remark.text"
+        [class.annotation-border]="remark.remark.isOpen"
+        [style.top.px]="remark.position.top"
+        [style.left.px]="remark.position.left"
+        (click)="annotationPopupOpen(remark.remark, $event)">
+      <div [class.show]="remark.remark.isOpen && remark.remark.text"
+            [style.margin-left.px]="remark.popupLeft"
+            class="dropdown-menu shadow annotation-view p-2" >
+        <div class="font-smaller">
+          <div class="text-truncate text-gray">{{remark.remark.person}}</div>
+          <div class="text-truncate text-wrap mt-2" *ngIf="remark.remark.text">{{remark.remark.text}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #textNoteRemarkTemplate let-remark="remark"> 
+  <div class="annotation-mark" 
+        [class.annotation-border]="remark.remark.isOpen"
+        [id]="remark.remark.id + '-clickArea'"
+        [style.top.px]="remark.position.top"
+        [style.left.px]="remark.position.left"
+        (click)="annotationPopupOpen(remark.remark, $event)">
+      <div [class.show]="remark.remark.isOpen"
+          [style.margin-left.px]="remark.popupLeft"
+          class="dropdown-menu shadow annotation-view p-2">
+          <div class="font-smaller">
+            <div class="text-truncate text-gray">{{remark.remark.person}}</div>
+            <div class="text-truncate text-wrap mt-2" *ngIf="remark.remark.text">{{remark.remark.text}}</div>
+          </div>
+      </div>
+    </div>
+</ng-template>

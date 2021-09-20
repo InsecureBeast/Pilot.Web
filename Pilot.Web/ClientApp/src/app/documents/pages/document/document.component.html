@@ -5,63 +5,46 @@
                       (documentCardOpened)="onShowDocumentCard(cardTemplate)"
                       (filesShown)="showFiles($event)">
 </app-document-toolbar>
-
-<div class="pt-6" *ngIf="!error">
-  <div class="row m-0">
-    <div class="col-12 p-0 pb-5"
+ 
+<div class="pt-6 h-100" *ngIf="!error">
+  <div class="row h-100">
+    <div class="col-12 viewer-container pr-0"
         [class.col-lg-12]="isSourceFile()"
-        [class.col-lg-8]="!isSourceFile()">
+        [class.col-lg-8]="!isSourceFile()"
+        [class.h-46v]="bottomSheetDialogState.isOpen">
 
-      <div class="text-center" *ngIf="!isActualVersionSelected">
-        <div class="alert alert-warning" role="alert">
-          <span translate="outdatedVersionFrom"></span> {{selectedVersionCreated}}
-          <a href="#" (click)="selectActualVersion()"><span translate="goToCurrentVersion"></span></a>
-        </div>
-      </div>
-
-      <div class="text-center mt-3" *ngIf="images">
-        <div *ngFor="let page of images">
-          <img [src]="page" class="doc-page">
-        </div>
-      </div>
-
-      <div class="text-center h-30" *ngIf="!images">
-        <img src="/assets/images/doc_empty.svg" class="error-image"/>
-        <h5 class="font-weight-normal mt-2">{{fileName}}</h5>
-        <p class="mt-3" translate="cantPreviewDocument"></p>
-        <button type="submit" class="btn btn-primary" (click)="download($event)" *ngIf="!isDownloading" translate="download"></button>
-        <button class="btn btn-primary" type="button" disabled *ngIf="isDownloading">
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          <span class="ml-1" translate="downloading"></span>
-        </button>
-      </div>
-
-      <div class="text-center h-30" *ngIf="isLoading">
-        <div class="spinner-border text-secondary" role="status">
-          <span class="sr-only"></span>
-        </div>
-      </div>
+      <app-document-viewer [snapshot]="selectedSnapshot"
+                           [isActualVersionSelected]="isActualVersionSelected"
+                           (versionSelected)="selectActualVersion($event)"
+                           (downloaded)="download($event)">
+      </app-document-viewer>
     </div>
 
-    <div class="versions-view col-12 doc-info overflow-auto p-0 d-none d-lg-block"
+    <div class="versions-view col-12 overflow-auto p-0 pt-2 d-none d-lg-block"
         [class.col-lg-12]="isSourceFile()"
         [class.col-lg-4]="!isSourceFile()"
         *ngIf="document && !isSourceFile()">
-      <div class="h-100 pt-1">
+      <div class="h-100">
         <tabset #staticTabs >
-          <tab heading="{{ 'signatures' | translate }}" customClass="h-100" *ngIf="!isSourceFile()">
-            <app-digital-signatures 
-              [document]="document" 
-              (error)="onError($event)"></app-digital-signatures>
+          <tab heading="{{ 'signatures' | translate }}" customClass="h-100">
+            <app-digital-signatures
+              [document]="document"
+              (error)="onError($event)">
+            </app-digital-signatures>
+          </tab>
+          <tab heading="{{ 'remarks' | translate }}" customClass="h-100">
+            <app-remark-list
+              [document]="document"
+              [snapshot]="selectedSnapshot"
+              (error)="onError($event)">
+            </app-remark-list>
           </tab>
           <tab heading="{{ 'versions' | translate }}">
-            <div class="">
-              <app-document-versions
+            <app-document-versions
                 [document]="document"
                 (onClose)="closeDocumentVersions($event)"
                 (versionSelected)="onVersionSelected($event)">
               </app-document-versions>
-            </div>
           </tab>
         </tabset>
       </div>
@@ -81,7 +64,62 @@
 </ng-template>
 
 <app-bottom-sheet [options]="options" #bottomSheet>
-  <app-context-menu #contextMenu>
-
+  <app-context-menu #contextMenu content>
   </app-context-menu>
 </app-bottom-sheet>
+
+<app-bottom-sheet [options]="bottomSheetDialogState.options" #bottomSheetDialog>
+  <nav class="navbar navbar-expand navbar-light justify-content-between bg-white" header>
+    <ul class="navbar-nav">
+      <li click-stop-propagation click-prevent-default 
+          class="nav-item nav-item-button" 
+          (click)="openFullscreenBottomSheet(bottomSheetDialogState.type)" 
+          *ngIf="bottomSheetDialogState.options.isMiddleScreen">
+        <span class="navbar-text toolbar-text nav-icon material-icons">keyboard_arrow_up</span>
+      </li>
+      <li click-stop-propagation click-prevent-default 
+          class="nav-item nav-item-button" 
+          (click)="toggelToMiddleScreen(bottomSheetDialogState.type)"
+          *ngIf="bottomSheetDialogState.options.isFullScreen">
+        <span class="navbar-text toolbar-text nav-icon material-icons">keyboard_arrow_down</span>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <span class="navbar-text font-weight-500 text-black">{{bottomSheetDialogState.title}}</span>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li click-stop-propagation click-prevent-default 
+          class="nav-item nav-item-button" 
+          (click)="closeBottomSheet()">
+        <span class="navbar-text toolbar-text nav-icon material-icons">close</span>
+      </li>
+    </ul>
+  </nav>
+  <div class="" #bottomSheetContent content>
+    <ng-container *ngIf="bottomSheetDialogState.type === 'remarks'" >
+      <ng-container *ngTemplateOutlet="remarksTemplate"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="bottomSheetDialogState.type === 'versions'" >
+      <ng-container *ngTemplateOutlet="versionsTemplate"></ng-container>
+    </ng-container>
+  </div>
+</app-bottom-sheet>
+
+<ng-template #remarksTemplate>
+  <app-remark-list 
+      [document]="document"
+      [needReload]="false"    
+      [snapshot]="selectedSnapshot"
+      (error)="onError($event)">
+  </app-remark-list>
+</ng-template>
+
+<ng-template #versionsTemplate>
+  <app-document-versions
+                [document]="document"
+                (onClose)="closeDocumentVersions($event)"
+                (versionSelected)="onVersionSelected($event)">
+  </app-document-versions>
+</ng-template>

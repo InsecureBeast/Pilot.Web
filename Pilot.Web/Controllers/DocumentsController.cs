@@ -83,9 +83,9 @@ namespace Pilot.Web.Controllers
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
             var guid = Guid.Parse(documentId);
-            var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
+            var xpsServiceApi = _contextService.GetExternalXpsServiceApi(api);
             var signatureBuffer = xpsServiceApi.GetSignatures(guid);
-            return XpsDigitalSignatureSerializer.Deserialize(signatureBuffer);
+            return DtoCreator.CreateDigitalSignatures(signatureBuffer);
         }
 
         [Authorize]
@@ -96,9 +96,9 @@ namespace Pilot.Web.Controllers
             var api = _contextService.GetServerApi(actor);
             var guid = Guid.Parse(documentId);
             var snapshotDateTime = DateTime.Parse(snapshotDate);
-            var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
+            var xpsServiceApi = _contextService.GetExternalXpsServiceApi(api);
             var signatureBuffer = xpsServiceApi.GetSignatures(guid, snapshotDateTime);
-            return XpsDigitalSignatureSerializer.Deserialize(signatureBuffer);
+            return DtoCreator.CreateDigitalSignatures(signatureBuffer);
         }
 
         [Authorize]
@@ -109,10 +109,20 @@ namespace Pilot.Web.Controllers
             var actor = HttpContext.GetTokenActor();
             var api = _contextService.GetServerApi(actor);
             var guid = Guid.Parse(data.DocumentId);
-            var xpsServiceApi = api.GetServerCommandProxy<IXpsServiceApi>(XpsServerConstants.XpsServiceName);
+            var xpsServiceApi = _contextService.GetExternalXpsServiceApi(api);
             var currentPerson = api.GetCurrentPerson();
             var result = xpsServiceApi.SignDocument(guid, positions, currentPerson.Id);
             return result == SignResult.SignedSuccessfully;
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public bool IsXpsServiceConnected()
+        {
+            var actor = HttpContext.GetTokenActor();
+            var api = _contextService.GetServerApi(actor);
+            var xpsServiceApi = _contextService.GetExternalXpsServiceApi(api);
+            return xpsServiceApi.CheckConnected();
         }
     }
 

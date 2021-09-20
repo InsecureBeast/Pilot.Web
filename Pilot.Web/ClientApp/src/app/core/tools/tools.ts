@@ -24,9 +24,14 @@ export class Tools {
   }
 
   static getImage(base64: string, type: string, sanitizer: DomSanitizer): SafeUrl {
-    const imageSrc = 'data:image/' + type + ';base64,' + base64;
+    const imageSrc = this.getUnsafeImage(base64, type);
     const source = sanitizer.bypassSecurityTrustUrl(imageSrc);
     return source;
+  }
+
+  static getUnsafeImage(base64: string, type: string): string {
+    const imageSrc = 'data:image/' + type + ';base64,' + base64;
+    return imageSrc;
   }
 
   static getSvgImage(base64: string, sanitizer: DomSanitizer): SafeUrl {
@@ -59,6 +64,10 @@ export class Tools {
   static async sleep(ms): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  static replaceAll(string: string, search: string, replace:string): string {
+    return string.split(search).join(replace);
+  }
 }
 
 export class StringUtils {
@@ -68,5 +77,20 @@ export class StringUtils {
     }
 
     return true;
+  }
+}
+
+export function parseBoolean(value): boolean {
+  switch(value){
+      case true:
+      case "true":
+      case "True":
+      case 1:
+      case "1":
+      case "on":
+      case "yes":
+          return true;
+      default: 
+          return false;
   }
 }

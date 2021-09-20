@@ -1,0 +1,9 @@
+.viewer {
+  overflow: auto; 
+  height: 100%;
+  padding-right: 10px;
+}
+
+.content-center-absolute {
+  top: 40vh;
+}

@@ -10,60 +10,63 @@
 }
 
 .breadcrumb-item {
-  max-width: 400px;
+  max-width: 450px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  padding-left: 0;
 }
 
 .breadcrumb-item + .breadcrumb-item:before {
-  content: "›";
-  font-size: x-large;
-  margin-top: -7px;
+  content: "";
+}
+
+li.breadcrumb-item svg {
+  fill: var(--gray);
 }
 
 li.breadcrumb-item a, li.breadcrumb-button a {
   color: var(--gray);
 }
 
-  li.breadcrumb-item a:link, li.breadcrumb-button a:link {
-    color: var(--gray);
-  }
-  li.breadcrumb-item a:visited, li.breadcrumb-button a:visited {
-    color: var(--gray);
-  }
-  li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
-    color: var(--dark);
-    text-decoration: none;
-  }
+li.breadcrumb-item a:link, li.breadcrumb-button a:link {
+  color: var(--gray);
+}
+li.breadcrumb-item a:visited, li.breadcrumb-button a:visited {
+  color: var(--gray);
+}
+li.breadcrumb-item a:hover, li.breadcrumb-button a:hover {
+  color: var(--dark);
+  text-decoration: none;
+}
 
-@media (max-width: 765px) {
+@media (max-width: 1200px) {
   .breadcrumb-item {
-    max-width: 280px;
+    max-width: 300px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 980px) {
   .breadcrumb-item {
-    max-width: 210px;
+    max-width: 290px;
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 460px) {
   .breadcrumb-item {
-    max-width: 170px;
+    max-width: 190px;
   }
-}
+} 
 
-@media (max-width: 400px) {
+@media (max-width: 430px) {
   .breadcrumb-item {
-    max-width: 135px;
+    max-width: 165px;
   }
 }
 
 @media (max-width: 350px) {
   .breadcrumb-item {
-    max-width: 115px;
+    max-width: 125px;
   }
 }
 
@@ -79,4 +82,24 @@ li.breadcrumb-item a, li.breadcrumb-button a {
   right: 34px;
 }
 
+.rigth-search-button {
+  border-radius: .25rem;
+    border-top-left-radius: 0.0rem;
+    border-top-right-radius: 0.8rem;
+    border-bottom-right-radius: 0.8rem;
+    border-bottom-left-radius: 0.0rem;
+}
+
+.left-search-button{
+  border-radius: .25rem;
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.0rem;
+    border-bottom-right-radius: 0.0rem;
+    border-bottom-left-radius: 0.8rem;
+}
+
 /*-------------------------------  end search block  --------------------------------------*/
+
+.dropdown-item:active {
+  background-color: var(--primary-light);
+}
