@@ -216,6 +216,9 @@ namespace Pilot.Web.Controllers
         public double GetDisplacementFactor()
         {
             var factor = _options.Value.DisplacementFactor;
+            if (factor == 0)
+                return 1;
+
             return factor;
         }
 
