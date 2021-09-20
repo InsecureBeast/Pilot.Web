@@ -115,8 +115,8 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   imageLoaded(img: HTMLImageElement) : void {
     this.imageHtmlRef = img;
-    this._remarks = new Array();
-    this.remarksSubscription = this.remarksService.remarks.pipe(first()).subscribe(remarks => {
+    this.remarksSubscription = this.remarksService.remarks.subscribe(remarks => {
+      this._remarks = new Array();
       for (const r of remarks) {
         if (this.pageNumber === r.pageNumber)
           this._remarks.push(r);
@@ -169,6 +169,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.displayRemarks = new Array();
     if (!this.imageHtmlRef || !this._remarksVisible) {
       return;
     }
@@ -178,7 +179,6 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this._yRatio = img.naturalHeight / img.offsetHeight;
     this.setupRedPencilDisplayParams(img.offsetWidth, img.offsetHeight);
     
-    this.displayRemarks = new Array();
     const sortedRemarks = [...this._remarks].sort((a, b) => (a.position.top > b.position.top ? -1 : 1));
     for (const remark of sortedRemarks) {
       
