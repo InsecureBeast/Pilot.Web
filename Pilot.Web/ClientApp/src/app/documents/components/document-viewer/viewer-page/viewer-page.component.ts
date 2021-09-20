@@ -2,7 +2,6 @@ import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
 import { FilesRepositoryService } from 'src/app/core/files-repository.service';
 import { RemarksService } from 'src/app/documents/shared/remarks.service';
 import { Remark, Point, RemarkType } from '../../remarks/remark';
@@ -23,6 +22,7 @@ class RedPencilRemarkDisplayParams {
   viewBoxHeight = 1;
   viewBoxWidth = 1;
   transform = 'scale(1)';
+  strokeWidth = 2;
 }
 
 @Component({
@@ -162,6 +162,7 @@ export class ViewerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.redParams.viewBoxHeight = newHeight;
     this.redParams.viewBoxValue = `${0} ${0} ${newWidth} ${newHeight}`;
     this.redParams.transform = `scale(${(1 / this._xRatio) * this._displacementFactor})`;
+    this.redParams.strokeWidth = this._xRatio + 2;
   }
 
   private drawRemarks(): void {
