@@ -1,9 +1,22 @@
 # Pilot-Web
 
-Редакция web-клиента на ASP.NET Core 3.1 для системы управления данными Pilot-ICE
+Редакция web-клиента на **ASP.NET Core 3.1** для системы управления данными **Pilot**
 
-Всё необходимое для устновки Pilot-Server и админки здесь: https://pilot.ascon.ru/
-Инструкция развёртывания всех компонентов Pilot-ICE: https://pilot.ascon.ru/release/Help/ru/ReadMe.pdf
+Всё необходимое для устновки **Pilot-Server** и **myAdmin** [здесь](https://pilot.ascon.ru/).\
+[Инструкция развёртывания](https://pilot.ascon.ru/release/Help/ru/ReadMe.pdf) всех компонентов Pilot-ICE.
+
+## Demo
+Пример работы **Pilot-Web** можно посмотреть [здесь](http://151.248.116.15).
+
+Тестовые данные для входа:
+| Имя для входа  | Пароль  |
+| -------------- | ------- |
+| sedov          | 123456  |
+| rogova         | 123456  |
+| pavlenko       | 123456  |
+
+![image](https://user-images.githubusercontent.com/11440230/134138178-b630c7ca-353b-42f6-ba6e-bbb4321dfc0f.png)
+
 
 ## Установка и настройка
 ### Установка клиента на Linux
