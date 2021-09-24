@@ -222,7 +222,7 @@ export class RepositoryService {
     this.metadata = null;
   }
 
-  getPerson(id: number): IPerson {
+  getPerson(id: number): IPerson | undefined{
     return this.people.get(id);
   }
 
@@ -238,9 +238,12 @@ export class RepositoryService {
     return this.databaseInfo.databaseId;
   }
 
-  getPersonOnOrganizationUnit(positionId: number): IPerson {
+  getPersonOnOrganizationUnit(positionId: number): IPerson | undefined {
     const orgUnit = this.getOrganizationUnit(positionId);
     let person: IPerson;
+    if (orgUnit === undefined)
+      return undefined;
+
     if (orgUnit.person !== -1) {
       person = this.getPerson(orgUnit.person);
     }
@@ -250,17 +253,17 @@ export class RepositoryService {
     }
 
     if (!orgUnit.vicePersons) {
-      return null;
+      return undefined;
     }
 
     for (const vicePerson of orgUnit.vicePersons) {
       person = this.getPerson(vicePerson);
-      if (person != null && !person.isInactive) {
+      if (person != undefined && !person.isInactive) {
         return person;
       }
     }
 
-    return null;
+    return undefined;
   }
 
   getUserState(id: string): IUserState {

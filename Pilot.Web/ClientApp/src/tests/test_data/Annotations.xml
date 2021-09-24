@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<anc:Annotations xmlns:anc="http://schemas.microsoft.com/windows/annotations/2003/11/core" xmlns:anb="http://schemas.microsoft.com/windows/annotations/2003/11/base">
+    <anc:Annotation Id="a865181e-93cc-4e1f-9616-b1ce0eb3638c" 
+                    CreationTime="2020-11-17T09:36:21.1349922+03:00" 
+                    LastModificationTime="2021-06-11T12:32:15.0000000+03:00" 
+                    Type="anb:TextNote">
+        <anc:Authors>
+            <anb:StringAuthor>Голомидов Дмитрий Александрович</anb:StringAuthor>
+            <anb:StringAuthor>ffffffff-0000-9d01-9c38-917c00a6bd8e</anb:StringAuthor>
+        </anc:Authors>
+        <anc:Cargos>
+            <anc:Resource Id="c93d9a78-4bea-4336-868e-4242e988071f" Name="Meta Data">
+                <anb:MetaData anb:Top="148.610240700219" 
+                              anb:Left="387.050154798762" 
+                              anb:Mark="ГД" 
+                              anb:PageNumber="0" 
+                              anb:LastModified="06/11/2021 12:32:15" 
+                              anb:StatusName="Снято" 
+                              anb:StatusIcon="&lt;!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  --&gt;&#xA;&lt;svg enable-background=&quot;new 0 0 16 16&quot; version=&quot;1.0&quot; viewBox=&quot;0 0 16 16&quot; xml:space=&quot;preserve&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:cc=&quot;http://creativecommons.org/ns#&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;&gt;&lt;metadata&gt;&lt;rdf:RDF&gt;&lt;cc:Work rdf:about=&quot;&quot;&gt;&lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;&lt;dc:type rdf:resource=&quot;http://purl.org/dc/dcmitype/StillImage&quot;/&gt;&lt;dc:title/&gt;&lt;/cc:Work&gt;&lt;/rdf:RDF&gt;&lt;/metadata&gt;&lt;defs&gt;&lt;pattern id=&quot;EMFhbasepattern&quot; width=&quot;6&quot; height=&quot;6&quot; patternUnits=&quot;userSpaceOnUse&quot;/&gt;&lt;/defs&gt;&lt;style type=&quot;text/css&quot;&gt;&#xA; .st0{fill:#606262;}&#xA;&lt;/style&gt;&lt;path d=&quot;m1.99 1.34a0.65 0.65 0 0 0 -0.453 1.12l5.54 5.54-5.54 5.54a0.65 0.65 0 1 0 0.92 0.918l5.54-5.54 5.54 5.54a0.65 0.65 0 1 0 0.92 -0.918l-5.54-5.54 5.54-5.54a0.65 0.65 0 0 0 -0.473 -1.12 0.65 0.65 0 0 0 -0.447 0.197l-5.54 5.54-5.54-5.54a0.65 0.65 0 0 0 -0.467 -0.197z&quot; color=&quot;#000000&quot; color-rendering=&quot;auto&quot; dominant-baseline=&quot;auto&quot; enable-background=&quot;accumulate&quot; fill=&quot;#df4e4e&quot; fill-rule=&quot;evenodd&quot; image-rendering=&quot;auto&quot; shape-rendering=&quot;auto&quot; solid-color=&quot;#000000&quot; style=&quot;font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;isolation:auto;mix-blend-mode:normal;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal&quot;/&gt;&lt;/svg&gt;&#xA;" />
+            </anc:Resource>
+            <anc:Resource Id="51f8fea7-e20c-4055-a026-0afcfdc7ef5f" Name="Text Data">
+                <anb:Text>PFNlY3Rpb24geG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd2luZngvMjAwNi94YW1sL3ByZXNlbnRhdGlvbiI+PFBhcmFncmFwaD4xPC9QYXJhZ3JhcGg+PC9TZWN0aW9uPg==
+                </anb:Text>
+            </anc:Resource>
+        </anc:Cargos>
+    </anc:Annotation>
+    <anc:Annotation Id="55db1b01-f9a8-4be6-8b55-f866aad1d029" 
+                    CreationTime="2020-11-17T09:36:31.9045897+03:00" 
+                    LastModificationTime="2021-06-11T12:32:15.0000000+03:00" 
+                    Type="anb:TextNote">
+        <anc:Authors>
+            <anb:StringAuthor>Голомидов Дмитрий Александрович (от имени Голомидов Дмитрий Александрович 2)</anb:StringAuthor>
+            <anb:StringAuthor>ffffffff-0000-9d01-9c38-917c00a6bd8e</anb:StringAuthor>
+        </anc:Authors>
+        <anc:Cargos>
+            <anc:Resource Id="f3aad88a-eb51-4f36-91e1-2b4c7968762b" Name="Meta Data">
+                <anb:MetaData anb:Top="275.113172866521" 
+                                anb:Left="389.507616099071" 
+                                anb:Mark="ГД" 
+                                anb:PageNumber="0" 
+                                anb:LastModified="06/11/2021 12:32:15" 
+                                anb:StatusName="Снято" 
+                                anb:StatusIcon="&lt;!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  --&gt;&#xA;&lt;svg enable-background=&quot;new 0 0 16 16&quot; version=&quot;1.0&quot; viewBox=&quot;0 0 16 16&quot; xml:space=&quot;preserve&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:cc=&quot;http://creativecommons.org/ns#&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;&gt;&lt;metadata&gt;&lt;rdf:RDF&gt;&lt;cc:Work rdf:about=&quot;&quot;&gt;&lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;&lt;dc:type rdf:resource=&quot;http://purl.org/dc/dcmitype/StillImage&quot;/&gt;&lt;dc:title/&gt;&lt;/cc:Work&gt;&lt;/rdf:RDF&gt;&lt;/metadata&gt;&lt;defs&gt;&lt;pattern id=&quot;EMFhbasepattern&quot; width=&quot;6&quot; height=&quot;6&quot; patternUnits=&quot;userSpaceOnUse&quot;/&gt;&lt;/defs&gt;&lt;style type=&quot;text/css&quot;&gt;&#xA; .st0{fill:#606262;}&#xA;&lt;/style&gt;&lt;path d=&quot;m1.99 1.34a0.65 0.65 0 0 0 -0.453 1.12l5.54 5.54-5.54 5.54a0.65 0.65 0 1 0 0.92 0.918l5.54-5.54 5.54 5.54a0.65 0.65 0 1 0 0.92 -0.918l-5.54-5.54 5.54-5.54a0.65 0.65 0 0 0 -0.473 -1.12 0.65 0.65 0 0 0 -0.447 0.197l-5.54 5.54-5.54-5.54a0.65 0.65 0 0 0 -0.467 -0.197z&quot; color=&quot;#000000&quot; color-rendering=&quot;auto&quot; dominant-baseline=&quot;auto&quot; enable-background=&quot;accumulate&quot; fill=&quot;#df4e4e&quot; fill-rule=&quot;evenodd&quot; image-rendering=&quot;auto&quot; shape-rendering=&quot;auto&quot; solid-color=&quot;#000000&quot; style=&quot;font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;isolation:auto;mix-blend-mode:normal;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal&quot;/&gt;&lt;/svg&gt;&#xA;" />
+            </anc:Resource>
+            <anc:Resource Id="f164db5c-14ab-47e9-842b-d38f5223df7c" Name="Text Data">
+                <anb:Text>PFNlY3Rpb24geG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd2luZngvMjAwNi94YW1sL3ByZXNlbnRhdGlvbiI+PFBhcmFncmFwaD4yPC9QYXJhZ3JhcGg+PC9TZWN0aW9uPg==</anb:Text>
+            </anc:Resource>
+        </anc:Cargos>
+    </anc:Annotation>
+    <anc:Annotation Id="74662bc1-c48e-42ba-8559-63b5102c905a" 
+                    CreationTime="2020-11-17T09:36:50.4560958+03:00" 
+                    LastModificationTime="2021-06-11T12:32:15.0000000+03:00" 
+                    Type="anb:TextNote">
+        <anc:Authors>
+            <anb:StringAuthor>Голомидов Дмитрий Александрович (от имени Голомидов Дмитрий Александрович 2)</anb:StringAuthor>
+            <anb:StringAuthor>ffffffff-0000-9d01-9c38-917c00a6bd8e</anb:StringAuthor>
+        </anc:Authors>
+        <anc:Cargos>
+            <anc:Resource Id="bd95ca8c-fa2d-4038-8074-e30b483b5048" Name="Meta Data">
+                <anb:MetaData anb:Top="403.598719068413" 
+                                anb:Left="405.881402061856" 
+                                anb:Mark="ГД" 
+                                anb:PageNumber="0" 
+                                anb:LastModified="06/11/2021 12:32:15" 
+                                anb:StatusName="Снято" 
+                                anb:StatusIcon="&lt;!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  --&gt;&#xA;&lt;svg enable-background=&quot;new 0 0 16 16&quot; version=&quot;1.0&quot; viewBox=&quot;0 0 16 16&quot; xml:space=&quot;preserve&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:cc=&quot;http://creativecommons.org/ns#&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;&gt;&lt;metadata&gt;&lt;rdf:RDF&gt;&lt;cc:Work rdf:about=&quot;&quot;&gt;&lt;dc:format&gt;image/svg+xml&lt;/dc:format&gt;&lt;dc:type rdf:resource=&quot;http://purl.org/dc/dcmitype/StillImage&quot;/&gt;&lt;dc:title/&gt;&lt;/cc:Work&gt;&lt;/rdf:RDF&gt;&lt;/metadata&gt;&lt;defs&gt;&lt;pattern id=&quot;EMFhbasepattern&quot; width=&quot;6&quot; height=&quot;6&quot; patternUnits=&quot;userSpaceOnUse&quot;/&gt;&lt;/defs&gt;&lt;style type=&quot;text/css&quot;&gt;&#xA; .st0{fill:#606262;}&#xA;&lt;/style&gt;&lt;path d=&quot;m1.99 1.34a0.65 0.65 0 0 0 -0.453 1.12l5.54 5.54-5.54 5.54a0.65 0.65 0 1 0 0.92 0.918l5.54-5.54 5.54 5.54a0.65 0.65 0 1 0 0.92 -0.918l-5.54-5.54 5.54-5.54a0.65 0.65 0 0 0 -0.473 -1.12 0.65 0.65 0 0 0 -0.447 0.197l-5.54 5.54-5.54-5.54a0.65 0.65 0 0 0 -0.467 -0.197z&quot; color=&quot;#000000&quot; color-rendering=&quot;auto&quot; dominant-baseline=&quot;auto&quot; enable-background=&quot;accumulate&quot; fill=&quot;#df4e4e&quot; fill-rule=&quot;evenodd&quot; image-rendering=&quot;auto&quot; shape-rendering=&quot;auto&quot; solid-color=&quot;#000000&quot; style=&quot;font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;isolation:auto;mix-blend-mode:normal;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal&quot;/&gt;&lt;/svg&gt;&#xA;" />
+            </anc:Resource>
+                <anc:Resource Id="5d3ba72d-d5a4-4827-b5d6-00c56eaf72fb" Name="Text Data">
+                    <anb:Text>PFNlY3Rpb24geG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd2luZngvMjAwNi94YW1sL3ByZXNlbnRhdGlvbiI+PFBhcmFncmFwaD4zPC9QYXJhZ3JhcGg+PC9TZWN0aW9uPg==</anb:Text>
+                </anc:Resource>
+            </anc:Cargos>
+        </anc:Annotation>
+</anc:Annotations>

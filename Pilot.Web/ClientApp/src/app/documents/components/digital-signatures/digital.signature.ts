@@ -28,9 +28,9 @@ export class DigitalSignature {
 
     if (position) {
       positionTitle = position.title;
+      this.position = position.id;
     }
 
     this.person = personNameFunc(personName, positionTitle);
-    this.position = position.id;
   }
 }
