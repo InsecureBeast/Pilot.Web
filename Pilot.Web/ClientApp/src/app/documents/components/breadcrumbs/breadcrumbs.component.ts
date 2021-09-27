@@ -82,7 +82,7 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
     private readonly nodeStyleService: NodeStyleService,
     private readonly documentsService: DocumentsService,
     private readonly navigationService: DocumentsNavigationService,
-    private readonly searchService: SearchService) {
+    public readonly searchService: SearchService) {
 
     this.allBreadcrumbNodes = new Array<BreadcrumbNode>();
     this.hiddenBreadcrumbs = new Array<BreadcrumbNode>();
