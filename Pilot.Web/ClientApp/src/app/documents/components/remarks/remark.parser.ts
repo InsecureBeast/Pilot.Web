@@ -1,4 +1,5 @@
 import { Element, XmlParser, Text } from "@angular/compiler";
+import { EncodingDetector } from "src/app/core/tools/encoding.detector";
 import { parseBoolean, Tools } from "src/app/core/tools/tools";
 import { TextDecoder } from 'text-encoding';
 import { Remark } from "./remark";
@@ -67,7 +68,7 @@ export class RemarkParser extends XmlParserBase {
         const annotation = <Element>pr.rootNodes.find(n => (<Element>n).name === "Annotation");
         if (!annotation) {
             console.warn("annotation is undefined")
-            console.log(pr);
+            return;
         }
 
         remark.type = this.getAttribute('Type', annotation);
@@ -78,8 +79,15 @@ export class RemarkParser extends XmlParserBase {
     }
 
     parseFromArrayBuffer(buffer: ArrayBuffer) : Remark {
-        var enc = new TextDecoder("utf-8");
-        const s = enc.decode(buffer);
+        var encDetector = new EncodingDetector();
+        var uintArray = new Uint8Array(buffer);
+        var enc = 'utf-8';
+        if (encDetector.isUtf16(uintArray)) {
+            enc = 'utf-16';
+        }
+
+        var decoder = new TextDecoder(enc);
+        const s = decoder.decode(buffer);
         return this.parseFromXml(s);
     }
 
