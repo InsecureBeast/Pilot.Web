@@ -1,6 +1,6 @@
 {
   "name": "pilot.web",
-  "version": "21.2.0",
+  "version": "21.2.1",
   "scripts": {
     "ng": "ng",
     "start": "@echo & ng serve",
