@@ -23,7 +23,7 @@
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="21.17.0" />
     <PackageReference Include="Lucene.Net" Version="4.8.0-beta00013" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00013" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.18" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.4" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="3.1.0" ExcludeAssets="all" PrivateAssets="all">
