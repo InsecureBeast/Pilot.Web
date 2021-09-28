@@ -2,12 +2,9 @@
 export class EncodingDetector {
 
   isUtf8(data: Uint8Array): boolean {
-    var i = 0;
-    var len = data && data.length;
-    var b;
-
-    for (; i < len; i++) {
-      b = data[i];
+    const len = data && data.length;
+    for (let i = 0; i < len; i++) {
+      let b = data[i];
       if (b > 0xFF) {
         return false;
       }
@@ -78,11 +75,10 @@ export class EncodingDetector {
 
   // utf-16 (LE or BE)
   isUtf16(data: Uint8Array): boolean {
-    var i = 0;
-    var len = data && data.length;
-    var pos = null;
-    var b1, b2, next, prev;
+    let pos = null;
+    let b1: number, b2: number, next: number, prev: number;
 
+    const len = data && data.length;
     if (len < 2) {
       if (data[0] > 0xFF) {
         return false;
@@ -99,7 +95,7 @@ export class EncodingDetector {
         return true;
       }
 
-      for (; i < len; i++) {
+      for (let i = 0; i < len; i++) {
         if (data[i] === 0x00) {
           pos = i;
           break;
