@@ -1,10 +1,11 @@
 import { Element, XmlParser, Text } from "@angular/compiler";
+import { EncodingDetector } from "src/app/core/tools/encoding.detector";
 import { parseBoolean, Tools } from "src/app/core/tools/tools";
 import { TextDecoder } from 'text-encoding';
 import { Remark } from "./remark";
 
 export class XmlParserBase {
-    protected getAttribute(name: string, element: Element): any {
+    protected getAttribute(name: string, element: Element): any | null {
         const attr = element.attrs.find(a => a.name === name)
         if (attr) {
             return attr.value; 
@@ -13,7 +14,7 @@ export class XmlParserBase {
         return null;
     }
 
-    protected getFirstOrDefaultChildText(element: Element): string {
+    protected getFirstOrDefaultChildText(element: Element): string | null {
         if (!element) {
             return null;
         }
@@ -26,7 +27,7 @@ export class XmlParserBase {
         return null;
     }
 
-    protected getElement(element: Element, name: string): Element {
+    protected getElement(element: Element, name: string): Element | null {
         let children = element.children.filter(a => a instanceof Element) as Element[];
         for (const child of children) {
             if (child.name === name) {
@@ -63,24 +64,34 @@ export class RemarkParser extends XmlParserBase {
     parseFromXml(xml: string) : Remark {
 
         let remark = new Remark();
-
         const pr = new XmlParser().parse(xml, '');
-        const annotation = <Element>pr.rootNodes[1];
+        const annotation = <Element>pr.rootNodes.find(n => (<Element>n).name === "Annotation");
+        if (!annotation) {
+            console.warn("annotation is undefined")
+            return;
+        }
+
         remark.type = this.getAttribute('Type', annotation);
         remark.id = this.getAttribute('Id', annotation);
         remark.created = this.getAttribute('CreationTime', annotation);
-        
         this.fill(annotation, remark);
         return remark;
     }
 
     parseFromArrayBuffer(buffer: ArrayBuffer) : Remark {
-        var enc = new TextDecoder("utf-8");
-        const s = enc.decode(buffer);
+        var encDetector = new EncodingDetector();
+        var uintArray = new Uint8Array(buffer);
+        var enc = 'utf-8';
+        if (encDetector.isUtf16(uintArray)) {
+            enc = 'utf-16';
+        }
+
+        var decoder = new TextDecoder(enc);
+        const s = decoder.decode(buffer);
         return this.parseFromXml(s);
     }
 
-  private fill(element: Element, remark: Remark): void {
+    private fill(element: Element, remark: Remark): void {
         let children = element.children.filter(a => a instanceof Element) as Element[];
         for (const child of children) {
             if (child.name === ':anb:StringAuthor' && !remark.person) {
