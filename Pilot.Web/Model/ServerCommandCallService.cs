@@ -15,9 +15,9 @@ namespace Pilot.Web.Model
             _commandName = CommandNameParser.GetCommandName(typeof(T).Name, processorName);
         }
 
-        public byte[] Call(ICallData data)
+        public byte[] Call(byte[] data)
         {
-            var result = _serverApiService.InvokeServerCommand(_commandName, data.GetBytes())
+            var result = _serverApiService.InvokeServerCommand(_commandName, data)
                 .GetAwaiter()
                 .GetResult();
 
@@ -30,11 +30,6 @@ namespace Pilot.Web.Model
                 default:
                     throw new InvalidOperationException("Unable to deserialize server command response");
             }
-        }
-
-        public byte[] Get(string data)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -145,7 +145,7 @@ namespace Pilot.Web.Tests
             controller.Change(new[] { change });
 
             // then
-            modifier.Verify(m => m.Apply(null), Times.Once);
+            modifier.Verify(m => m.Apply(), Times.Once);
         }
 
         [Test]
