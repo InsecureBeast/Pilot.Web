@@ -67,14 +67,14 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Publish Linux x64
-      run: dotnet publish Pilot.Web\Pilot.Web.csproj /p:PublishProfile=Pilot.Web\Properties\PublishProfiles\Linux64.pubxml -c Release
+      run: dotnet build Pilot.Web/Pilot.Web.csproj /p:DeployOnBuild=true /p:PublishProfile=Pilot.Web/Properties/PublishProfiles/Linux64.pubxml -c Release
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v2
       with:
         name: pilot-web_linux-${{ steps.gitversion.outputs.fullSemVer }}
         path: Pilot.Web\bin\Release\netcoreapp3.1\pilot-web_linux\
     - name: Publish Windows x64
-      run: dotnet publish Pilot.Web\Pilot.Web.csproj /p:PublishProfile=Pilot.Web\Properties\PublishProfiles\Windows64.pubxml -c Release
+      run: dotnet build Pilot.Web/Pilot.Web.csproj /p:DeployOnBuild=true /p:PublishProfile=Pilot.Web/Properties/PublishProfiles/Windows64.pubxml -c Release
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v2
       with:
