@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\src\assets\fonts\" />
+    <Folder Include="Model\Extensions\" />
     <Folder Include="Tools\" />
   </ItemGroup>
 
