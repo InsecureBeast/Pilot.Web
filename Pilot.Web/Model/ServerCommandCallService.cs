@@ -15,9 +15,14 @@ namespace Pilot.Web.Model
             _commandName = CommandNameParser.GetCommandName(typeof(T).Name, processorName);
         }
 
-        public byte[] Call(byte[] data)
+        public byte[] Get(string data)
         {
-            var result = _serverApiService.InvokeServerCommand(_commandName, data)
+            throw new NotImplementedException();
+        }
+
+        public byte[] Call(ICallData data)
+        {
+            var result = _serverApiService.InvokeServerCommand(_commandName, data.GetBytes())
                 .GetAwaiter()
                 .GetResult();
 

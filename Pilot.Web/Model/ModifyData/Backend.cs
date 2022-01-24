@@ -84,7 +84,13 @@ namespace Pilot.Web.Model.ModifyData
             return _serverApi.GetObjects(new[] { id }).FirstOrDefault();
         }
 
-        public Guid Apply(IEnumerable<INChange> changes, IEnumerable<Guid> newFileBodies, ChangesetDataSource source = ChangesetDataSource.Native, MergeChangePolicy mergePolicy = MergeChangePolicy.Deny)
+        public IObjectSecurity GetObjectSecurity()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Guid Apply(IEnumerable<INChange> changes, IEnumerable<Guid> newFileBodies, ChangesetDataSource source = ChangesetDataSource.Native,
+            MergeChangePolicy mergePolicy = MergeChangePolicy.Deny, Guid? extensionId = null)
         {
             var bodies = newFileBodies.ToList();
             var changesetData = new DChangesetData { Identity = Guid.NewGuid() };

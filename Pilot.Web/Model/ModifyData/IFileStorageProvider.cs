@@ -7,13 +7,7 @@ using Ascon.Pilot.DataModifier;
 
 namespace Pilot.Web.Model.ModifyData
 {
-    public interface IFileStorage : IFileStorageProvider
-    {
-        string CreateFile(Guid fileId);
-        void DeleteFile(Guid fileId);
-    }
-
-    public class FileStorageProvider : IFileStorage
+    public class FileStorageProvider : IFileStorageProvider
     {
         private readonly string _fileArchiveFolder;
         private static readonly ConcurrentDictionary<Guid, string> Files = new ConcurrentDictionary<Guid, string>();
@@ -45,14 +39,7 @@ namespace Pilot.Web.Model.ModifyData
             throw new NotImplementedException();
         }
 
-        public string CreateFile(Guid fileId)
-        {
-            var filePath = Path.Combine(_fileArchiveFolder, fileId.ToString());
-            Files[fileId] = filePath;
-            return filePath;
-        }
-
-        public void DeleteFile(Guid fileId)
+        public void DeleteFile(Guid fileId, bool isDeleted)
         {
             if (!Files.TryGetValue(fileId, out var path))
                 return;
