@@ -1,7 +1,6 @@
 import { Element, XmlParser, Text } from "@angular/compiler";
 import { EncodingDetector } from "src/app/core/tools/encoding.detector";
 import { parseBoolean, Tools } from "src/app/core/tools/tools";
-import { TextDecoder } from 'text-encoding';
 import { Remark } from "./remark";
 
 export class XmlParserBase {
