@@ -1,6 +1,6 @@
 # Pilot-Web
 
-Редакция web-клиента на **ASP.NET Core 3.1** для системы управления данными **Pilot**
+Редакция web-клиента на **ASP.NET Core 5.0** для системы управления данными **Pilot**
 
 Всё необходимое для устновки **Pilot-Server** и **myAdmin** [здесь](https://pilot.ascon.ru/).\
 [Инструкция развёртывания](https://pilot.ascon.ru/release/Help/ru/ReadMe.pdf) всех компонентов Pilot-ICE.
