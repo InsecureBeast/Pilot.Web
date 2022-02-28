@@ -96,6 +96,8 @@ Restart=always
 RestartSec=10
 SyslogIdentifier=dotnet-pilot-web-client
 Enviroment=ASPNETCORE_ENVIROMENT=Production
+ExecStart=/opt/pilot-web/Pilot.Web
+ExecStopp=/bin/kill -s 3 $MAINPID
 
 [Install]
 WantedBy=multi-user.target
