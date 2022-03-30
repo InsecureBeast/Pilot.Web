@@ -1,6 +1,6 @@
 # Pilot-Web
 
-Редакция web-клиента на **ASP.NET Core 3.1** для системы управления данными **Pilot**
+Редакция web-клиента на **ASP.NET Core 5.0** для системы управления данными **Pilot**
 
 Всё необходимое для устновки **Pilot-Server** и **myAdmin** [здесь](https://pilot.ascon.ru/).\
 [Инструкция развёртывания](https://pilot.ascon.ru/release/Help/ru/ReadMe.pdf) всех компонентов Pilot-ICE.
@@ -96,6 +96,8 @@ Restart=always
 RestartSec=10
 SyslogIdentifier=dotnet-pilot-web-client
 Enviroment=ASPNETCORE_ENVIROMENT=Production
+ExecStart=/opt/pilot-web/Pilot.Web
+ExecStopp=/bin/kill -s 3 $MAINPID
 
 [Install]
 WantedBy=multi-user.target

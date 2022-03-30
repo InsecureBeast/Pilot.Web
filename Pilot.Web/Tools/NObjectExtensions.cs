@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Ascon.Pilot.Common;
@@ -60,45 +61,60 @@ namespace Pilot.Web.Tools
 
         private static string GetAttributeText(INObject obj, IReadOnlyDictionary<string, DValue> attributes, INAttribute attr)
         {
-            DValue value;
-            attributes.TryGetValue(attr.Name, out value);
-            var strValue = value?.Value?.ToString();
-            if (attr.Type == MAttrType.Numerator)
+            if (!attributes.TryGetValue(attr.Name, out var value))
+                return string.Empty;
+
+            switch (attr.Type)
             {
-                try
-                {
-                    return GetNumeratorAttributeText(obj, strValue, attr.ParsedConfiguration().CounterDescriptions);
-                }
-                catch (FormatException)
-                {
-                    return string.Empty;
-                }
+                case MAttrType.Numerator:
+                    try
+                    {
+                        return GetNumeratorAttributeText(obj, attr, value.Value?.ToString());
+                    }
+                    catch (FormatException)
+                    {
+                        return string.Empty;
+                    }
+                case MAttrType.DateTime:
+                    return GetDateTimeAttributeText(obj, value);
+                default:
+                    return value.Value?.ToString();
             }
-            return strValue;
         }
 
-        public static string GetNumeratorAttributeText(INObject obj, string attributeValue, NCounterDescriptionList description)
+        public static string GetDateTimeAttributeText(INObject obj, DValue attributeValue)
         {
-            if (string.IsNullOrEmpty(attributeValue))
+            //for backward compatibility - old datetime values were stored as strValue
+            if (attributeValue.DateValue.HasValue)
+            {
+                return attributeValue.DateValue.Value.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+            }
+
+            return attributeValue;
+        }
+
+        public static string GetNumeratorAttributeText(INObject obj, INAttribute attr, string attrValue)
+        {
+            if (string.IsNullOrEmpty(attrValue))
                 return null;
 
-            bool deferred = false;
-            string format = attributeValue;
-            if (attributeValue.StartsWith(NumeratorDescription.Deferred))
+            var description = attr.ParsedConfiguration().CounterDescriptions;
+            var keywordProvider = new INumeratorKeywordProvider<INObject>[]
             {
-                deferred = true;
-                format = attributeValue.Substring(NumeratorDescription.Deferred.Length);
-            }
-            if (description.DeferredRegistration)
-            {
-                deferred = true;
-            }
-            return new NumeratorFormatter(new NumeratorKeywordProviderAggregator(new INumeratorKeywordProvider[]
-            {
-                    new CurrentDateProvider(deferred),
-                    new AttributeKeywordProvider(),
-                    new UnknownProvider(description.DraftText)
-            })).Format(obj, format);
+                GetCurrentDateKeywordProviders(attrValue, description),
+                new UnknownProvider(description.DraftText)
+            };
+
+            if (attrValue.StartsWith(NumeratorDescription.Deferred))
+                attrValue = attrValue.Substring(NumeratorDescription.Deferred.Length);
+
+            return new NumeratorFormatter<INObject>(new NumeratorKeywordProviderAggregator<INObject>(keywordProvider)).Format(obj, attrValue);
+        }
+
+        public static INumeratorKeywordProvider<INObject> GetCurrentDateKeywordProviders(string attributeValue, NCounterDescriptionList description)
+        {
+            var deferred = attributeValue.StartsWith(NumeratorDescription.Deferred) || description.DeferredRegistration;
+            return new CurrentDateProvider(deferred);
         }
     }
 }

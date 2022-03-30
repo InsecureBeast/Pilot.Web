@@ -1,8 +1,9 @@
-﻿using Ascon.Pilot.DataClasses;
+﻿using System.Collections.Generic;
+using Ascon.Pilot.DataClasses;
 
 namespace Pilot.Web.Tools.Numerator
 {
-    public class UnknownProvider : INumeratorKeywordProvider
+    public class UnknownProvider : INumeratorKeywordProvider<INObject>
     {
         const string DEFAULT_PLACEHOLDER = "***";
         private readonly string _placeholder;
@@ -15,6 +16,11 @@ namespace Pilot.Web.Tools.Numerator
         public object GetValue(INObject obj, string keyword)
         {
             return _placeholder;
+        }
+
+        public IEnumerable<object> GetValues(INObject obj, string keyword)
+        {
+            return new[] { GetValue(obj, keyword) };
         }
     }
 }
