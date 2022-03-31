@@ -56,6 +56,10 @@ export class Tools {
       return undefined;
     }
 
+    if (scDateTime === undefined) {
+      return undefined;
+    }
+
     const utcDate = Tools.toUtcCsDateTime(scDateTime);
     const datePipe = new DatePipe(currentLang);
     return datePipe.transform(utcDate, format);

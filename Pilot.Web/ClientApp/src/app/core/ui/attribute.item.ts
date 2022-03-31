@@ -40,14 +40,6 @@ export class DateAttributeItem extends AttributeItem {
 
   constructor(attribute: IAttribute, value: string, currentLang: string) {
     super(attribute);
-    if (value === '9999-12-31T23:59:59.9999999') {
-      return;
-    }
-
-    if (value === '9999-12-31T20:59:59.9999999') {
-      return;
-    }
-
     this.value = Tools.toLocalDateTime(value, currentLang);
   }
 
