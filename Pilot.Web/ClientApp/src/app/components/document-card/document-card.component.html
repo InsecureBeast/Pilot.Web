@@ -11,13 +11,13 @@
             <div *ngTemplateOutlet="doubleAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
         <ng-container *ngIf="attr.type === 2">
-            <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
+            <div *ngTemplateOutlet="dateAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
         <ng-container *ngIf="attr.type === 3">
             <div *ngTemplateOutlet="stringAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
         <ng-container *ngIf="attr.type === 4">
-            <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
+            <div *ngTemplateOutlet="decimalAttributeTemplate;context:{attr:attr}"></div>
         </ng-container>
         <ng-container *ngIf="attr.type === 5">
             <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:attr}"></div>
@@ -35,13 +35,18 @@
 </form>
 
 <ng-template #orgUnitAttributeTemplate let-item="item">
-  <div class="f-md text-second mt-2">{{item.title}}</div>
-  <div *ngFor="let orgUnit of item.items | keyvalue">
-    <div class="f-lg">
-      <span *ngIf="orgUnit.key" class="mr-1">{{orgUnit.key.displayName}}</span>
-      <span class="text-secondary">({{orgUnit.value.title}})</span>
+  <ng-container *ngIf="item.items.size == 0">
+    <div *ngTemplateOutlet="readonlyAttributeTemplate;context:{attr:item}"></div>
+  </ng-container>
+  <ng-container *ngIf="item.items.size > 0">
+    <div class="f-md text-second mt-2">{{item.title}}</div>
+    <div *ngFor="let orgUnit of item.items | keyvalue">
+      <div class="f-lg">
+        <span *ngIf="orgUnit.key" class="mr-1">{{orgUnit.key.displayName}}</span>
+        <span class="text-secondary">({{orgUnit.value.title}})</span>
+      </div>
     </div>
-  </div>
+  </ng-container>
 </ng-template>
 
 <ng-template #stringAttributeTemplate let-item="attr">
@@ -85,6 +90,19 @@
     </div>
 </ng-template>
 
+<ng-template #decimalAttributeTemplate let-item="attr">
+    <div class="form-group mt-2">
+        <label for="{{item.name}}">{{item.title}}</label>
+        <input class="form-control" 
+                type="text"
+                readonly
+                id="{{item.name}}" 
+                value="{{item.value}}"
+                (change)="onChange(item.name, $event.target.value)"
+                style="width: 150px;">
+    </div>
+</ng-template>
+
 <ng-template #doubleAttributeTemplate let-item="attr">
     <div class="form-group mt-2">
         <label for="{{item.name}}">{{item.title}}</label>
@@ -101,11 +119,24 @@
 
 <ng-template #readonlyAttributeTemplate let-item="attr">
     <div class="form-group mt-2">
-        <label for="{{item.name}}">{{item.title}}</label>
+        <label class="text-second" for="{{item.name}}">{{item.title}}</label>
         <input  class="form-control" 
                 readonly
                 id="{{item.name}}" 
                 value="{{item.value}}"
                 (change)="onChange(item.name, $event.target.value)">
+    </div>
+</ng-template>
+
+<ng-template #dateAttributeTemplate let-item="attr">
+    <div class="form-group mt-2">
+        <label class="text-second" for="{{item.name}}">{{item.title}}</label>
+        <textarea class="form-control" 
+                  readonly
+                  id="{{item.name}}" 
+                  rows="1"
+                  value="{{item.value}}"
+                  (change)="onChange(item.name, $event.target.value)">
+        </textarea>
     </div>
 </ng-template>
