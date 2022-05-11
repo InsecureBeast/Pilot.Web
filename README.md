@@ -5,16 +5,7 @@
 Всё необходимое для устновки **Pilot-Server** и **myAdmin** [здесь](https://pilot.ascon.ru/).\
 [Инструкция развёртывания](https://pilot.ascon.ru/release/Help/ru/ReadMe.pdf) всех компонентов Pilot-ICE.
 
-## Demo
-Пример работы **Pilot-Web** можно посмотреть [здесь](http://151.248.116.15).
-
-Тестовые данные для входа:
-| Имя для входа  | Пароль  |
-| -------------- | ------- |
-| sedov          | 123456  |
-| rogova         | 123456  |
-| pavlenko       | 123456  |
-
+## Внешний вид
 ![image](https://user-images.githubusercontent.com/11440230/134138178-b630c7ca-353b-42f6-ba6e-bbb4321dfc0f.png)
 
 
@@ -123,7 +114,7 @@ systemctl start pilot-web
 Для того, чтобы запустить **Pilot-Web** в службе `IIS` необходимо:
 
 - Включить Службы `IIS` в компонентах `Windows`.
-- Установить `ASP.NET Core Runtime 3.1.19` (<https://dotnet.microsoft.com/download/dotnet/3.1>), если еще не установлен
+- Установить `ASP.NET Core Runtime 6.0.5` (<https://dotnet.microsoft.com/download/dotnet/6.0>), если еще не установлен
 - Распаковать архив `pilot-web_windows.zip` в папку для web-сайтов `IIS` (например `C:\wwwroot\pilot-web`)
 - Добавить сайт в `IIS`. Для этого в Диспетчере служб `IIS` вызовите из контекстного меню узла `Сайты -> Добавить веб-сайт`.
   В диалоговом окне задайте параметры нового сайта:
