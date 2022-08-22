@@ -14,3 +14,4 @@ _ReSharper*/
 /Pilot.Xps.Connection/obj/*
 /Pilot.Xps.Entities/bin/*
 /Pilot.Xps.Entities/obj/*
+Pilot.Web/ClientApp/package-lock.json

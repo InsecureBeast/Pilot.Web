@@ -108,9 +108,8 @@
       </div>
     </div>
 
-    <a [routerLink]=""
-       *ngIf="task.hasChildren"
-       class="align-self-center"
+    <a *ngIf="task.hasChildren"
+       class="align-self-center pointer"
        (click)="showSubTasks(task);$event.stopPropagation()">
       <span class="material-icons" *ngIf="!task.isChildrenShown">chevron_right</span>
       <span class="material-icons" *ngIf="task.isChildrenShown">expand_more</span>

@@ -43,16 +43,16 @@ export class DownloadService {
     const blob = new Blob([data], { type: dataType });
 
     // detect whether the browser is IE/Edge or another browser
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+    //if (window.navigator && window.navigator.msSaveOrOpenBlob) {
       // To IE or Edge browser, using msSaveorOpenBlob method to download file.
-      window.navigator.msSaveOrOpenBlob(blob, name);
-    } else {
+    //  window.navigator.msSaveOrOpenBlob(blob, name);
+    //} else {
       // To another browser, create a tag to download file.
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.target = '_blank';
       link.download = name;
       link.click();
-    }
+    //}
   }
 }

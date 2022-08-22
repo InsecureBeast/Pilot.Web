@@ -45,7 +45,7 @@
       *ngIf="selectedFilter" >
     <div class="bt-button pointer p-2" 
         (click)="showFilters();$event.stopPropagation()">
-      <a [routerLink]="" >
+      <a class="pointer">
         <span class="material-icons">filter_list</span>
         <span class="align-top ml-2">{{ selectedFilter.name }}</span>
       </a>

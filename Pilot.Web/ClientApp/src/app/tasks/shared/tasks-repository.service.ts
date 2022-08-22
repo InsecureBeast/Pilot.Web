@@ -1,12 +1,11 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { IObject, ICommonSettings } from '../../core/data/data.classes';
 import { AuthService } from '../../auth/auth.service';
 import { HeadersProvider } from 'src/app/core/headers.provider';
-import { resolve } from 'url';
 
 @Injectable({ providedIn: 'root' })
 export class TasksRepositoryService {

@@ -4,18 +4,16 @@
       <a click-stop-propagation 
         id="root-button"
         click-prevent-default 
-        [routerLink]="" 
         (click)="onSelect(root)" 
         *ngIf="!root.isActive"
-        class="material-icons">home</a>
+        class="material-icons pointer">home</a>
       <span *ngIf="root.isActive" class="material-icons">home</span>
     </li>
     <li class="breadcrumb-button btn-group" dropdown *ngIf="hiddenBreadcrumbs && hiddenBreadcrumbs.length > 0">
       <a click-stop-propagation 
         click-prevent-default 
         id="button-basic"
-        [routerLink]="" 
-        class="material-icons"
+        class="material-icons pointer"
         dropdownToggle 
         aria-controls="dropdown-basic">more_horiz</a>
       <ul id="dropdown-basic" 
@@ -25,10 +23,9 @@
           role="menu" 
           aria-labelledby="button-basic">
         <li role="breadcrumb-item menuitem" *ngFor="let bc of hiddenBreadcrumbs" >
-          <a class="dropdown-item"
+          <a class="dropdown-item pointer"
              click-stop-propagation 
              click-prevent-default 
-             [routerLink]="" 
              (click)="onSelect(bc)"
              style="text-overflow: ellipsis;
              white-space: nowrap;
@@ -54,8 +51,7 @@
       <div class="input-group" >
         <div class="input-group-prepend">
           <a queryParamsHandling="preserve"
-             [routerLink]="" 
-             class="material-icons nav-icon input-group-text left-search-button" 
+             class="material-icons nav-icon input-group-text left-search-button pointer" 
              id="close-search-button" 
              (click)="toggleSearchInput(false)">chevron_right</a>
         </div>
@@ -68,8 +64,7 @@
                (keyup.enter)="search()">
         <div class="input-group-append">
           <a queryParamsHandling="preserve"
-             [routerLink]="" 
-             class="material-icons nav-icon input-group-text rigth-search-button" 
+             class="material-icons nav-icon input-group-text rigth-search-button pointer" 
              id="search-button" 
              (click)="search()">search</a>
         </div>
@@ -78,20 +73,17 @@
     <li class="breadcrumb-button">
       <a id="open-search-button" 
          queryParamsHandling="preserve"
-         [routerLink]="" 
-         class="material-icons nav-icon" 
+         class="material-icons nav-icon pointer" 
          (click)="toggleSearchInput(true)">search</a>
     </li>
     <li class="breadcrumb-item" *ngIf="nodeStyle === 1">
       <a queryParamsHandling="preserve" 
-         [routerLink]="" 
-         class="material-icons nav-icon" 
+         class="material-icons nav-icon pointer" 
          (click)="changeStyle(0)">view_list</a>
     </li>
     <li class="breadcrumb-item" (click)="changeStyle(1)" *ngIf="nodeStyle === 0">
       <a queryParamsHandling="preserve"
-         [routerLink]="" 
-         class="material-icons nav-icon" 
+         class="material-icons nav-icon pointer" 
          (click)="changeStyle(1)">view_module</a>
     </li>
   </ul>
@@ -119,8 +111,8 @@
   </svg>
   <a click-stop-propagation 
     click-prevent-default 
-    [routerLink]="" 
     (click)="onSelect(bc)" 
+    class="pointer"
     *ngIf="!bc.isActive">{{bc.title}}</a>
   <span *ngIf="bc.isActive">{{bc.title}}</span>
 </ng-template>

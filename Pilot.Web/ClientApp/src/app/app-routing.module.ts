@@ -6,8 +6,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: "documents",
-    canActivate: [AuthGuard]
+    redirectTo: "documents"
   },
   {
     path: "documents",

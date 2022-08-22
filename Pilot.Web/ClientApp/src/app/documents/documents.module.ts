@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -74,5 +74,6 @@ import { RemarkLoadedDirective } from './components/document-viewer/viewer-page/
     DocumentComponent,
     FileDropDirective
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ] 
 })
 export class DocumentsModule {}
