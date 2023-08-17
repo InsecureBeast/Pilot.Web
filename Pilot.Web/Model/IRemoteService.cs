@@ -1,7 +1,7 @@
 ﻿using System;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
-using Pilot.Web.Model.ModifyData;
+using Ascon.Pilot.DataModifier;
 
 namespace Pilot.Web.Model
 {
@@ -30,12 +30,12 @@ namespace Pilot.Web.Model
 
             var searchFactory = new SearchServiceFactory(_serverCallback);
             var localArchiveRootFolder = DirectoryProvider.GetTempPath();
-            var fileStorageProvider = new FileStorageProvider(localArchiveRootFolder);
+            var fileStorageProvider = new FileSystemStorageProvider(localArchiveRootFolder);
             var changsetUploader = new ChangesetUploader(_fileArchiveApi, fileStorageProvider, null);
             var messageApi = client.GetMessagesApi(new NullableMessagesCallback());
             var serverApi = client.GetServerApi(_serverCallback);
             var dbInfo = serverApi.OpenDatabase();
-            var backend = new Backend(serverApi, dbInfo, messageApi, changsetUploader);
+            var backend = new Backend(serverApi, messageApi, changsetUploader);
 
             _serverApi = new ServerApiService(serverApi, dbInfo, searchFactory, backend);
             _serverCallback.RegisterCallbackListener((IRemoteServiceListener) _serverApi);

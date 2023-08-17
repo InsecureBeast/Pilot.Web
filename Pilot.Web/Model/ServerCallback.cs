@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.Transport;
@@ -60,6 +57,14 @@ namespace Pilot.Web.Model
         }
 
         public void NotifyChangeAsyncError(Guid identity, ProtoExceptionInfo exception)
+        {
+        }
+
+        public void NotifyCustomNotification(string name, byte[] data)
+        {
+        }
+
+        public void NotifyAccessChangeset(Guid objectId)
         {
         }
 

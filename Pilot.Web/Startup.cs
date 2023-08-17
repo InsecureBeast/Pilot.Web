@@ -84,7 +84,7 @@ namespace Pilot.Web
             services.AddScoped<IFilesOperationService, FilesOperationService>();
             services.AddScoped<IFileStorageDirectoryProvider, FileStorageDirectoryProvider>();
             services.AddScoped<IFileDownloadService, FileDownloadService>();
-            services.AddSingleton<IFileStorageProvider>(new FileStorageProvider(DirectoryProvider.GetTempPath()));
+            services.AddSingleton<IFileStorageProvider>(new FileSystemStorageProvider(DirectoryProvider.GetTempPath()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
