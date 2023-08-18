@@ -7,7 +7,7 @@ export class SystemTypes {
 }
 
 export class SystemAttributes {
-  static PROJECT_ITEM_NAME = 'Title 4C281306-E329-423A-AF45-7B39EC30273F';
+  static PROJECT_ITEM_NAME = '$Title';
   static ALLOW_SIGNING_AT_NONE_STATE_NAME = 'AllowSigningAtNoneState';
   static DOCUMENT_REMARK_VERSION = 'annotation_version';
   static DOCUMENT_REMARK_ANNOTATION = 'annotation';
