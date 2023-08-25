@@ -39,8 +39,15 @@ export class Tools {
   }
 
   static toUtcCsDateTime(scDateTime: string): Date {
-    const utcTime = new Date(Date.parse(scDateTime + 'Z'));
-    return utcTime;
+    let utcDate;
+    if (!scDateTime.endsWith('Z')) {
+        utcDate = new Date(Date.parse(scDateTime + 'Z'));    
+    }
+    else {
+        utcDate = new Date(Date.parse(scDateTime));    
+    }
+    
+    return utcDate;
   }
 
   static toLocalDateTime(scDateTime: string, currentLang: string, format: string = 'short'): string {
@@ -53,6 +60,10 @@ export class Tools {
     }
 
     if (scDateTime === '0001-01-01T00:00:00') {
+      return undefined;
+    }
+
+    if (scDateTime === undefined) {
       return undefined;
     }
 

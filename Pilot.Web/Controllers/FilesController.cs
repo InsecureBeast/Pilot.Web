@@ -196,7 +196,7 @@ namespace Pilot.Web.Controllers
                         : formFile.Name;
                     
                     var newObjectId = Guid.NewGuid();
-                    var builder = modifier.CreateObject(newObjectId, parentId, fileType);
+                    var builder = modifier.CreateObject(newObjectId, parentId, fileType.Id);
                     builder.SetAttribute(fileTitleAttribute, fileName);
                     builder.AddFile(
                         new DocumentInfo(formFile.Name, formFile.OpenReadStream, DateTime.Now, DateTime.Now,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.Transport;
 
@@ -15,12 +16,19 @@ namespace Pilot.Web.Model
             _commandName = CommandNameParser.GetCommandName(typeof(T).Name, processorName);
         }
 
-        public byte[] Call(byte[] data)
+        public byte[] Get(string data)
         {
-            var result = _serverApiService.InvokeServerCommand(_commandName, data)
-                .GetAwaiter()
-                .GetResult();
+            throw new NotImplementedException();
+        }
 
+        public byte[] Call(ICallData data)
+        {
+            return CallAsync(data).GetAwaiter().GetResult();
+        }
+
+        public async Task<byte[]> CallAsync(ICallData data)
+        {
+            var result = await _serverApiService.InvokeServerCommand(_commandName, data.GetBytes());
             switch (result.Result)
             {
                 case ServerCommandResult.Success:

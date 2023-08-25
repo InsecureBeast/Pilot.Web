@@ -1,20 +1,11 @@
 # Pilot-Web
 
-Редакция web-клиента на **ASP.NET Core 3.1** для системы управления данными **Pilot**
+Редакция web-клиента на **ASP.NET Core 6.0** для системы управления данными **Pilot**
 
 Всё необходимое для устновки **Pilot-Server** и **myAdmin** [здесь](https://pilot.ascon.ru/).\
 [Инструкция развёртывания](https://pilot.ascon.ru/release/Help/ru/ReadMe.pdf) всех компонентов Pilot-ICE.
 
-## Demo
-Пример работы **Pilot-Web** можно посмотреть [здесь](http://151.248.116.15).
-
-Тестовые данные для входа:
-| Имя для входа  | Пароль  |
-| -------------- | ------- |
-| sedov          | 123456  |
-| rogova         | 123456  |
-| pavlenko       | 123456  |
-
+## Внешний вид
 ![image](https://user-images.githubusercontent.com/11440230/134138178-b630c7ca-353b-42f6-ba6e-bbb4321dfc0f.png)
 
 
@@ -96,6 +87,8 @@ Restart=always
 RestartSec=10
 SyslogIdentifier=dotnet-pilot-web-client
 Enviroment=ASPNETCORE_ENVIROMENT=Production
+ExecStart=/opt/pilot-web/Pilot.Web
+ExecStopp=/bin/kill -s 3 $MAINPID
 
 [Install]
 WantedBy=multi-user.target
@@ -121,7 +114,7 @@ systemctl start pilot-web
 Для того, чтобы запустить **Pilot-Web** в службе `IIS` необходимо:
 
 - Включить Службы `IIS` в компонентах `Windows`.
-- Установить `ASP.NET Core Runtime 3.1.19` (<https://dotnet.microsoft.com/download/dotnet/3.1>), если еще не установлен
+- Установить `ASP.NET Core Runtime 6.0.5` (<https://dotnet.microsoft.com/download/dotnet/6.0>), если еще не установлен
 - Распаковать архив `pilot-web_windows.zip` в папку для web-сайтов `IIS` (например `C:\wwwroot\pilot-web`)
 - Добавить сайт в `IIS`. Для этого в Диспетчере служб `IIS` вызовите из контекстного меню узла `Сайты -> Добавить веб-сайт`.
   В диалоговом окне задайте параметры нового сайта:
@@ -159,8 +152,10 @@ systemctl start pilot-web
   }
 ```
 где:\
-`FilesStorageDirectory` - корневая папка для локального хранилища\
-`DisplacementFactor` - коэффициент смещения замечаний на документе.\
+`FilesStorageDirectory` - корневая папка для локального хранилища
+> ℹ️ На системах `Windows` для указания папки локального хранилища используйте косую черту `/` или двойную обратную косую черту `\\`. Например `C:\\Temp\\PilotWebStorage` или `C:/Temp/PilotWebStorage`.
+ 
+`DisplacementFactor` - коэффициент смещения замечаний на документе.
 > ℹ️ Т.к. для рендеринга документов на `Windows` и `Linux` используются разные инструменты, необходимо задать коэффициент смещения для правильного позиционирования замечаний на документе.\
 Для `Windows` рекомедуется использовать значение **`1`**.\
 Для `Linux` рекомендуется установить значение **`1.248`**.\
